@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.UserMapper">
+	
+	<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	
+	<insert id="insertUser" parameterType="User">
+		<!--Oracle中返回自增主键到user中的方法 -->
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select TEST_USER_SEQ.nextval from dual
+		</selectKey>
+		insert into test_user(id,name,age) values(#{id},#{name},#{age})
+	</insert>
+	
+	<insert id="insertUserNoReturnId" parameterType="User">
+		insert into test_user(id,name,age) values(TEST_USER_SEQ.nextval,#{name},#{age})
+	</insert>
+	
+	<update id="updateUser" parameterType="User">
+		update test_user set name=#{name} where id=#{id}
+	</update>
+	
+	<select id="retriveUser" parameterType="int" resultType="User">
+		select * from test_user where id=#{id}
+	</select>
+	
+	<delete id="deleteUser" parameterType="int">
+		delete from test_user where id=#{id}
+	</delete>
+	
+	
+	<!-- Map相关 -->
+	<insert id="insertUserByMap" parameterType="HashMap">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select TEST_USER_SEQ.nextval from dual
+		</selectKey>
+		insert into test_user(id,name,age) values(#{id},#{name},#{age})
+	</insert>
+	<select id="retiveUserMap" parameterType="int" resultType="HashMap">
+		select * from test_user where id=#{id}
+	</select>		
+	<update id="updateUserByMap" parameterType="HashMap">
+		update test_user set name=#{name} where id=#{id}
+	</update>
+	
+	<!-- Page相关 -->
+	<select id="getUserByPage" resultType="User">
+		select * from test_user
+	</select>
+	<select id="getMapByPage" resultType="HashMap">
+		select * from test_user 
+	</select>
+	
+	<!-- 批量操作 -->
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into test_user
+		select TEST_USER_SEQ.nextval, temp.* from(
+			<foreach collection="userList" item="item" index="index" separator="union all">
+				select #{item.age},#{item.name} 
+				from dual
+			</foreach>
+		) temp
+	</insert>
+		
+	<select id="getAllUser" resultType="HashMap">
+		select * from test_user
+	</select>
+	
+	<select id="getUserByMap" parameterType="HashMap" resultType="User">
+		select * from test_user where id=#{abc}
+	</select>
+
+	<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper> 

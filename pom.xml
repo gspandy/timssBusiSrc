@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<url>http://maven.apache.org</url>
+	<parent>
+		<groupId>com.timss.2.0</groupId>
+		<artifactId>timss-deps</artifactId>
+		<version>2.0-SNAPSHOT</version>
+		<relativePath>timss-deps/pom.xml</relativePath>
+	</parent>
+	<artifactId>timss-2.0</artifactId>
+	<version>2.0.0</version>
+	<packaging>pom</packaging>
+	<name>timss-2.0</name>
+	<description>TIMSS组件集合管理，统一为所有的组件的父亲</description>
+
+	<modules>
+		<module>timss-deps</module>
+		<module>timss-facade</module>
+		<module>core-config</module>
+		<module>timss-asset</module>
+		<module>timss-ptw</module>
+		<module>timss-operation</module>
+		<module>timss-pms</module>
+		<module>timss-purchase</module>
+		<module>timss-finance</module>
+		<module>timss-workorder</module>
+		<module>timss-inventory</module>
+		<module>timss-attendance</module>
+		<module>timss-itsm</module>
+
+		<!--最终打包的项目 -->
+		<module>timss-2.0</module>
+	</modules>
+</project>

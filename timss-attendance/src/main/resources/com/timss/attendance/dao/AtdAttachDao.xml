@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.AtdAttachDao">
+	<select id="queryAll" resultType="String">
+		select attach_id from ATD_ATTACH where item_id=#{itemId} and item_type=#{itemType}
+	</select>
+	<insert id="insert" parameterType="java.util.List">
+		insert into  ATD_ATTACH( item_id,item_type,attach_id ) 
+		select  temp.* from (
+		<foreach collection="attachIds" item="attachId" index="index" separator="union all">
+			 select #{itemId},#{itemType},#{attachId} from dual
+		</foreach>
+		) temp
+	</insert>
+	<delete id="delete">
+		delete from ATD_ATTACH 
+		where item_id=#{itemId} and item_type=#{itemType}
+		<if test="attachIds != null and attachIds.length>0 ">
+		 	and attach_id in 
+			<foreach item="item" collection="attachIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+</mapper> 

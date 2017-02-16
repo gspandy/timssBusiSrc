@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceMainDao">
+	 <sql id='FINANCE_MAIN_SEQUENCE'>FIN_MAIN_FID_SEQ.nextval</sql>
+	 
+	<!-- 在resultMap中设置为指定的ID，然后即可将数据库中的column名称转换为bean中的属性。名字一样的可以不写在result中。 -->
+	<resultMap type="FinanceMain" id="financeMainMap">
+		<result column="apply_id" property="applyId" />
+		<result column="apply_name" property="applyName" />
+		<result column="status_name" property="statusName" />
+		<result column="budget" property="budget" />
+		<result column="description" property="description" />		
+	</resultMap>
+	
+	<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		fm.fid as fid,fm.fname,fm.createid,fm.creatorname,fm.departmentid as departmentid,
+		fm.department as department,fm.createtime,fm.apply_id,fm.apply_name,fm.description,
+		fm.total_amount,fm.status as status,fm.finance_flow,fm.finance_type,
+		fm.createdate,fm.flag_item,fm.siteid,fm.deptid,fm.fin_level,fm.finance_flowid,fm.finance_typeid
+	</sql>
+	
+	<sql id="columnBasicDistinctFid">
+		distinct fm.fid as fid,fm.fname,fm.createid,fm.creatorname,fm.departmentid as departmentid,
+		fm.department as department,fm.createtime,fm.total_amount,fm.status as status,fm.description,
+		fm.status_name as statusName,fm.finance_flow,fm.finance_type,fm.createdate
+	</sql>
+	
+	<select id="queryFinanceMainList"  resultMap="financeMainMap">
+		select <include refid="columnBasicDistinctFid"/>,fm.siteid,fm.deptid,DECODE(FMP.ID,NULL,0,1) AS isAdministractiveExpenses
+		    from FIN_MAIN fm LEFT JOIN FIN_MANAGEMENT_PAY FMP ON FMP.MAIN_ID = fm.FID
+		    inner join sec_proc_route spr <!-- 原来是inner join 会无法显示暂存的报销单  --> 
+		        on fm.fid=spr.flowid 
+			where fm.siteid=#{params.siteid}  and  is_show = 'Y' AND SPR.FLOWID IS NOT NULL AND SPR.USERID = #{params.loginUserId} 			
+			AND (FMP.ID IS NOT NULL AND FMP.STATUS <![CDATA[<>]]>  'draft' AND FMP.STATUS <![CDATA[<>]]>  'voided' 
+			OR FMP.ID IS NULL AND FM.STATUS <![CDATA[<>]]> 'finance_draft' )
+		<if test="params.fid != null and params.fid != '' ">
+			and fm.fid like '%${params.fid}%'
+		</if>
+		<if test="params.fname != null and params.fname != '' ">
+			and fname like '%${params.fname}%'
+		</if>
+		<if test="params.createid != null and params.createid != '' ">
+			and createid = #{params.createid}
+		</if>
+		<if test="params.creatorname != null and params.creatorname != '' ">
+			and creatorname like '%${params.creatorname}%'
+		</if>
+		<if test="params.departmentid != null and params.departmentid != '' ">
+			and departmentid = #{params.departmentid}
+		</if>
+		<if test="params.department != null and params.department != '' ">
+			and department like '%${params.department}%'
+		</if>
+		<if test="params.createdate != null and params.createdate != '' ">
+			and createdate like '%${params.createdate}%'
+		</if>
+		<if test="params.total_amount != null and params.total_amount != '' ">
+			and total_amount = #{params.total_amount}
+		</if>
+		<if test="params.statusName != null and params.statusName != '' ">
+			and fm.status_name like '%${params.statusName}%'
+		</if> 
+		<if test="params.finance_flow != null and params.finance_flow != '' ">
+			and finance_flow like '%${params.finance_flow}%'
+		</if>
+		<if test="params.finance_type != null and params.finance_type != '' ">
+			and finance_type like '%${params.finance_type}%'
+		</if>
+		order by fid desc
+	</select>
+	
+	<select id="queryAllFinanceMainList"  resultMap="financeMainMap">
+		select <include refid="columnBasicDistinctFid"/>,fm.siteid,fm.deptid,DECODE(FMP.ID,NULL,0,1) AS isAdministractiveExpenses
+			from FIN_MAIN fm LEFT JOIN FIN_MANAGEMENT_PAY FMP ON FMP.MAIN_ID = fm.FID
+				where is_show = 'Y' and fm.siteid=#{params.siteid} AND FM.STATUS <![CDATA[<>]]> 'finance_draft' 
+		<if test="params.fid != null and params.fid != '' ">
+			and fm.fid like '%${params.fid}%'
+		</if>
+		<if test="params.fname != null and params.fname != '' ">
+			and fname like '%${params.fname}%'
+		</if>
+		<if test="params.createid != null and params.createid != '' ">
+			and createid = #{params.createid}
+		</if>
+		<if test="params.creatorname != null and params.creatorname != '' ">
+			and creatorname like '%${params.creatorname}%'
+		</if>
+		<if test="params.departmentid != null and params.departmentid != '' ">
+			and departmentid = #{params.departmentid}
+		</if>
+		<if test="params.department != null and params.department != '' ">
+			and department like '%${params.department}%'
+		</if>
+		<if test="params.createdate != null and params.createdate != '' ">
+			and createdate like '%${params.createdate}%'
+		</if>
+		<if test="params.total_amount != null and params.total_amount != '' ">
+			and total_amount = #{params.total_amount}
+		</if>
+		<if test="params.status != null and params.status != '' ">
+			and fm.status like '%${params.status}%'
+		</if> 
+		<if test="params.finance_flow != null and params.finance_flow != '' ">
+			and finance_flow like '%${params.finance_flow}%'
+		</if>
+		<if test="params.finance_type != null and params.finance_type != '' ">
+			and finance_type like '%${params.finance_type}%'
+		</if>
+		order by fid desc
+	</select>
+	
+	
+	<select id="queryFinanceMainListByApplyId"  resultMap="financeMainMap">
+		select <include refid="columnBasicDistinctFid"/>,fm.siteid
+		from FIN_MAIN fm 
+		where is_show = 'Y' and fm.siteid=#{siteid} and fm.apply_Id=#{applyId}
+				AND FM.STATUS <![CDATA[<>]]> 'finance_draft' AND FM.STATUS <![CDATA[<>]]> 'finance_abolish'		
+		order by fid desc
+	</select>
+	
+	<select id="queryFinanceMainByFid"  resultMap="financeMainMap">
+		select <include refid="columnBasic"/>,fma.budget 
+		from FIN_MAIN fm LEFT JOIN fin_management_apply fma ON fm.apply_id=fma.id
+		where  fid = #{params.fid}
+		</select>
+		
+	<!-- 如果要往表中插入空数据，则需要设置jdbcType -->
+	<sql id="propertyBasic">
+		(
+		#{fid,jdbcType=VARCHAR},
+		#{fname,jdbcType=VARCHAR},
+		#{createid,jdbcType=VARCHAR},
+		#{creatorname,jdbcType=VARCHAR},
+		#{departmentid,jdbcType=VARCHAR},
+		#{department,jdbcType=VARCHAR},
+		#{createtime,jdbcType=TIMESTAMP},
+		#{total_amount,jdbcType=NUMBER},
+		#{status,jdbcType=VARCHAR},
+		#{finance_flow,jdbcType=VARCHAR},
+		#{finance_type,jdbcType=VARCHAR}
+		)
+		
+	</sql>
+	 
+	
+ 	<insert id="insertFinanceMain" parameterType="FinanceMain">
+		insert into FIN_MAIN
+		(fid,fname,finance_flow,finance_type,total_amount,creatorname,status,status_name,description,
+			departmentid,department,createid,createdate,is_show,flag_item,finance_flowid,finance_typeid,
+			siteid,deptid,APPLY_ID,APPLY_NAME) 
+		values(
+			#{fid,jdbcType=VARCHAR}, #{fname,jdbcType=VARCHAR},#{finance_flow,jdbcType=VARCHAR},
+			#{finance_type,jdbcType=VARCHAR},#{total_amount,jdbcType=NUMERIC},
+			#{creatorname,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{statusName,jdbcType=VARCHAR},
+			#{description,jdbcType=VARCHAR},#{departmentid,jdbcType=VARCHAR},#{department,jdbcType=VARCHAR},
+			#{createid,jdbcType=VARCHAR},#{createdate,jdbcType=DATE},#{is_show,jdbcType=VARCHAR},
+			#{flag_item,jdbcType=VARCHAR},#{finance_flowid,jdbcType=VARCHAR},#{finance_typeid,jdbcType=VARCHAR},
+			#{siteid,jdbcType=VARCHAR},#{deptid,jdbcType=VARCHAR},#{applyId,jdbcType=VARCHAR},#{applyName,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateFinanceMainByFid">
+		update FIN_MAIN 
+		<set>   
+		<if test="fname != null and fname != '' ">
+			 fname = #{fname},
+		</if>
+		<if test="departmentid != null and departmentid != '' ">
+			 departmentid = #{departmentid},
+		</if>
+		<if test="department != null and department != '' ">
+			 department = #{department},
+		</if>
+		<if test="description != null and description != '' ">
+			 description = #{description},
+		</if>
+		<if test="total_amount != null and total_amount != '' ">
+			 total_amount = #{total_amount},
+		</if>
+		<if test="status != null and status != '' ">
+			 status = #{status},
+		</if> 
+		<if test="statusName != null and status != '' ">
+			 status_name = #{statusName},
+		</if> 
+		  <if test="updateid != null and updateid != '' ">
+			 updateid = #{updateid},
+		</if> 
+		<if test="is_show != null and is_show != '' ">
+			 is_show = #{is_show},
+		</if>
+		<if test="fin_level != null and fin_level != '' ">
+			 fin_level = #{fin_level},
+		</if>
+		<if test="flag_item != null and flag_item != '' ">
+			 flag_item = #{flag_item},
+		</if>
+		<!-- 补充一些新的字段 -->
+		<if test="null != applyId and '' != applyId ">
+			APPLY_ID = #{applyId},
+		</if>
+		<if test="null != finance_flow and '' != finance_flow ">
+			FINANCE_FLOW = #{finance_flow},
+		</if>
+		<if test="null != finance_type and '' != finance_type ">
+			FINANCE_TYPE = #{finance_type},
+		</if>
+		<if test="null != finance_typeid and '' != finance_typeid ">
+			FINANCE_TYPEID = #{finance_typeid},
+		</if>
+		<if test="null != applyName and '' != applyName ">
+			APPLY_NAME = #{applyName},
+		</if>
+		siteid=#{siteid,jdbcType=VARCHAR},
+		deptid=#{deptid,jdbcType=VARCHAR}
+		</set>  
+		where fid = #{fid}
+	</update>
+	
+	<delete id = "deleteFinanceMain" >
+             delete from FIN_MAIN where fid = #{fid}
+    </delete>
+    <update id = "deleteFinanceMainLogically">
+		UPDATE FIN_MAIN SET IS_SHOW = 'N' WHERE FID = #{fid}    
+    </update>
+     <update id="updateFinanceTotalAmount"  parameterType="HashMap">
+		update FIN_MAIN 
+		set total_amount = #{total_amount}
+		where fid = #{fid}
+	</update>	 
+</mapper> 

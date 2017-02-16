@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatTranDetailDao">
+	<resultMap type="com.timss.inventory.vo.InvMatTranDetailVO" id="InvMatTranDetailVOMap">
+		<result property="siteId" column="site_id"/>
+		<result property="inQty" column="in_qty"/>
+		<result property="inUnitid" column="in_unitid"/>
+		<result property="outQty" column="out_qty"/>
+		<result property="outUnitid" column="out_unitid"/>
+		<result property="stockQty" column="stock_qty"/>
+		<result property="outterSheetno" column="outter_sheetno"/>
+		<result property="totalPrice" column="total_price"/>
+		<result property="sheetname" column="outter_sheetname"/>
+		<result property="trantype" column="tran_type"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="canOutQty" column="can_out_qty"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.bean.InvMatMapping" id="InvMatMappingMap">
+		<result property="tranType" column="tran_type"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.asset.vo.AssetVo" id="AssetVoMap">
+		<result property="assetId" column="ASSETID"/>
+		<result property="itemName" column="ITEM_NAME"/>
+		<result property="assetCode" column="ASSETCODE"/>
+		<result property="createuser" column="CREATE_USER"/>
+		<result property="createdate" column="CREATE_DATE"/>
+		<result property="assetDate" column="ASSET_DATE"/>
+		<result property="astApplyId" column="AST_APPLY_ID"/>
+		<result property="createName" column="CREATE_NAME"/>
+	</resultMap>
+
+	<resultMap type="com.timss.inventory.bean.InvMatTranDetail" id="InvMatTranDetailMap">
+		<result property="siteId" column="site_id"/>
+		<result property="inQty" column="in_qty"/>
+		<result property="inUnitid" column="in_unitid"/>
+		<result property="outQty" column="out_qty"/>
+		<result property="outUnitid" column="out_unitid"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="canOutQty" column="can_out_qty"/>
+	</resultMap>
+
+	<!-- 插入主交易记录 -->
+	<insert id="insertInvMatTranDetail" parameterType="com.timss.inventory.bean.InvMatTranDetail">
+		insert into inv_mat_tran_detail 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> imtdid, </if>
+	      <if test="imtid != null"> imtid, </if>
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="binid != null"> binid, </if>
+	      <if test="lotno != null"> lotno, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="inQty != null"> in_qty, </if>
+	      <if test="inUnitid != null"> in_unitid, </if>
+	      <if test="outQty != null"> out_qty, </if>
+	      <if test="outUnitid != null"> out_unitid, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="price != null"> price, </if>
+	      <if test="itemcode != null"> itemcode, </if>
+	      <if test="puraId != null">pura_id,</if>
+	      <if test="invcateid != null">invcateid,</if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> #{imtdid,jdbcType=VARCHAR}, </if>
+	      <if test="imtid != null"> #{imtid,jdbcType=VARCHAR}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="binid != null"> #{binid,jdbcType=VARCHAR}, </if>
+	      <if test="lotno != null"> #{lotno,jdbcType=NUMERIC}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="inQty != null"> #{inQty,jdbcType=NUMERIC}, </if>
+	      <if test="inUnitid != null"> #{inUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="outQty != null"> #{outQty,jdbcType=NUMERIC}, </if>
+	      <if test="outUnitid != null"> #{outUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> #{price,jdbcType=NUMERIC}, </if>
+	      <if test="itemcode != null"> #{itemcode,jdbcType=VARCHAR}, </if>
+	      <if test="puraId != null"> #{puraId,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+		
+	<!-- 将数据更新交易信息表 -->
+	<update id="updateInvMatTranDetail" parameterType="com.timss.inventory.bean.InvMatTranDetail">
+		update inv_mat_tran_detail t
+		<set>
+	      <if test="itemid != null"> t.itemid=#{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> t.warehouseid=#{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="binid != null"> t.binid=#{binid,jdbcType=VARCHAR}, </if>
+	      <if test="lotno != null"> t.lotno=#{lotno,jdbcType=NUMERIC}, </if>
+	      <if test="remark != null"> t.remark=#{remark,jdbcType=VARCHAR}, </if>
+	      <if test="inQty != null"> t.in_qty=#{inQty,jdbcType=NUMERIC}, </if>
+	      <if test="inUnitid != null"> t.in_unitid=#{inUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="outQty != null"> t.out_qty=#{outQty,jdbcType=NUMERIC}, </if>
+	      <if test="outUnitid != null"> t.out_unitid=#{outUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> t.createuser=#{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> t.createdate=#{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> t.site_id=#{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> t.price=#{price,jdbcType=NUMERIC}, </if>
+	      <if test="itemcode != null"> t.itemcode=#{itemcode,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> t.invcateid=#{invcateid,jdbcType=VARCHAR}, </if>
+	      <if test="noTaxPrice != null"> t.no_tax_price=#{noTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="tax != null"> t.tax=#{tax,jdbcType=NUMERIC}, </if>
+	      <if test="canOutQty != null"> t.can_out_qty=#{canOutQty,jdbcType=NUMERIC}, </if>
+	    </set>
+		where t.imtdid=#{imtdid}
+	</update>	
+	
+	<!-- 删除交易明细表 -->
+	<delete id="deleteMatTranDetailByImtid">
+		delete from inv_mat_tran_detail imtd where imtd.imtid=#{params.imtid}
+	</delete>
+	
+	<!-- 删除交易明细表 -->
+	<delete id="deleteMatTranDetailById">
+		delete from inv_mat_tran_detail imtd where imtd.imtdid=#{params.id}
+	</delete>	
+	
+	
+	
+	
+	
+	
+	<!-- *********************以下查询都指向了新的流水表***************************** -->
+	<!-- 查询库存情况 -->
+	<select id="queryStockInfo" resultMap="InvMatTranDetailVOMap" parameterType="java.util.Map">
+		select iw.warehousename,ib.binname, ird.actual_qty as stockqty,ird.can_use_qty as nowqty
+        from inv_warehouse_item iwi left join inv_item ii on iwi.itemid = ii.itemid 
+        left join inv_realtime_data ird on iwi.itemid = ird.itemid
+      	 	and iwi.invcateid = ird.invcateid
+       		and iwi.site_id = ird.site_id
+       left join inv_warehouse iw on iwi.warehouseid = iw.warehouseid
+       left join inv_bin ib on iwi.def_binid = ib.binid
+       where iwi.site_id=#{siteId} and  ii.itemcode = #{itemCode}
+       <if test="wareId != null and wareId != ''">
+			  	and iwi.warehouseid = #{wareId} 
+		</if>
+		<if test="invcateId != null and invcateId != ''">
+			  	and iwi.invcateId = #{invcateId} 
+		</if>
+       group by iw.warehousename,ib.binname,ird.actual_qty,ird.can_use_qty
+       order by iwi.warehouseid desc
+	</select>
+	
+	<!-- 查询库存操作信息 -->
+	<select id="queryStockOperInfo" resultMap="InvMatTranDetailVOMap">
+		select * from(  
+        select t.opertype,t.sheetno,t.createdate,t.outter_sheetno,t.warehousename,t.warehouseid,t.binname,t.lotno,
+            t.stock_qty,t.price,nvl(t.stock_qty,0)*nvl(t.price,0) as total_price,t.remark,t.outter_sheetname,t.tran_type,t.imtid
+          from(
+          select 
+                    case when imt.tran_type = 'materialscounting' then
+                         case when imtd.in_qty=0 then 
+                              (select be.enum_val from b_enum be  where  be.ecat_code = 'INV_OPERATION_TYPE' and be.siteid = 'NaN' and be.enum_code = imt.tran_type||'Out')
+                         else  
+                              (select be.enum_val from b_enum be  where  be.ecat_code = 'INV_OPERATION_TYPE' and be.siteid = 'NaN' and be.enum_code = imt.tran_type||'In')
+                         end
+                    else 
+                         (select be.enum_val from b_enum be  where be.enum_code = imt.tran_type and be.ecat_code = 'INV_OPERATION_TYPE' and be.siteid = 'NaN') 
+                    end as opertype,
+                imt.sheetno,imtd.createdate as createdate,
+                imt.tran_type,
+                case when imt.tran_type = 'receivingmaterial' then
+                     (select iwp.sheetno from itceam_workflow_purchorder iwp where iwp.sheet_id = imm.outterid)
+                     when imt.tran_type = 'pickingmaterials' then
+                     (select ima.sheetno from inv_mat_apply ima,inv_mat_apply_detail imad where ima.imaid = imad.imaid(+) and imad.imadid =imm.outterid group by ima.sheetno)
+                     when imt.tran_type = 'materialscounting' then
+                     (select ist.sheetno from inv_stocktaking ist,inv_stocktaking_detail istd where ist.istid = istd.istid(+) and istd.istdid =imm.outterid group by ist.sheetno)
+                     when imt.tran_type = 'strippermaterials' then
+                     (select imts.sheetno from inv_mat_returns imr,inv_mat_tran imts where imr.imtid = imts.imtid and imr.site_id = imts.site_id and imr.imrsno = imt.sheetno )
+                     when imt.tran_type = 'materialsrefunding' then
+                     (select ima.sheetno from inv_mat_returns imr,inv_mat_apply ima where imr.imtid = ima.imaid and imr.site_id = ima.site_id and imr.imrsno = imt.sheetno )
+                     when imt.tran_type = 'shiftmaterialsIn' or imt.tran_type = 'shiftmaterialsOut' then
+                     imt.sheetno
+                     when imt.tran_type = 'acceptancematerial' then
+                     imt.sheetno
+                     when imt.tran_type = 'returnasset' then
+                     (select a.assetcode from ast_asset a where a.assetid = imt.sheetno)
+                else '' end as outter_sheetno,
+                case when imt.tran_type = 'receivingmaterial' then
+                     (select iwp.sheetname from itceam_workflow_purchorder iwp where iwp.sheet_id = imm.outterid)
+                     when imt.tran_type = 'pickingmaterials' then
+                     (select ima.sheetname from inv_mat_apply ima,inv_mat_apply_detail imad where ima.imaid = imad.imaid(+) and imad.imadid =imm.outterid group by ima.sheetno,ima.sheetname)
+                     when imt.tran_type = 'materialscounting' then
+                     (select ist.sheetname from inv_stocktaking ist,inv_stocktaking_detail istd where ist.istid = istd.istid(+) and istd.istdid =imm.outterid group by ist.sheetno,ist.sheetname)
+                     when imt.tran_type = 'strippermaterials' then
+                     (select imts.sheetno from inv_mat_returns imr,inv_mat_tran imts where imr.imtid = imts.imtid and imr.site_id = imts.site_id and imr.imrsno = imt.sheetno )
+                     when imt.tran_type = 'materialsrefunding' then
+                     (select ima.sheetname from inv_mat_returns imr,inv_mat_apply ima where imr.imtid = ima.imaid and imr.site_id = ima.site_id and imr.imrsno = imt.sheetno )
+                     when imt.tran_type = 'shiftmaterialsIn' or imt.tran_type = 'shiftmaterialsOut' then
+                     (select imtf.name from inv_mat_transfer imtf where imtf.imtcode = imt.sheetno and imt.site_id = imtf.siteid)
+                     when imt.tran_type = 'acceptancematerial' then
+                     imt.sheetno
+                else '' end as outter_sheetname,
+                case
+                  when imt.tran_type = 'strippermaterials' then
+                  (select imr.imtid
+                      from inv_mat_returns imr, inv_mat_tran imts
+                     where imr.imtid = imts.imtid
+                       and imr.site_id = imts.site_id
+                       and imr.imrsno = imt.sheetno) 
+                  else
+                imt.imtid end as imtid,
+                iw.warehousename,
+                imtd.warehouseid,
+                ib.binname,
+                imtd.lotno,
+                case when imtd.in_qty=0 then '-' || FORMATNUM2(round(imtd.out_qty,2)) else '+' || FORMATNUM2(round(imtd.in_qty,2)) end as stock_qty,
+              round(imtd.price,2) as price,imtd.remark
+              from inv_mat_tran_rec imtd,inv_mat_tran imt,inv_mat_map imm,inv_warehouse iw,inv_bin ib 
+              where imtd.imtid = imt.imtid(+) 
+                    and imtd.imtdid = imm.imtdid(+)
+                    and imtd.warehouseid = iw.warehouseid(+) 
+                    and imtd.binid = ib.binid(+) 
+                    and imtd.itemcode =#{params.itemCode}
+                    and imtd.site_id = #{params.siteId}
+                    and imtd.invcateid = #{params.invcateid}
+                    and <![CDATA[imt.tran_type <> 'adjustprice']]> 
+                   and <![CDATA[imtd.in_qty <> imtd.out_qty]]>) t
+              ) t 
+            where 1=1 and <![CDATA[t.stock_qty<>0 ]]>
+	      	<if test="params.opertype != null and params.opertype != ''">
+			  	and t.opertype like '%'||'${params.opertype}'||'%' 
+			</if>
+			<if test="params.sheetno != null and params.sheetno != ''">
+			  	and t.sheetno like '%'||'${params.sheetno}'||'%' 
+			</if>
+			<if test="params.createdate != null and params.createdate != ''">
+			  	and to_char(t.createdate,'yyyy-MM-dd HH24:mi') like '%'||'${params.createdate}'||'%' 
+			</if>
+			<if test="params.outterSheetno != null and params.outterSheetno != ''">
+			  	and t.outter_sheetno like '%'||'${params.outterSheetno}'||'%' 
+			</if> 
+			<if test="params.warehousename != null and params.warehousename != ''">
+			  	and t.warehousename like '%'||'${params.warehousename}'||'%' 
+			</if>  
+			<if test="params.warehouseid != null and params.warehouseid != ''">
+			  	and t.warehouseid = '${params.warehouseid}' 
+			</if> 
+			<if test="params.binname != null and params.binname != ''">
+			  	and t.binname like '%'||'${params.binname}'||'%' 
+			</if>  
+			<if test="params.lotno != null and params.lotno != ''">
+			  	and t.lotno like '%'||'${params.lotno}'||'%' 
+			</if>  
+			<if test="params.stockQty != null and params.stockQty != ''">
+			  	and t.stock_qty like '%'||'${params.stockQty}'||'%' 
+			</if>
+			<if test="params.price != null and params.price != ''">
+			  	and t.price like '%'||'${params.price}'||'%' 
+			</if>
+			<if test="params.totalPrice != null and params.totalPrice != ''">
+			  	and t.total_price like '%'||'${params.totalPrice}'||'%' 
+			</if>
+			<if test="params.remark != null and params.remark != ''">
+			  	and t.remark like '%'||'${params.remark}'||'%' 
+			</if>
+	</select>
+	
+	<!-- 通过Item信息查询InvMatTranDetail -->
+	<select id="queryInvMatTranDetailByItemInfo" resultMap="InvMatTranDetailMap" parameterType="java.util.Map">
+		select * from inv_mat_tran_rec a where a.itemid=#{itemId} and a.itemcode=#{itemCode} and a.site_id=#{siteId} order by a.createdate desc
+	</select>
+	
+	<!-- 通过id查询详细信息 -->
+	<select id="queryInvMatTranDetailByImtdid" resultType="com.timss.inventory.bean.InvMatTranRec">
+		select * from inv_mat_tran_rec imtd where imtd.imtdid=#{params.imtdid} order by imtd.createdate desc
+	</select>
+	
+	<!-- 表单中列表数据查询 -->
+	<select id="queryMatTranDetail" resultType="com.timss.inventory.vo.InvItemVO">
+			select m.itemid,m.itemcode,m.itemname,m.cusmodel,
+			       m.purorderno,m.unit1,m.unitname,m.itemnum,m.stockqty,
+			       m.laststockqty,m.bestockqty,m.batchstockqty,
+			       avg(m.price) as price,avg(m.totalprice) as totalprice,m.bin,
+			       m.lotno,m.remark,m.outterid,m.binid,m.warehouse,m.warehouseid,
+			       m.imtdid,m.projectAscription,m.sheetno as puraNo,m.pura_id as puraId,m.invcateid,m.tax_rate as tax,m.no_tax_price as noTaxPrice
+			from (
+			        select t.itemid,t.itemcode,t.itemname,t.cusmodel,
+			               t.purorderno,t.unit1,t.unitname,t.itemnum,t.stockqty,
+			               t.laststockqty,(t.itemnum - t.laststockqty) as bestockqty,t.batchstockqty,
+			               t.price as price,(t.laststockqty * t.price) as totalprice,t.bin,
+			               '1' as lotno,t.remark,t.outterid,t.binid,t.warehouse,t.warehouseid,t.imtdid,t.projectAscription,t.sheetno,t.pura_id,t.invcateid,t.tax_rate,t.no_tax_price   
+			        from(
+			               select ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,
+		                            iwp.sheetno as purorderno,iu.unitname as unitname,iu.unitid as unit1,
+		                            sum(iwpi.itemnum) as itemnum,
+		                           (select sum(imtd.in_qty) - sum(imtd.out_qty) 
+		                            from inv_mat_tran_rec imtd,inv_item ii 
+		                            where imtd.itemid = ii.itemid(+) and ii.itemcode = iwpi.itemid) as stockqty,
+		                           nvl((select sum(imtd1.in_qty) - nvl(sum(return_qty),0)
+		                                          from inv_mat_tran_rec imtd1,inv_mat_map imm,inv_mat_tran imt,
+		                                          (select t.imtdid,nvl(sum(t.return_qty),0) as return_qty from inv_mat_returns_detail t group by t.imtdid) imrsd
+		                                         where imtd1.imtdid = imm.imtdid(+)
+		                                           and imm.itemcode =iwpi.itemid
+		                                           and imm.outterid =  iwpi.sheet_id
+		                                           and imtd1.warehouseid = iwpi.warehouseid
+		                                           and imtd1.imtid = imt.imtid 
+		                                           and imtd1.imtdid = imrsd.imtdid(+) 
+		                                           and imtd1.pura_id = iwpi.apply_sheet_id
+		                                           and instr(imt.sheetno,'SR')>0),0) as laststockqty,
+		                           imtd.in_qty as batchstockqty,
+		                           round(avg(imtd.price),2) as price,
+		                           (select ib.binname 
+		                            from inv_bin ib,inv_warehouse_item iwi 
+		                            where ib.binid = iwi.def_binid(+) 
+		                                  and iwi.itemid = ii.itemid 
+		                                  and iwi.invcateid = imtd.invcateid
+                                      	  and iwi.def_binid = imtd.binid 
+		                            ) as bin,
+		                           (select iwi.def_binid 
+		                            from inv_warehouse_item iwi 
+		                            where iwi.itemid = ii.itemid 
+		                                  and iwi.invcateid = imtd.invcateid
+                                      	  and iwi.def_binid = imtd.binid
+		                            ) as binid,
+		                           imtd.remark,iwpi.sheet_id as outterid,
+		                           iw.warehousename as warehouse,
+		                           imtd.warehouseid,
+		                           imtd.imtdid,
+		                           iwpa.projectAscription,
+		                           iwpa.sheetno,
+		                           imtd.pura_id,
+		                           imtd.invcateid,
+		                           (iwpi.tax_rate / 100) as tax_rate,
+		                           imtd.no_tax_price
+		                      from inv_mat_tran_rec imtd,
+		                           inv_mat_map imm,
+		                           inv_item ii,
+		                           inv_unit iu,
+		                           itceam_workflow_orderitem_exc iwpi ,
+		                           (select iwpa.sheet_id,iwpa.sheetno,be.enum_val as projectAscription from itceam_workflow_purchapply iwpa left join b_enum be on iwpa.project_ascription = be.enum_code  and be.ecat_code = 'PUR_PROJECT_ARP' and be.siteid = iwpa.siteid) iwpa,
+		                           itceam_workflow_purchorder iwp,
+		                           inv_warehouse iw
+		                      where imtd.imtdid = imm.imtdid(+)
+		                            and imtd.itemid = ii.itemid(+)
+		                            and imm.outterid = iwpi.sheet_id(+) 
+		                            and iwpi.warehouseid = iw.warehouseid(+)
+		                            and imm.itemcode = iwpi.itemid(+)
+		                            and iwpi.sheet_id = iwp.sheet_id(+)
+		                            and iwpi.apply_sheet_id = iwpa.sheet_id
+		                            and iu.unitid = ii.unit1 and iu.site_id = ii.site_id
+		                            and iw.warehouseid = imtd.warehouseid and iw.site_id = imtd.site_id
+		                            and imm.tran_type = 'receivingmaterial'
+		                            and imtd.imtid=#{params.imtid}
+		                            and imtd.site_id=#{params.siteId}
+		                            and imtd.pura_id = iwpi.apply_sheet_id
+		                      group by ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,iwp.sheetno,iu.unitid,
+		                               iu.unitname,imtd.in_qty,imtd.lotno,imtd.remark,iwpi.sheet_id,
+		                               iwpi.itemid,iw.warehousename,imtd.warehouseid,ii.site_id,imtd.imtdid,imtd.imtid,
+		                               iwpa.projectAscription,iwpa.sheetno,imtd.binid,iwpi.warehouseid,iwpi.apply_sheet_id,imtd.pura_id,imtd.invcateid,iwpi.tax_rate,imtd.no_tax_price
+                      ) t where 1=1 
+			             <if test="params.openType == null or params.openType == ''">
+			            	and t.itemnum>t.laststockqty
+			        	</if> 
+			        ) m 
+	        group by m.itemid,m.itemcode, m.itemname,m.cusmodel,m.purorderno,
+	                 m.unit1,m.unitname,m.itemnum,m.stockqty,m.laststockqty,m.bestockqty,m.batchstockqty,
+	                 m.bin,m.lotno,m.remark,m.outterid,m.binid,m.warehouse,m.warehouseid,m.imtdid,m.projectAscription,m.sheetno,m.pura_id,m.invcateid,m.tax_rate,m.no_tax_price   
+	        order by m.itemcode desc
+	</select>
+	
+	<!-- 解除物资类型绑定 -->
+	<delete id="deleteBindWarehouse">
+		delete from inv_warehouse_item iwi where iwi.iwiid=#{params.iwiid}
+	</delete>
+	
+	<!-- 通过imtid查询InvMatTranDetail -->
+	<select id="queryMatTranDetailByImtid" resultType="com.timss.inventory.bean.InvMatTranDetail">
+		select * from inv_mat_tran_rec imtd where imtd.imtid=#{params.imtid} order by imtd.createdate desc
+	</select>
+	
+	<!-- 获取最新的批次号 -->
+	<select id="queryMatTranMaxLotno" resultType="java.lang.String">
+		select max(imtd.lotno) from inv_mat_tran_rec imtd,inv_mat_map imm where imtd.imtdid = imm.imtdid(+) and imm.outterid =#{params.outterid}
+	</select>
+
+	<!-- 根据采购单号获取物资接收 -->
+	<select id="queryMatTranSheetNoByOutterId" resultType="java.lang.String">
+		SELECT IMT.SHEETNO
+		FROM INV_MAT_TRAN IMT ,INV_MAT_TRAN_REC IMTD,INV_MAT_MAP IMM 
+		WHERE IMTD.IMTDID = IMM.IMTDID(+) AND IMT.IMTID = IMTD.IMTID(+)
+		AND IMM.OUTTERID = #{params.outterid}
+	</select>
+	
+	<!-- 自动触发物资接收后会产生无效的初始化数据，获取出来将其删除 -->
+	<select id="getNoMainDetailDataBydbId" parameterType="java.util.Map" resultMap="InvMatTranDetailMap">
+		select * from inv_mat_tran_rec b 
+		where b.imtid in (
+			select a.imtid 
+			from inv_mat_tran a 
+			where a.processinstid = #{dbId} and instr(a.sheetno,'RS')>0
+		)
+	</select>
+	
+	<!-- 查询库存操作信息 -->
+	<select id="queryAlreadyOut" resultMap="InvMatTranDetailVOMap">
+		select be.enum_val as opertype, 
+    			iw.warehousename as warehousename, 
+    			t1.outter_sheetno,
+    			t.sheetno,
+    			t.createdate
+		from(
+		      select imt.sheetno,
+		            imtd.createdate as createdate,
+		             imm.outterid,
+		             imt.tran_type,
+		           	 imtd.warehouseid,
+		             imtd.site_id
+		      from inv_mat_tran imt,
+		           inv_mat_tran_rec imtd,
+		           inv_mat_map imm
+		      where imt.imtid = imtd.imtid
+		        	and imtd.imtdid = imm.imtdid
+		        	and imtd.site_id =  #{params.siteId}
+		        	and imm.outterid in(select imad.imadid from inv_mat_apply_detail imad where imad.imaid = #{params.imaid})
+		        	and imm.tran_type = 'pickingmaterials'
+		 ) t
+		 left join b_enum be on be.enum_code = t.tran_type and be.ecat_code = 'INV_OPERATION_TYPE'
+		 left join inv_warehouse iw on iw.warehouseid = t.warehouseid and iw.site_id = t.site_id
+		 left join (select ima.sheetno as outter_sheetno,imad.imadid
+		            from inv_mat_apply ima left join 
+		                    inv_mat_apply_detail imad on ima.imaid = imad.imaid
+		            group by ima.sheetno,imad.imadid) t1 on t1.imadid =t.outterid 
+		 group by be.enum_val,t.sheetno,t.createdate,t1.outter_sheetno,iw.warehousename
+		 order by t.createdate desc
+	</select>
+	
+	<!-- 查询还剩多少物资没有入库 -->
+	<select id="queryRemainWarehouseNum" parameterType="java.lang.String" resultType="com.timss.purchase.vo.PurRemainVO">
+		select (iwoe.itemnum - sum(imtd.in_qty)) as remainnum,
+		       iwpi.sheet_id as sheetid,
+		       iwpi.itemid as itemid
+		  from (select *
+		          from inv_mat_tran_rec imtd where imtd.imtdid in (select imm1.imtdid
+		                                                     from inv_mat_map imm1,
+		                                                          (select imm.outterid,
+		                                                                  imm.itemcode
+		                                                             from inv_mat_map imm
+		                                                            where imm.imtdid = #{imtdId}) imm2
+		                                                    where imm1.outterid =
+		                                                          imm2.outterid
+		                                                      and imm1.itemcode =
+		                                                          imm2.itemcode)) imtd,
+		       inv_mat_map imm,
+		       itceam_workflow_orderitem_exc iwoe,
+		       itceam_workflow_purchapplyitem iwpi
+		 where imtd.imtdid = imm.imtdid
+		   and imm.outterid = iwoe.sheet_id
+		   and imm.itemcode = iwoe.itemid
+		   and iwoe.apply_sheet_id = iwpi.sheet_id
+		   and iwoe.itemid = iwpi.itemid
+		 group by iwoe.itemnum, iwpi.sheet_id, iwpi.itemid
+	</select>
+	
+	<!-- 通过站点查询实时的库存金额（旧算法） -->
+	<select id="queryInvPriceTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		select round((sum(v.tprice)/10000),4) as totalprice  
+		from (
+			select 
+		  		round(
+		         (sum(imtd.in_qty) - sum(imtd.out_qty))*
+		          sum(imtd.price*imtd.in_qty)/case when sum(imtd.in_qty) = 0 then 1 else sum(imtd.in_qty) end
+				 ,2) as tprice
+			from inv_mat_tran_rec imtd 
+			where imtd.site_id = '${siteId}' 
+			group by imtd.itemid
+		) v
+	</select>
+	
+	<!-- 根据实时表查询库存总金额（含税） -->
+	<select id="queryInvWithTaxPriceTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		select round((sum(v.tprice) / 10000), 4)
+ 			from (select sum(t.with_tax_price * t.actual_qty) as tprice 
+ 				from inv_realtime_data t where t.site_id = '${siteId}') v
+	</select>
+	
+	<!-- 根据实时表查询库存总金额 （不含税）-->
+	<select id="queryInvNoTaxPriceTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		select round((sum(v.tprice) / 10000), 4)
+ 			from (select sum(t.no_tax_price * t.actual_qty) as tprice 
+ 				from inv_realtime_data t where t.site_id = '${siteId}') v
+	</select>		
+
+	<!-- 根据流水表查询库存总金额（含税） -->
+	<select id="queryStockMoneyWithTaxTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		select nvl(sum(imtd.can_out_qty * imtd.price), 0)
+    		from inv_mat_tran_rec imtd
+			where imtd.site_id = '${siteId}'
+			<if test="null != wareHouseId and '' != wareHouseId ">
+				and imtd.warehouseid = '${wareHouseId}'
+			</if>
+	</select>
+
+	<!-- 根据流水表查询库存总金额（不含税） -->
+	<select id="queryStockMoneyNoTaxTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		select nvl(sum(imtd.can_out_qty * imtd.no_tax_price), 0)
+			from inv_mat_tran_rec imtd
+			where imtd.site_id = '${siteId}'
+			<if test="null != wareHouseId and '' != wareHouseId ">
+				and imtd.warehouseid = '${wareHouseId}'
+			</if>
+	</select>
+		
+	<!-- 查询当前库存量 -->
+	<select id="queryInvStockQty" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+        select (sum(imtd.in_qty) - sum(imtd.out_qty)) as stockQty
+        from inv_mat_tran_rec imtd
+        where imtd.itemcode = #{itemCode} and imtd.site_id = #{siteId}
+        <if test="warehouseId != null and warehouseId != ''">
+        	and imtd.warehouseid = #{warehouseId}
+        </if>
+        
+	</select>
+	
+	<!-- 物资领料页面查询退库列表-->
+	<select id="queryAlreadyRefunding" resultMap="InvMatTranDetailVOMap">
+		 SELECT BE.ENUM_VAL AS OPERTYPE,
+               	IMRS.IMRSNO AS SHEETNO,
+            	IMRS.RETURN_DATE AS CREATEDATE,
+            	IW.WAREHOUSENAME AS WAREHOUSENAME,
+            	IMRS.REMARK AS REMARK
+       	 FROM INV_MAT_RETURNS IMRS,
+       	 		INV_MAT_RETURNS_DETAIL IMRSD,
+          		INV_MAT_APPLY_DETAIL IMAD,
+          		INV_WAREHOUSE IW,
+		        (SELECT BE.ENUM_VAL 
+		          FROM B_ENUM BE 
+		          WHERE BE.ECAT_CODE = 'INV_OPERATION_TYPE' 
+		            AND BE.ENUM_CODE = 'materialsrefunding') BE
+       	 WHERE IMRS.IMTID = IMAD.IMAID 
+         	AND IMRS.SITE_ID = IMAD.SITE_ID
+           	AND IMRS.IMRSID = IMRSD.IMRSID
+           	AND IMRSD.IMTDID = IMAD.IMADID
+        	AND IMAD.WAREHOUSEID = IW.WAREHOUSEID 
+        	AND IMAD.SITE_ID = IW.SITE_ID 
+        	AND IMAD.IMAID= #{params.imaid} 
+        	AND IMAD.SITE_ID= #{params.siteId}
+       	 GROUP BY IMRS.IMRSNO,IMRS.RETURN_DATE,IW.WAREHOUSENAME,IMRS.REMARK,BE.ENUM_VAL 
+     	 ORDER BY IMRS.IMRSNO DESC
+	</select>
+	
+	<!-- 通过imtid查询此物资接收单是否完全接收 -->
+	<select id="queryIsReviceAllItemBySheetNo" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(1) 
+        FROM (
+        	SELECT T.ITEMNUM,T.ITEMID,(SUM(T.IN_QTY)-NVL(SUM(T.RETURN_QTY),0)) AS IN_QTY 
+        	FROM (
+           		SELECT IWOE.ITEMNUM,IWOE.ITEMID,IMTD. IN_QTY,IMRSD.RETURN_QTY
+           		FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE,
+           			 ITCEAM_WORKFLOW_PURCHORDER IWP,
+           			 INV_MAT_MAP IMM,
+           			(SELECT SUM(T.IN_QTY) AS IN_QTY,T.IMTDID  
+           				FROM INV_MAT_TRAN_REC T 
+           				GROUP BY T.IMTDID ) IMTD,
+           			(SELECT SUM(T1.RETURN_QTY) AS RETURN_QTY,T1.IMTDID 
+           				FROM INV_MAT_RETURNS_DETAIL T1 
+           				GROUP BY T1.IMTDID) IMRSD
+           		WHERE TO_CHAR(IWOE.SHEET_ID) = IWP.SHEET_ID
+                 	AND IWOE.SHEET_ID = IMM.OUTTERID 
+                 	AND IWOE.ITEMID = IMM.ITEMCODE
+                 	AND IMTD.IMTDID = IMM.IMTDID
+                 	AND IMM.IMTDID = IMRSD.IMTDID(+)
+                 	AND IWP.SHEETNO = #{sheetNo} 
+            ) T
+             GROUP BY T.ITEMNUM,T.ITEMID
+        ) M
+        WHERE M.ITEMNUM - M.IN_QTY <![CDATA[<>]]>0   
+	</select>
+
+	<select id="queryInvMatTranDetailUnionIMT" resultMap="InvMatTranDetailVOMap" >
+			select imtd.* 
+			from inv_mat_tran_rec imtd 
+			inner join inv_mat_tran imt on imtd.imtid = imt.imtid and imtd.site_id = imt.site_id
+			where imt.tran_type = 'storagematerials' 
+					and imtd.itemid=#{InvWarehouseItemVO.itemid} 
+					and imtd.warehouseid = #{InvWarehouseItemVO.warehouseid}  
+					and imtd.binid = #{InvWarehouseItemVO.defBinid}  
+	</select>
+		
+	<!-- 逻辑是按照itemid、invcateid和siteid三个字段来查询可以出库的批次 -->
+	<select id="queryTranDetailByBatch" resultMap="InvMatTranDetailMap">
+		 	SELECT IMTD.*
+		  	FROM INV_MAT_TRAN_DETAIL IMTD
+		 	WHERE IMTD.ITEMID = #{itemId,jdbcType=VARCHAR} 
+		   		AND IMTD.INVCATEID = #{invcateid,jdbcType=VARCHAR} 
+		   		AND IMTD.SITE_ID = #{siteId,jdbcType=VARCHAR} 
+		   		AND IMTD.OUT_QTY = 0
+		   		AND IMTD.IN_QTY > 0
+		   		AND IMTD.CAN_OUT_QTY>0
+			ORDER BY IMTD.CREATEDATE ASC
+	</select>
+	
+	<!-- 查询物资接收单某个物资资产化次数-->
+	<select id="queryAssetApplyByImtdId" resultType="java.lang.Integer">
+        select count(*) from ast_asset_apply
+        where IMTDID = #{imtdId}
+	</select>
+	
+	<!-- 查询物资接收单某个物资资产化记录(只限科技公司)-->
+	<select id="queryRelateAssetByImtId" resultMap="AssetVoMap">
+        SELECT S.ASSETID, T.ITEM_NAME AS ITEM_NAME, T.CREATE_DATE AS CREATE_DATE, SU.NAME AS CREATE_NAME, T.CREATE_USER AS CREATE_USER, T.STATUS AS STATUS, S.CREATEDATE AS ASSET_DATE, S.ASSETCODE AS ASSETCODE FROM AST_ASSET_APPLY T
+        LEFT JOIN AST_ASSET S ON T.IMTDID = S.IMTDID
+        AND T.AST_APPLY_ID = S.AST_APPLY_ID
+        LEFT JOIN SEC_USER SU ON SU.USER_ID = T.CREATE_USER
+        WHERE T.IMTDID IN (SELECT IMD.IMTDID FROM INV_MAT_TRAN_DETAIL IMD WHERE IMD.IMTID = #{imtId} AND IMD.SITE_ID = 'ITC')
+        AND T.SITE_ID = 'ITC'
+        ORDER BY T.CREATE_DATE DESC
+	</select>
+</mapper>

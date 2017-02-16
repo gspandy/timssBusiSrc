@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvEquipItemMappingDao">
+	<resultMap type="com.timss.inventory.bean.InvEquipItemMapping" id="ieimMap">
+		<result property="siteId" column="site_id"/>
+	</resultMap>
+
+	<!-- 删除绑定设备数据 -->
+	<delete id="deleteMappingInfoByItemInfo" parameterType="java.util.Map">
+		delete from inv_equip_item_mapping ieim 
+		where ieim.itemid=#{itemid} and ieim.site_id=#{siteid} 
+		<if test="equipid != null and equipid != ''">
+			and ieim.equipid=#{equipid} 
+		</if>
+	</delete>
+	
+	<!-- 插入关联设备信息 -->
+	<insert id="insertMappingInfoByItemInfo" parameterType="com.timss.inventory.bean.InvEquipItemMapping">
+		insert into inv_equip_item_mapping 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="ieimid != null"> ieimid, </if>
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="equipid != null"> equipid, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="equipname != null"> equipname, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="ieimid != null"> #{ieimid,jdbcType=VARCHAR}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="equipid != null"> #{equipid,jdbcType=VARCHAR}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="equipname != null"> #{equipname,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 查询关联物资 -->
+	<select id="getSpareByAssetId" resultType="com.timss.inventory.vo.SpareBean">
+		select t.* from (
+		      select ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,(sum(imtd.in_qty)-sum(imtd.out_qty)) as stockqty, 
+		          iw.warehousename as warehouse,iwi.sparecode,iwi.manufacturer,ieim.equipid as assetid 
+		      from inv_warehouse_item iwi,
+		         inv_item ii,
+		         inv_equip_item_mapping ieim,
+		         inv_mat_map imm,
+		         inv_mat_tran_rec imtd,
+		         inv_warehouse iw
+		      where iwi.itemid = ii.itemid(+) 
+		        and iwi.itemid = ieim.itemid(+) 
+		        and iwi.iwiid = imm.outterid(+) 
+		        and imm.imtdid = imtd.imtdid(+)
+		        and iwi.warehouseid = iw.warehouseid(+) 
+		        and ieim.equipid=#{params.assetId} 
+		        and iwi.site_id=#{params.siteId}
+		      group by ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,iw.warehousename,iwi.sparecode,iwi.manufacturer,ieim.equipid
+		) t 
+		order by t.sparecode,t.itemname asc 
+	</select>
+	
+	<!-- 查询绑定设备信息 -->
+	<select id="queryEquipInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select ieim.equipid,ieim.equipname 
+		from inv_equip_item_mapping ieim 
+		where ieim.itemid='${itemId}' and ieim.site_id='${siteId}'
+	</select>
+</mapper> 

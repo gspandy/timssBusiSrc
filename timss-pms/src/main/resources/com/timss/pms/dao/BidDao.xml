@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.BidDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+    <resultMap type="com.timss.pms.bean.Bid" id="bidMap">
+		<id property="bidId" column="bid_id"/>
+		<result property="name" column="name"/>
+		<result property="projectId" column="project_id"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="code" column="code"/>
+		<result property="budget" column="budget"/>
+		<result property="type" column="type"/>
+		<result property="BAttach" column="b_attach"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+	</resultMap>
+	<!-- 评标方法resultMap 只是用用于bidDtlMap中-->
+	<resultMap type="com.timss.pms.bean.BidMethod" id="bidMethodMap">
+		<id property="bidId" column="bid_id"/>
+		<result property="bidMethodId" column="bid_method_id"/>
+		<result property="delFlag" column="mdel_flag"/>
+		<result property="attach" column="mattach"/>
+		<result property="status" column="mstatus"/>
+		<result property="siteid" column="msiteid"/>
+		<result property="command" column="mcommand"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.bean.BidResult" id="bidResultMap">
+		<id property="bidId" column="bid_id"/>
+		<result property="bidResultId" column="bid_result_id"/>
+		<result property="delFlag" column="rdel_flag"/>
+		<result property="attach" column="rattach"/>
+		<result property="status" column="rstatus"/>
+		<result property="siteid" column="rsiteid"/>
+		<result property="command" column="rcommand"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.BidVo" id="bidVoMap">
+		<id property="bidId" column="bid_id"/>
+		<result property="name" column="name"/>
+		<result property="projectId" column="project_id"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="code" column="code"/>
+		<result property="budget" column="budget"/>
+		<result property="type" column="type"/>
+		<result property="BAttach" column="b_attach"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+		
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.BidDtlVo" id="bidDtlVoMap">
+		<id property="bidId" column="bid_id"/>
+		<result property="name" column="name"/>
+		<result property="projectId" column="project_id"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="code" column="code"/>
+		<result property="budget" column="budget"/>
+		<result property="type" column="type"/>
+		<result property="BAttach" column="b_attach"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+		<collection property="bidMethod" column="bid_id" javaType="java.util.ArrayList"
+		resultMap="bidMethodMap" ofType="com.timss.pms.bean.BidMethod"/>
+		<collection property="bidResult" column="bid_id" javaType="java.util.ArrayList"
+		resultMap="bidResultMap" ofType="com.timss.pms.bean.BidResult"/>
+	</resultMap>
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		bid_id,name,project_id,del_flag,code,budget,type,b_attach,status,command
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+	<sql id="columnVoDtl">
+		<include refid="columnVo"/>
+	</sql>
+
+<insert id="insertBid" parameterType="com.timss.pms.bean.Bid">
+    <selectKey resultType="int" keyProperty="bidId" order="BEFORE">
+        select SEQ_PMS_BID.nextval from dual
+    </selectKey>
+    insert into Tim_Pms_BID(<include refid="columnBasic"/>,create_time,create_user,siteid) 
+    values (#{bidId},#{name,jdbcType=VARCHAR},#{projectId,jdbcType=NUMERIC},0,#{code,jdbcType=VARCHAR},
+    #{budget,jdbcType=NUMERIC},#{type,jdbcType=VARCHAR},#{BAttach,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{command,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},
+    #{createUser,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR})
+</insert>
+
+<insert id="insertBidMethod" parameterType="com.timss.pms.bean.BidMethod">
+    insert into Tim_Pms_BID_Method(bid_id,bid_method_id,command,attach,status,del_flag,create_time,create_user,siteid) 
+    values (#{bidId},#{bidId},#{command,jdbcType=VARCHAR},#{attach,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},0,#{createTime,jdbcType=TIMESTAMP},
+    #{createUser,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR})
+</insert>
+
+<insert id="insertBidResult" parameterType="com.timss.pms.bean.BidResult">
+    insert into Tim_Pms_BID_Result(bid_id,bid_result_id,command,attach,status,del_flag,create_time,create_user,siteid) 
+    values (#{bidId},#{bidId},#{command,jdbcType=VARCHAR},#{attach,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},0,#{createTime,jdbcType=TIMESTAMP},
+    #{createUser,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR})
+</insert>
+<select id="queryBidListByProjectId" resultMap="bidVoMap">
+	select <include refid="columnVo" />
+	from Tim_Pms_Bid t
+	where t.project_id=#{projectId} and t.del_flag=0
+</select>
+<!-- 对重名字段进行重命名，防止奇怪的问题 -->
+<select id="queryBidByBidId" resultMap="bidDtlVoMap">
+	select t.bid_id,t.name,t.project_id,t.del_flag,t.code,t.budget,t.type,t.b_attach,t.status,t.command,
+	       b.command mcommand,b.bid_method_id,b.del_flag mdel_flag,b.attach mattach,b.status mstatus,
+	       r.command rcommand,r.bid_result_id,r.del_flag rdel_flag,r.attach rattach,r.status rstatus
+	from Tim_Pms_Bid t
+	left join Tim_Pms_Bid_Method b on t.bid_id=b.bid_id
+	left join Tim_pms_Bid_Result r on r.bid_id=b.bid_id
+	where t.bid_id=#{bidId} and t.del_flag=0
+</select>
+
+<delete id="deleteBid" parameterType="string">
+    delete from Tim_Pms_Bid where bid_id=#{bidId};
+    delete from Tim_Pms_Bid_METHOD where bid_id=#{bidId};
+    delete from Tim_Pms_Bid_RESULT where bid_id=#{bidId};
+</delete>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>

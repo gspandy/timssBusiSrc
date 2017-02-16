@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvCategroyDao">
+
+	<!-- 查询指定节点下的所有物资类型 -->
+	<select id="queryCategroyNodeById" resultType="com.timss.inventory.vo.TreeBean" parameterType="java.util.Map">
+		select t.invcateid as id, t.invcatename as text,
+				'closed' as state,case when instr(t.parentid,'IWHI')>0 then 'category' else 'material' end as type 
+		from inv_category t 
+		where t.site_id = '${siteId}' 
+		<if test="opertype != 'categroy'">
+		  	and t.status = 'ACTIVE' 
+		</if>
+		<if test="warehouseid != null and warehouseid != ''">
+		  	and t.warehouseid in (${warehouseid})
+		</if>
+		<if test="categoryid != null and categoryid != ''">
+		  	and t.invcateid in (${categoryid})
+		</if>
+		<if test="parentid != null and parentid != ''">
+		  	and t.parentid = '${parentid}' 
+		</if>
+		order by t.invcateid asc
+	</select>
+	
+	<!-- 根据名字查询物资类型id -->
+	<select id="queryCategroyIdByName" parameterType="java.util.Map" resultType="java.lang.String">
+		select t.invcateid from inv_category t 
+		where t.site_id = #{siteId} and 
+			  t.status = 'ACTIVE' 
+		<if test="invcatename != null and invcatename != ''">
+		  	and t.invcatename like '%'||#{invcatename}||'%' 
+		</if> 
+		order by t.invcateid asc
+	</select>
+		
+   	<!-- 查询物资分类下是否存在启用的主项目 -->
+	<select id="queryItemByInvcateid" parameterType="java.lang.String" resultType="com.timss.inventory.bean.InvItem">
+        select ii.itemcode,ii.itemid,ii.itemname from inv_warehouse_item iwi
+        left join inv_item ii on iwi.itemid = ii.itemid
+        where iwi.active = 'Y'
+        and iwi.invcateid = #{invcateid}
+   	</select>
+	
+	<!-- 查询物资分类表单 -->
+	<select id="queryInvCategroyDetail" parameterType="java.util.Map" resultType="com.timss.inventory.vo.InvCategoryVO">
+		select * from inv_category ic where ic.invcateid=#{cateId} and ic.site_id=#{siteId}
+	</select>
+	
+	<!-- 通过父节点找到分类详细信息 -->
+	<select id="queryInvCategroyDetailByParentId" parameterType="java.util.Map" resultType="com.timss.inventory.vo.InvCategoryVO">
+		select * from inv_category ic where ic.parentid=#{parentid} and ic.site_id=#{siteId}
+	</select>
+	<select id="queryCategroyLevelOne" resultType="com.timss.inventory.vo.InvCategoryVO">
+		select * from inv_category ic where ic.parentid=#{params.parentid} and ic.site_id=#{params.siteId}
+	</select>
+	
+	<!-- 更新物资分类名称 -->
+	<update id="updateInvCategroy" parameterType="com.timss.inventory.bean.InvCategory">
+		update inv_category ic 
+		<set>
+	      <if test="invcatename != null"> ic.invcatename=#{invcatename}, </if>
+	      <if test="descriptions != null"> ic.descriptions=#{descriptions}, </if>
+	      <if test="status != null"> ic.status=#{status}, </if>
+	      <if test="parentid != null"> ic.parentid=#{parentid}, </if>
+	      <if test="warehouseid != null"> ic.warehouseid=#{warehouseid}, </if>
+	      <if test="siteId != null"> ic.site_id=#{siteId}, </if>
+	      <if test="createuser != null"> ic.createuser=#{createuser}, </if>
+	      <if test="modifyuser != null"> ic.modifyuser=#{modifyuser}, </if>
+	      <if test="createdate != null"> ic.createdate=#{createdate}, </if>
+	      <if test="modifydate != null"> ic.modifydate=#{modifydate}, </if>
+	    </set>
+		where ic.invcateid=#{invcateid}
+	</update>
+	
+	<!-- 插入物资分类表 -->
+	<insert id="insertInvCategroy" parameterType="com.timss.inventory.bean.InvCategory">
+		insert into inv_category 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="invcateid != null"> invcateid, </if>
+	      <if test="invcatename != null"> invcatename, </if>
+	      <if test="descriptions != null"> descriptions, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="parentid != null"> parentid, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	      <if test="invcatename != null"> #{invcatename,jdbcType=VARCHAR}, </if>
+	      <if test="descriptions != null"> #{descriptions,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="parentid != null"> #{parentid,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 通过id删除物资分类 -->
+	<delete id="deleteCategroyById">
+		delete from inv_category ic where ic.invcateid=#{params.categoryId}
+	</delete>
+	
+	<!-- 对外开放查询物资类型接口 -->
+	<select id="queryCategroy" parameterType="com.timss.inventory.vo.InvCategoryParam" resultType="com.timss.inventory.bean.InvCategory">
+		SELECT T.INVCATEID,
+		        T.INVCATENAME,
+		        T.DESCRIPTIONS,
+		        T.STATUS,
+		        T.PARENTID,
+		        T.WAREHOUSEID,
+		        T.SITE_ID,
+		        T.CREATEUSER,
+		        T.MODIFYUSER,
+		        T.CREATEDATE,
+		        T.MODIFYDATE
+		FROM (
+			SELECT IC.*,LEVEL AS LEV
+			FROM INV_CATEGORY IC 
+			WHERE IC.SITE_ID = #{siteId,jdbcType=VARCHAR} 
+				AND IC.WAREHOUSEID = #{warehouseId,jdbcType=VARCHAR} 
+			START WITH IC.PARENTID = IC.WAREHOUSEID
+			CONNECT BY IC.PARENTID = PRIOR IC.INVCATEID
+		) T
+		WHERE 1 = 1
+		
+		<if test="level != null and level != ''">
+		  	AND T.LEV = #{level,jdbcType=VARCHAR} 
+		</if>
+		<if test="invCategory != null">
+			<if test="invCategory.invcateid != null and invCategory.invcateid != ''">
+			  	AND INSTR(T.INVCATEID,#{invCategory.invcateid,jdbcType=VARCHAR})<![CDATA[>]]>0
+			</if>
+			<if test="invCategory.invcatename != null and invCategory.invcatename != ''">
+			  	AND INSTR(T.INVCATENAME,#{invCategory.invcatename,jdbcType=VARCHAR})<![CDATA[>]]>0
+			</if>
+			<if test="invCategory.descriptions != null and invCategory.descriptions != ''">
+			  	AND INSTR(T.DESCRIPTIONS,#{invCategory.descriptions,jdbcType=VARCHAR})<![CDATA[>]]>0
+			</if>
+			<if test="invCategory.status != null and invCategory.status != ''">
+			  	AND INSTR(T.STATUS,#{invCategory.status,jdbcType=VARCHAR})<![CDATA[>]]>0
+			</if>
+			<if test="invCategory.parentid != null and invCategory.parentid != ''">
+			  	AND INSTR(T.PARENTID,#{invCategory.parentid,jdbcType=VARCHAR})<![CDATA[>]]>0
+			</if>
+		</if>
+		
+		ORDER BY T.INVCATEID ASC
+	</select>
+</mapper>

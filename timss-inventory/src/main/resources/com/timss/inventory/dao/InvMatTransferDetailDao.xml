@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatTransferDetailDao">
+	<resultMap type="com.timss.inventory.bean.InvMatTransferDetail" id="InvMatTransferDetailMap">
+		<result property="imtdId" column="IMTDID"/>
+		<result property="imtId" column="IMTID"/>
+		<result property="itemId" column="ITEMID"/>
+		<result property="itemCode" column="ITEMCODE"/>
+		<result property="itemName" column="ITEMNAME"/>
+		<result property="price" column="PRICE"/>
+		<result property="cusModel" column="CUSMODEL"/>
+		<result property="nowqty" column="NOWQTY"/>
+		<result property="stockQty" column="STOCKQTY"/>
+		<result property="transferQty" column="TRANSFERQTY"/>
+		<result property="unitId" column="UNITID"/>
+		<result property="unitName" column="UNITNAME"/>
+		
+		<result property="wareHouseId" column="WAREHOUSEID"/>
+		<result property="wareHouseName" column="WAREHOUSENAME"/>
+		<result property="binId" column="BINID"/>
+		<result property="binName" column="BINNAME"/>
+		<result property="cateTypeId" column="CATETYPEID"/>
+		<result property="cateTypeName" column="CATETYPENAME"/>
+		
+		<result property="toWareHouseId" column="TO_WAREHOUSEID"/>
+		<result property="toWareHouseName" column="TO_WAREHOUSENAME"/>
+		<result property="toBinId" column="TO_BINID"/>
+		<result property="toBinName" column="TO_BINNAME"/>
+		<result property="toCateTypeId" column="TO_CATETYPEID"/>
+		<result property="toCateTypeName" column="TO_CATETYPENAME"/>
+		
+		<result property="deleted" column="DELETED"/>
+		
+		<result property="createuser" column="CREATEUSER"/>
+		<result property="createdate" column="CREATEDATE"/>
+		<result property="modifyuser" column="MODIFYUSER"/>
+		<result property="modifydate" column="MODIFYDATE"/>
+		<result property="siteid" column="SITEID"/>
+		<result property="deptid" column="DEPTID"/>
+	</resultMap>
+	<resultMap type="com.timss.inventory.vo.InvItemVO" id="InvItemVOMap">
+		<result property="itemid" column="itemid"/>
+		<result property="itemcode" column="itemcode"/>
+		<result property="itemname" column="itemname"/>
+		<result property="cusmodel" column="cusmodel"/>
+		<result property="warehouseid" column="warehouseid"/>		
+		<result property="warehouse" column="warehouse"/>
+		<result property="binid" column="binid"/>
+		<result property="bin" column="bin"/>
+		<result property="cateId" column="cate_id"/>
+		<result property="cateName" column="cate_name"/>
+		<result property="unit1" column="unitid"/>
+		<result property="unitname" column="unitname"/>
+		<result property="qtyStock" column="qtyStock"/>
+		<result property="price" column="price"/>
+		<result property="nowqty" column="nowqty"/>
+	</resultMap>
+		
+	<!-- 根据申请查询物资 -->
+	<select id="queryInvMatTransferDetailList" resultMap="InvMatTransferDetailMap">
+        select T.IMTDID,T.IMTID,
+        	T.ITEMID,T.ITEMCODE,T.ITEMNAME,
+        	T.PRICE,T.CUSMODEL,
+        	IRD.CAN_USE_QTY AS NOWQTY,
+        	IRD.ACTUAL_QTY AS STOCKQTY,
+        	T.TRANSFERQTY,
+        	T.UNITID,T.UNITNAME,
+        	
+        	T.WAREHOUSEID,T.WAREHOUSENAME,
+        	T.BINID,T.BINNAME,
+        	T.CATETYPEID,T.CATETYPENAME,
+        	
+        	T.CREATEUSER,T.CREATEDATE,
+        	T.MODIFYUSER,T.MODIFYDATE,
+        	T.SITEID,T.DEPTID,
+        	T.CATETYPEID,T.CATETYPENAME,
+        	
+        	T.TO_WAREHOUSEID, w2.warehousename as TO_WAREHOUSENAME,
+        	T.TO_BINID, b2.binname as TO_BINNAME,
+        	T.TO_CATETYPEID, c2.invcatename as TO_CATETYPENAME
+        	
+        	from inv_mat_transfer_detail t 
+			left join inv_realtime_data ird
+    			on ird.itemid = t.itemid
+    			and ird.site_id = t.siteid
+    			and ird.invcateid = t.catetypeid
+        	left join inv_warehouse w2 on w2.warehouseid = t.to_warehouseid
+        	left join inv_bin b2 on b2.binid = t.to_binid
+        	left join inv_category c2 on c2.invcateid = t.to_catetypeid
+        	where t.imtid=#{imtId}
+        	order by t.imtdid asc
+	</select>
+	
+	<!-- 插入领料明细信息 -->
+	<insert id="insertInvMatTransferDetail" parameterType="com.timss.inventory.bean.InvMatTransferDetail">
+		insert into inv_mat_transfer_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtdId != null"> imtdid, </if>
+	      <if test="imtId != null"> imtid, </if>
+	      <if test="itemId != null"> itemid, </if>
+	      <if test="itemCode != null"> itemcode, </if>
+	      <if test="itemName != null"> itemname, </if>
+	      <if test="price != null"> price, </if>
+	      <if test="cusModel != null"> cusmodel, </if>
+	      <if test="stockQty != null"> stockqty, </if>
+	      <if test="transferQty != null"> transferqty, </if>	      
+	      <if test="unitId != null"> unitid, </if>
+	      <if test="unitName != null"> unitname, </if>
+	      <if test="wareHouseId != null"> warehouseid, </if>
+	      <if test="wareHouseName != null"> warehousename, </if>
+	      <if test="binId != null"> binid, </if>
+	      <if test="binName != null"> binname, </if>
+	      <if test="cateTypeId != null"> catetypeid, </if>
+	      <if test="cateTypeName != null"> catetypename, </if>
+	      <if test="toWareHouseId != null"> to_warehouseid, </if>
+	      <if test="toWareHouseName != null"> to_warehousename, </if>
+	      <if test="toBinId != null"> to_binid, </if>
+	      <if test="toBinName != null"> to_binname, </if>
+	      <if test="toCateTypeId != null"> to_catetypeid, </if>
+	      <if test="toCateTypeName != null"> to_catetypename, </if>	      
+	      <if test="deleted != null"> deleted, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteid != null"> siteid, </if>
+	      <if test="deptid != null"> deptid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtdId != null"> #{imtdId,jdbcType=VARCHAR}, </if>
+	      <if test="imtId != null"> #{imtId,jdbcType=VARCHAR}, </if>
+	      <if test="itemId != null"> #{itemId,jdbcType=VARCHAR}, </if>
+	      <if test="itemCode != null"> #{itemCode,jdbcType=VARCHAR}, </if>
+	      <if test="itemName != null"> #{itemName,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> #{price,jdbcType=NUMERIC}, </if>
+	      <if test="cusModel != null"> #{cusModel,jdbcType=VARCHAR}, </if>
+	      <if test="stockQty != null"> #{stockQty,jdbcType=NUMERIC}, </if>
+	      <if test="transferQty != null"> #{transferQty,jdbcType=NUMERIC}, </if>
+	      <if test="unitId != null"> #{unitId,jdbcType=VARCHAR}, </if>
+	      <if test="unitName != null"> #{unitName,jdbcType=VARCHAR}, </if>
+	      
+	      <if test="wareHouseId != null"> #{wareHouseId,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseName != null"> #{wareHouseName,jdbcType=VARCHAR}, </if>
+	      <if test="binId != null"> #{binId,jdbcType=VARCHAR}, </if>
+	      <if test="binName != null"> #{binName,jdbcType=VARCHAR}, </if>
+	      <if test="cateTypeId != null"> #{cateTypeId,jdbcType=VARCHAR}, </if>
+	      <if test="cateTypeName != null"> #{cateTypeName,jdbcType=VARCHAR}, </if>
+
+	      <if test="toWareHouseId != null"> #{toWareHouseId,jdbcType=VARCHAR}, </if>
+	      <if test="toWareHouseName != null"> #{toWareHouseName,jdbcType=VARCHAR}, </if>
+	      <if test="toBinId != null"> #{toBinId,jdbcType=VARCHAR}, </if>
+	      <if test="toBinName != null"> #{toBinName,jdbcType=VARCHAR}, </if>
+	      <if test="toCateTypeId != null"> #{toCateTypeId,jdbcType=VARCHAR}, </if>
+	      <if test="toCateTypeName != null"> #{toCateTypeName,jdbcType=VARCHAR}, </if>
+	      	      
+	      <if test="deleted != null"> #{deleted,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 更新物资信息 -->
+	<update id="updateInvMatTransferDetail" parameterType="com.timss.inventory.bean.InvMatTransferDetail">
+		update inv_mat_transfer_detail t 
+		<set>
+	      <if test="itemId != null"> t.itemid = #{itemId,jdbcType=VARCHAR}, </if>
+	      <if test="itemCode != null"> t.itemcode = #{itemCode,jdbcType=VARCHAR}, </if>
+	      <if test="itemName != null"> t.itemname = #{itemName,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> t.price = #{price,jdbcType=NUMERIC}, </if>
+	      <if test="cusModel != null"> t.cusmodel = #{cusModel,jdbcType=VARCHAR}, </if>
+	      <if test="stockQty != null"> t.stockqty = #{stockQty,jdbcType=NUMERIC}, </if>
+	      <if test="transferQty != null"> t.transferqty = #{transferQty,jdbcType=NUMERIC}, </if>
+	      <if test="unitId != null"> t.unitid = #{unitId,jdbcType=VARCHAR}, </if>
+	      <if test="unitName != null"> t.unitname = #{unitName,jdbcType=VARCHAR}, </if>
+	      
+	      <if test="toWareHouseId != null"> t.to_warehouseid = #{toWareHouseId,jdbcType=VARCHAR}, </if>
+	      <if test="toWareHouseName != null"> t.to_warehousename = #{toWareHouseName,jdbcType=VARCHAR}, </if>
+	      <if test="toBinId != null"> t.to_binid = #{toBinId,jdbcType=VARCHAR}, </if>
+	      <if test="toBinName != null"> t.to_binname = #{toBinName,jdbcType=VARCHAR}, </if>
+	      <if test="toCateTypeId != null"> t.to_catetypeid = #{toCateTypeId,jdbcType=VARCHAR}, </if>
+	      <if test="toCateTypeName != null"> t.to_catetypename = #{toCateTypeName,jdbcType=VARCHAR}, </if>
+	      
+	      <if test="deleted != null"> t.deleted = #{deleted,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> t.modifyuser = #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate = #{modifydate,jdbcType=TIMESTAMP}, </if>
+	    </set>
+		where t.imtdid=#{imtdId,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 根据申请删除物资-->
+	<delete id="deleteInvMatTransferDetailByImtId">
+		delete from inv_mat_transfer_detail t where t.imtid=#{imtId}
+	</delete>
+	
+	<!-- 根据物资编码查询物资详细信息 -->
+	<select id="queryItemInfoToMatTransfer" parameterType="java.util.Map" resultMap="InvItemVOMap">
+	select i.itemid,
+	            i.itemcode,
+	            i.itemname,
+	            i.cusmodel,
+	            
+	            i.warehouseid,
+	            i.warehouse,
+	            i.bin,
+	            i.binid,
+	            i.cate_name,
+	            i.cate_id,
+	            
+	            i.manufacturer,
+	            iu.unitid as unitid,
+	            iu.unitname as unitname,
+	            ird.last_in_time as late_in_date,
+		        ird.actual_qty as stockqty,
+		        ird.last_in_qty as late_in_qty,
+		        ird.last_in_price as late_in_price,
+		        ird.with_tax_price as price,
+		        ird.can_use_qty as nowqty
+	    from (
+	      select ii.itemid,
+	                  ii.itemcode,
+	                  ii.itemname,
+	                  ii.cusmodel,
+	                  ii.unit1,
+	                  iw.warehouseid,
+	                  iw.warehousename as warehouse,
+	                  ib.binid,
+	                  ib.binname as bin,
+	                  iwi.manufacturer,
+	                  ii.site_id,
+	                  ic.invcateid as cate_id,
+	                  ic.invcatename as cate_name
+	        from inv_item ii,
+	                  inv_warehouse_item iwi,
+	                  inv_warehouse iw,
+	                  inv_bin ib,
+	                  inv_category ic
+	        where ii.itemid = iwi.itemid(+)
+	              and iwi.warehouseid = iw.warehouseid(+)
+	              and iwi.def_binid = ib.binid(+)
+	              and iwi.invcateid = ic.invcateid(+)
+	              and ii.site_id = #{siteId}
+	              <if test="itemCode != null and itemCode != ''">
+	                and ii.itemcode = #{itemCode}
+	             </if>
+	              <if test="itemId != null and itemId != ''">
+	                and ii.itemid = #{itemId}
+	              </if>
+	              <if test="wareHouseId != null and wareHouseId != ''">
+	                  and iwi.warehouseid = #{wareHouseId}
+	              </if>
+	              <if test="cateTypeId != null and cateTypeId != ''">
+	                  and iwi.invcateid in ('${cateTypeId}')
+	              </if>	         
+	     ) i
+	     left join inv_unit iu on iu.unitid = i.unit1 and iu.site_id = i.site_id
+	     left join inv_realtime_data ird
+			    on ird.itemid = i.itemid
+			   and ird.site_id = i.site_id
+			   and ird.invcateid = i.cate_id
+	     group by i.itemid,
+		          i.itemcode,
+		          i.itemname,
+		          i.cusmodel,
+		          iu.unitid,
+		          iu.unitname,
+		          i.warehouseid,
+		          i.warehouse,
+		          i.bin,
+		          i.binid,
+		          i.cate_name,
+		          i.cate_id,
+		          i.manufacturer,
+		          ird.last_in_time,
+		          ird.actual_qty,
+		          ird.last_in_qty,
+		          ird.last_in_price,
+		          ird.with_tax_price,
+		          ird.can_use_qty
+	     order by i.itemcode asc
+	</select>
+		
+</mapper> 

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.CheckoutDao">
+
+
+    <resultMap type="com.timss.pms.bean.Checkout" id="checkoutMap">
+		<id property="id" column="id"/>
+		<result property="type" column="type"/>
+		<result property="time" column="time"/>
+		<result property="address" column="address"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="status" column="status"/>
+		<result property="command" column="command"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="siteid" column="siteid"/>
+		<result property="checkStage" column="check_stage"/>
+		<result property="attach" column="attach"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		<result property="isProjectChange" column="is_project_change"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="checkUser" column="check_user"/>
+	</resultMap>
+	
+	  <resultMap type="com.timss.pms.vo.CheckoutVo" id="checkoutVoMap">
+		<id property="id" column="id"/>
+		<result property="type" column="type"/>
+		<result property="time" column="time"/>
+		<result property="address" column="address"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="status" column="status"/>
+		<result property="command" column="command"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="siteid" column="siteid"/>
+		<result property="checkStage" column="check_stage"/>
+		<result property="attach" column="attach"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		<result property="contractName" column="contractName"/>
+		<result property="contractCode" column="contractCode"/>
+		<result property="contractType" column="contractType"/>
+		<result property="payTypeName" column="payType"/>
+		<result property="flowid" column="flowid"/>
+		<result property="isProjectChange" column="is_project_change"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="checkUser" column="check_user"/>
+		<result property="flowStatus" column="flowStatus"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.CheckoutDtlVo" id="checkoutDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="type" column="type"/>
+		<result property="time" column="time"/>
+		<result property="address" column="address"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="status" column="status"/>
+		<result property="command" column="command"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="siteid" column="siteid"/>
+		<result property="checkStage" column="check_stage"/>
+		<result property="attach" column="attach"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		<result property="isProjectChange" column="is_project_change"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="checkUser" column="check_user"/>
+	</resultMap>
+
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,type,time,address,create_user,create_time,status,command,del_flag,siteid,check_stage,attach,
+		contract_id,payplan_id,is_project_change,start_date,end_date,check_user
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+	<sql id="columnDtlVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertCheckout" parameterType="com.timss.pms.bean.Checkout">
+    <selectKey resultType="int" keyProperty="id" order="BEFORE">
+        select SEQ_PMS_Checkout.nextval from dual
+    </selectKey>
+    insert into Tim_Pms_CHECKOUT(<include refid="columnBasic"/>,flow_id,project_name,contract_name,project_leader,FIRST_PARTY,FP_LEADER)
+    values (#{id},#{type,jdbcType=VARCHAR},#{time,jdbcType=TIMESTAMP},#{address,jdbcType=VARCHAR},
+    #{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{status,jdbcType=VARCHAR},
+    #{command,jdbcType=VARCHAR},0,#{siteid,jdbcType=VARCHAR},#{checkStage,jdbcType=VARCHAR},
+    #{attach,jdbcType=VARCHAR},#{contractId,jdbcType=NUMERIC},#{payplanId,jdbcType=NUMERIC},
+    #{isProjectChange,jdbcType=VARCHAR},#{startDate,jdbcType=TIMESTAMP},#{endDate,jdbcType=TIMESTAMP},
+    #{checkUser,jdbcType=VARCHAR},#{flowId,jdbcType=VARCHAR},
+    #{projectName,jdbcType=VARCHAR},#{contractName,jdbcType=VARCHAR},#{projectLeader,jdbcType=VARCHAR},
+    #{firstParty,jdbcType=VARCHAR},#{fpLeader,jdbcType=VARCHAR}
+    )
+</insert>
+
+<update id="updateCheckout" parameterType="com.timss.pms.bean.Checkout">
+    update Tim_Pms_CHECKOUT 
+    set type=#{type,jdbcType=VARCHAR},time=#{time,jdbcType=TIMESTAMP},address=#{address,jdbcType=VARCHAR},
+    update_user=#{updateUser,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=TIMESTAMP},status=#{status,jdbcType=VARCHAR},
+    command=#{command,jdbcType=VARCHAR},siteid=#{siteid,jdbcType=VARCHAR},check_stage=#{checkStage,jdbcType=VARCHAR},
+    attach=#{attach,jdbcType=VARCHAR},contract_id=#{contractId,jdbcType=NUMERIC},payplan_id=#{payplanId,jdbcType=NUMERIC},
+    is_project_change=#{isProjectChange,jdbcType=VARCHAR},start_date=#{startDate,jdbcType=TIMESTAMP},
+    end_date=#{endDate,jdbcType=TIMESTAMP},check_user=#{checkUser,jdbcType=VARCHAR},
+    project_name=#{projectName,jdbcType=VARCHAR},
+    contract_name=#{contractName,jdbcType=VARCHAR},project_leader=#{projectLeader,jdbcType=VARCHAR},
+    first_party=#{firstParty,jdbcType=VARCHAR},fp_leader=#{fpLeader,jdbcType=VARCHAR}
+    <if test="flowId != null and flowId != '' ">
+			 ,flow_id = #{flowId}
+    </if>
+    <if test="processInstId != null and processInstId != '' ">
+			 ,process_inst_id = #{processInstId}
+    </if>
+    where id=#{id}
+</update>
+<select id="queryCheckoutListByContractId" resultMap="checkoutVoMap">
+	select <include refid="columnBasic" />,process_inst_id processInstId,flow_id flowId
+	from Tim_Pms_Checkout t
+	where t.contract_id=#{id} and t.del_flag=0 and t.status!='voided'
+</select>
+
+
+<select id="queryCheckoutListByProjectId" resultMap="checkoutVoMap">
+	select t.id,t.type,t.time,t.address,t.create_user,t.create_time,t.status,t.command,
+	t.del_flag,t.siteid,t.check_stage,t.attach,t.contract_id,t.payplan_id,p.contract_code as contractCode,
+	p.name as contractName,p.type as contractType,pp.pay_type as payType
+	from (select id,project_name from tim_pms_project where id=#{projectId}) pr
+	left join tim_pms_contract p on pr.id=p.project_id
+	left join tim_pms_checkout t on p.id= t.contract_id
+	left join tim_pms_payplan pp on t.payplan_id=pp.id
+	where t.del_flag=0 and t.status!='voided'
+</select>
+<select id="queryCheckoutList" resultMap="checkoutVoMap">
+	select t.id,t.type,t.time,t.address,t.create_user,t.create_time,t.status,t.command,
+	t.del_flag,t.siteid,t.check_stage,t.attach,t.contract_id,t.payplan_id,p.contract_code as contractCode,
+	p.name as contractName,p.type as contractType,pp.pay_type as payType ,wf.id as flowid,to_char(t.time,'yyyy-MM-dd') as timestr
+	from Tim_Pms_Checkout t
+	left join tim_pms_contract p on t.contract_id=p.id
+	left join tim_pms_payplan pp on t.payplan_id=pp.id
+	left join Tim_PMS_workflow_business wf on wf.business_id='checkout_' || t.id
+	where t.del_flag=0 and t.status!='voided'
+</select>
+<select id="queryCheckoutListAndFilter" resultMap="checkoutVoMap">
+	select t.id,t.type,t.time,t.address,t.create_user,t.create_time,t.status,t.command,
+	t.del_flag,t.siteid,t.check_stage,t.attach,t.contract_id,t.payplan_id,p.contract_code as contractCode,
+	p.name as contractName,p.type as contractType,pp.pay_type as payType ,wf.id as flowid,to_char(t.time,'yyyy-MM-dd') as timestr
+	from Tim_Pms_Checkout t
+	left join tim_pms_contract p on t.contract_id=p.id
+	left join tim_pms_payplan pp on t.payplan_id=pp.id
+	left join Tim_PMS_workflow_business wf on wf.business_id='checkout_' || t.id
+	where t.del_flag=0 
+</select>
+
+<select id="queryCheckoutListByPayplanId" resultMap="checkoutVoMap">
+	select <include refid="columnBasic" />,process_inst_id processInstId,flow_id flowId
+	from Tim_Pms_Checkout t
+	where t.payplan_id=#{id} and t.del_flag=0 and t.status!='voided'
+</select>
+
+<select id="queryCheckoutById"  resultMap="checkoutDtlVoMap">
+    select <include refid="columnBasic"/>,process_inst_id processInstId,flow_id flowId
+    from Tim_Pms_Checkout t
+    where t.del_flag=0 and t.id=#{id}
+</select>
+
+<delete id="deleteCheckout" >
+    delete from Tim_Pms_Checkout t where id=#{id}
+</delete>
+
+<update id="updateByPrimaryKeySelective">
+    update TIM_PMS_CHECKOUT
+    <set>
+
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        TIME = #{time,jdbcType=DATE},
+      </if>
+      <if test="address != null">
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="condition != null">
+        CONDITION = #{condition,jdbcType=VARCHAR},
+      </if>
+      <if test="conditionAttach != null">
+        CONDITION_ATTACH = #{conditionAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="standard != null">
+        STANDARD = #{standard,jdbcType=VARCHAR},
+      </if>
+      <if test="standardAttach != null">
+        STANDARD_ATTACH = #{standardAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="expert != null">
+        EXPERT = #{expert,jdbcType=VARCHAR},
+      </if>
+      <if test="expertAttach != null">
+        EXPERT_ATTACH = #{expertAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="report != null">
+        REPORT = #{report,jdbcType=VARCHAR},
+      </if>
+      <if test="reportAttach != null">
+        REPORT_ATTACH = #{reportAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="completion != null">
+        COMPLETION = #{completion,jdbcType=VARCHAR},
+      </if>
+      <if test="completionAttach != null">
+        COMPLETION_ATTACH = #{completionAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="valuation != null">
+        VALUATION = #{valuation,jdbcType=VARCHAR},
+      </if>
+      <if test="valuationAttach != null">
+        VALUATION_ATTACH = #{valuationAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="command != null">
+        COMMAND = #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        DEL_FLAG = #{delFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="projectName != null">
+        PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="siteid != null">
+        SITEID = #{siteid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null">
+        DEPTID = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="projectLeader != null">
+        PROJECT_LEADER = #{projectLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="contractName != null">
+        CONTRACT_NAME = #{contractName,jdbcType=VARCHAR},
+      </if>
+      <if test="checkStage != null">
+        CHECK_STAGE = #{checkStage,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="firstParty != null">
+        FIRST_PARTY = #{firstParty,jdbcType=VARCHAR},
+      </if>
+      <if test="fpLeader != null">
+        FP_LEADER = #{fpLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="attach != null">
+        ATTACH = #{attach,jdbcType=VARCHAR},
+      </if>
+      <if test="contractId != null">
+        CONTRACT_ID = #{contractId,jdbcType=DECIMAL},
+      </if>
+      <if test="payplanId != null">
+        PAYPLAN_ID = #{payplanId,jdbcType=DECIMAL},
+      </if>
+      <if test="isProjectChange != null">
+        IS_PROJECT_CHANGE = #{isProjectChange,jdbcType=VARCHAR},
+      </if>
+      <if test="checkUser != null">
+        CHECK_USER = #{checkUser,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        START_DATE = #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null">
+        END_DATE = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="flowId != null">
+        FLOW_ID = #{flowId,jdbcType=VARCHAR},
+      </if>
+      <if test="processInstId != null">
+        PROCESS_INST_ID = #{processInstId,jdbcType=VARCHAR},
+      </if>
+      <if test="flowStatus != null">
+        FLOW_STATUS = #{flowStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+</mapper>

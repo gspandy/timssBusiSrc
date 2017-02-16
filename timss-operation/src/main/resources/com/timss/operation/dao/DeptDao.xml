@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.DeptDao">
+	
+	<!--说明：#{}内的参数，需要与传入的Dept中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertDept" parameterType="Dept">
+			insert into opr_dept( deptId, name, isactive, updateTime, updateBy,siteId ) 
+			values(#{deptId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{isActive,jdbcType=VARCHAR}, 
+			#{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{siteId,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateDept" parameterType="Dept">
+	update opr_dept set name = #{name,jdbcType=VARCHAR}, isactive = #{isActive,jdbcType=VARCHAR} 	
+	where deptId = #{ deptId }
+	</update>
+		
+	<select id="queryDeptById" parameterType="String" resultType="Dept">
+		select * from opr_dept where deptid= #{ id }
+	</select>
+	
+	<delete id="deleteDeptById" parameterType="String">
+		update opr_dept set del_ind='Y' where deptid= #{ id }
+	</delete>
+	
+	<select id="queryAllDept" resultType="Dept">
+		select * from opr_dept where del_ind!='Y'
+	</select>
+	
+	<!-- queryByPage 暂时不用 -->
+	<select id="queryDeptByPage" resultType="Dept">
+		select * from opr_dept where deptId like '%${ params.deptId }%' and del_ind!='Y'
+	</select>
+	
+	<select id="queryDeptBySearch" resultType="Dept" >
+		select * from opr_dept where del_ind!='Y'
+		<if test="params.deptId != null">
+		 	and deptId like '%${ params.deptId }%'
+		</if>
+		<if test="params.name != null">
+		 	and name like '%${ params.name }%'
+		</if>
+		<if test="params.isActive != null">
+		 	and isactive like '%${ params.isActive }%'
+		</if>
+		<if test="params.updateBy != null">
+		 	and updateBy like '%${ params.updateBy }%'
+		</if>
+		<if test="params.updateTime != null">
+		 	and updateTime like '%${ params.updateTime }%'
+		</if>
+		<if test="params.siteId != null">
+		 	and siteId like '%${ params.siteId }%'
+		</if>
+	</select>
+	
+	<resultMap id="DeptMap" type="Dept">
+		<id property="deptId" column="deptId"/>
+		<result property="name" column="name"/>
+		<result property="isActive" column="isActive"/>
+		<collection property="jobsList" column="deptId" javaType="ArrayList" ofType="Jobs" resultMap="jobsMap"/>
+	</resultMap>
+	
+    <resultMap id="jobsMap" type="Jobs">
+		<id property="id" column="j_id"/>
+		<result property="name" column="j_name"/>
+		<result property="stationId" column="j_stationId"/>
+		<result property="isActive" column="j_isActive"/>		
+	</resultMap>
+	
+	<select id="queryDeptWithJobsBySiteId" parameterType="String" resultMap="DeptMap">
+select d.deptid deptId,d.name name,d.isactive isActive,
+j.id j_id,j.name j_name,j.stationid j_stationId,j.isactive j_isActive
+from opr_dept d
+left join opr_jobs j on j.stationid=d.deptid
+where d.siteid=#{siteId} and d.del_ind!='Y' and j.del_ind!='Y' 
+and j.isactive!='N' and d.isactive!='N' 
+order by d.sorttype,j.sorttype
+	</select>
+</mapper> 

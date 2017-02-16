@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.WorkloadDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+ 
+	
+	<resultMap type="com.timss.pms.vo.WorkloadVo" id="workloadVoMap">
+		<id property="workloadId" column="workload_id"/>
+		<result property="projectId" column="project_id"/>
+		<result property="userLevel" column="user_level"/>
+		<result property="workloadValue" column="workload_value"/>
+
+		<result property="siteid" column="siteid"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="command" column="command"/>
+		
+		<result property="updateTime" column="update_time"/>
+		<result property="updateUser" column="update_user"/>
+		
+	
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.InvoiceDtlVo" id="invoiceDtlVoMap">
+		<id property="workloadId" column="workload_id"/>
+		<result property="projectId" column="project_id"/>
+		<result property="userLevel" column="user_level"/>
+		<result property="workloadValue" column="workload_value"/>
+
+		<result property="siteid" column="siteid"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="command" column="command"/>
+		
+		<result property="updateTime" column="update_time"/>
+		<result property="updateUser" column="update_user"/>
+	</resultMap>
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		workload_id,project_id,user_level,workload_value,siteid,create_time,
+    	create_user,del_flag,command
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertWorkload" parameterType="com.timss.pms.bean.Workload">
+
+    insert into Tim_Pms_Workload (<include refid="columnBasic"/>)
+    values (#{workloadId,jdbcType=NUMERIC},#{projectId,jdbcType=NUMERIC},#{userLevel,jdbcType=VARCHAR},
+    	#{workloadValue,jdbcType=VARCHAR},
+    	#{siteid,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR},
+    	0,#{command,jdbcType=VARCHAR})
+</insert>
+
+<update id="updateWorkload">
+	update Tim_Pms_Workload
+	set project_id=#{projectId,jdbcType=NUMERIC},
+    	user_level=#{userLevel,jdbcType=VARCHAR},workload_value=#{workloadValue,jdbcType=VARCHAR},
+    	siteid=#{siteid,jdbcType=VARCHAR},create_time=#{createTime,jdbcType=TIMESTAMP},create_user=#{createUser,jdbcType=VARCHAR},
+    	command=#{command,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=TIMESTAMP},update_user=#{updateUser,jdbcType=VARCHAR}
+    	
+    where workload_id=#{workloadId}
+</update>
+
+
+
+
+
+<select id="queryWorkloadListByProjectId" resultMap="workloadVoMap">
+	select <include refid="columnBasic"/>
+	from Tim_Pms_Workload t
+	where project_id=#{projectId} and del_flag='0'
+</select>
+
+
+
+
+<delete id="deleteWorkload">
+    delete from Tim_Pms_Workload t 
+    where workload_id=#{workloadId}
+</delete>
+
+<delete id="deleteWorkloadByProjectId">
+	delete from Tim_Pms_Workload t
+	where project_id=#{projectId}
+</delete>
+</mapper>

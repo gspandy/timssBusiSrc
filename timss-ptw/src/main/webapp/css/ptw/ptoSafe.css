@@ -1,0 +1,138 @@
+.wrap-underline {
+	border-bottom-color: rgb(226, 233, 243);
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	padding-left: 40px;
+	padding-right: 200px;
+	position: relative;
+}
+.wrap-underline-single{
+	padding-right: 0px;
+}
+.wrap-underline2 {
+	border-bottom-color: rgb(226, 233, 243);
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	padding-left: 0px;
+	padding-right: 200px;
+	position: relative;
+}
+.wrap-underline-single2{
+	padding-right: 0px;
+}
+
+.safe-input {
+	border-width: 0px;
+	border-style: none;
+	margin-left:10px;
+	width: 96%;
+	font-size: 12px;
+	outline: none;
+	line-height: 26px;
+	height: 26px;
+	background-color: #FFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #FFF;
+	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.safeRemark-input {
+	border-width: 0px;
+	border-style: none;
+	margin-left:10px;
+	width: 100%;
+	font-size: 12px;
+	outline: none;
+	line-height: 26px;
+	height: 26px;
+	background-color: #FFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #FFF;
+	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.safeRemark-input:focus {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #3366cc;
+}
+.noborder {
+	border-width: 0px;
+	border-style: none;
+	font-size: 12px;
+	outline: none;
+	line-height: 26px;
+	height: 26px;
+	background-color: #FFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #FFF;
+	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.safe-input:focus {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #3366cc;
+}
+
+.wrap-underline>span{
+	font-size: 12px;
+	line-height: 28px;
+	vertical-align: middle;
+}
+.safe-input-content{
+	font-size: 12px;
+	line-height: 28px;
+	vertical-align: middle;
+	display:block;
+	margin:0px;
+}
+.safeRemark-input-content, .time-content, .check-content, .safe-number-span{
+	font-size: 12px;
+	line-height: 28px;
+	vertical-align: middle;
+}
+.safe-number-span {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin-left: 20px;
+	
+}
+
+#safeItemTest{counter-reset:safeItemTest;}
+#safeItemTest .safe-number-span:before{counter-increment:safeItemTest;content:counter(safeItemTest) ". ";}
+
+.exec-span {
+	position: absolute;
+	top: 0;
+	right: 300px;
+	display:block;
+	width: 100px;
+}
+.safe-unremove-remarks{
+	position: absolute;
+	top: 0;
+	right: 100px;
+	display:block;
+	width: 200px;
+}
+.remover-span {
+	position: absolute;
+	top: 0;
+	right: 0;
+	display:block;
+	width: 100px;
+}
+.exec-span:before {
+	content: "执行人: ";
+}
+.safe-unremove-remarks:before{
+	content: "备注: ";
+}
+.remover-span:before {
+	content: "解除人: ";
+}

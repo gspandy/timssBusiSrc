@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.PrecautionDao">
+
+
+	<resultMap type="Precaution" id="precautionMap">
+		<result column="ID" property="id" />
+		<result column="NAME" property="name" />
+		<result column="DESCRIPTION" property="precautionDescription" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+	</resultMap>	
+	 	
+	<insert id="insertPrecaution">
+		insert into wo_precaution(ID,DESCRIPTION,SITEID,DEPTID,YXBZ) 
+		values( #{id},
+				#{precautionDescription,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC}) 
+	</insert>
+	<insert id="insertPrecautionCopy">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+		 	select timss_wo_jpothers_seq.nextval id from dual
+		 </selectKey>	
+		insert into wo_precaution(ID,NAME,DESCRIPTION,SITEID,DEPTID,YXBZ) 
+		values(#{id},#{name},#{description},#{siteid},#{deptid},#{yxbz}) 
+	</insert>
+ 
+ 	<update id="updatePrecaution" parameterType="Precaution">
+		update wo_precaution
+		set NAME=#{name}
+		where ID=#{id} 
+	</update>
+	<update id="updatePrecautionCopy" parameterType="Precaution">
+		update wo_precaution
+		set NAME=#{name},DESCRIPTION=#{description}
+		where ID=#{id} and SITEID=#{siteid} and DEPTID=#{deptid} and YXBZ=#{yxbz}
+	</update>
+	 
+	<select id="queryPrecautionById" parameterType="int" resultMap="precautionMap">
+		select * from wo_precaution where id= #{ id }
+	</select>
+	
+	<delete id="deletePrecautionById" parameterType="int" >
+		delete from wo_precaution where id= #{ id }
+	</delete>
+	
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextPrecautionId" resultType="int">
+		select SEQ_WO_JPOTHERS.nextval from dual
+	</select>
+	
+</mapper>

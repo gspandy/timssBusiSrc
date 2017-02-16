@@ -1,0 +1,82 @@
+.new-table li {
+	list-style: none;
+	display: inline-block;
+}
+
+.new-table {
+	padding: 0px;
+	margin: 0px;
+}
+
+.new-table .row-item {
+	width: 100%;
+	line-height: 43px;
+}
+
+.new-table .col-left,.new-table .col-right {
+	float: left;
+}
+
+.new-table .row-item.head {
+	height: 28px;
+	line-height: 28px;
+	border-bottom: 1px solid #aaa;
+	font-size: 12px;
+	font-weight:bold;
+}
+
+.new-table .col-left {
+	margin-left:20px;
+	width: 52%;
+}
+
+.new-table .col-right {
+	width: 18%;
+}
+
+.new-table .head .col-left {
+	width: 50%;
+}
+
+.new-table .head .col-right {
+	width: 20%;
+	text-align: right;
+}
+
+.row-top,.row-bottom {
+	width: 100%;
+	display: block
+}
+
+.new-table .row-top {
+	font-size: 18px;
+	line-height: 24px;
+}
+
+.new-table .row-bottom {
+	font-size: 12px;
+	line-height: 18px;
+	text-overflow:ellipsis;
+	overflow: hidden;
+	white-space:nowrap;
+	width: 240px;
+}
+
+.new-table .col-right b {
+	font-size: 24px;
+	color:#B70004;
+}
+
+.new-table .col-right span.row-b {
+	font-size: 24px;
+	color:#000000;
+}
+
+.new-table .col-right span {
+	font-size: 14px;
+}
+
+.new-table .align-right {
+	text-align: right;
+	margin-right: 9px;
+}

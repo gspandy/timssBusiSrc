@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoPriConfigDao">
+
+	<resultMap type="WoPriConfig" id="WoPriConfigMap">
+		<id column="PRI_ID" property="priId" />
+		<result column="URGENCY_DEGREE" property="urgentDegree" />
+		<result column="INFLUENCE_SCOPE" property="influenceScope" />
+		<result column="SITEID" property="siteid" />
+	</resultMap>	
+	
+	  
+	<insert id="insertWoPriConfig"  parameterType="WoPriConfig" >
+		insert into wo_priconfig(PRI_ID,URGENCY_DEGREE,INFLUENCE_SCOPE,SITEID) 
+		values( #{priId},
+				#{urgentDegree,jdbcType=VARCHAR},
+				#{influenceScope,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="deleteWoPriConfig" parameterType="HashMap">
+		delete wo_priconfig t
+		where t.PRI_ID=#{priId} AND T.SITEID=#{siteid}
+	</delete>
+	
+	<!-- 查询列表信息 -->
+	<select id="queryWoPriConfigListById" parameterType="HashMap" resultMap="WoPriConfigMap">
+		select *
+		from wo_priconfig t
+		where t.PRI_ID= #{priId} and siteid = #{siteid}
+	</select>
+	
+	<!-- 根据影响度和紧急度，查询对应的服务级别信息 -->
+	<select id="queryWoPriConfigByOtherCode" parameterType="HashMap" resultMap="WoPriConfigMap">
+		select *
+		from wo_priconfig t
+		where t.URGENCY_DEGREE= #{urgentVal} and t.siteid = #{siteid} and t.INFLUENCE_SCOPE =#{influenceVal}
+	</select>
+	
+</mapper>

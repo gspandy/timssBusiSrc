@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatRecipientsDao">
+	<resultMap type="com.timss.inventory.bean.InvMatRecipients" id="InvMatRecipientsMap">
+		<result property="applyType" column="apply_type"/>
+		<result property="siteId" column="site_id"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvMatRecipientsVO" id="InvMatRecipientsVOMap">
+		<result property="applyType" column="apply_type"/>
+		<result property="siteId" column="site_id"/>
+		<result property="outterNo" column="outter_no"/>
+		<result property="deliveryDate" column="delivery_date"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvMatRecipientsDetailVO" id="InvMatRecipientsDetailVOMap">
+		<result property="qtyApply" column="qty_apply"/>
+		<result property="actualQty" column="actual_qty"/>
+		<result property="siteId" column="site_id"/>
+		<result property="unitCode1" column="unitcode1"/>
+		<result property="invcatename" column="invcatename"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+	</resultMap>
+	
+	<!-- 插入领用情况信息 -->
+	<insert id="insertInvMatRecipients" parameterType="com.timss.inventory.bean.InvMatRecipients">
+		insert into inv_mat_recipients
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imrid != null"> imrid, </if>
+	      <if test="sheetname != null"> sheetname, </if>
+	      <if test="sheetno != null"> sheetno, </if>
+	      <if test="applyType != null"> apply_type, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="instanceid != null"> instanceid, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="imaid != null"> imaid, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="deliveryDate != null"> delivery_date, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imrid != null"> #{imrid,jdbcType=VARCHAR}, </if>
+	      <if test="sheetname != null"> #{sheetname,jdbcType=VARCHAR}, </if>
+	      <if test="sheetno != null"> #{sheetno,jdbcType=VARCHAR}, </if>
+	      <if test="applyType != null"> #{applyType,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="instanceid != null"> #{instanceid,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="imaid != null"> #{imaid,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="deliveryDate != null"> #{deliveryDate,jdbcType=TIMESTAMP}, </if>
+	    </trim>
+	</insert>
+
+	<!-- 更新发料主表 -->
+	<update id="updateInvMatRecipients" parameterType="com.timss.inventory.bean.InvMatRecipients">
+		update inv_mat_recipients t
+		<set>
+	      <if test="deliveryDate != null"> t.delivery_date=#{deliveryDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="status != null"> t.status=#{status,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>	      
+	    </set>
+		where t.imrid=#{imrid} and t.site_id=#{siteId}
+	</update>
+		
+	<!-- 查询表单信息 -->
+	<select id="queryInvMatRecipientsForm" parameterType="java.util.Map" resultMap="InvMatRecipientsVOMap">
+		select imr.imrid,imr.sheetname,imr.sheetno,be.enum_val as apply_type,imr.imaid,imr.instanceid,imr.remark,iom.outter_no,imr.delivery_date,imr.status   
+    	from inv_mat_recipients imr
+        left join (
+        		select be.enum_val,be.enum_code,be.siteid 
+        		from b_enum be 
+        		where be.ecat_code = 'INV_APPLY_TYPE'
+        		) be on  be.enum_code = imr.apply_type and be.siteid =imr.site_id
+        left join inv_outter_mapping iom on imr.imaid = iom.inv_id
+    	where imr.imrid =#{imrid} and imr.site_id=#{siteId} 
+	</select>
+	
+	<!-- 查询子单信息 -->
+	<select id="queryInvMatRecipientsList" resultMap="InvMatRecipientsDetailVOMap">
+		select imrd.imrdid,
+			   ii.itemcode,
+			   ii.itemname,
+			   ii.cusmodel,
+			   imrd.qty_apply,
+			   imrd.outstockqty,
+			   ii.itemid,
+			   iu.unitname as unit1,
+			   ii.unit1 as unitcode1,
+			   iw.warehousename as warehouse,
+			   ib.binname as bin,
+			   imrd.imadid,
+			   imrd.warehouseid,
+			   imrd.binid,
+			   imrd.price,
+			   imrd.no_tax_price,
+			   imrd.invcateid,
+			   imrd.site_id,
+			   imrd.isled,
+			   c.invcatename,
+			   ird.actual_qty as actual_qty
+		from inv_mat_recipients_detail imrd 
+			left join inv_warehouse iw on iw.warehouseid = imrd.warehouseid and iw.site_id = imrd.site_id
+			left join inv_bin ib on ib.binid = imrd.binid and ib.site_id = imrd.site_id
+		    left join inv_item ii on imrd.itemid = ii.itemid and imrd.site_id = ii.site_id
+		    left join inv_unit iu on iu.unitid = ii.unit1 and iu.site_id = ii.site_id
+		    left join inv_category c on imrd.invcateid = c.invcateid and imrd.site_id = c.site_id
+		    left join inv_realtime_data ird on imrd.itemid = ird.itemid and imrd.invcateid = ird.invcateid and imrd.site_id = ird.site_id
+		where imrd.imrid= #{params.imrid}
+		  and imrd.site_id= #{params.siteId}
+		  and imrd.outstockqty<![CDATA[>]]>0
+    	order by ii.itemcode asc
+	</select>
+	
+	<select id="queryInvMatRecipListByItem" resultMap="InvMatRecipientsDetailVOMap">
+		SELECT II.ITEMID,II.ITEMCODE,II.ITEMNAME, II.CUSMODEL,IMRD.IMRDID,IMRD.OUTSTOCKQTY,
+           IMR.SITE_ID, IU.UNITID, IU.UNITNAME,IMRD.IMADID,IMTC.WAREHOUSEID, IMTC.BINID,
+            IMTC.IMTDID,IMTC.PRICE,IMTC.no_tax_price, IMTC.Tax,IMTC.INVCATEID,IMTC.CREATEDATE       
+      FROM INV_MAT_RECIPIENTS        IMR,
+           INV_MAT_RECIPIENTS_DETAIL IMRD,
+           INV_ITEM                  II,
+           INV_UNIT                  IU,
+           INV_MAT_TRAN_REC       IMTC,
+           INV_MAT_TRAN              IMT
+     WHERE IMR.IMRID = IMRD.IMRID
+       AND IMR.SITE_ID = IMRD.SITE_ID
+       AND IMRD.ITEMID = II.ITEMID
+       AND IMRD.SITE_ID = II.SITE_ID
+       AND IMTC.IMTID = IMT.IMTID
+       AND IMTC.SITE_ID = IMT.SITE_ID
+       AND IMRD.ITEMID = IMTC.ITEMID
+       AND IMR.SHEETNO = IMT.SHEETNO
+       AND II.UNIT1 = IU.UNITID
+       AND II.SITE_ID = IU.SITE_ID
+       AND IMRD.INVCATEID = IMTC.INVCATEID
+       AND IMR.IMAID = #{imaid}
+       AND IMR.SITE_ID = #{siteid}  
+        <if test="itemid != null and itemid != ''"> 
+             AND IMRD.itemid=#{itemid}
+             and imrd.WAREHOUSEID = #{warehouseid}
+        </if>
+       ORDER BY IMTC.createdate ASC
+	</select>
+	
+	<!-- 根据sheetno查询id -->
+	<select id="queryRecipientsIdBySheetNo" parameterType="java.util.Map" resultType="java.lang.String">
+		select imr.imrid from inv_mat_recipients imr where imr.sheetno = #{sheetNo} and imr.site_id = #{siteId}
+	</select>
+	
+	<!--  通过imaid查询发料单数据 -->
+	<select id="queryRecipientsByImaId" parameterType="java.util.Map" resultMap="InvMatRecipientsVOMap">
+		select * from inv_mat_recipients imr where imr.imaid = #{imaid} and imr.site_id = #{siteId}
+	</select>
+	
+	<!--  查询发料子表信息 -->
+	<select id="queryRecipientsDetailByImrId" parameterType="java.util.Map" resultMap="InvMatRecipientsDetailVOMap">
+		select * from inv_mat_recipients_detail imrd where imrd.imrid = #{imrId} and imrd.site_id = #{siteId}
+	</select>	
+	
+	<!-- 根据领料单ID删除发料单主表记录 -->
+	<delete id="deleteInvMatRecipients">
+		delete from inv_mat_recipients t where t.imrid=#{imrId} and t.site_id = #{siteId}
+	</delete>
+	
+	<!-- 通过siteid获取所有物资发料单 -->
+	<select id="queryInvMatRecipientsApplyList" resultMap="InvMatRecipientsVOMap">
+		select imrid, sheetno, sheetname, delivery_date,delivery_date as deliveryDate,formatdatetime(delivery_date) as DELIVERYDATE_STR, status, CREATEDATE from inv_mat_recipients where site_id = '${ params.siteId }' order by createdate desc
+	</select>	
+	
+	<!-- 根据物资编号或名称获取该站点下物资发料列表 -->
+	<select id="searchInvMatRecipientsApplyList" resultMap="InvMatRecipientsVOMap">
+        select imr.imrid, imr.sheetno, imr.sheetname, imr.delivery_date, imr.delivery_date as deliveryDate, formatdatetime(imr.delivery_date) as DELIVERYDATE_STR, imr.status, imr.CREATEDATE 
+        from inv_mat_recipients imr
+        left join inv_mat_recipients_detail imrd on imr.imrid = imrd.imrid
+        left join inv_item ii on ii.itemid = imrd.itemid
+        where imr.site_id = '${ params.siteId }'
+        <if test="params.sdata != null and params.sdata != ''">
+        and ii.itemname like '%${ params.sdata }%' or ii.itemcode like '%${ params.sdata }%'
+        </if>
+        order by imr.createdate desc
+	</select>
+</mapper> 

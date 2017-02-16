@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.RulesHistoryDao">
+	
+	<!--说明：#{}内的参数，需要与传入的Rules中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	
+	<insert id="insertRulesHistory" parameterType="RulesHistory">
+		<!--Oracle中返回自增主键到Rules中的方法 -->
+		 <selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select seq_opr_rules_history.nextval from dual
+		</selectKey> 
+		insert into opr_rules_history( id, uuid, name, startTime, endTime, stationId,writeDate,startFlag,siteId ) 
+		values(#{id}, #{uuid}, #{name}, #{startTime}, #{endTime},#{stationId},#{writeDate}, #{startFlag},#{siteId})
+	</insert>
+	
+	<select id="queryRulesHistoryByMap" parameterType="HashMap" resultType="RulesHistoryVo">
+		select * from OPR_RULES_HISTORY WHERE uuid = #{uuid} and starttime = #{fristDate} and endtime= #{lastDate}
+	</select>
+	
+	<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper> 

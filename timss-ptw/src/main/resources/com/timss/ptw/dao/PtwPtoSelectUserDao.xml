@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwPtoSelectUserDao">
+	<resultMap type="PtwPtoSelectUserInfoVo" id="ptwPtoUserInfoMap">
+		<result column="CATEGORY" property="category" />
+		<result column="STEP" property="step" />
+		<result column="TYPE" property="type" />
+		<result column="BEGINDATE" property="beginDate" />
+		<result column="ENDDATE" property="endDate" />
+		<result column="USERID" property="userId" />
+		<result column="NAME" property="userName" />
+	</resultMap>
+	<select id="queryPtwPtoUserInfo" resultMap="ptwPtoUserInfoMap">
+		SELECT
+		I.CATEGORY,I.TYPE,S.STEP,T.USERID,U.NAME,S.BEGINDATE,S.ENDDATE,I.SITEID,S.DEL_FLAG
+		FROM
+		PTWPTO_SELECTOR T,PTWPTO_CONFIG S,SEC_USER U,PTWPTO_STEPINFO I
+		WHERE T.CONFIGID = S.ID AND U.USER_ID = T.USERID AND I.ID = S.STEP AND S.DEL_FLAG<![CDATA[<>]]>'Y'
+		<if test="category != null and category != '' ">
+			AND I.CATEGORY = #{category}
+		</if>
+		<if test="type != null and type != '' ">
+			AND I.TYPE = #{type}
+		</if>
+		<if test="step != null and step != '' ">
+			AND I.STEP = #{step}
+		</if>
+		<if test="siteid != null and siteid != '' ">
+			AND I.SITEID = #{siteid}
+		</if>
+		<if test="curDate != null and curDate != '' ">
+			AND S.BEGINDATE <![CDATA[<=]]> #{curDate}
+			AND S.ENDDATE <![CDATA[>=]]> #{curDate}
+		</if>
+	</select>
+</mapper>

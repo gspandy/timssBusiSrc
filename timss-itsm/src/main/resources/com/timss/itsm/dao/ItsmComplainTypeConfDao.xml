@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmComplainTypeConfDao">
+
+	<resultMap type="ItsmComplainTypeConf" id="complainTypeConfMap">
+		<id column="ID" property="id" />
+		<result column="TYPENAME" property="typename" />
+		<result column="REMARKS" property="remarks" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="SITEID" property="siteid" />
+		<result column="ACTIVE" property="active" />
+		
+		<!--数据库表中没有的信息字段-->
+		<result column="CREATEUSERNAME" property="createUserName"/>
+	</resultMap>	
+	
+	<insert id="insertComplTypeConf"  parameterType="ItsmComplainTypeConf" >
+		insert into itsm_complaint_type(ID,TYPENAME,REMARKS,CREATEUSER,CREATEDATE,MODIFYUSER,MODIFYDATE,SITEID,ACTIVE) 
+		values( #{id},
+				#{typename,jdbcType=VARCHAR},
+				#{remarks,jdbcType=VARCHAR},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{modifyuser,jdbcType=VARCHAR},
+				#{modifydate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{active,jdbcType=VARCHAR}
+				)
+	</insert>
+	
+	<update id="updateComplTypeConf" parameterType="ItsmComplainTypeConf">
+		update 
+			itsm_complaint_type
+		set 
+			TYPENAME=#{typename},
+			REMARKS = #{remarks}
+		where ID=#{id} 
+	</update>
+	
+	 
+	<select id="queryComplTypeConfById" parameterType="HashMap" resultMap="complainTypeConfMap">
+		select ID,TYPENAME, REMARKS,CREATEUSER,CREATEDATE,SITEID,ACTIVE 
+		from itsm_complaint_type 
+		where ID= #{id} 
+	</select>
+	
+	<!-- 进行逻辑删除，将有效标识改为N -->
+	<delete id="deleteComplTypeConf" parameterType="HashMap">
+		update itsm_complaint_type set ACTIVE='N' where ID=#{id} 
+	</delete>
+	
+	
+	<!-- 查询列表信息 -->
+	<select id="queryComplTypeConfList" resultMap="complainTypeConfMap" >
+		 select s.name CREATEUSERNAME,t.id,t.typename,t.remarks,t.createdate 
+		   from itsm_complaint_type t ,sec_user s
+		where t.active='Y'  and t.createuser=s.user_id 
+		<if test="params.siteid != null">
+		and   t.siteid = #{params.siteid}  
+		</if>
+		order by t.CREATEDATE DESC
+	</select>
+</mapper>

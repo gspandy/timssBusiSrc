@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvAttachMappingDao">
+	<insert id="insertInvAttachMapping" parameterType="com.timss.inventory.bean.InvAttachMapping" >
+    	insert into inv_attach_mapping (sheetid, attachid)
+    	values (#{sheetid,jdbcType=VARCHAR},#{attachid,jdbcType=VARCHAR})
+    </insert>
+    
+    <delete id="deleteInvAttachMappingBySheetId" parameterType="java.lang.String">
+    	delete from inv_attach_mapping iam where iam.sheetid=#{sheetId}
+    </delete>
+    
+    <select id="queryInvAttachMappingBysheetId" parameterType="java.lang.String" resultType="com.timss.inventory.bean.InvAttachMapping">
+    	select iam.sheetid,iam.attachid from inv_attach_mapping iam where iam.sheetid=#{sheetId}
+    </select>
+</mapper>

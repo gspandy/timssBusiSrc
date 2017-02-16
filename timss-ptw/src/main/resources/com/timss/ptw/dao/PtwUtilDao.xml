@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.ptw.dao.PtwUtilDao">
+
+	<select id="queryEnumValueByEcatcode" resultType="String" >
+		SELECT T.ENUM_VAL enumName
+		FROM b_enum t 
+		WHERE t.ecat_code=#{ecatcode} AND T.SITEID=#{siteid} 
+		ORDER BY t.sort_num
+	</select>
+	
+	
+	
+	
+	
+</mapper>

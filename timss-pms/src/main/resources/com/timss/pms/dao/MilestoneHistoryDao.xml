@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.MilestoneHistoryDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+ 
+	
+	<resultMap type="com.timss.pms.vo.MilestoneHistoryVo" id="milestoneHistoryVoMap">
+		<id property="milestoneHistoryId" column="milestone_history_id"/>
+		<result property="projectId" column="project_id"/>
+		<result property="milestoneHistoryUser" column="milestone_history_user"/>
+		<result property="time" column="time"/>
+
+		<result property="operator" column="operator"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="content" column="content"/>
+		<result property="siteid" column="siteid"/>
+		
+		<result property="updateTime" column="update_time"/>
+		<result property="updateUser" column="update_user"/>
+		
+	
+	</resultMap>
+	
+	
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		milestone_history_id,project_id,milestone_history_user,time,operator,create_time,
+    	create_user,del_flag,content,siteid
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertMilestoneHistory" parameterType="com.timss.pms.bean.MilestoneHistory">
+
+    insert into Tim_Pms_Milestone_History (<include refid="columnBasic"/>)
+    values (#{milestoneHistoryId,jdbcType=NUMERIC},#{projectId,jdbcType=NUMERIC},#{milestoneHistoryUser,jdbcType=VARCHAR},
+    	#{time,jdbcType=TIMESTAMP},
+    	#{operator,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR},
+    	0,#{content,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR})
+</insert>
+
+
+<select id="queryMilestoneHistoryListByProjectId" resultMap="milestoneHistoryVoMap">
+	select <include refid="columnBasic"/>
+	from Tim_Pms_Milestone_History t
+	where project_id=#{projectId} and del_flag='0'
+	order by milestone_history_id asc
+</select>
+
+<delete id="deleteMilestoneHistoryByProjectId">
+	delete from Tim_Pms_Milestone_History t
+	where project_id=#{projectId}
+</delete>
+</mapper>

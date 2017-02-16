@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatBudgetDao">
+
+	<select id="queryInvMatBudget" parameterType="java.util.Map" resultType="com.timss.inventory.bean.InvMatBudget">
+		select * from inv_mat_budget imb where imb.deptid = #{deptid} and to_char(imb.setdate,'yyyy-mm') = #{setdate} and imb.site_id = #{siteId}
+	</select>
+	
+	<select id="queryBudgetGrandTotalLastMonth" parameterType="java.util.Map" resultType="java.lang.Double">
+		select case when sum(imb.budget) is null then 0 else sum(imb.budget) end from inv_mat_budget imb where imb.deptid = #{deptId} and ( to_char(imb.setdate,'yyyy-mm') between to_char(sysdate,'yyyy')||'-01' and #{lastMonth} ) and imb.site_id = #{siteId}
+	</select>
+	
+	<insert id="insertInvMatBudget" parameterType="com.timss.inventory.bean.InvMatBudget" >
+		insert into inv_mat_budget(imbid,budget,deptid,setdate,createuser,createdate,modifyuser,modifydate,site_id) 
+		values(#{imbid,jdbcType=VARCHAR},
+			   #{budget,jdbcType=NUMERIC},
+			   #{deptid,jdbcType=VARCHAR},
+			   #{setdate,jdbcType=TIMESTAMP},
+			   #{createuser,jdbcType=VARCHAR},
+			   #{createdate,jdbcType=TIMESTAMP},
+			   #{modifyuser,jdbcType=VARCHAR},
+			   #{modifydate,jdbcType=TIMESTAMP},
+			   #{siteId,jdbcType=VARCHAR})
+    </insert>
+    
+	<update id="updateInvMatBudget" parameterType="com.timss.inventory.bean.InvMatBudget">
+    	update inv_mat_budget imb
+		set imb.budget=#{budget,jdbcType=NUMERIC},
+			imb.deptid=#{deptid,jdbcType=VARCHAR},
+    		imb.setdate=#{setdate,jdbcType=TIMESTAMP},
+    		imb.modifyuser=#{modifyuser,jdbcType=VARCHAR},
+    		imb.modifydate=#{modifydate,jdbcType=TIMESTAMP}
+		where imb.imbid= #{imbid}
+    </update>
+</mapper>

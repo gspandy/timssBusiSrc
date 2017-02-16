@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceFlowMatchDao">
+	
+	<!-- 在resultMap中设置为指定的ID，然后即可将数据库中的column名称转换为bean中的属性。名字一样的可以不写在result中。 -->
+	<resultMap type="FinanceFlowMatch" id="financeFlowMatchMap">
+		<result property="fid" column="fid"/>
+		<result property="pid" column="pid"/>
+	</resultMap>
+	<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		fid,pid
+	</sql>
+	
+	<!--  新增FIN_FLOW_MATCH表数据，接收fid,pid,返回FinanceFlowMatch对象-->
+	 	<insert id="insertFinanceFlowMatch" parameterType="FinanceFlowMatch">
+		insert into FIN_FLOW_MATCH(fid,pid) 
+		values(#{fid}, #{pid})
+	</insert>
+
+		<!-- 通过fid查询FIN_FLOW_MATCH表的 信息，返回FinanceFlowMatch对象,fid必须不为空-->
+		<select id="queryFinanceFlowMatchByFid"  resultType="FinanceFlowMatch" >
+		select <include refid="columnBasic"/> 
+		from FIN_FLOW_MATCH
+		where 1 = 1 
+		and fid = #{params.fid}
+		</select>
+		
+		<!-- 通过pid查询FIN_FLOW_MATCH表的 信息，返回FinanceFlowMatch对象,pid必须不为空 -->
+		<select id="queryFinanceFlowMatchByPid"  resultType="FinanceFlowMatch">
+		select <include refid="columnBasic"/> 
+		from FIN_FLOW_MATCH
+		where 1 = 1 
+			and pid = #{pid}
+		</select>
+		
+	<delete id = "deleteFinanceFlowMatch" >
+		delete from fin_flow_match where fid = #{fid}
+	</delete>
+</mapper> 

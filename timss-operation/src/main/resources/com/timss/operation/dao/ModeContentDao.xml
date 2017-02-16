@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.ModeContentDao">
+
+	<delete id="deleteModeContent">
+		delete from OPR_MODE_CONTENT t where t.dutyId = #{ dutyId, jdbcType=NUMERIC } 
+		and t.jobsId = #{ jobsId, jdbcType=NUMERIC }
+		and t.handoverId = #{ handoverId, jdbcType=NUMERIC }
+		and exists ( select assetid from opr_mode m where t.assetid = m.assetid
+		<if test="team != null and team !=''">
+		 and team=#{ team, jdbcType=VARCHAR }
+		</if>
+		)
+	</delete>
+	
+	<insert id="insertBatchModeContent" parameterType="java.util.List">
+		insert into  OPR_MODE_CONTENT( 
+		contentId, assetId, content, dutyId, jobsId,
+		handoverId, isDelete, deptId,
+		siteId, createUser, createUserName, createDate ) 
+		select  temp.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			 select #{  item.contentId, jdbcType=VARCHAR}, #{  item.assetId, jdbcType=VARCHAR}, 
+			 #{  item.content, jdbcType=VARCHAR},#{  item.dutyId, jdbcType=NUMERIC}, 
+			 #{  item.jobsId, jdbcType=NUMERIC},#{  item.handoverId, jdbcType=NUMERIC},
+			 #{  item.isDelete, jdbcType=VARCHAR}, #{  item.deptid, jdbcType=VARCHAR}, 
+ 			 #{  item.siteid, jdbcType=VARCHAR}, #{  item.createuser, jdbcType=VARCHAR},
+ 			 #{  item.createUserName, jdbcType=VARCHAR}, #{  item.createdate, jdbcType=TIMESTAMP } from dual
+		</foreach>
+		) temp
+	</insert>
+	
+	<select id="queryModeContentByDutyJobsHandover" resultType="ModeContentVo">
+		select p.contentId, p.assetId, p.content, p.dutyId, p.jobsId,
+		handoverId, p.isDelete, p.deptId,
+		siteId, p.createUser, p.createUserName, p.createDate,
+		p.modifyUserName, p.modifyDate, p.modifyUser, a.assetName
+		from ( 
+			select * from OPR_MODE_CONTENT  
+			where dutyId = #{ dutyId, jdbcType=NUMERIC } 
+			and jobsId = #{ jobsId, jdbcType=NUMERIC }
+			and handoverId = #{ handoverId, jdbcType=NUMERIC } 
+		) p 
+		left join ast_asset a on a.assetId = p.assetId 
+		inner  join ( 
+			select * from opr_mode  where 1=1 
+			and jobId = #{ jobsId, jdbcType=NUMERIC }
+			<if test="team != null and team !=''">
+			 and team=#{ team, jdbcType=VARCHAR }
+			 </if>
+		) m on p.assetid = m.assetid 
+		order by m.team, m.sortnum asc, a.assetName
+	</select>
+	
+	<select id="insertOrUpdateDynamicTemp" resultType="Integer">
+		select count(1) from OPR_MODE_CONTENT 
+	</select>
+	
+</mapper> 

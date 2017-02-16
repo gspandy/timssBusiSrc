@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.DutyDao">
+	
+	<!-- 插入 -->
+	<insert id="insertDuty" parameterType="Duty">
+		 <selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select seq_opr_duty.nextval from dual
+		</selectKey> 
+		insert into OPR_DUTY( id, num, name, sortType, deptId, siteId,stationId,isactive ) 
+		values( #{ id,jdbcType=NUMERIC }, #{ num,jdbcType=VARCHAR }, #{ name,jdbcType=VARCHAR }, #{ sortType,jdbcType=NUMERIC }, #{ deptId,jdbcType=NUMERIC }, 
+				#{ siteId,jdbcType=VARCHAR }, #{ stationId,jdbcType=VARCHAR },#{isActive,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 批量插入 -->
+	<insert id="batchInsertDutyPerson" parameterType="java.util.List">
+		INSERT INTO opr_duty_person(DUTYID, USERID )  
+			<foreach collection="list" item="item" index="index" separator="union all">
+				select  #{item.dutyId} dutyId , #{item.userId} userId 
+				from dual
+			</foreach>
+	</insert>
+	
+	<!-- 批量删除 -->
+	<delete id="batchDeleteDutyPerson" parameterType="java.util.List">
+		DELETE FROM opr_duty_person where USERID in 
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item.userId}
+		</foreach>
+	</delete>
+	
+	<select id="hasDutyPerson" resultType="String">
+		select d.name from opr_duty d join opr_duty_person p on d.id=p.dutyId  where d.del_ind='N' and d.siteId=#{siteId} and p.userId=#{userId}
+	</select>
+	
+	<select id="queryOrgsRelatedToUsers" parameterType="int" resultType="String">
+		select userId from opr_duty_person where dutyId= #{ id }
+	</select>
+	
+	<update id="updateDuty" parameterType="Duty">
+		update OPR_DUTY set  name = #{ name,jdbcType=VARCHAR } ,sortType = #{ sortType,jdbcType=NUMERIC }, 
+		       stationId = #{ stationId,jdbcType=VARCHAR }, 
+		       isactive = #{ isActive,jdbcType=VARCHAR }		       
+		       where id= #{ id }
+	</update>
+		
+	<select id="queryDutyById" parameterType="int" resultType="Duty">
+		select * from OPR_DUTY where id= #{ id }
+	</select>
+	
+	<delete id="deleteDutyById" parameterType="int">
+		update OPR_DUTY set del_ind = 'Y' where id= #{ id }
+	</delete>
+	
+	<select id="queryAllDuty" resultType="Duty">
+		select * from OPR_DUTY where del_ind!='Y'
+	</select>
+	
+	<select id="queryDutyByPage" resultType="Duty">
+		select du.id, du.num, du.name, du.sortType, du.deptId, du.siteId,du.isactive,d.name stationId 
+		from OPR_DUTY du
+		left join opr_dept d on du.stationId = d.deptId 
+		where du.siteId like '%${ params.siteId }%' and du.del_ind!='Y'
+	</select>
+	
+	<select id="queryDutyBySearch" resultType="Duty" >
+		select du.id, du.num, du.name, du.sortType, du.deptId, du.siteId,du.isactive,d.name stationId 
+		from OPR_DUTY du
+		left join opr_dept d on du.stationId = d.deptId 
+		where du.del_ind!='Y'
+		<if test="params.id != null ">
+		 	and du.id like '%${params.id}%'
+		</if>
+		<if test="params.num != null ">
+		 	and du.num like '%${ params.num }%'
+		</if>
+		<if test="params.name != null ">
+		 	and du.name like '%${ params.name }%'
+		</if>
+		<if test="params.sortType != null ">
+		 	and du.sortType like '%${ params.sortType }%'
+		</if>
+		<if test="params.deptId != null ">
+		 	and du.deptId like '%${ params.deptId }%'
+		</if>
+		<if test="params.stationId != null">
+			and d.name like '%${ params.stationId }%' 
+		</if>
+		<if test="params.siteId != null ">
+		 	and du.siteId like '%${ params.siteId }%'
+		</if>
+		<if test="params.isActive != null ">
+		 	and du.isactive like '%${ params.isActive }%'
+		</if>
+	</select>
+	
+	<select id="queryDutyByStationId" parameterType="String" resultType="Duty">
+		select * from OPR_DUTY where del_ind!='Y' and isactive != 'N' and stationId= #{ stationId } ORDER BY SORTTYPE
+	</select>
+	
+	<select id="queryStationInfoBySitId" parameterType="String" resultType="RoleVo">
+		SELECT s.deptId roleId, s.NAME name, s.isactive active, s.UPDATETIME updateTime, 
+		s.updateBy updateBy, s.SITEID siteId 
+		FROM OPR_DEPT s 
+		WHERE deptId LIKE #{ roleId } and del_ind!='Y' and isactive!='N'
+	</select>
+	
+	<select id="queryDutyByUuid" parameterType="String" resultType="Duty">
+		SELECT * FROM OPR_DUTY WHERE <!-- del_ind!='Y' and isactive != 'N' and -->
+		ID IN ( 
+			SELECT dutyid FROM opr_rules_detail WHERE uuid = #{uuid} GROUP BY dutyid 
+		) 
+		ORDER BY sortType
+	</select>
+	
+	<select id="querySortTypeByStationId" parameterType="String" resultType="String">
+		SELECT MAX(sorttype) max FROM OPR_DUTY WHERE stationid = #{ stationId } and del_ind!='Y'
+	</select>
+	
+	<select id="queryDutyPersonAndShiftBySiteAndTime" resultType="DutyPersonShiftVo">
+select concat(to_char(sd.datetime,'YYYY-MM-DD'),concat('_',dp.userid)) flag,dp.userid userId,
+d.id dutyId,d.name dutyName,d.siteId,
+sd.datetime,
+s.id shiftId,s.name shiftName,s.starttime,s.longtime,s.type shiftType
+from opr_duty_person dp
+left join opr_duty d on dp.dutyid=d.id
+left join opr_schedule_detail sd on sd.dutyid=d.id 
+left join opr_shift s on s.id=sd.shiftid
+where 1=1
+		<if test="siteId != null  and siteId != '' ">
+		 	and d.siteid=#{siteId,jdbcType=VARCHAR}
+		</if>
+		<if test="userId != null  and userId != '' ">
+		 	and dp.userid=#{userId,jdbcType=VARCHAR}
+		</if>
+		<if test="startDate != null  and startDate != '' ">
+		 	and to_char(sd.datetime,'YYYY-MM-DD') &gt;= substr(#{ startDate,jdbcType=VARCHAR },0,10) 
+		</if>
+		<if test="endDate != null  and endDate != '' ">
+		 	and to_char(sd.datetime,'YYYY-MM-DD') &lt;= substr(#{ endDate,jdbcType=VARCHAR },0,10)
+		</if>
+	</select>
+	
+	<select id="queryOprPersonIdBySite" resultType="String">
+		select distinct userId 
+		from opr_duty_person dp
+		left join opr_duty d on dp.dutyid=d.id 
+		where d.siteid=#{siteId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryDutyPersons" resultType="PersonJobs">
+select distinct p.userId,su.name userName,d.id dutyid,d.stationId stationId
+from opr_duty_person p
+inner join opr_duty d on d.id=p.dutyId and d.isactive!='N' and d.del_ind!='Y'
+inner join sec_user su on su.user_id = p.userId and su.active!='N'
+where 1=1
+<if test="dutyId != null  and dutyId != 0 ">
+ and p.dutyId=#{dutyId}
+</if>
+<if test="siteId != null  and siteId != '' ">
+ and d.siteId=#{siteId}
+</if>
+<if test="userId != null  and userId != '' ">
+ and p.userId=#{userId}
+</if>
+<if test="userKw != null  and userKw != '' ">
+ and (su.user_id like '%'||#{userKw}||'%' or su.name like '%'||#{userKw}||'%')
+</if>
+	</select>
+</mapper> 

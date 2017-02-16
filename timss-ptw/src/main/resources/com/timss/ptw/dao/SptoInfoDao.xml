@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.SptoInfoDao">
+	<resultMap type="SptoInfoVo" id="sptoInfoMap">
+		<id column="ID" property="id" />
+		<result column="SHEETNO" property="sheetNo" />
+		<result column="CODE" property="code" />
+		<result column="MISSION" property="mission" />
+		<result column="EQUIPMENT" property="equipment" />
+		<result column="TYPE" property="type" />
+		<result column="OPERITEM_REMARKS" property="operItemRemarks" />
+		<result column="IS_DRAFT" property="isDraft" />
+		<result column="VERSION" property="version" />
+		<result column="PROCINSTID" property="procinstId" />
+		<result column="STATUS" property="status" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEL_FLAG" property="delFlag" />
+		<result column="AUDITUSER" property="auditUser" />
+		<result column="AUDITUSERNAME" property="auditUserName" />
+		<result column="PERMITUSER" property="permitUser" />
+		<result column="PERMITUSERNAME" property="permitUserName" />
+		<result column="CREATEUSERNAME" property="createUserName" />
+		<result column="EQUIPMENTNAME" property="equipmentName" />
+		<result column="CREATEDATE" property="createDate" />
+		<result column="AUDITDATE" property="auditDate" />
+		<result column="PERMITDATE" property="permitDate" />
+		<result column="PREAUDITUSER" property="preAuditUser" />
+		<result column="PREAUDITUSERNAME" property="preAuditUserName" />
+		<result column="PREAUDITDATE" property="preAuditDate" />
+		<result column="BEGINTIME" property="beginTime" />
+		<result column="ENDTIME" property="endTime" />
+	</resultMap>
+	<resultMap type="PtoOperItem" id="sptoItemMap">
+		<id column="ID" property="id" />
+		<result column="PTOID" property="ptoId" />
+		<result column="SHOWORDER" property="showOrder" />
+		<result column="CONTENT" property="content" />
+	</resultMap>
+	<select id="querySptoInfo" resultMap="sptoInfoMap">
+		SELECT
+		T.ID,T.CODE,T.MISSION,T.EQUIPMENT,T.TYPE,T.BEGINTIME,T.ENDTIME,
+		T.VERSION,T.PROCINSTID,T.STATUS,T.CREATEUSER,T.OPERITEM_REMARKS,
+		T.MODIFYDATE,T.MODIFYUSER,T.SITEID,T.DEL_FLAG,T.IS_DRAFT,
+		T1.USERNAME AS AUDITUSERNAME,
+		T2.USERNAME AS PERMITUSERNAME,
+		T3.USERNAME AS PREAUDITUSERNAME,
+		ASSET.ASSETNAME AS EQUIPMENTNAME,
+		T0.USERNAME AS CREATEUSERNAME,
+		T0.OPRDATE AS CREATEDATE,
+		T1.OPRDATE AS AUDITDATE,
+		T2.OPRDATE AS PERMITDATE,
+		T3.OPRDATE AS PREAUDITDATE
+		FROM
+		PTO_STANDARDPTO T
+		LEFT JOIN PTO_RELATEUSERINFO T0 ON T0.STANDARDPTOID = T.ID AND T0.TYPE = #{params.writeStatus}
+		LEFT JOIN PTO_RELATEUSERINFO T1 ON T1.STANDARDPTOID = T.ID AND T1.TYPE = #{params.auditStatus}
+		LEFT JOIN PTO_RELATEUSERINFO T2 ON T2.STANDARDPTOID = T.ID AND T2.TYPE = #{params.permitStatus}
+		LEFT JOIN AST_ASSET ASSET ON T.EQUIPMENT = ASSET.ASSETID
+		LEFT JOIN PTO_RELATEUSERINFO T3 ON T3.STANDARDPTOID = T.ID AND T3.TYPE = #{params.preauditStatus}
+		WHERE 
+		T.STATUS <![CDATA[<>]]> #{params.statusCon1} 
+		AND T.DEL_FLAG = #{params.delFlag} AND T.IS_DRAFT = #{params.isDraft}
+		<if test="params.onRunningSpto != null">
+			AND t.begintime <![CDATA[<]]> #{params.nowTime} AND t.endtime <![CDATA[>=]]> #{params.nowTime}
+		</if>
+		<if test="params.siteid != null">
+			AND T.SITEID = #{params.siteid}
+		</if>
+		
+		<if test="params.selectTreeId != null">
+			AND T.EQUIPMENT IN (
+			SELECT A.ASSETID FROM AST_ASSET A
+			START WITH A.ASSETID =
+			#{params.selectTreeId}
+			CONNECT BY PRIOR ASSETID
+			= A.PARENTID)
+		</if>
+	</select>
+
+
+	<select id="querySptoInfoByCode" resultMap="sptoInfoMap">
+		SELECT
+			T.ID,T.CODE,T.MISSION,T.EQUIPMENT,T.TYPE,T.BEGINTIME,T.ENDTIME,
+			T.VERSION,T.PROCINSTID,T.STATUS,T.CREATEUSER,T.OPERITEM_REMARKS,
+			T.MODIFYDATE,T.MODIFYUSER,T.SITEID,T.DEL_FLAG,T.IS_DRAFT,
+			ASSET.ASSETNAME AS EQUIPMENTNAME
+		FROM PTO_STANDARDPTO T
+			LEFT JOIN AST_ASSET ASSET ON T.EQUIPMENT = ASSET.ASSETID
+		WHERE T.STATUS = 'passed' AND T.DEL_FLAG = 'N' AND T.IS_DRAFT = 'N'
+			AND T.SITEID = #{params.siteid} AND t.begintime <![CDATA[<]]> #{params.nowTime} AND t.endtime <![CDATA[>=]]>#{params.nowTime} 
+			<if test="params.sptoCode != 'nullString'.toString() ">
+				AND UPPER(T.CODE) LIKE '%'||UPPER(#{params.sptoCode})||'%'
+			</if> 	
+	</select>
+
+	<select id="querySptoInfoListByCode" resultMap="sptoInfoMap">
+		SELECT T.ID,T.CODE,T.MISSION,T.BEGINTIME,T.ENDTIME,T.OPERITEM_REMARKS,
+				T.VERSION,T.STATUS,T.CREATEUSER,T.SITEID
+		FROM PTO_STANDARDPTO T
+		WHERE T.DEL_FLAG = 'N' AND T.IS_DRAFT = 'N'
+			<if test="id != null">
+				and t.id <![CDATA[<>]]> #{id}
+			</if> 	
+			AND T.SITEID = #{siteid} 
+			AND T.CODE = #{code}	
+		order by t.version desc
+	</select>
+	
+	<select id="querySameCodeSptoListByCode" resultMap="sptoInfoMap">
+		SELECT T.ID,T.CODE,T.MISSION,T.BEGINTIME,T.ENDTIME,T0.USERNAME AS CREATEUSERNAME,
+				T.VERSION,T.STATUS,T.CREATEUSER,T.SITEID,T.OPERITEM_REMARKS
+		FROM PTO_STANDARDPTO T
+			LEFT JOIN PTO_RELATEUSERINFO T0 ON T0.STANDARDPTOID = T.ID AND T0.TYPE = 'write'
+		WHERE T.DEL_FLAG = 'N' AND T.IS_DRAFT = 'N'
+				<if test="params.id != null">
+					and t.id <![CDATA[<>]]> #{params.id}
+				</if> 	
+				AND T.SITEID = #{params.siteid} 
+				AND T.CODE = #{params.code}	
+		order by t.version desc
+	</select>
+	
+	<select id="querySptoInfoById" resultMap="sptoInfoMap">
+		SELECT
+		T.ID,T.SHEETNO,T.CODE,T.MISSION,T.EQUIPMENT,T.TYPE,T.BEGINTIME,T.ENDTIME,
+		T.VERSION,T.PROCINSTID,T.STATUS,T.CREATEUSER,T.OPERITEM_REMARKS,
+		T.MODIFYDATE,T.MODIFYUSER,T.SITEID,T.DEL_FLAG,T.IS_DRAFT,
+		T1.USERNAME AS AUDITUSERNAME,
+		T2.USERNAME AS PERMITUSERNAME,
+		T3.USERNAME AS PREAUDITUSERNAME,
+		ASSET.ASSETNAME AS EQUIPMENTNAME,
+		T0.OPRDATE AS CREATEDATE,
+		T1.OPRDATE AS AUDITDATE,
+		T2.OPRDATE AS PERMITDATE,
+		T3.OPRDATE AS PREAUDITDATE,
+		T0.USERNAME AS CREATEUSERNAME
+		FROM
+		PTO_STANDARDPTO T 
+		LEFT JOIN PTO_RELATEUSERINFO T0 ON T0.STANDARDPTOID = T.ID AND T0.TYPE = #{condition.writeStatus} 
+		LEFT JOIN PTO_RELATEUSERINFO T1 ON T1.STANDARDPTOID = T.ID AND T1.TYPE = #{condition.auditStatus}
+		LEFT JOIN
+		PTO_RELATEUSERINFO T2 ON T2.STANDARDPTOID = T.ID AND T2.TYPE =#{condition.permitStatus}
+		LEFT JOIN AST_ASSET ASSET ON T.EQUIPMENT = ASSET.ASSETID
+		LEFT JOIN PTO_RELATEUSERINFO T3 ON T3.STANDARDPTOID = T.ID AND T3.TYPE = #{condition.preauditStatus}
+		WHERE
+		T.ID = #{id}
+	</select>
+	
+	<select id="querySptoMainInfoById" resultMap="sptoInfoMap">
+		SELECT  T.ID,T.CODE,T.MISSION,T.EQUIPMENT,T.TYPE,T.BEGINTIME,T.ENDTIME,
+				T.VERSION,T.PROCINSTID,T.STATUS,T.CREATEUSER,T.OPERITEM_REMARKS,
+				T.MODIFYDATE,T.MODIFYUSER,T.SITEID,T.DEL_FLAG,T.IS_DRAFT,T.SITEID		
+		FROM PTO_STANDARDPTO T 
+		WHERE T.ID = #{id} and t.siteid=#{siteid}
+	</select>
+	
+	<select id="querySptoItemsBySptoId" resultMap="sptoItemMap">
+		SELECT
+		T.ID,T.PTOID,T.SHOWORDER,T.CONTENT
+		FROM PTO_OPERITEM T
+		WHERE
+		T.PTOID = #{id}
+		ORDER BY T.SHOWORDER ASC
+	</select>
+
+	<insert id="insertSptoInfo" parameterType="com.timss.ptw.bean.SptoInfo">
+		INSERT INTO PTO_STANDARDPTO (ID,SHEETNO,CODE,MISSION,EQUIPMENT,TYPE,BEGINTIME,ENDTIME,
+			OPERITEM_REMARKS,VERSION,STATUS,CREATEDATE,CREATEUSER,SITEID,DEL_FLAG,IS_DRAFT)
+		VALUES(
+			#{id},
+			#{sheetNo},
+			#{code},
+			#{mission,jdbcType=VARCHAR},
+			#{equipment,jdbcType=VARCHAR},
+			#{type,jdbcType=VARCHAR},
+			#{beginTime,jdbcType=TIMESTAMP},
+			#{endTime,jdbcType=TIMESTAMP},
+			
+			#{operItemRemarks,jdbcType=VARCHAR},
+			#{version,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{createdate,jdbcType=TIMESTAMP},
+			#{createuser,jdbcType=VARCHAR},
+			#{siteid,jdbcType=VARCHAR},
+			#{delFlag,jdbcType=VARCHAR},
+			#{isDraft,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSptoItem">
+		INSERT INTO PTO_OPERITEM
+		(ID,PTOID,SHOWORDER,CONTENT) VALUES
+		(
+		#{id},
+		#{ptoId,jdbcType=VARCHAR},
+		#{showOrder,jdbcType=NUMERIC},
+		#{content,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateSptoInfo">
+		UPDATE PTO_STANDARDPTO
+		<set>
+			<foreach item="item" index="index" collection="params">
+				<if test="item=='mission'"> MISSION = #{sptoInfoVo.mission,jdbcType=VARCHAR}, </if>
+				<if test="item=='equipment'"> EQUIPMENT = #{sptoInfoVo.equipment,jdbcType=VARCHAR},
+				</if>
+				<if test="item=='type'"> TYPE = #{sptoInfoVo.type,jdbcType=VARCHAR}, </if>
+				<if test="item=='operItemRemarks'"> OPERITEM_REMARKS = #{sptoInfoVo.operItemRemarks,jdbcType=VARCHAR}, </if>
+				<if test="item=='version'"> VERSION = #{sptoInfoVo.version,jdbcType=VARCHAR}, </if>
+				
+				<if test="item=='beginTime'"> BEGINTIME = #{sptoInfoVo.beginTime,jdbcType=TIMESTAMP},
+				</if>
+				<if test="item=='endTime'"> ENDTIME = #{sptoInfoVo.endTime,jdbcType=TIMESTAMP},
+				</if>
+				<if test="item=='procinstId'"> PROCINSTID = #{sptoInfoVo.procinstId,jdbcType=VARCHAR},
+				</if>
+				<if test="item=='status'"> STATUS = #{sptoInfoVo.status,jdbcType=VARCHAR}, </if>
+				<if test="item=='delFlag'"> DEL_FLAG = #{sptoInfoVo.delFlag,jdbcType=VARCHAR}, </if>
+				<if test="item=='isDraft'"> IS_DRAFT = #{sptoInfoVo.isDraft,jdbcType=VARCHAR}, </if>
+			</foreach>
+			<if test="sptoInfoVo.modifydate != null">
+				MODIFYDATE=#{sptoInfoVo.modifydate,jdbcType=TIMESTAMP},
+			</if>
+			MODIFYUSER=#{sptoInfoVo.modifyuser,jdbcType=VARCHAR}
+		</set>
+		WHERE ID=#{sptoInfoVo.id}
+	</update>
+
+	<update id="updateValidTime">
+		UPDATE PTO_STANDARDPTO
+		SET BEGINTIME = #{beginTime,jdbcType=TIMESTAMP},
+			ENDTIME = #{endTime,jdbcType=TIMESTAMP}
+		WHERE ID=#{id,jdbcType=VARCHAR}
+	</update>
+
+
+	<update id="invalidateOtherSameCodeSpto">
+		UPDATE PTO_STANDARDPTO t
+		SET ENDTIME = #{nowTime},
+			t.modifydate = #{nowTime},
+			t.modifyuser = #{userId,jdbcType=VARCHAR}
+		WHERE t.id <![CDATA[<>]]> #{id} and T.STATUS = 'passed' AND T.DEL_FLAG = 'N' AND T.IS_DRAFT = 'N'
+			AND T.SITEID = #{siteid} AND t.begintime <![CDATA[<]]> #{nowTime} AND t.endtime <![CDATA[>=]]>#{nowTime}
+			AND T.CODE = #{code}
+	</update>
+
+	<delete id="deleteSptoItem">
+		DELETE FROM PTO_OPERITEM
+		WHERE PTOID
+		= #{id}
+	</delete>
+
+	<insert id="insertSptoRelateUser" parameterType="com.timss.ptw.bean.PtoRelateUserInfo">
+		INSERT INTO
+		PTO_RELATEUSERINFO
+		(STANDARDPTOID,USERID,USERNAME,OPRDATE,TYPE) VALUES
+		(
+		#{standardPtoId,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR},
+		#{oprDate,jdbcType=DATE},
+		#{type,jdbcType=VARCHAR}
+		)
+	</insert>
+	<delete id="deleteSptoRelateUser" parameterType="com.timss.ptw.bean.PtoRelateUserInfo">
+		DELETE FROM
+		PTO_RELATEUSERINFO
+		WHERE STANDARDPTOID = #{standardPtoId} 
+		AND USERID = #{userId} 
+		AND USERNAME = #{userName} 
+		AND TYPE = #{type}
+	</delete>
+
+
+	<select id="getMaxVersionByCode" resultType="java.lang.Integer">
+		SELECT NVL(MAX(nvl(T.VERSION,0)),0)
+		FROM PTO_STANDARDPTO T
+		WHERE T.CODE = #{code} and t.siteid=#{siteid}
+	</select>
+</mapper>

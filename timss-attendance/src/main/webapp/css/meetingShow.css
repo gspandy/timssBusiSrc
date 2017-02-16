@@ -1,0 +1,99 @@
+.card {
+	width: 270px;
+	height: 255px;
+	border-radius: 4px;
+	padding-top: 32px;
+	position: relative;
+	float: left;
+	margin-right: 10px;
+	margin-top: 10px;
+	border: 1px solid transparent;
+	border-color: #cfdbe2;
+	border-top-width: 3px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.card .title-wrap {
+	padding: 6px;
+	height: 32px;
+	position: absolute;
+	top: 0px;
+	width: 100%;
+	border-bottom: 1px solid #ddd;
+}
+
+.panel-title {
+	font-size: 14px;
+	padding: 2px;
+	padding-left: 6px;
+	border-bottom: 1px solid #ddd;
+	position: relative;
+	cursor: pointer;
+	color: #333;
+	height: 30px;
+}
+
+.arrow.arrow-down {
+	background-image:
+		url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAMAAAC38k/IAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAGZQTFRFBgYGEhISyMjIo6OjGhoa4eHhqamp5eXlX19fXFxcZGRk+fn5MDAwqKiofn5+5OTk6enpBwcHFhYWgYGBwsLCHh4eV1dXNzc3PDw8w8PDKioq9vb2d3d3CgoKiIiIERERAAAA////12vfZAAAACJ0Uk5T////////////////////////////////////////////AA3Qw3EAAABQSURBVHjaPMdFAoAwEEPRqeBS3GVy/0tCW8rfJI9SErdLUE5Dx19aEvqAC4Ro9n9JXkC19p8xLPbJIiscsGrmUcIDB3ONALOVzQ+oys0jwAAIUwyC/s5loQAAAABJRU5ErkJggg==");
+}
+
+.arrow.arrow-up {
+	background-image:
+		url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAMAAAC38k/IAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAGZQTFRFBgYGEhISyMjIo6OjGhoa4eHhqamp5eXlX19fXFxcZGRk+fn5MDAwqKiofn5+5OTk6enpBwcHFhYWgYGBwsLCHh4eV1dXNzc3PDw8w8PDKioq9vb2d3d3CgoKiIiIERERAAAA////12vfZAAAACJ0Uk5T////////////////////////////////////////////AA3Qw3EAAABPSURBVHjaPMdXFoAgEEPRAbH33jXsf5Myo/g+knPJcmUgRzxNsdU/KuDw0CNg1hd5Cte0C6KT0QaMeIE0hw4XvnpL2nh0A2WkbklR8ggwAFKNDIIw9S49AAAAAElFTkSuQmCC");
+}
+
+.arrow {
+	width: 12px;
+	height: 10px;
+	display: block;
+	float: right;
+	position: absolute;
+	top: 10px;
+	right: 6px;
+}
+
+.conf-list {
+	margin: 0px;
+	padding: 0px;
+}
+
+.conf-list li {
+	width: 100%;
+	padding: 4px;
+	border-bottom: 1px solid #ddd;
+	padding-left: 8px;
+	position: relative;
+	min-height: 30px;
+}
+
+.conf-list li span {
+	float: right;
+}
+
+.cpanel-body b {
+	height: 100%;
+	width: 6px;
+	display: block;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+.cpanel-body .leader b {
+	background-color: rgb(183, 0, 4);
+}
+
+.title-wrap a {
+	position: absolute;
+	right: 6px;
+}
+
+.panel-group {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.today {
+	background-color: RGB(255,225,121);
+}

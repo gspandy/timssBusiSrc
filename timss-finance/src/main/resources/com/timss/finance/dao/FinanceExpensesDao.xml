@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceExpensesDao">
+	
+	<select id="queryBeginYearBySiteId"  resultType="string">
+		select to_char(createdate,'yyyy')
+		from FIN_MAIN
+		where  siteid = #{siteId,jdbcType=VARCHAR} and rownum=1 order by createdate
+	</select>
+		
+</mapper> 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmOperRecordDao">
+
+	<resultMap type="ItsmOperRecord" id="operRecordMap">
+		<result column="WO_ID" property="woId" />
+		<result column="WORKFLOW_ID" property="flowId" />
+		<result column="OPERUSER" property="operUser" />
+		<result column="OPERUSER_TEAM" property="operUserTeam " />
+		<result column="OPER_TYPE" property="operType" />
+		<result column="OPER_CONTENT" property="operContent" />
+		<result column="OPER_DATE" property="operDate" />
+		<result column="SITEID" property="siteid" />
+	</resultMap>	
+	
+	<insert id="insertOperRecord" >
+		insert into itsm_oper_his(WO_ID,WORKFLOW_ID,OPERUSER,OPERUSER_TEAM,OPER_TYPE,OPER_CONTENT,OPER_DATE,SITEID) 
+		values( #{woId,jdbcType=VARCHAR},
+				#{flowId,jdbcType=VARCHAR},
+				#{operUser,jdbcType=VARCHAR},
+				#{operUserTeam,jdbcType=VARCHAR},
+				#{operType,jdbcType=VARCHAR},
+				#{operContent,jdbcType=VARCHAR},
+				#{operDate,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR}) 
+	</insert>
+	
+	
+</mapper>

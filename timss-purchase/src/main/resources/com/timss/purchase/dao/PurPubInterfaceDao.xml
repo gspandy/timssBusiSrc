@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurPubInterfaceDao">
+	<resultMap type="com.timss.purchase.vo.PurApplyVO" id="PurApplyVOMap">
+		<result property="sheetId" column="sheet_id"/>
+		<result property="sheetno" column="sheetno"/>
+		<result property="sheetname" column="sheetname"/>
+		<result property="createname" column="createname"/>
+		<result property="dept" column="dept"/>
+		<result property="projectAscription" column="PROJECT_ASCRIPTION"/>
+		<result property="createdate" column="createdate"/>
+	</resultMap>
+	<resultMap type="com.timss.purchase.vo.PurInvoiceAssetVo" id="PurInvoiceAssetVoMap">
+		<result property="itemId" column="item_id"/>
+		<result property="itemCode" column="item_code"/>
+		<result property="purchName" column="purch_name"/>
+		<result property="unitPrice" column="unit_price"/>
+		<result property="receivedMount" column="received_mount"/>
+		<result property="receivedPrice" column="received_price"/>
+		<result property="noTaxInvoicePrice" column="no_tax_invoice_price"/>
+		<result property="taxUnitPrice" column="tax_unit_price"/>
+		<result property="taxSum" column="tax_sum"/>
+		<result property="noTaxSumPrice" column="no_tax_sum_price"/>
+		<result property="imtNo" column="imt_no"/>
+		<result property="isReceived" column="is_received"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.purchase.vo.PurOrderVO" id="PurOrderInterMap">
+		<result property="sheetIType" column="sheet_i_type"/>
+		<result property="sheetId" column="sheet_id"/>
+		<result property="companyName" column="company_name"/>
+		<result property="totalPrice" column="total_price"/>
+		<result property="statusName" column="status_name"/>
+		<result property="companyNo" column="company_no"/>
+		<result property="curHandler" column="cur_handler"/>
+		<result property="taxRate" column="tax_rate"/>
+	</resultMap>
+	<resultMap type="com.timss.inventory.vo.InvItemVO" id="PurInvItemVOMap">
+		<result property="siteId" column="site_id"/>
+		<result property="qtyUnit1" column="qty_unit1"/>
+		<result property="qtyUnit2" column="qty_unit2"/>
+		<result property="qtyStock" column="qty_stock"/>
+		<result property="cateId" column="cate_id"/>
+		<result property="cateName" column="cate_name"/>
+		<result property="totalQty" column="total_qty"/>
+		<result property="prepareQty" column="prepare_qty"/>
+		<result property="lateInPrice" column="late_in_price"/>
+		<result property="lateInQty" column="late_in_qty"/>
+		<result property="blgEquip" column="blg_equip"/>
+		<result property="secQty" column="sec_qty"/>
+		<result property="lateInDate" column="late_in_date"/>
+		<result property="issafety" column="ISSAFETY"/>
+		<result property="qtyEconomic" column="QTY_ECONOMIC"/>
+		<result property="qtyLowInv" column="QTY_LOWINV"/>
+		<result property="cateType" column="invcate"/>
+		<result property="puraId" column="puraId"/>
+		<result property="nowqty" column="nowqty"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="invNum" column="INVNUM"/>
+	</resultMap>
+	<!-- 使用ihint来查询采购合同信息 -->
+	<select id="queryPurOrderByIHint" parameterType="java.util.Map" resultMap="PurOrderInterMap">
+		SELECT T.SHEET_ID,T.SHEETNO,T.SHEETNAME
+		FROM (
+			SELECT IWP.SHEET_ID,IWP.SHEETNO,IWP.SHEETNAME
+			FROM ITCEAM_WORKFLOW_PURCHORDER IWP 
+			WHERE INSTR(IWP.SHEETNO,'${keyWord}') <![CDATA[>]]> 0 AND IWP.SITEID = '${siteid}'
+				AND IWP.CREATEDATE BETWEEN ADD_MONTHS(SYSDATE ,-12) AND SYSDATE AND IWP.STATUS <![CDATA[>]]> 0
+				
+			UNION ALL
+			
+			SELECT IWP.SHEET_ID,IWP.SHEETNO,IWP.SHEETNAME
+			FROM ITCEAM_WORKFLOW_PURCHORDER IWP 
+			WHERE INSTR(IWP.SHEETNAME,'${keyWord}')<![CDATA[>]]> 0 AND IWP.SITEID = '${siteid}' 
+				AND IWP.CREATEDATE BETWEEN ADD_MONTHS(SYSDATE ,-12) AND SYSDATE AND IWP.STATUS <![CDATA[>]]> 0
+		) T WHERE ROWNUM &lt;= 20
+		GROUP BY T.SHEET_ID,T.SHEETNO,T.SHEETNAME
+		ORDER BY T.SHEETNO ASC
+	</select>
+	
+	<!-- 根据采购合同id查询采购合同主单信息 -->
+	<select id="queryPurOrderVOBySheetId" parameterType="java.util.Map" resultMap="PurOrderInterMap">
+		SELECT IWP.SHEET_ID,
+	            IWP.SHEET_I_TYPE,
+	            IWP.DHDATE,
+	            IWP.COMPANY_NO,
+	            SBI.NAME AS COMPANY_NAME,
+	            IWP.SHEETNO,
+	            IWP.SHEETNAME,
+	            IWP.BUSINESSNO
+		FROM ITCEAM_WORKFLOW_PURCHORDER IWP,SUP_BASE_INFO SBI 
+		WHERE IWP.COMPANY_NO = SBI.CODE AND IWP.SITEID = SBI.SITEID	AND
+		IWP.SHEET_ID = '${sheetId}' AND IWP.SITEID = '${siteid}'
+	</select>
+	
+	<!-- 根据采购和同id查询物资信息 -->
+	<select id="queryPurInvoiceAssetVoBySheetId" parameterType="java.util.Map" resultMap="PurInvoiceAssetVoMap">
+		SELECT II.ITEMID AS ITEM_ID,
+			II.ITEMCODE AS ITEM_CODE,
+           II.ITEMNAME AS PURCH_NAME,
+           II.CUSMODEL AS TYPE,
+           IU.UNITNAME AS UNIT,
+           IT.SHEETNO AS IMT_NO,
+           IT.PRICE AS UNIT_PRICE,
+           IT.ITEMNUM AS MOUNT,
+           NVL(IT.IN_QTY,0) AS RECEIVED_MOUNT,
+           NVL(IT.REVICEPRICE,0) AS RECEIVED_PRICE,
+           IT.VCPRICE AS NO_TAX_INVOICE_PRICE,
+           IT.COST AS TAX_UNIT_PRICE,
+           IT.TAX AS TAX_SUM,
+           CASE WHEN IT.IN_QTY IS NULL THEN 'NOTIN' ELSE 'IN' END AS IS_RECEIVED,
+           IT.ISRMBRS,
+           IT.WAREHOUSEID
+	    FROM(
+	      SELECT IWOE.ITEMID,
+	               IMT.SHEETNO,
+	               IWOE.PRICE,
+	               IWOE.ITEMNUM,
+	               IMTD.IN_QTY,
+	               IMTD.IN_QTY*IWOE.PRICE AS REVICEPRICE,
+	               IWOE.PRICE AS VCPRICE,
+	               IWOE.COST,
+	               IWOE.TAX,
+	               IWP.SITEID AS SITE_ID,
+	               IMTD.ISRMBRS,
+	               IWOE.WAREHOUSEID
+	      FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE
+	             INNER JOIN ITCEAM_WORKFLOW_PURCHORDER IWP ON IWOE.SHEET_ID = IWP.SHEET_ID
+	             LEFT JOIN INV_MAT_MAP IMM ON IWOE.SHEET_ID = IMM.OUTTERID AND IWOE.ITEMID = IMM.ITEMCODE AND IMM.TRAN_TYPE = 'receivingmaterial'
+	             LEFT JOIN (SELECT * FROM INV_MAT_TRAN_REC IMTD WHERE IMTD.IN_QTY >0) IMTD ON IMM.IMTDID = IMTD.IMTDID
+	             LEFT JOIN INV_MAT_TRAN IMT ON IMTD.IMTID = IMT.IMTID AND IMT.SITE_ID = IMTD.SITE_ID
+	      WHERE IWOE.SHEET_ID ='${sheetId}' AND IWP.SITEID ='${siteid}'
+	      GROUP BY IWOE.ITEMID,
+	                IMT.SHEETNO,
+	                IWOE.PRICE,
+	                IWOE.ITEMNUM,
+	                IMTD.IN_QTY,
+	                IWOE.PRICE,
+	                IWOE.COST,
+	                IWOE.TAX,
+	                IWP.SITEID,
+	                IMTD.ISRMBRS,
+	                IWOE.WAREHOUSEID
+	      ) IT,
+	      INV_ITEM II,
+	      INV_UNIT IU
+	    WHERE IT.ITEMID = II.ITEMCODE AND IT.SITE_ID = II.SITE_ID AND II.UNIT1 = IU.UNITID AND II.SITE_ID = IU.SITE_ID
+	    ORDER BY II.ITEMCODE
+	</select>
+	<!-- 根据采购和同id查询物资信息 -->
+	<select id="queryWuziByContractId" parameterType="java.util.Map" resultMap="PurInvoiceAssetVoMap">
+		SELECT II.ITEMID AS ITEM_ID,
+			 	II.ITEMCODE AS ITEM_CODE,
+           		II.ITEMNAME AS PURCH_NAME,
+           		II.CUSMODEL AS TYPE,
+           		IU.UNITNAME AS UNIT,
+           		IT.SHEETNO AS IMT_NO,
+           		IT.PRICE AS UNIT_PRICE,
+           		IT.ITEMNUM AS MOUNT,
+           		NVL(IT.IN_QTY,0) AS RECEIVED_MOUNT,
+           		NVL(IT.REVICEPRICE,0) AS RECEIVED_PRICE,
+           		IT.VCPRICE AS NO_TAX_INVOICE_PRICE,
+           		IT.COST AS TAX_UNIT_PRICE,
+           		IT.TAX AS TAX_SUM,
+           		CASE WHEN IT.IN_QTY IS NULL THEN 'NOTIN' ELSE 'IN' END AS IS_RECEIVED,
+           		IT.ISRMBRS
+    	FROM(
+      		SELECT IWOE.ITEMID,
+               		IMT.SHEETNO,
+               		IWOE.PRICE,
+               		IWOE.ITEMNUM,
+               		IMTD.IN_QTY,
+              		IMTD.IN_QTY*IWOE.PRICE AS REVICEPRICE,
+               		IWOE.PRICE AS VCPRICE,
+               		IWOE.COST,
+               		IWOE.TAX,
+               		IWP.SITEID AS SITE_ID,
+               		IMTD.ISRMBRS
+      		FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE
+             		INNER JOIN ITCEAM_WORKFLOW_PURCHORDER IWP ON IWOE.SHEET_ID = IWP.SHEET_ID
+             		LEFT JOIN INV_MAT_MAP IMM ON IWOE.SHEET_ID = IMM.OUTTERID AND IWOE.ITEMID = IMM.ITEMCODE AND IMM.TRAN_TYPE = 'receivingmaterial'
+             		LEFT JOIN (SELECT * FROM INV_MAT_TRAN_REC IMTD WHERE IMTD.IN_QTY >0)  IMTD ON IMM.IMTDID = IMTD.IMTDID
+             		LEFT JOIN INV_MAT_TRAN IMT ON IMTD.IMTID = IMT.IMTID AND IMT.SITE_ID = IMTD.SITE_ID
+      		WHERE IWOE.SHEET_ID =#{params.sheetId,jdbcType=VARCHAR} AND IWP.SITEID =#{params.siteId,jdbcType=VARCHAR}) IT,
+      		INV_ITEM II,
+      		INV_UNIT IU
+    	WHERE IT.ITEMID = II.ITEMCODE AND IT.SITE_ID = II.SITE_ID AND II.UNIT1 = IU.UNITID AND II.SITE_ID = IU.SITE_ID
+	</select>
+	
+	<!-- 根据发票信息更新交易表中入库价格 (税后价格)-->
+	<update id="updateTranDetailByInvoice">
+		UPDATE INV_MAT_TRAN_DETAIL IMTD
+		SET IMTD.PRICE = (TO_NUMBER(${PurInvoiceItemBean.noTaxSumPrice}) + TO_NUMBER(${PurInvoiceItemBean.tax}))/IMTD.IN_QTY,IMTD.ISRMBRS='Y'
+		WHERE IMTD.IMTDID = (
+			SELECT IMTD.IMTDID 
+			FROM INV_MAT_TRAN_DETAIL IMTD,
+			     INV_MAT_TRAN IMT,
+			     INV_MAT_MAPPING IMM,
+			     ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE,
+			     ITCEAM_WORKFLOW_PURCHORDER IWP
+			WHERE IMTD.IMTID = IMT.IMTID 
+				  AND IMTD.SITE_ID = IMT.SITE_ID
+			      AND IMTD.IMTDID = IMM.IMTDID 
+			      AND IMM.TRAN_TYPE = 'receivingmaterial'
+			      AND IMM.OUTTERID = IWOE.SHEET_ID 
+			      AND IMM.ITEMCODE = IWOE.ITEMID
+			      AND IWOE.SHEET_ID = IWP.SHEET_ID
+				  AND IMT.SHEETNO = #{PurInvoiceItemBean.imtNo,jdbcType=VARCHAR} 
+				  AND IMTD.ITEMID = #{PurInvoiceItemBean.itemId,jdbcType=VARCHAR} 
+				  AND IMT.SITE_ID = #{siteId,jdbcType=VARCHAR} 
+				  AND IWP.SHEET_ID = #{purOrderId,jdbcType=VARCHAR}
+		)
+	</update>
+	
+	<!-- 通过采购合同id查询所有关联的发票 -->
+	<select id="queryInvoiceRelationByContractId" parameterType="java.util.Map" resultType="com.timss.purchase.bean.PurInvoiceBean">
+		SELECT PI.SHEETNO,
+			   PI.ID,
+               PI.SUPPLIER,
+               PI.INVOICENO,
+               PI.NOTAXSUMPRICE,
+               PI.INVOICECREATEDATE,
+               BE.ENUM_VAL AS STATUS, 
+               PI.CREATEUSER
+		FROM PUR_INVOICE PI,B_ENUM BE
+		WHERE PI.STATUS = BE.ENUM_CODE 
+			AND BE.ECAT_CODE = 'PUR_INVOICE_STATUS' 
+		    AND PI.CONTRACTID = '${contractId}' 
+		    AND PI.SITEID = '${siteId}'
+	</select>
+	
+	<!-- 如果已接收数量等于采购数量，且有关联的未报账的发票记录，系统发送站内信息给这些发票的录入人 -->
+	<select id="queryInvoice2SendNotice" resultType="com.timss.purchase.bean.PurInvoiceBean">
+		SELECT PI.ID,
+				PI.SHEETNO,
+				PI.INVOICENO,
+				PI.INVOICECREATEDATE,
+				PI.STATUS,
+				PI.REIMDATE,
+				PI.CONTRACTID,
+				PI.CONTRACTNO,
+				PI.SUPPLIERID,
+				PI.SUPPLIER,
+				PI.BUSINESSNO,
+				PI.NOTAXSUMPRICE,
+				PI.TAX,
+				PI.EFFECTIVEDATE,
+				PI.ENDDATE,
+				PI.ISDELETE,
+				PI.DEPTID,
+				PI.SITEID,
+				PI.CREATEUSER,
+				PI.CREATEUSERNAME,
+				PI.CREATEDATE,
+				PI.MODIFYUSERNAME,
+				PI.MODIFYUSER,
+				PI.MODIFYDATE
+		FROM (
+				SELECT CASE WHEN M.ITEMNUM - M.IN_QTY = 0 THEN 'Y' ELSE 'N' END AS STATUS,M.SHEET_ID
+		        FROM (
+		        	SELECT T.ITEMNUM,T.ITEMID,(SUM(T.IN_QTY)-NVL(SUM(T.RETURN_QTY),0)) AS IN_QTY,T.SHEET_ID 
+		        	FROM (
+		           		SELECT IWOE.ITEMNUM,IWOE.ITEMID,IMTD.IN_QTY,IMRSD.RETURN_QTY,IWOE.SHEET_ID
+		           		FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE,
+		           			 ITCEAM_WORKFLOW_PURCHORDER IWP,
+		           			 INV_MAT_MAPPING IMM,
+		           			(SELECT SUM(T.IN_QTY) AS IN_QTY,T.IMTDID  
+		           				FROM INV_MAT_TRAN_DETAIL T 
+		           				GROUP BY T.IMTDID ) IMTD,
+		           			(SELECT SUM(T1.RETURN_QTY) AS RETURN_QTY,T1.IMTDID 
+		           				FROM INV_MAT_RETURNS_DETAIL T1 
+		           				GROUP BY T1.IMTDID) IMRSD
+		           		WHERE TO_CHAR(IWOE.SHEET_ID) = IWP.SHEET_ID
+		                 	AND IWOE.SHEET_ID = IMM.OUTTERID 
+		                 	AND IWOE.ITEMID = IMM.ITEMCODE
+		                 	AND IMTD.IMTDID = IMM.IMTDID
+		                 	AND IMM.IMTDID = IMRSD.IMTDID(+)
+		                 	AND IWP.SHEETNO = #{sheetNo,jdbcType=VARCHAR} 
+		            ) T 
+		            GROUP BY T.ITEMNUM,T.ITEMID,T.SHEET_ID
+				)M
+				GROUP BY M.SHEET_ID,M.ITEMNUM, M.IN_QTY
+			) INS,
+			PUR_INVOICE PI
+		WHERE INS.SHEET_ID = PI.CONTRACTID 
+			AND PI.SITEID = #{siteId,jdbcType=VARCHAR}  
+			AND INS.STATUS = 'Y' 
+			AND PI.STATUS = 'PUR_INVOICE_STATUS_1'
+	</select>
+	
+	<!-- 已入库物资列表 -->
+	<select id="queryPurApplyStockItemList" resultType="com.timss.purchase.vo.PurApplyStockItemVO">
+		SELECT II.ITEMID,
+	            II.ITEMCODE,
+	            II.ITEMNAME,
+	            II.CUSMODEL,
+	            IMTD.IMTID,
+	            IMT.SHEETNO,
+	            IMT.CREATEDATE,
+	            IW.WAREHOUSENAME,
+	            IW.WAREHOUSEID,
+	            IB.BINNAME
+		FROM INV_MAT_TRAN_REC IMTD,
+             INV_MAT_TRAN IMT,
+             INV_MAT_MAP IMM,
+             ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE,
+             INV_ITEM II,
+             INV_WAREHOUSE IW,
+             INV_BIN IB
+		WHERE IMTD.IMTDID = IMM.IMTDID
+          AND IMTD.IMTID = IMT.IMTID AND IMTD.SITE_ID = IMT.SITE_ID
+          AND IMTD.WAREHOUSEID = IWOE.WAREHOUSEID and imtd.invcateid = iwoe.invcateid 
+          AND IMTD.ITEMID = II.ITEMID AND IMTD.SITE_ID = II.SITE_ID
+          AND IMTD.WAREHOUSEID = IW.WAREHOUSEID AND IMTD.SITE_ID = IW.SITE_ID
+          AND IMTD.BINID = IB.BINID AND IMTD.SITE_ID = IB.SITE_ID
+          AND IMM.OUTTERID = IWOE.SHEET_ID AND IMM.ITEMCODE = IWOE.ITEMID and iwoe.apply_sheet_id = imtd.pura_id
+          AND INSTR(IMT.SHEETNO,'RS') = 0
+          AND IWOE.APPLY_SHEET_ID = '${params.sheetId}'
+          AND IMTD.SITE_ID = '${params.siteId}'
+       	ORDER BY II.ITEMID ASC
+	</select>
+	
+	<!-- 执行情况列表 -->
+	<select id="queryPurApplyImplemetationStatusList" resultType="com.timss.purchase.vo.PurApplyStockItemVO">
+		SELECT ITEM.ITEMID,ITEM.ITEMCODE,ITEM.ITEMNAME,ITEM.CUSMODEL,DECODE(NVL(IWP.ISTOBUSINESS,'-'),'Y','是','否') AS ISTOBUSINESS,
+		IWPI.REPLIEDNUM,IWPOINFO.ITEMNUM,IWPOINFO.SHEETNO,FORMATNUM2(IWPI.AVERPRICE) AS APPLYPRICE,FORMATNUM2(IWPOINFO.COST) AS ORDERPRICE,SUM(NVL(IMTR.IN_QTY,0)) AS INVNUM,IWPI.INVCATEID
+		FROM 
+		ITCEAM_WORKFLOW_PURCHAPPLY IWP 
+		INNER JOIN ITCEAM_WORKFLOW_PURCHAPPLYITEM IWPI ON IWP.SHEET_ID = IWPI.SHEET_ID
+		INNER JOIN INV_ITEM ITEM ON IWPI.ITEMID = ITEM.ITEMCODE 
+		LEFT JOIN 
+		(SELECT IWOE.COST,IWOE.APPLY_SHEET_ID,IWOE.ITEMID,IWOE.INVCATEID,IWPO.SHEETNO,IWPO.SHEET_ID,IWOE.ITEMNUM FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE  
+	    INNER JOIN ITCEAM_WORKFLOW_PURCHORDER IWPO ON IWOE.SHEET_ID = IWPO.SHEET_ID AND IWPO.STATUS NOT IN ('5','-1'))
+	    IWPOINFO ON IWPOINFO.APPLY_SHEET_ID = IWPI.SHEET_ID AND IWPOINFO.ITEMID = IWPI.ITEMID AND IWPOINFO.INVCATEID = IWPI.INVCATEID
+		
+		LEFT JOIN INV_MAT_MAP IMM ON IMM.OUTTERID = IWPOINFO.SHEET_ID AND IMM.TRAN_TYPE = 'receivingmaterial' AND IMM.ITEMCODE = ITEM.ITEMCODE 
+		LEFT JOIN INV_MAT_TRAN_REC IMTR ON IMTR.IMTDID = IMM.IMTDID AND IMTR.PURA_ID = IWP.SHEET_ID AND IMTR.ITEMCODE = IWPOINFO.ITEMID AND IMTR.INVCATEID = IWPI.INVCATEID AND IMTR.SITE_ID = '${params.siteId}'	
+		WHERE IWP.SHEET_ID = '${params.sheetId}'
+        GROUP BY ITEM.ITEMID,ITEM.ITEMCODE,ITEM.ITEMNAME,ITEM.CUSMODEL,IWP.ISTOBUSINESS,
+        IWPI.REPLIEDNUM,IWPOINFO.ITEMNUM,IWPOINFO.SHEETNO,IWPI.AVERPRICE ,IWPOINFO.COST,IWPI.INVCATEID
+		ORDER BY ITEM.ITEMID ASC
+	</select>
+	
+	<!-- 物资领料-采购申请物资明细-->
+	<select id="queryPurApplyItemListByIdInIMA" resultMap="PurInvItemVOMap">
+		SELECT ITEM.ITEMID,ITEM.ITEMCODE,ITEM.ITEMNAME,ITEM.CUSMODEL,SUM(NVL(IMTR.IN_QTY,0)) AS INVNUM,IWPI.INVCATEID,
+	    ROUND(AVG(IRD.ACTUAL_QTY),2) AS STOCKQTY,ROUND(AVG(IRD.CAN_USE_QTY),2) AS NOWQTY,
+	    AVG(IRD.WITH_TAX_PRICE) AS PRICE,AVG(IRD.NO_TAX_PRICE) AS NO_TAX_PRICE,AVG(IRD.LAST_IN_PRICE) AS LATE_IN_PRICE
+	    ,IU.UNITNAME,ITEM.UNIT1,IW.WAREHOUSEID,IW.WAREHOUSENAME AS WAREHOUSE,IC.INVCATEID ,IC.INVCATENAME AS INVCATE,
+	    IC.INVCATEID AS CATE_ID
+	    FROM 
+	    ITCEAM_WORKFLOW_PURCHAPPLY IWP 
+	    INNER JOIN ITCEAM_WORKFLOW_PURCHAPPLYITEM IWPI ON IWP.SHEET_ID = IWPI.SHEET_ID 
+	    INNER JOIN ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE ON IWOE.APPLY_SHEET_ID = IWPI.SHEET_ID AND IWOE.ITEMID = IWPI.ITEMID AND IWOE.INVCATEID = IWPI.INVCATEID 
+	    INNER JOIN ITCEAM_WORKFLOW_PURCHORDER IWPO ON IWOE.SHEET_ID = IWPO.SHEET_ID 
+	    INNER JOIN INV_ITEM ITEM ON IWOE.ITEMID = ITEM.ITEMCODE 
+	    INNER JOIN INV_WAREHOUSE_ITEM IWI ON ITEM.ITEMID = IWI.ITEMID AND ITEM.SITE_ID = IWI.SITE_ID AND IWPI.INVCATEID = IWI.INVCATEID
+	    LEFT JOIN INV_MAT_MAP IMM ON IMM.OUTTERID = IWOE.SHEET_ID AND IMM.TRAN_TYPE = 'receivingmaterial' AND IMM.ITEMCODE = ITEM.ITEMCODE
+	    LEFT JOIN INV_MAT_TRAN_REC IMTR ON IMTR.IMTDID = IMM.IMTDID AND IMTR.PURA_ID = IWP.SHEET_ID AND IMTR.SITE_ID = IWP.SITEID AND IMTR.ITEMID = ITEM.ITEMID AND IMTR.INVCATEID = IWPI.INVCATEID
+	    LEFT JOIN INV_REALTIME_DATA IRD ON IRD.ITEMID = ITEM.ITEMID AND IRD.INVCATEID = IWI.INVCATEID AND IRD.SITE_ID = ITEM.SITE_ID
+	    LEFT JOIN INV_UNIT IU ON IU.UNITID = ITEM.UNIT1 AND IU.SITE_ID = ITEM.SITE_ID
+	    LEFT JOIN INV_WAREHOUSE IW ON IWI.WAREHOUSEID = IW.WAREHOUSEID AND IWI.SITE_ID = IW.SITE_ID
+	    LEFT JOIN INV_CATEGORY IC ON IC.INVCATEID = IWI.INVCATEID AND IC.SITE_ID = IWI.SITE_ID
+	    WHERE IWOE.APPLY_SHEET_ID =  #{sheetId,jdbcType=VARCHAR}
+	    	AND IWP.SITEID = #{siteid,jdbcType=VARCHAR}
+	    GROUP BY ITEM.ITEMID,ITEM.ITEMCODE,ITEM.ITEMNAME,ITEM.CUSMODEL,IWP.ISTOBUSINESS,
+	        IWPI.REPLIEDNUM,IWOE.ITEMNUM,IWPO.SHEETNO,IWPI.AVERPRICE ,IWOE.COST,IWPI.INVCATEID,IU.UNITNAME,ITEM.UNIT1,IW.WAREHOUSEID,IW.WAREHOUSENAME ,IC.INVCATEID ,IC.INVCATENAME
+	        HAVING SUM(NVL(IMTR.IN_QTY,0))>0 
+	    ORDER BY ITEM.ITEMID ASC
+	</select>
+	
+	
+	<!-- 相关领料单列表 -->
+	<select id="queryRelateMatApplyList" resultType="com.timss.inventory.vo.InvMatApplyVO">
+		SELECT IMA.IMAID,IMA.SHEETNO,IMA.SHEETNAME,IMA.CREATEDATE,U.NAME AS CREATEUSER,
+ 		CASE WHEN IMA.STATUS ='stopsend' THEN '已终止' ELSE DECODE(HM.statusname,'已中止', '已作废', '已归档','已完成',HM.statusname) END AS STATUS ,IPM.PURCHAPPLYID
+   		FROM INV_PURMATAPPLY_MAP IPM,INV_MAT_APPLY IMA LEFT JOIN SEC_USER U ON IMA.CREATEUSER=U.USER_ID 
+        LEFT JOIN HOP_MAIN_LIST HM ON IMA.SHEETNO = HM.FLOWNO AND IMA.SITE_ID = HM.SITEID AND HM.TASKTYPE = 'Main'
+		WHERE IPM.MATAPPLYID = IMA.IMAID
+		AND IPM.SITEID = IMA.SITE_ID
+		AND IPM.PURCHAPPLYID = '${params.sheetId}'
+        AND IPM.SITEID = '${params.siteId}'
+		ORDER BY IMA.CREATEDATE DESC
+	</select>
+	<!-- 为领料查询的采购申请  -->
+	<select id="queryPurApplyListForMatApply" resultMap="PurApplyVOMap">
+		SELECT IWP.SHEET_ID AS SHEETID ,IWP.SHEETNO,IWP.SHEETNAME,U.NAME AS CREATENAME,IWP.DEPT,IWP.CREATEDATE,IWP.PROJECT_ASCRIPTION,
+	    TO_CHAR(IWP.CREATEDATE,'yyyy-MM-dd') AS CREATEDATESTR
+	    FROM ITCEAM_WORKFLOW_PURCHAPPLY IWP 
+	    INNER JOIN ITCEAM_WORKFLOW_PURCHAPPLYITEM IWPI ON IWP.SHEET_ID = IWPI.SHEET_ID 
+	    INNER JOIN ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE ON IWOE.APPLY_SHEET_ID = IWPI.SHEET_ID AND IWOE.ITEMID = IWPI.ITEMID AND IWOE.INVCATEID = IWPI.INVCATEID 
+	    INNER JOIN INV_ITEM ITEM ON IWOE.ITEMID = ITEM.ITEMCODE 
+	    LEFT JOIN SEC_USER U ON IWP.CREATEACCOUNT = U.USER_ID
+	    LEFT JOIN INV_MAT_MAP IMM ON IMM.OUTTERID = IWOE.SHEET_ID AND IMM.TRAN_TYPE = 'receivingmaterial' AND IMM.ITEMCODE = ITEM.ITEMCODE
+	    LEFT JOIN INV_MAT_TRAN_REC IMTR ON IMTR.IMTDID = IMM.IMTDID AND IMTR.PURA_ID = IWP.SHEET_ID AND IMTR.SITE_ID = IWP.SITEID AND IMTR.ITEMID = ITEM.ITEMID AND IMTR.INVCATEID = IWPI.INVCATEID
+	    WHERE IWP.CREATEACCOUNT = '${params.creator}'
+		GROUP BY IWP.SHEET_ID ,IWP.SHEETNO,IWP.SHEETNAME,U.NAME,IWP.DEPT,IWP.CREATEDATE,IWP.PROJECT_ASCRIPTION
+		HAVING SUM(NVL(IMTR.IN_QTY,0))>0 
+		ORDER BY IWP.CREATEDATE DESC
+	</select>
+	
+	
+	
+</mapper>

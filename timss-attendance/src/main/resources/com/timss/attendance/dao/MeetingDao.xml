@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.MeetingDao">
+
+	<sql id="meetingBeanField">
+		id, num, userName,
+		deptId, meetingNo,reason, siteId,
+		deptName, startDate, endDate, createBy,
+		createDate, updateBy, updateDate, countTime,
+		useDept, meetingName, activities, remark, isLeader
+	</sql>
+	
+	<!--说明：#{}内的参数，需要与传入的Dept中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertMeeting" parameterType="MeetingBean">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_ATD_MEETING.nextval from dual
+		</selectKey>
+			insert into ATD_MEETING( id, num, userName,
+			deptId, meetingNo,reason, siteId,
+			deptName, startDate, endDate,createBy,
+			createDate,countTime,useDept,meetingName,
+			activities,isLeader )
+			values( #{id}, #{ num,jdbcType=VARCHAR }, #{ userName,jdbcType=VARCHAR}, 
+					#{ deptId,jdbcType=VARCHAR}, #{ meetingNo,jdbcType=VARCHAR },  #{ reason,jdbcType=VARCHAR }, #{ siteId,jdbcType=VARCHAR },
+					#{ deptName,jdbcType=VARCHAR}, #{ startDate,jdbcType=TIMESTAMP}, #{ endDate,jdbcType=TIMESTAMP}, #{ createBy,jdbcType=VARCHAR},
+					#{createDate,jdbcType=TIMESTAMP}, #{countTime,jdbcType=NUMERIC}, #{useDept,jdbcType=VARCHAR}, #{ meetingName,jdbcType=VARCHAR },
+					#{activities,jdbcType=VARCHAR}, #{isLeader,jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<select id="queryMeetingById" parameterType="int" resultType="MeetingBean">
+		select <include refid="meetingBeanField"/> from ATD_MEETING where id = #{ id }
+	</select>
+	
+	<select id="queryMeetingByDiffDate" parameterType="MeetingBean" resultType="MeetingBean">
+		select <include refid="meetingBeanField"/> from ATD_MEETING 
+		where meetingNo = #{ meetingNo } and activities = 'Y' and
+		( ( startDate &gt;= #{startDate,jdbcType=TIMESTAMP} and startDate &lt;= #{ endDate ,jdbcType=TIMESTAMP} )
+		or ( startDate &lt;= #{startDate,jdbcType=TIMESTAMP} and endDate &gt;= #{ endDate ,jdbcType=TIMESTAMP} ) or
+		( endDate &gt;= #{startDate,jdbcType=TIMESTAMP} and endDate &lt;= #{ endDate ,jdbcType=TIMESTAMP} ) )
+	</select>
+	
+	<select id="queryCalendarByDate" parameterType="Map" resultType="MeetingBean">
+		select <include refid="meetingBeanField"/> from ATD_MEETING 
+		where siteId = #{ siteId } and activities ='Y' and
+		( ( startDate &gt;= #{startDate,jdbcType=TIMESTAMP} and startDate &lt;= #{ endDate ,jdbcType=TIMESTAMP} )
+		or ( startDate &lt;= #{startDate,jdbcType=TIMESTAMP} and endDate &gt;= #{ endDate ,jdbcType=TIMESTAMP} ) or
+		( endDate &gt;= #{startDate,jdbcType=TIMESTAMP} and endDate &lt;= #{ endDate ,jdbcType=TIMESTAMP} ) )
+		<if test="meetingNo != null and meetingNo != '' ">
+			and meetingNo = #{ meetingNo } 
+		</if>
+		order by startDate asc
+	</select>
+	
+	<select id="queryCalendarByDateMore" parameterType="Map" resultType="MeetingBean">
+		select * from ( select <include refid="meetingBeanField"/> from ATD_MEETING 
+		where siteId = #{ siteId } and activities ='Y' and
+		( ( startDate &gt;= #{startDate,jdbcType=TIMESTAMP} and startDate &lt;= #{ endDate ,jdbcType=TIMESTAMP} )
+		or ( startDate &lt;= #{startDate,jdbcType=TIMESTAMP} and endDate &gt;= #{ endDate ,jdbcType=TIMESTAMP} ) or
+		( endDate &gt;= #{startDate,jdbcType=TIMESTAMP} and endDate &lt;= #{ endDate ,jdbcType=TIMESTAMP} ) )
+		<if test="meetingNo != null and meetingNo != '' ">
+			and meetingNo = #{ meetingNo } 
+		</if>
+		<if test="meetingNo != null and meetingNo != '' ">
+			and meetingNo = #{ meetingNo } 
+		</if>
+		order by startDate asc ) temp
+		where  ROWNUM &lt; ${ rownum }
+	</select>
+	
+	<update id="updateMeeting" parameterType="MeetingBean">
+		update ATD_MEETING set 
+		meetingName = #{ meetingName,jdbcType=VARCHAR },
+		meetingNo = #{ meetingNo,jdbcType=VARCHAR }, reason = #{reason,jdbcType=VARCHAR}, startDate =#{ startDate,jdbcType=TIMESTAMP},	
+		endDate =  #{ endDate,jdbcType=TIMESTAMP}, updateBy = #{updateBy,jdbcType=VARCHAR },  updateDate = #{ updateDate,jdbcType=TIMESTAMP },
+		isLeader = #{isLeader,jdbcType=VARCHAR}, countTime = #{countTime,jdbcType=NUMERIC}
+		where id = #{ id }
+	</update>
+	
+	<update id="updateMeetingForStatus" parameterType="MeetingBean">
+		update ATD_MEETING set 
+		remark = #{ remark,jdbcType=VARCHAR }, activities = #{activities,jdbcType=VARCHAR}, 
+		updateBy = #{updateBy,jdbcType=VARCHAR },  updateDate = #{ updateDate,jdbcType=TIMESTAMP }
+		where id = #{ id }
+	</update>
+		
+	<!-- <update id="updateOperUserById" parameterType="HashMap"  >
+		update ATD_MEETING set 
+		status = #{ status }
+		<if test="currentDealUser != null">
+		 	,currentDealUser = #{ currentDealUser }
+		</if>
+		<if test="instanceId != null">
+		 	,INSTANTID = #{ instanceId }
+		</if>
+		where id = #{ id }
+	</update>
+	
+	<select id="queryMeetingBySearch" resultType="MeetingBean" >
+		select  <include refid="meetingBeanField"/> from ATD_MEETING where 1 = 1
+		<if test="params.num != null">
+		 	and num like '%${ params.num }%'
+		</if>
+		<if test="params.userName != null">
+		 	and userName like '%${ params.userName }%'
+		</if>
+		<if test="params.deptName != null">
+		 	and deptName like '%${ params.deptName }%'
+		</if>
+		<if test="params.createDate != null">
+		 	and createDate like '%${ params.createDate }%'
+		</if>
+		<if test="params.startDate != null">
+		 	and startDate like '%${ params.startDate }%'
+		</if>
+		<if test="params.category != null">
+		 	and category like '%${ params.category }%'
+		</if>
+		<if test="params.status != null">
+		 	and status like '%${ params.status }%'
+		</if>
+		and siteId = '${ params.siteId }' and status !=  '${ params.statusTemp }'
+	</select>
+	
+	<select id="queryMeetingByDeptSearch" resultType="MeetingBean" >
+		select  <include refid="meetingBeanField"/> from ATD_MEETING where 1 = 1
+		<if test="params.num != null">
+		 	and num like '%${ params.num }%'
+		</if>
+		<if test="params.userName != null">
+		 	and userName like '%${ params.userName }%'
+		</if>
+		<if test="params.deptName != null">
+		 	and deptName like '%${ params.deptName }%'
+		</if>
+		<if test="params.createDate != null">
+		 	and createDate like '%${ params.createDate }%'
+		</if>
+		<if test="params.startDate != null">
+		 	and startDate like '%${ params.startDate }%'
+		</if>
+		<if test="params.category != null">
+		 	and category like '%${ params.category }%'
+		</if>
+		<if test="params.status != null">
+		 	and status like '%${ params.status }%'
+		</if>
+		and deptId = '${ params.deptId }' and siteId = '${ params.siteId }'  and status != '${ params.statusTemp }'
+	</select>
+	
+	<select id="queryMeetingByUserSearch" resultType="MeetingBean" >
+		select  <include refid="meetingBeanField"/> from ATD_MEETING where 1 = 1
+		<if test="params.num != null">
+		 	and num like '%${ params.num }%'
+		</if>
+		<if test="params.userName != null">
+		 	and userName like '%${ params.userName }%'
+		</if>
+		<if test="params.deptName != null">
+		 	and deptName like '%${ params.deptName }%'
+		</if>
+		<if test="params.createDate != null">
+		 	and createDate like '%${ params.createDate }%'
+		</if>
+		<if test="params.startDate != null">
+		 	and startDate like '%${ params.startDate }%'
+		</if>
+		<if test="params.category != null">
+		 	and category like '%${ params.category }%'
+		</if>
+		<if test="params.status != null">
+		 	and status like '%${ params.status }%'
+		</if>
+		and createBy = '${ params.userId }' and siteId = '${ params.siteId }'  and status != '${ params.statusTemp }'
+	</select>
+	
+	<select id="queryMeetingBySiteId" resultType="MeetingBean">
+		select  <include refid="meetingBeanField"/> from ATD_MEETING where siteId = '${ params.siteId }'  and status !=  '${ params.status }'
+	</select>
+	
+	<select id="queryMeetingByDept" resultType="MeetingBean">
+		select  <include refid="meetingBeanField"/> from ATD_MEETING where siteId = '${ params.siteId }' 
+		and deptId = '${ params.deptId }'  and status !=  '${ params.status }'
+	</select>
+	
+	<select id="queryMeetingByUser" resultType="MeetingBean">
+		select  <include refid="meetingBeanField"/> from ATD_MEETING where siteId = '${ params.siteId }' 
+		and createBy = '${ params.userId }'  and status !=  '${ params.status }'
+	</select>
+	
+	<select id="queryMeetingByNum" parameterType="Map" resultType="MeetingBean">
+		select  <include refid="meetingBeanField"/> from ATD_MEETING where num = #{ num } and siteId = #{ siteId }
+	</select>	
+	
+	<delete id="deleteMeeting" parameterType="int">
+		delete from ATD_MEETING where id = #{ id }
+	</delete> -->
+</mapper> 

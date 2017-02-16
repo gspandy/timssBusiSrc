@@ -1,0 +1,52 @@
+
+.wo-statistic .inumber-number{
+	width: 100%;
+}
+
+.wo-statistic .inumber-number-itsmtitle{
+	height: 22px;
+	position: relative;
+	float: left;
+}
+
+.wo-statistic .inumber-number-itsm{
+	text-align: center;
+	margin-top: 28px;
+}
+
+.woability-statistic .inumber-number-itsm{
+	margin-top: 8px;
+}
+
+.woability-statistic .up{
+	color:#b70004;;
+}
+
+.woability-statistic .down{
+	color:#0eab4a;
+}
+
+.woability-statistic .up,
+.woability-statistic .down{
+	font-weight:bold;
+	padding-left:8px;
+}
+
+.woability-statistic .down .uparrow{
+	display:none;
+}
+
+.woability-statistic .up .downarrow{
+	display:none;
+}
+
+.uparrow,.downarrow{
+	margin-left:8px;
+}
+
+.worespondtime-statistic .wots-name,
+.worespondtime-statistic .wots-arrow,
+.worespondtime-statistic{
+	
+}
+

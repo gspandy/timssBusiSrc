@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwProcessDao">
+	<select id="queryPtwProcessByPtwId" resultType="PtwProcess">
+		select *
+		from ptw_process
+		where wtId = #{wtId}
+		order by id asc
+	</select>
+	
+	<select id="queryPtwProcessByWtIdAndStatus" resultType="PtwProcess">
+		select *
+		from ptw_process
+		where wtId = #{wtId} and wtStatus = #{wtStatus}
+	</select>
+	
+	<insert id="insertPtwProcess">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_MORE.nextval from dual
+		</selectKey>
+		insert into ptw_process
+		  (id,wtId,processId,wtStatus)
+		values
+		  (#{id},#{wtId},#{processId},#{wtStatus})
+	</insert>
+</mapper> 

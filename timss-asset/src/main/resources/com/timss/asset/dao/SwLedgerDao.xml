@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.asset.dao.SwLedgerDao">
+   	<sql id='attrs'>
+attr01, attr02, attr03, attr04, attr05, attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, attr16, attr17, attr18, attr19, attr20, 
+long_attr01 as longAttr01, long_attr02 as longAttr02, long_attr03 as longAttr03, long_attr04 as longAttr04, long_attr05 as longAttr05, 
+long_attr06 as longAttr06, long_attr07 as longAttr07, long_attr08 as longAttr08, long_attr09 as longAttr09, long_attr10 as longAttr10
+    </sql>
+    
+    <select id="queryList" resultType="SwLedgerBean">
+select s.sw_id as swId,s.sw_name as swName,
+s.owner_org as ownerOrg,s.attr01,
+s.principal as principal,s.attr02,a.ip
+from ast_sw_l s
+left join(
+     select l.sw_id,replace(wm_concat(distinct(d.ip)),',','/') as ip
+     from ast_sw_l l
+     left join ast_sw_l_app a on l.sw_id=a.sw_id
+     left join ast_hw_l_device d on d.hw_id=a.hw_id
+     group by l.sw_id
+)a on s.sw_id=a.sw_id
+where s.site_id=#{params.siteId}
+    </select>
+    
+    <select id="queryApps" resultMap="appMap">
+select a.app_id as appId,a.app_type as appType,a.app_name as appName,a.port,
+h.hw_id as h_hwId, h.hw_name as h_hwName, h.hw_type as h_hwType,
+d.ip as d_ip
+from ast_sw_l_app a
+left join ast_hw_l h on a.hw_id=h.hw_id
+left join ast_hw_l_device d on d.hw_id=h.hw_id
+where a.sw_id=#{id}
+    </select>
+    
+    <select id="queryDetail" resultType="SwLedgerBean">
+select 
+sw_id as swId, 
+sw_name as swName, 
+owner_org as ownerOrg, 
+related_business as relatedBusiness, 
+principal, 
+supplier, 
+to_use_time as toUseTime, 
+remarks, 
+project_id as projectId, 
+<include refid="attrs"/>
+from ast_sw_l s
+where s.sw_id=#{id}	
+    </select>
+    
+    <resultMap id="appMap" type="SwLedgerAppBean">
+		<id property="appId" column="appId"/>
+		<result property="appType" column="appType"/><result property="appName" column="appName"/><result property="port" column="port"/>
+		<result property="path" column="path"/><result property="softwareSn" column="softwareSn"/><result property="innerCode" column="innerCode"/>
+		<result property="isMiddleware" column="isMiddleware"/><result property="virtualMigration" column="virtualMigration"/><result property="localDiskUsage" column="localDiskUsage"/>
+		<result property="nasUsage" column="nasUsage"/><result property="sanLunUsage" column="sanLunUsage"/><result property="remarks" column="remarks"/>
+		<result property="attr01" column="attr01"/><result property="attr02" column="attr02"/><result property="attr03" column="attr03"/><result property="attr04" column="attr04"/><result property="attr05" column="attr05"/>
+		<result property="attr06" column="attr06"/><result property="attr07" column="attr07"/><result property="attr08" column="attr08"/><result property="attr09" column="attr09"/><result property="attr10" column="attr10"/>
+		<result property="attr11" column="attr11"/><result property="attr12" column="attr12"/><result property="attr13" column="attr13"/><result property="attr14" column="attr14"/><result property="attr15" column="attr15"/>
+		<result property="attr16" column="attr16"/><result property="attr17" column="attr17"/><result property="attr18" column="attr18"/><result property="attr19" column="attr19"/><result property="attr20" column="attr20"/>
+		<result property="longAttr01" column="longAttr01"/><result property="longAttr02" column="longAttr02"/><result property="longAttr03" column="longAttr03"/><result property="longAttr04" column="longAttr04"/><result property="longAttr05" column="longAttr05"/>
+		<result property="longAttr06" column="longAttr06"/><result property="longAttr07" column="longAttr07"/><result property="longAttr08" column="longAttr08"/><result property="longAttr09" column="longAttr09"/><result property="longAttr10" column="longAttr10"/>
+		
+		<association property="hwlDevice" column="appId" javaType="HwLedgerDeviceBean" resultMap="hwlMap"/>
+		<association property="swl" column="appId" javaType="SwLedgerBean" resultMap="swlMap"/>
+	</resultMap>
+	
+    <resultMap id="hwlMap" type="HwLedgerDeviceBean">
+		<id property="hwId" column="h_hwId"/>
+		<result property="hwName" column="h_hwName"/>
+		<result property="hwType" column="h_hwType"/>
+		<result property="ip" column="d_ip"/>		
+	</resultMap>
+	
+    <resultMap id="swlMap" type="SwLedgerBean">
+		<id property="swId" column="s_swId"/>
+		<result property="swName" column="s_swName"/>
+		<result property="swType" column="s_swType"/>
+		<result property="path" column="s_path"/>	
+		<result property="port" column="s_port"/>			
+	</resultMap>
+	
+    <select id="queryAppsDetail" resultMap="appMap">
+select 
+a.app_id as appId, 
+a.app_type as appType, 
+a.app_name as appName, 
+a.port, 
+a.path, 
+a.software_sn as softwareSn, 
+a.inner_code as innerCode, 
+a.is_middleware as isMiddleware, 
+a.virtual_migration as virtualMigration, 
+a.local_disk_usage as localDiskUsage, 
+a.nas_usage as nasUsage, 
+a.san_lun_usage as sanLunUsage, 
+a.remarks, 
+a.attr01, a.attr02, a.attr03, a.attr04, a.attr05, a.attr06, a.attr07, a.attr08, a.attr09, a.attr10, 
+a.attr11, a.attr12, a.attr13, a.attr14, a.attr15, a.attr16, a.attr17, a.attr18, a.attr19, a.attr20, 
+a.long_attr01 as longAttr01, a.long_attr02 as longAttr02, a.long_attr03 as longAttr03, a.long_attr04 as longAttr04, a.long_attr05 as longAttr05, 
+a.long_attr06 as longAttr06, a.long_attr07 as longAttr07, a.long_attr08 as longAttr08, a.long_attr09 as longAttr09, a.long_attr10 as longAttr10,
+h.hw_id as h_hwId,h.hw_name as h_hwName,h.hw_type as h_hwType,
+d.ip as d_ip
+from ast_sw_l_app a
+left join ast_hw_l h on a.hw_id=h.hw_id
+left join ast_hw_l_device d on d.hw_id=h.hw_id
+where a.sw_id=#{id}	
+    </select>
+    
+    <select id="querySwLedgerByName" resultType="SwLedgerBean">
+select s.sw_id as swId,s.sw_name as swName
+from ast_sw_l s
+where s.site_id=#{siteId} and s.sw_name=#{name}
+    </select>
+    
+    <select id="querySwLedgerAppByName" resultType="SwLedgerAppBean">
+select app_id as appId,app_name as appName
+from ast_sw_l_app
+where app_name=#{name} and sw_id=#{swId}
+    </select>
+    
+    <insert id="insert" parameterType="SwLedgerBean" >
+    	insert into ast_sw_l (
+sw_id, sw_name, owner_org, related_business, principal, 
+supplier, to_use_time, remarks, project_id, 
+site_id, created_by, create_time, updated_by, update_time, 
+attr01, attr02, attr03, attr04, attr05, 
+attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, 
+attr16, attr17, attr18, attr19, attr20, 
+long_attr01, long_attr02, long_attr03, long_attr04, long_attr05, 
+long_attr06, long_attr07, long_attr08, long_attr09, long_attr10
+		)
+    	values (
+#{swId,jdbcType=VARCHAR},#{swName,jdbcType=VARCHAR},#{ownerOrg,jdbcType=VARCHAR},#{relatedBusiness,jdbcType=VARCHAR},#{principal,jdbcType=VARCHAR},
+#{supplier,jdbcType=VARCHAR},#{toUseTime,jdbcType=TIMESTAMP},#{remarks,jdbcType=VARCHAR},#{projectId,jdbcType=VARCHAR},
+#{siteid,jdbcType=VARCHAR},#{createuser,jdbcType=VARCHAR},#{createdate,jdbcType=TIMESTAMP},#{modifyuser,jdbcType=VARCHAR},#{modifydate,jdbcType=TIMESTAMP},
+#{attr01,jdbcType=VARCHAR},#{attr02,jdbcType=VARCHAR},#{attr03,jdbcType=VARCHAR},#{attr04,jdbcType=VARCHAR},#{attr05,jdbcType=VARCHAR},
+#{attr06,jdbcType=VARCHAR},#{attr07,jdbcType=VARCHAR},#{attr08,jdbcType=VARCHAR},#{attr09,jdbcType=VARCHAR},#{attr10,jdbcType=VARCHAR},
+#{attr11,jdbcType=VARCHAR},#{attr12,jdbcType=VARCHAR},#{attr13,jdbcType=VARCHAR},#{attr14,jdbcType=VARCHAR},#{attr15,jdbcType=VARCHAR},
+#{attr16,jdbcType=VARCHAR},#{attr17,jdbcType=VARCHAR},#{attr18,jdbcType=VARCHAR},#{attr19,jdbcType=VARCHAR},#{attr20,jdbcType=VARCHAR},
+#{longAttr01,jdbcType=VARCHAR},#{longAttr02,jdbcType=VARCHAR},#{longAttr03,jdbcType=VARCHAR},#{longAttr04,jdbcType=VARCHAR},#{longAttr05,jdbcType=VARCHAR},
+#{longAttr06,jdbcType=VARCHAR},#{longAttr07,jdbcType=VARCHAR},#{longAttr08,jdbcType=VARCHAR},#{longAttr09,jdbcType=VARCHAR},#{longAttr10,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <insert id="insertApp" parameterType="SwLedgerAppBean" >
+    	insert into ast_sw_l_app (
+app_id, sw_id, hw_id, app_type, app_name, 
+port, path, software_sn, inner_code, is_middleware, 
+virtual_migration, local_disk_usage, nas_usage, san_lun_usage, remarks, 
+site_id, created_by, create_time, updated_by, update_time, 
+attr01, attr02, attr03, attr04, attr05, 
+attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, 
+attr16, attr17, attr18, attr19, attr20, 
+long_attr01, long_attr02, long_attr03, long_attr04, long_attr05, 
+long_attr06, long_attr07, long_attr08, long_attr09, long_attr10
+		)
+    	values (
+#{appId,jdbcType=VARCHAR},#{swl.swId,jdbcType=VARCHAR},#{hwlDevice.hwId,jdbcType=VARCHAR},#{appType,jdbcType=VARCHAR},#{appName,jdbcType=VARCHAR},
+#{port,jdbcType=VARCHAR},#{path,jdbcType=VARCHAR},#{softwareSn,jdbcType=VARCHAR},#{innerCode,jdbcType=VARCHAR},#{isMiddleware,jdbcType=VARCHAR},
+#{virtualMigration,jdbcType=VARCHAR},#{localDiskUsage,jdbcType=VARCHAR},#{nasUsage,jdbcType=VARCHAR},#{sanLunUsage,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR},
+#{siteid,jdbcType=VARCHAR},#{createuser,jdbcType=VARCHAR},#{createdate,jdbcType=TIMESTAMP},#{modifyuser,jdbcType=VARCHAR},#{modifydate,jdbcType=TIMESTAMP},
+#{attr01,jdbcType=VARCHAR},#{attr02,jdbcType=VARCHAR},#{attr03,jdbcType=VARCHAR},#{attr04,jdbcType=VARCHAR},#{attr05,jdbcType=VARCHAR},
+#{attr06,jdbcType=VARCHAR},#{attr07,jdbcType=VARCHAR},#{attr08,jdbcType=VARCHAR},#{attr09,jdbcType=VARCHAR},#{attr10,jdbcType=VARCHAR},
+#{attr11,jdbcType=VARCHAR},#{attr12,jdbcType=VARCHAR},#{attr13,jdbcType=VARCHAR},#{attr14,jdbcType=VARCHAR},#{attr15,jdbcType=VARCHAR},
+#{attr16,jdbcType=VARCHAR},#{attr17,jdbcType=VARCHAR},#{attr18,jdbcType=VARCHAR},#{attr19,jdbcType=VARCHAR},#{attr20,jdbcType=VARCHAR},
+#{longAttr01,jdbcType=VARCHAR},#{longAttr02,jdbcType=VARCHAR},#{longAttr03,jdbcType=VARCHAR},#{longAttr04,jdbcType=VARCHAR},#{longAttr05,jdbcType=VARCHAR},
+#{longAttr06,jdbcType=VARCHAR},#{longAttr07,jdbcType=VARCHAR},#{longAttr08,jdbcType=VARCHAR},#{longAttr09,jdbcType=VARCHAR},#{longAttr10,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <update id="update" parameterType="SwLedgerBean">
+        update ast_sw_l set 
+sw_name=#{swName,jdbcType=VARCHAR}, owner_org=#{ownerOrg,jdbcType=VARCHAR}, related_business=#{relatedBusiness,jdbcType=VARCHAR}, principal=#{principal,jdbcType=VARCHAR}, 
+supplier=#{supplier,jdbcType=VARCHAR}, to_use_time=#{toUseTime,jdbcType=TIMESTAMP}, remarks=#{remarks,jdbcType=VARCHAR}, project_id=#{projectId,jdbcType=VARCHAR}, 
+updated_by = #{modifyuser,jdbcType=VARCHAR}, update_time = #{modifydate,jdbcType=TIMESTAMP},
+attr01=#{attr01,jdbcType=VARCHAR},attr02=#{attr02,jdbcType=VARCHAR},attr03=#{attr03,jdbcType=VARCHAR},attr04=#{attr04,jdbcType=VARCHAR},attr05=#{attr05,jdbcType=VARCHAR},
+attr06=#{attr06,jdbcType=VARCHAR},attr07=#{attr07,jdbcType=VARCHAR},attr08=#{attr08,jdbcType=VARCHAR},attr09=#{attr09,jdbcType=VARCHAR},attr10=#{attr10,jdbcType=VARCHAR},
+attr11=#{attr11,jdbcType=VARCHAR},attr12=#{attr12,jdbcType=VARCHAR},attr13=#{attr13,jdbcType=VARCHAR},attr14=#{attr14,jdbcType=VARCHAR},attr15=#{attr15,jdbcType=VARCHAR},
+attr16=#{attr16,jdbcType=VARCHAR},attr17=#{attr17,jdbcType=VARCHAR},attr18=#{attr18,jdbcType=VARCHAR},attr19=#{attr19,jdbcType=VARCHAR},attr20=#{attr20,jdbcType=VARCHAR}, 
+long_attr01=#{longAttr01,jdbcType=VARCHAR},long_attr02=#{longAttr02,jdbcType=VARCHAR},long_attr03=#{longAttr03,jdbcType=VARCHAR},long_attr04=#{longAttr04,jdbcType=VARCHAR},long_attr05=#{longAttr05,jdbcType=VARCHAR},
+long_attr06=#{longAttr06,jdbcType=VARCHAR},long_attr07=#{longAttr07,jdbcType=VARCHAR},long_attr08=#{longAttr08,jdbcType=VARCHAR},long_attr09=#{longAttr09,jdbcType=VARCHAR},long_attr10=#{longAttr10,jdbcType=VARCHAR}   	
+        where sw_id = #{swId}
+    </update>
+    
+    <update id="updateApp" parameterType="SwLedgerAppBean">
+        update ast_sw_l_app set 
+hw_id=#{hwlDevice.hwId,jdbcType=VARCHAR}, app_type=#{appType,jdbcType=VARCHAR}, app_name=#{appName,jdbcType=VARCHAR}, 
+port=#{port,jdbcType=VARCHAR}, path=#{path,jdbcType=VARCHAR}, software_sn=#{softwareSn,jdbcType=VARCHAR}, inner_code=#{innerCode,jdbcType=VARCHAR}, is_middleware=#{isMiddleware,jdbcType=VARCHAR}, 
+virtual_migration=#{virtualMigration,jdbcType=VARCHAR}, local_disk_usage=#{localDiskUsage,jdbcType=VARCHAR}, nas_usage=#{nasUsage,jdbcType=VARCHAR}, san_lun_usage=#{sanLunUsage,jdbcType=VARCHAR}, remarks=#{remarks,jdbcType=VARCHAR}, 
+updated_by = #{modifyuser,jdbcType=VARCHAR}, update_time = #{modifydate,jdbcType=TIMESTAMP},
+attr01=#{attr01,jdbcType=VARCHAR},attr02=#{attr02,jdbcType=VARCHAR},attr03=#{attr03,jdbcType=VARCHAR},attr04=#{attr04,jdbcType=VARCHAR},attr05=#{attr05,jdbcType=VARCHAR},
+attr06=#{attr06,jdbcType=VARCHAR},attr07=#{attr07,jdbcType=VARCHAR},attr08=#{attr08,jdbcType=VARCHAR},attr09=#{attr09,jdbcType=VARCHAR},attr10=#{attr10,jdbcType=VARCHAR},
+attr11=#{attr11,jdbcType=VARCHAR},attr12=#{attr12,jdbcType=VARCHAR},attr13=#{attr13,jdbcType=VARCHAR},attr14=#{attr14,jdbcType=VARCHAR},attr15=#{attr15,jdbcType=VARCHAR},
+attr16=#{attr16,jdbcType=VARCHAR},attr17=#{attr17,jdbcType=VARCHAR},attr18=#{attr18,jdbcType=VARCHAR},attr19=#{attr19,jdbcType=VARCHAR},attr20=#{attr20,jdbcType=VARCHAR}, 
+long_attr01=#{longAttr01,jdbcType=VARCHAR},long_attr02=#{longAttr02,jdbcType=VARCHAR},long_attr03=#{longAttr03,jdbcType=VARCHAR},long_attr04=#{longAttr04,jdbcType=VARCHAR},long_attr05=#{longAttr05,jdbcType=VARCHAR},
+long_attr06=#{longAttr06,jdbcType=VARCHAR},long_attr07=#{longAttr07,jdbcType=VARCHAR},long_attr08=#{longAttr08,jdbcType=VARCHAR},long_attr09=#{longAttr09,jdbcType=VARCHAR},long_attr10=#{longAttr10,jdbcType=VARCHAR}   	
+        where app_id = #{appId}
+    </update>
+    
+    <delete id="deleteById">
+    	delete from ast_sw_l where sw_id = #{id}
+    </delete>    
+
+    <delete id="deleteAppById">
+    	delete from ast_sw_l_app where app_id = #{id}
+    </delete> 
+    
+    <select id="querySwLedgerAppByHwId" resultMap="appMap">
+        select a.app_Id as appId,a.app_Name as appName,a.app_Type as appType,a.port as port,a.path as path,s.sw_Id as s_swId,s.sw_Name as s_swName
+        from ast_sw_l_app a 
+        left join ast_sw_l s on s.sw_Id=a.sw_Id
+        where a.hw_Id=#{hwId}
+    </select>
+</mapper>

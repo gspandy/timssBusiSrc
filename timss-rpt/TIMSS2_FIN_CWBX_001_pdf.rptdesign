@@ -1,0 +1,1173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">732</property>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">732</property>
+        </structure>
+        <structure>
+            <property name="name">rowFetchSize</property>
+            <property name="id">732</property>
+        </structure>
+    </list-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[var count=1;]]></method>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="siteid" id="777">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">ITC</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="beginDate" id="778">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">2016-06-01</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="endDate" id="779">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">2016-07-01</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="7">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledMetadataBidiFormatStr</name>
+                </ex-property>
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledContentBidiFormatStr</name>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.driver.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@10.0.17.154:1521:itceam</property>
+            <property name="odaUser">timss2dev</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">YWJj</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/timss2dev</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set" id="732">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">FINANCE_TYPE</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">FINANCE_TYPE</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">FINANCE_TYPE</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">FID</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">FID</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">FID</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">FNAME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">FNAME</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">FNAME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">CREATORNAME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">CREATORNAME</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">CREATORNAME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">DEPARTMENT</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">DEPARTMENT</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">DEPARTMENT</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">CREATEDATE</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">CREATEDATE</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">CREATEDATE</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">TOTAL_AMOUNT</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">TOTAL_AMOUNT</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">TOTAL_AMOUNT</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">APPLY_TIME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">APPLY_TIME</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">APPLY_TIME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ACCOUNTING_TIME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">ACCOUNTING_TIME</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ACCOUNTING_TIME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">MAIN_ACCOUNTING_TIME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">MAIN_ACCOUNTING_TIME</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">MAIN_ACCOUNTING_TIME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">CASHIER_TIME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">CASHIER_TIME</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">CASHIER_TIME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">STATUS_NAME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">STATUS_NAME</text-property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">STATUS_NAME</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">siteid</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">1</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">beginDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">2</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_3</property>
+                    <property name="paramName">endDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">3</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">FINANCE_TYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">FID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">FNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">CREATORNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">DEPARTMENT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">CREATEDATE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">TOTAL_AMOUNT</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">APPLY_TIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ACCOUNTING_TIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">MAIN_ACCOUNTING_TIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">CASHIER_TIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">STATUS_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">FINANCE_TYPE</property>
+                    <property name="nativeName">FINANCE_TYPE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">FID</property>
+                    <property name="nativeName">FID</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">FNAME</property>
+                    <property name="nativeName">FNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">CREATORNAME</property>
+                    <property name="nativeName">CREATORNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">DEPARTMENT</property>
+                    <property name="nativeName">DEPARTMENT</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">CREATEDATE</property>
+                    <property name="nativeName">CREATEDATE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">TOTAL_AMOUNT</property>
+                    <property name="nativeName">TOTAL_AMOUNT</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">2</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">APPLY_TIME</property>
+                    <property name="nativeName">APPLY_TIME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ACCOUNTING_TIME</property>
+                    <property name="nativeName">ACCOUNTING_TIME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">MAIN_ACCOUNTING_TIME</property>
+                    <property name="nativeName">MAIN_ACCOUNTING_TIME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">CASHIER_TIME</property>
+                    <property name="nativeName">CASHIER_TIME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">STATUS_NAME</property>
+                    <property name="nativeName">STATUS_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select m.finance_type,
+       m.fid,
+       m.fname,
+       m.creatorname,
+       m.department,
+       m.createdate,
+       m.total_amount,
+       m.apply_time,
+       (CASE WHEN m.apply_time is not null THEN m.accounting_time else '' END) as accounting_time,
+       (CASE WHEN m.apply_time<m.accounting_time THEN m.main_accounting_time ELSE '' END) as main_accounting_time,
+       (CASE WHEN m.accounting_time<m.cashier_time THEN m.cashier_time ELSE '' END) as cashier_time,
+       m.status_name
+        from 
+(select t.finance_type,
+       t.fid,
+       t.fname,
+       t.creatorname,
+       t.department,
+       t.createdate,
+       t.total_amount,
+       wm_concat(case
+                   when t.task_def_key_ = 'apply_approve' then
+                    to_char(t.end_time_, 'yyyy-mm-dd hh24:mi:ss')
+                   else
+                    ''
+                 end) as apply_time,
+       wm_concat(case
+                   when t.task_def_key_ = 'accounting_approve' then
+                    to_char(t.end_time_, 'yyyy-mm-dd hh24:mi:ss')
+                   else
+                    ''
+                 end) as accounting_time,
+       wm_concat(case
+                   when t.task_def_key_ = 'main_accounting_approve' then
+                    to_char(t.end_time_, 'yyyy-mm-dd hh24:mi:ss')
+                   else
+                    ''
+                 end) as main_accounting_time,
+       wm_concat(case
+                   when t.task_def_key_ = 'cashier_approve' then
+                    to_char(t.end_time_, 'yyyy-mm-dd hh24:mi:ss')
+                   else
+                    ''
+                 end) as cashier_time,
+       t.status_name
+  from (select * from (select t.finance_type,
+               t.fid,
+               t.fname,
+               t.creatorname,
+               t.department,
+               t.createdate,
+               t.total_amount,
+               aht.task_def_key_,
+               first_value(aht.end_time_) over(partition by aht.task_def_key_, t.fid order by aht.end_time_ desc) as end_time_,
+               t.status_name
+          from (select fm.finance_type,
+                       fm.fid,
+                       fm.fname,
+                       fm.creatorname,
+                       fm.department,
+                       to_char(fm.createdate, 'yyyy-mm-dd') createdate,
+                       fm.total_amount,
+                       fm.status_name,
+                       ffm.pid
+                  from FIN_MAIN fm
+                  left join fin_flow_match ffm
+                    on ffm.fid = fm.fid
+                 where fm.is_show = 'Y'
+                   and fm.siteid = ?
+                   and fm.STATUS <> 'finance_draft'
+                   and fm.STATUS <> 'finance_abolish'
+                   and fm.createdate >= to_date(?, 'yyyy-MM-dd')
+                   and fm.createdate < to_date(?, 'yyyy-MM-dd')) t
+          left join act_hi_taskinst aht
+            on aht.proc_inst_id_ = t.pid) t
+         group by t.finance_type,
+                  t.fid,
+                  t.fname,
+                  t.creatorname,
+                  t.department,
+                  t.createdate,
+                  t.total_amount,
+                  t.task_def_key_,
+                  t.end_time_,
+                  t.status_name
+         order by t.fid, end_time_ desc) t
+ group by t.finance_type,
+          t.fid,
+          t.fname,
+          t.creatorname,
+          t.department,
+          t.createdate,
+          t.total_amount,
+          t.status_name) m
+]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">"宋体"</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="titleStyle" id="82">
+            <property name="fontFamily">"宋体"</property>
+            <property name="fontSize">12pt</property>
+            <property name="textAlign">left</property>
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="dynamicTxtStyle" id="83">
+            <property name="fontFamily">"宋体"</property>
+            <property name="fontSize">11pt</property>
+            <property name="textAlign">left</property>
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="fontStyle1" id="443">
+            <property name="fontFamily">"宋体"</property>
+            <property name="fontSize">10.5pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+            <property name="leftMargin">0.25in</property>
+            <property name="rightMargin">0.25in</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="710">
+            <property name="height">0.8958333333333334in</property>
+            <property name="width">11.114583333333334in</property>
+            <property name="dataSet">Data Set</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">FID</property>
+                    <text-property name="displayName">FID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["FID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">params["siteid"].value+params["beginDate"].value.substring(0,4)+"年"+params["beginDate"].value.substring(5,7)+"月费用报销月度统计表"</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="711">
+                <property name="width">11.114583333333334in</property>
+            </column>
+            <row id="712">
+                <property name="height">0.19791666666666666in</property>
+                <cell id="713">
+                    <property name="paddingTop">6pt</property>
+                    <property name="paddingBottom">6pt</property>
+                    <label id="787">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="fontSize">14pt</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="textAlign">center</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["FID"]==null?false:true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text">无报销清单数据</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="781">
+                <property name="height">0.5in</property>
+                <cell id="782">
+                    <property name="paddingTop">6pt</property>
+                    <property name="paddingBottom">6pt</property>
+                    <data id="783">
+                        <property name="fontSize">large</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="textAlign">center</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["FID"]==null?true:false</expression>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Column Binding</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="714">
+                <property name="height">0.19791666666666666in</property>
+                <cell id="715">
+                    <property name="paddingTop">6pt</property>
+                    <property name="paddingBottom">6pt</property>
+                </cell>
+            </row>
+        </grid>
+        <table id="599">
+            <property name="fontSize">9pt</property>
+            <property name="dataSet">Data Set</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">row["FID"]==null?true:false</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">FINANCE_TYPE</property>
+                    <text-property name="displayName">FINANCE_TYPE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["FINANCE_TYPE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">FID</property>
+                    <text-property name="displayName">FID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["FID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">FNAME</property>
+                    <text-property name="displayName">FNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["FNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CREATORNAME</property>
+                    <text-property name="displayName">CREATORNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CREATORNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEPARTMENT</property>
+                    <text-property name="displayName">DEPARTMENT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DEPARTMENT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CREATEDATE</property>
+                    <text-property name="displayName">CREATEDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CREATEDATE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">TOTAL_AMOUNT</property>
+                    <text-property name="displayName">TOTAL_AMOUNT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TOTAL_AMOUNT"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">APPLY_TIME</property>
+                    <text-property name="displayName">APPLY_TIME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["APPLY_TIME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ACCOUNTING_TIME</property>
+                    <text-property name="displayName">ACCOUNTING_TIME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ACCOUNTING_TIME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">MAIN_ACCOUNTING_TIME</property>
+                    <text-property name="displayName">MAIN_ACCOUNTING_TIME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["MAIN_ACCOUNTING_TIME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CASHIER_TIME</property>
+                    <text-property name="displayName">CASHIER_TIME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CASHIER_TIME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUS_NAME</property>
+                    <text-property name="displayName">STATUS_NAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STATUS_NAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">count</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">false</property>
+                </structure>
+            </list-property>
+            <column id="634">
+                <property name="width">35px</property>
+            </column>
+            <column id="637">
+                <property name="width">70px</property>
+            </column>
+            <column id="638">
+                <property name="width">100px</property>
+            </column>
+            <column id="639"/>
+            <column id="640">
+                <property name="width">55px</property>
+            </column>
+            <column id="641">
+                <property name="width">65px</property>
+            </column>
+            <column id="728">
+                <property name="width">80px</property>
+            </column>
+            <column id="748">
+                <property name="width">60px</property>
+            </column>
+            <column id="751">
+                <property name="width">100px</property>
+            </column>
+            <column id="762">
+                <property name="width">100px</property>
+            </column>
+            <column id="759">
+                <property name="width">105px</property>
+            </column>
+            <column id="756">
+                <property name="width">100px</property>
+            </column>
+            <column id="769"/>
+            <header>
+                <row id="600">
+                    <property name="verticalAlign">middle</property>
+                    <cell id="602">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="645">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">序号</text-property>
+                        </label>
+                    </cell>
+                    <cell id="605">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="657">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">类别</text-property>
+                        </label>
+                    </cell>
+                    <cell id="606">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="659">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">编号</text-property>
+                        </label>
+                    </cell>
+                    <cell id="607">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="661">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">名称</text-property>
+                        </label>
+                    </cell>
+                    <cell id="608">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="663">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">申请人</text-property>
+                        </label>
+                    </cell>
+                    <cell id="609">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="665">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">申请部门</text-property>
+                        </label>
+                    </cell>
+                    <cell id="726">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="729">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">申请日期</text-property>
+                        </label>
+                    </cell>
+                    <cell id="746">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="752">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">总金额</text-property>
+                        </label>
+                    </cell>
+                    <cell id="749">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="753">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">申请人提交财务纸质审批单日期</text-property>
+                        </label>
+                    </cell>
+                    <cell id="760">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="763">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">会计复核日期</text-property>
+                        </label>
+                    </cell>
+                    <cell id="757">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="764">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">主办会计复核日期</text-property>
+                        </label>
+                    </cell>
+                    <cell id="754">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="766">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">出纳付款日期</text-property>
+                        </label>
+                    </cell>
+                    <cell id="767">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <label id="770">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">状态</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="611">
+                    <method name="onCreate"><![CDATA[count++;]]></method>
+                    <property name="textAlign">center</property>
+                    <property name="verticalAlign">middle</property>
+                    <cell id="613">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <data id="745">
+                            <property name="resultSetColumn">Column Binding</property>
+                        </data>
+                    </cell>
+                    <cell id="616">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <data id="734">
+                            <property name="resultSetColumn">FINANCE_TYPE</property>
+                        </data>
+                    </cell>
+                    <cell id="617">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <data id="735">
+                            <property name="resultSetColumn">FID</property>
+                        </data>
+                    </cell>
+                    <cell id="618">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <data id="736">
+                            <property name="resultSetColumn">FNAME</property>
+                        </data>
+                    </cell>
+                    <cell id="619">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <data id="737">
+                            <property name="resultSetColumn">CREATORNAME</property>
+                        </data>
+                    </cell>
+                    <cell id="620">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <data id="738">
+                            <property name="resultSetColumn">DEPARTMENT</property>
+                        </data>
+                    </cell>
+                    <cell id="727">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <property name="textAlign">center</property>
+                        <data id="739">
+                            <property name="resultSetColumn">CREATEDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="747">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <property name="textAlign">center</property>
+                        <data id="771">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
+                            <property name="resultSetColumn">TOTAL_AMOUNT</property>
+                        </data>
+                    </cell>
+                    <cell id="750">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <property name="textAlign">center</property>
+                        <data id="772">
+                            <property name="resultSetColumn">APPLY_TIME</property>
+                        </data>
+                    </cell>
+                    <cell id="761">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <property name="textAlign">center</property>
+                        <data id="773">
+                            <property name="resultSetColumn">ACCOUNTING_TIME</property>
+                        </data>
+                    </cell>
+                    <cell id="758">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <property name="textAlign">center</property>
+                        <data id="774">
+                            <property name="resultSetColumn">MAIN_ACCOUNTING_TIME</property>
+                        </data>
+                    </cell>
+                    <cell id="755">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <property name="textAlign">center</property>
+                        <data id="775">
+                            <property name="resultSetColumn">CASHIER_TIME</property>
+                        </data>
+                    </cell>
+                    <cell id="768">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <property name="paddingTop">6pt</property>
+                        <property name="paddingBottom">6pt</property>
+                        <property name="textAlign">center</property>
+                        <data id="776">
+                            <property name="resultSetColumn">STATUS_NAME</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

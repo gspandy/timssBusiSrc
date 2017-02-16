@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.JPWorkerDao">
+
+
+	<resultMap type="JPWorker" id="jpWorkerMap">
+		<id column="ID" property="id" />
+		<result column="JPTASK" property="jpTask" />
+		<result column="JOBPLAN_ID" property="jobPlanId" />
+		<result column="WORKER_LIST" property="workerList" />
+		<result column="MANAGERINFO" property="managerInfo" />
+		<result column="REMARKS" property="remarks" />
+		<result column="ITEM" property="item" />
+		<result column="PROJ" property="proj" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+	</resultMap>	
+	 
+	
+	
+	<insert id="insertJPWorker">
+		insert into wo_jp_worker(ID,JOBPLAN_ID,WORKER_LIST,MANAGERINFO,REMARKS,
+							PROJ,SITEID,DEPTID) 
+		values( #{id},
+				#{jobPlanId,jdbcType=NUMERIC},
+				#{workerList,jdbcType=VARCHAR},
+				#{managerInfo,jdbcType=VARCHAR},
+				#{remarks,jdbcType=VARCHAR},
+				#{proj,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR}) 
+	</insert>
+	<insert id="insertJPWorkerCopy">
+		insert into wo_jp_worker(ID,JPTASK,JOBPLAN_ID,WORKER_LIST,MANAGERINFO,REMARKS,ITEM,PROJ,SITEID,DEPTID) 
+		values(#{id},#{jpTask},#{jobPlanId},#{workerList},#{managerInfo},#{remarks},#{item},#{proj},#{siteid},#{deptid}) 
+	</insert>
+
+	<update id="updateJPWorker" parameterType="JPWorker">
+		update wo_jp_worker
+		set WORKER_LIST=#{workerList}
+		where ID=#{id} 
+	</update>
+	<update id="updateJPWorkerCopy" parameterType="JPWorker">
+		update wo_jp_worker
+		set JPTASK=#{jpTask},WORKER_LIST=#{workerList},MANAGERINFO=#{managerInfo},REMARKS=#{remarks},
+			ITEM=#{item},PROJ=#{proj}
+		where ID=#{id} AND siteid=#{siteid} 
+	</update>
+	
+	
+	<select id="queryJPWorkerByJPId" parameterType="int" resultMap="jpWorkerMap">
+		select * from wo_jp_worker t
+		where t.JOBPLAN_ID = #{jpId}
+	</select>
+	
+	<delete id="deleteJPWorkerByJPId" parameterType="int" >
+		delete from wo_jp_worker t
+		where t.JOBPLAN_ID = #{jpId}
+	</delete>
+	 
+	<select id="queryJPWorkerById" parameterType="int" resultMap="jpWorkerMap">
+		select * from wo_jp_worker where id= #{id}
+	</select>
+	
+	<select id="getNextJPWorkerId" resultType="int">
+		select SEQ_WO_JPOTHERS.nextval id from dual
+	</select>
+	
+</mapper>

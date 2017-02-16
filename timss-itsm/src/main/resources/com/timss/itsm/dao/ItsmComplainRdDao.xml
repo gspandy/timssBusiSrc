@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmComplainRdDao">
+
+	<resultMap type="ItsmComplainRd" id="complainRdMap">
+		<id column="ID" property="id" />
+		<result column="CODE" property="code" />
+		<result column="COMPLAINANT" property="complainant" />
+		<result column="COMPLAINANT_CODE" property="complainantCode" />
+		<result column="COMPLAINANT_COM" property="complainantCom" />
+		<result column="COMPLAINANT_DEPTID" property="complainantDeptId" />
+		<result column="COMPLAINANT_POSITION" property="complainantPosition" />
+		<result column="COMPLAINANT_SITEID" property="complainantSiteId" />
+		<result column="PHONE" property="phone" />
+		<result column="COMPLAIN_STYLE" property="complainStyle" />
+		<result column="COMPLAIN_TYPE" property="complainType" />
+		<result column="CONTENT" property="content" />
+		<result column="ITSM_WO_ID" property="itsmWoId" />
+		<result column="CURRSTATUS" property="currStatus" />
+		<result column="COMPLAIN_HANDLER_USER" property="complainHandlerUser" />
+		<result column="COMPLAIN_MANAGER" property="complainManager" />
+		<result column="COMPLAIN_ACTIVE" property="complainActive" />
+		<result column="COMPLAIN_CLOSE" property="complainClose" />
+		<result column="HANDLERDATE" property="handlerDate" />
+		<result column="HANDLERCONFIRM" property="handlerConfirm" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="ACTIVE" property="active" />
+		<result column="COMPLAIN_ACCEPT" property="complainAccept" />
+		<result column="HANDLEDEPT" property="handleDept" />
+		
+		<result column="currStatus_NAME" property="currStatusName" />
+		<result column="COMPLAIN_TYPENAME" property="complainTypeName" />
+		<result column="WORKFLOWID" property="workflowId" />
+		<result column="create_username" property="createUserName" />
+		<result column="dept_name" property="deptName" />
+	</resultMap>	
+	
+	<insert id="insertComplainRd"  parameterType="ItsmComplainRd" >
+		insert into itsm_complain
+		(ID,CODE,COMPLAINANT,COMPLAINANT_CODE,COMPLAINANT_COM,COMPLAINANT_DEPTID,COMPLAINANT_POSITION,
+		COMPLAINANT_SITEID,PHONE,COMPLAIN_STYLE,COMPLAIN_TYPE,CONTENT,ITSM_WO_ID,CURRSTATUS,MODIFYUSER,
+		MODIFYDATE,CREATEUSER,CREATEDATE,SITEID,DEPTID,ACTIVE) 
+		values( #{id},
+				#{code,jdbcType=VARCHAR},
+				#{complainant,jdbcType=VARCHAR},
+				#{complainantCode,jdbcType=VARCHAR},
+				#{complainantCom,jdbcType=VARCHAR},
+				#{complainantDeptId,jdbcType=VARCHAR},
+				#{complainantPosition,jdbcType=VARCHAR},
+				#{complainantSiteId,jdbcType=VARCHAR},
+				#{phone,jdbcType=VARCHAR},
+				#{complainStyle,jdbcType=VARCHAR},
+				#{complainType,jdbcType=VARCHAR},
+				#{content,jdbcType=VARCHAR},
+				#{itsmWoId,jdbcType=VARCHAR},
+				#{currStatus,jdbcType=VARCHAR},
+				
+				#{modifyuser,jdbcType=VARCHAR},
+				#{modifydate,jdbcType=TIMESTAMP},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{active,jdbcType=VARCHAR}
+				)
+	</insert>
+	
+	<update id="updateComplainRd" parameterType="ItsmComplainRd">
+		update itsm_complain
+		set 	id = id
+			<if test="workflowId != null and workflowId != ''">	
+				,WORKFLOWID=#{workflowId}
+			</if>
+			<if test="currStatus != null and currStatus != ''">
+				,CURRSTATUS = #{currStatus}
+			</if>
+			<if test="complainHandlerUser != null">
+				,COMPLAIN_HANDLER_USER = #{complainHandlerUser}
+			</if>
+			<if test="complainAccept != null">
+				,COMPLAIN_ACCEPT = #{complainAccept}
+			</if>
+			<if test="handleDept != null">
+				,HANDLEDEPT = #{handleDept}
+			</if>
+			<if test="complainActive != null">
+				,COMPLAIN_ACTIVE = #{complainActive}
+			</if>
+			<if test="complainant != null">
+		    	, complainant = #{complainant}
+		    </if>
+		    <if test="complainantCode != null">
+		    	, COMPLAINANT_CODE = #{complainantCode}
+		    </if>
+		    <if test="complainantCom != null">
+		    	, COMPLAINANT_COM = #{complainantCom}
+		    </if>
+		    <if test="complainantDeptId != null">
+		    	,COMPLAINANT_DEPTID = #{complainantDeptId}
+		    </if>
+		    <if test="complainantPosition != null">
+		    	,COMPLAINANT_POSITION = #{complainantPosition}
+		    </if>
+		    <if test="complainantSiteId != null">
+		    	,COMPLAINANT_SITEID = #{complainantSiteId}
+		    </if>
+		    <if test="phone != null">
+		    	,phone = #{phone}
+		    </if>
+		    <if test="complainStyle != null">
+		    	,COMPLAIN_STYLE = #{complainStyle}
+		    </if>
+		    <if test="complainType != null">
+		    	,COMPLAIN_TYPE = #{complainType}
+		    </if>
+		    <if test="content != null">
+		    	,content = #{content}
+		    </if>
+		where ID=#{id} 
+	</update>
+	<!-- 跟新当期状态 -->
+	<update id="updateComplainRdStatus" parameterType="ItsmComplainRd">
+		update itsm_complain
+		set  CURRSTATUS=#{currStatus}
+		where ID=#{id} 
+	</update>
+	
+	<!-- 在流程的环节中当前处理人信息 -->
+	<update id="updateCurrHandUserById" parameterType="HashMap">
+		update itsm_complain
+		set COMPLAIN_HANDLER_USER = #{complainHandlerUser}
+		where ID=#{complainRdId} 
+	</update>
+	
+	
+	<!-- 根据工单id查询 -->
+	<select id="queryCpRdById" resultMap="complainRdMap">
+		select  id, code, complainant, complainant_code, complainant_com,
+   				complainant_deptid, complainant_position, complainant_siteid, phone,
+   				complain_style, complain_type, content, itsm_wo_id, currstatus,
+ 				complain_handler_user, complain_manager, complain_active, complain_close,
+  				handlerdate, handlerconfirm, createuser, createdate, modifyuser, modifydate,
+  				t.siteid, t.deptid, t.active, workflowid, complain_accept,t.handledept,
+  				s.name  create_username,d.name dept_name
+  		from itsm_complain t
+  		left join sec_user s on s.user_id =t.createuser
+  		left join sec_organization d on d.org_code=t.deptid
+  		where ID= #{id}
+  		
+	</select>
+	
+	
+	<!-- 查询列表信息 -->
+	<select id="queryComplainRdList" resultMap="complainRdMap" >
+		select t.id,
+		       t.CODE,
+		       t.COMPLAINANT_COM,
+		       t.COMPLAINANT,
+		       t.CREATEDATE,
+		       t.COMPLAIN_TYPE,
+		       t.CONTENT,
+		       t.COMPLAIN_HANDLER_USER,
+		       t.CURRSTATUS,
+		       t.DEPTID,
+		       t.CREATEUSER,
+		       su.name  create_username,
+               d.name dept_name,
+		       b.enum_val CURRSTATUS_NAME,
+		       s.typename COMPLAIN_TYPENAME
+		  from itsm_complain t 
+		  left join itsm_complaint_type s on s.id=t.complain_type 
+		  left join b_enum b on b.enum_code = t.currstatus and b.ecat_code='ITSM_COMPLAIN_STATUS'
+		    ,sec_user su,sec_organization d
+		  where  t.createuser = su.user_id
+				and t.deptid = d.org_code
+				and  t.currstatus != 'draft' 
+		<if test="params.siteid != null">
+			and t.siteid = #{params.siteid} 
+			and  b.siteid=#{params.siteid} 
+		</if>
+		order by t.CREATEDATE DESC
+	</select>
+
+	<!-- 删除 -->
+	<delete id="deleteComplainRd" parameterType="ItsmComplainRd">
+		delete from itsm_complain 
+		where  ID=#{id}
+	</delete>
+</mapper>

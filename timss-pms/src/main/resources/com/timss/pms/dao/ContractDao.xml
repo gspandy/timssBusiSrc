@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.ContractDao">
+
+    <resultMap type="com.timss.pms.vo.ProjectDtlVo" id="projectDtlVoMap">
+		<id property="id" column="project_id"/>
+		<result property="iseasy" column="iseasy"/>
+		<result property="pyear" column="pyear"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="ptype" column="ptype"/>
+		<result property="planId" column="plan_id"/>
+		<result property="projectCode" column="project_code"/>
+		<result property="projectName" column="project_name"/>
+		<result property="isRs" column="is_rs"/>
+		<result property="property" column="property"/>
+		<result property="applyBudget" column="apply_budget"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="businessLeader" column="business_leader"/>
+		<result property="projectLeader" column="project_leader"/>
+		<result property="command" column="command"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		
+		<result property="typeName" column="typeName"/>
+		
+		<result property="planName" column="planName" />
+		<result property="attach" column="attach"/>
+	</resultMap>
+
+    <resultMap type="com.timss.pms.bean.Contract" id="contractMap">
+		<id property="id" column="id"/>
+		<result property="contractCode" column="contract_code"/>
+		<result property="projectId" column="project_id"/>
+		<result property="name" column="name"/>
+		<result property="type" column="type"/>
+		<result property="firstParty" column="first_party"/>
+		<result property="firstPartyId" column="first_party_id"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="fpPhone" column="fp_phone"/>
+		<result property="secondParty" column="second_party"/>
+		<result property="secondPartyId" column="second_party_id"/>
+		<result property="spLeader" column="sp_leader"/>
+		<result property="spPhone" column="sp_phone"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="totalSum" column="total_sum"/>
+		<result property="signTime" column="sign_time"/>
+		
+		<result property="command" column="command"/>
+		<result property="attach" column="attach"/>
+		<result property="delFlag" column="del_flag"/>
+		
+		<result property="createUser" column="create_user" />
+		<result property="createTime" column="create_time" />
+		<result property="siteid" column="siteid" />
+		
+		<result property="bidId" column="bid_id" />
+		<result property="contractCategory" column="contract_category"/>
+		<result property="tipNo" column="TIPNO"/>
+	</resultMap>
+	
+	 <resultMap type="com.timss.pms.vo.ContractVo" id="contractVoMap">
+		<id property="id" column="id"/>
+		<result property="contractCode" column="contract_code"/>
+		<result property="projectId" column="project_id"/>
+		<result property="name" column="name"/>
+		<result property="type" column="type"/>
+		<result property="firstParty" column="first_party"/>
+		<result property="firstPartyId" column="first_party_id"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="fpPhone" column="fp_phone"/>
+		<result property="secondPartyId" column="second_party_id"/>
+		<result property="secondParty" column="second_party"/>
+		
+		<result property="spLeader" column="sp_leader"/>
+		<result property="spPhone" column="sp_phone"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="totalSum" column="total_sum"/>
+		<result property="signTime" column="sign_time"/>
+		
+		<result property="command" column="command"/>
+		<result property="attach" column="attach"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/> 
+		<result property="statusApp" column="status_app"/>
+		<result property="createUser" column="create_user" />
+		<result property="createTime" column="create_time" />
+		<result property="siteid" column="siteid" />
+		<result property="bidId" column="bid_id" />
+		
+		<result property="projectName" column="project_name"/>
+		<result property="contractCategory" column="contract_category"/>
+		<result property="tipNo" column="TIPNO"/>
+		
+		<result property="belongTo" column="belongTo"/>
+		<result property="flowStatus" column="flowStatus"/>
+		<result property="companyId" column="company_id"/>
+		<result property="percent" column="percent"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.ContractDtlVo" id="contractDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="contractCode" column="contract_code"/>
+		<result property="projectId" column="project_id"/>
+		<result property="name" column="name"/>
+		<result property="type" column="type"/>
+		<result property="firstParty" column="first_party"/>
+		<result property="firstPartyId" column="first_party_id"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="fpPhone" column="fp_phone"/>
+		<result property="secondParty" column="second_party"/>
+		<result property="secondPartyId" column="second_party_id"/>
+		<result property="spLeader" column="sp_leader"/>
+		<result property="spPhone" column="sp_phone"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="totalSum" column="total_sum"/>
+		<result property="signTime" column="sign_time"/>
+		
+		<result property="command" column="command"/>
+		<result property="attach" column="attach"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/> 
+		<result property="statusApp" column="status_app"/>
+		<result property="createTime" column="create_time" />
+		<result property="siteid" column="siteid" />
+		<result property="bidId" column="bid_id" />
+		<result property="contractCategory" column="contract_category"/>
+		<result property="tipNo" column="TIPNO"/>
+		<result property="createuser" column="CREATEUSERNAME" />
+		<result property="createUser" column="CREATE_USER" />
+		<result property="processInstId" column="process_inst_id" />
+		<result property="taxRate" column="taxRate" />
+		<result property="qaTime" column="qaTime" />
+		<result property= "nullifyProcInstId" column ="nullifyProcInstId"/>
+		<association property="projectDtlVo" column="project_id"  resultMap="projectDtlVoMap"/>
+		
+	</resultMap>
+
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,contract_code,project_id,name,type,first_party,fp_leader,fp_phone,second_party,sp_leader,sp_phone,total_sum,sign_time,
+		command,attach,del_flag,status,bid_id,first_party_id,second_party_id,TIPNO,project_name,belong_to,bid_name
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+	<sql id="columnDtlVo">
+		<include refid="columnBasic"/>
+	</sql>
+	<sql id="baseSelectPart">
+			select t.id,t.contract_code,t.project_id,t.name,t.type,t.first_party,t.fp_leader,t.fp_phone,t.second_party,
+			t.sp_leader,t.sp_phone,t.total_sum,t.sign_time,t.first_party_id,t.second_party_id,t.command,t.attach,t.del_flag,
+			t.status,t.bid_id,t.siteid,p.project_name,t.status_app,t.contract_category,p.company_id,b.enum_val as company_name
+			,B2.ENUM_VAL AS STATUSNAME,to_char(t.sign_time,'yyyy-MM-dd') as signtimestr,B3.ENUM_VAL AS TYPENAMESTR,
+			FORMATNUM2(NVL2(PAYPLAN.TOTALSUM,NVL(PAY.TOTALSUM,0)/PAYPLAN.TOTALSUM,0)*100) AS PERCENT,t.taxRate,t.qaTime,t.tipno
+	</sql>
+	<sql id="baseFromPart">
+			from Tim_Pms_Contract t
+			left join Tim_Pms_Project p 
+			on t.project_id=p.id
+			LEFT JOIN B_ENUM B ON B.ECAT_CODE = 'PMS_PROJECT_SUBCOMP' AND B.ENUM_CODE = P.COMPANY_ID AND B.SITEID=T.SITEID
+			LEFT JOIN B_ENUM B2 ON B2.ECAT_CODE = 'PMS_STATUS' AND B2.ENUM_CODE = T.STATUS AND B2.SITEID = T.SITEID
+			LEFT JOIN B_ENUM B3 ON B3.ECAT_CODE = 'PMS_CONTRACT_TYPE' AND B3.ENUM_CODE = T.TYPE AND B3.SITEID = T.SITEID
+			LEFT JOIN (
+				SELECT B.CONTRACT_ID AS CID,SUM(B.PAY_SUM) AS TOTALSUM FROM TIM_PMS_PAYPLAN B , TIM_PMS_CONTRACT C
+				WHERE B.CONTRACT_ID = C.ID 
+				GROUP BY B.CONTRACT_ID
+			) PAYPLAN ON PAYPLAN.CID = T.ID
+			LEFT JOIN ( 
+				SELECT A.CONTRACT_ID AS CID,SUM(A.ACTUALPAY) AS TOTALSUM FROM TIM_PMS_PAY A , TIM_PMS_CONTRACT C
+				WHERE A.CONTRACT_ID = C.ID AND A.STATUS = 'approved'
+				GROUP BY A.CONTRACT_ID
+			) PAY ON PAY.CID = T.ID
+			
+	</sql>
+	<sql id="baseConditionPart">
+			where t.del_flag=0 and (nvl(T.STATUS,'NULL') <![CDATA[<>]]> 'voided' and nvl(T.STATUS_APP,'NULL') <![CDATA[<>]]> 'voided')
+	</sql>
+<insert id="insertContract" parameterType="com.timss.pms.bean.Contract">
+    <selectKey resultType="int" keyProperty="id" order="BEFORE">
+        select SEQ_PMS_CONTRACT.nextval from dual
+    </selectKey>
+    insert into Tim_Pms_CONTRACT(<include refid="columnBasic"/>,create_time,create_user,siteid,status_app,contract_category,DEPTID,taxRate,qaTime) 
+    values (#{id},#{contractCode,jdbcType=VARCHAR},#{projectId,jdbcType=NUMERIC},#{name,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},
+    	#{firstParty,jdbcType=VARCHAR},#{fpLeader,jdbcType=VARCHAR},#{fpPhone,jdbcType=VARCHAR},
+    	#{secondParty,jdbcType=VARCHAR},#{spLeader,jdbcType=VARCHAR},#{spPhone,jdbcType=VARCHAR},
+    	#{totalSum,jdbcType=NUMERIC},#{signTime,jdbcType=TIMESTAMP},#{command,jdbcType=VARCHAR},
+    	#{attach,jdbcType=VARCHAR},0,#{status,jdbcType=VARCHAR},#{bidId,jdbcType=VARCHAR},
+    	#{firstPartyId,jdbcType=VARCHAR},#{secondPartyId,jdbcType=VARCHAR},#{tipNo,jdbcType=VARCHAR},
+    	#{projectName,jdbcType=VARCHAR},#{belongTo,jdbcType=VARCHAR},#{bidName,jdbcType=VARCHAR},
+    	#{createTime,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR},
+    	#{statusApp,jdbcType=VARCHAR},#{contractCategory,jdbcType=VARCHAR},#{deptid,jdbcType=VARCHAR},
+    	#{taxRate,jdbcType=VARCHAR},#{qaTime,jdbcType=VARCHAR}
+    	)
+</insert>
+
+<select id="queryContractListByProjectId" resultMap="contractVoMap">
+	select <include refid="columnVo" />,t.status_app,t.contract_category
+	from Tim_Pms_Contract t
+	where t.project_id=#{projectId} and t.del_flag=0
+</select>
+
+<select id="queryContractList" resultMap="contractVoMap">
+	<include refid="baseSelectPart"/>
+	<include refid="baseFromPart"/>
+	<include refid="baseConditionPart"/>
+</select>
+
+<select id="queryContractListWithoutRowFilter" resultMap="contractVoMap">
+	<include refid="baseSelectPart"/>
+	<include refid="baseFromPart"/>
+	<include refid="baseConditionPart"/>
+	<if test="null !=params.kw and ''!=params.kw">
+		AND (CONTRACT_CODE LIKE '%'||#{params.kw}||'%' OR NAME LIKE '%'||#{params.kw}||'%')
+	</if>
+</select>
+
+<select id="queryContractListForSJW" resultMap="contractVoMap">
+	<include refid="baseSelectPart"/>
+	<include refid="baseFromPart"/>
+	LEFT JOIN B_ENUM SUBCOMP ON SUBCOMP.ECAT_CODE = 'PMS_PROJECT_SUBCOMP' AND SUBCOMP.ENUM_CODE =  P.COMPANY_ID AND SUBCOMP.SITEID='SJW'
+	<include refid="baseConditionPart"/>
+	<if test="null !=params.orgLimit and ''!=params.orgLimit">
+       AND (SUBCOMP.ENUM_VAL IN (${params.orgLimit}) OR SUBCOMP.ENUM_VAL IS NULL) 
+      </if>
+</select>
+
+<select id="queryContractListAndFilter" resultMap="contractVoMap">
+	select t.id,t.contract_code,t.project_id,t.name,t.type,t.first_party,t.fp_leader,t.fp_phone,t.second_party,
+	t.sp_leader,t.sp_phone,t.total_sum,t.sign_time,t.first_party_id,t.second_party_id,t.command,t.attach,t.del_flag,
+	t.status,t.bid_id,t.siteid,p.project_name,t.status_app,t.contract_category,t.tipNo,to_char(t.sign_time,'yyyy-MM-dd') as signtimestr,
+	t.taxRate,t.qaTime
+	from Tim_Pms_Contract t
+	left join Tim_Pms_Project p
+	on t.project_id=p.id
+	where t.del_flag=0 
+	or t.nullifyprocinstid is not null
+</select>
+
+<select id="queryContractById" resultMap="contractDtlVoMap">
+	select t.id,t.contract_code,t.project_id,t.name,t.type,t.first_party,t.fp_leader,t.fp_phone,t.second_party,t.sp_leader,t.sp_phone,t.total_sum,t.sign_time,
+		t.command,t.first_party_id,t.second_party_id,t.attach,t.del_flag,t.status,p.project_name,p.project_leader,t.create_user,t.create_time,t.siteid,t.bid_id
+		,t.status_app,t.contract_category,TIPNO,CASE WHEN O.NAME='' OR O.NAME IS NULL THEN U.NAME ELSE (U.NAME||'/'||O.NAME) END AS CREATEUSERNAME,T.CREATE_USER
+		,t.process_inst_id,t.taxRate,t.qaTime,t.nullifyProcInstId
+	from Tim_Pms_Contract t 
+	left join Tim_Pms_Project p on t.project_id=p.id
+	LEFT JOIN SEC_USER U ON T.CREATE_USER = U.USER_ID
+	LEFT JOIN SEC_ORGANIZATION O ON T.DEPTID = O.ORG_CODE
+	where t.id=#{id} 
+</select>
+
+<update id="updateContract">
+     update tim_pms_contract
+     set contract_code=#{contractCode,jdbcType=VARCHAR},project_id=#{projectId,jdbcType=NUMERIC},
+        name=#{name,jdbcType=VARCHAR},type=#{type,jdbcType=VARCHAR},
+    	first_party=#{firstParty,jdbcType=VARCHAR},fp_leader=#{fpLeader,jdbcType=VARCHAR},
+    	fp_phone=#{fpPhone,jdbcType=VARCHAR},second_party=#{secondParty,jdbcType=VARCHAR},
+    	sp_leader=#{spLeader,jdbcType=VARCHAR},sp_phone=#{spPhone,jdbcType=VARCHAR},
+    	total_sum=#{totalSum,jdbcType=NUMERIC},sign_time=#{signTime,jdbcType=TIMESTAMP},
+    	command=#{command,jdbcType=VARCHAR},
+    	attach=#{attach,jdbcType=VARCHAR},status=#{status,jdbcType=VARCHAR},
+    	update_time=#{updateTime,jdbcType=TIMESTAMP},
+    	update_user=#{updateUser,jdbcType=VARCHAR},siteid=#{siteid,jdbcType=VARCHAR},
+    	bid_id=#{bidId,jdbcType=VARCHAR},first_party_id=#{firstPartyId,jdbcType=VARCHAR},
+    	second_party_id=#{secondPartyId,jdbcType=VARCHAR},status_app=#{statusApp,jdbcType=VARCHAR},
+    	contract_category=#{contractCategory,jdbcType=VARCHAR},project_name = #{projectName,jdbcType=VARCHAR}
+    	,belong_to = #{belongTo,jdbcType=VARCHAR},bid_name = #{bidName,jdbcType=VARCHAR},
+    	qatime = #{qaTime,jdbcType=VARCHAR},taxrate=#{taxRate,jdbcType=VARCHAR}
+    	<if test="processInstId != null and processInstId != ''">
+    	,nullifyProcInstId= #{nullifyProcInstId,jdbcType=VARCHAR}
+    	</if>
+	     <if test="processInstId != null and processInstId != ''">
+	     ,process_inst_id = #{processInstId,jdbcType=VARCHAR}
+	     </if>
+     where id=#{id}
+</update>
+<update id="updateContractDelFlag">
+     update tim_pms_contract
+     set del_flag='1'
+     where id=#{id}
+</update>
+<update id="updateContractAttach">
+     UPDATE TIM_PMS_CONTRACT
+     SET ATTACH=#{attach,jdbcType=VARCHAR}
+     WHERE ID=#{id}
+</update>
+
+<delete id="deleteContract">
+	delete from tim_pms_contract
+	where id=#{id}
+</delete>
+
+<select id="selectByCodeAndSiteid"  resultType="int">
+    select count(t.id)
+    from Tim_Pms_Contract t
+    where t.del_flag='0' and t.siteid=#{siteid} and t.contract_code=#{contractCode} and nvl(t.status_app,'xxx') != 'voided'
+</select>
+
+ <update id="updateByPrimaryKeySelective" >
+    update TIM_PMS_CONTRACT
+    <set>
+      <if test="contractCode != null">
+        CONTRACT_CODE = #{contractCode,jdbcType=VARCHAR},
+      </if>
+      <if test="projectId != null">
+        PROJECT_ID = #{projectId,jdbcType=DECIMAL},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="firstParty != null">
+        FIRST_PARTY = #{firstParty,jdbcType=VARCHAR},
+      </if>
+      <if test="fpLeader != null">
+        FP_LEADER = #{fpLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="fpPhone != null">
+        FP_PHONE = #{fpPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="secondParty != null">
+        SECOND_PARTY = #{secondParty,jdbcType=VARCHAR},
+      </if>
+      <if test="spLeader != null">
+        SP_LEADER = #{spLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="spPhone != null">
+        SP_PHONE = #{spPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="planId != null">
+        PLAN_ID = #{planId,jdbcType=DECIMAL},
+      </if>
+      <if test="totalSum != null">
+        TOTAL_SUM = #{totalSum,jdbcType=DECIMAL},
+      </if>
+      <if test="startTime != null">
+        START_TIME = #{startTime,jdbcType=DATE},
+      </if>
+      <if test="endTime != null">
+        END_TIME = #{endTime,jdbcType=DATE},
+      </if>
+      <if test="signTime != null">
+        SIGN_TIME = #{signTime,jdbcType=DATE},
+      </if>
+      <if test="command != null">
+        COMMAND = #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="zbq != null">
+        ZBQ = #{zbq,jdbcType=VARCHAR},
+      </if>
+      <if test="attach != null">
+        ATTACH = #{attach,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        DEL_FLAG = #{delFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="auditStatus != null">
+        AUDIT_STATUS = #{auditStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=DATE},
+      </if>
+      <if test="businessStatus != null">
+        BUSINESS_STATUS = #{businessStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="relatedContract != null">
+        RELATED_CONTRACT = #{relatedContract,jdbcType=VARCHAR},
+      </if>
+      <if test="siteid != null">
+        SITEID = #{siteid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null">
+        DEPTID = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="payedSum != null">
+        PAYED_SUM = #{payedSum,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="bidId != null">
+        BID_ID = #{bidId,jdbcType=DECIMAL},
+      </if>
+      <if test="firstPartyId != null">
+        FIRST_PARTY_ID = #{firstPartyId,jdbcType=VARCHAR},
+      </if>
+      <if test="secondPartyId != null">
+        SECOND_PARTY_ID = #{secondPartyId,jdbcType=VARCHAR},
+      </if>
+      <if test="statusApp != null">
+        STATUS_APP = #{statusApp,jdbcType=VARCHAR},
+      </if>
+      <if test="contractCategory != null">
+        CONTRACT_CATEGORY = #{contractCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="tipNo != null">
+        TIPNO = #{tipNo,jdbcType=VARCHAR},
+      </if>
+      <if test="processInstId != null">
+        PROCESS_INST_ID = #{processInstId,jdbcType=VARCHAR},
+      </if>
+     
+     
+      <if test="projectName != null">
+        PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="belongTo != null">
+        BELONG_TO = #{belongTo,jdbcType=VARCHAR},
+      </if>
+      <if test="bidName != null">
+        BID_NAME = #{bidName,jdbcType=VARCHAR},
+      </if>
+      <if test="flowStatus != null">
+        FLOW_STATUS = #{flowStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null">
+        TAXRATE = #{taxRate,jdbcType=VARCHAR},
+      </if>
+      <if test="qaTime != null">
+        QATIME = #{qaTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  <select id="queryContractListWithCodePrefix" resultMap="contractVoMap">
+	select t.id,t.contract_code,t.project_id,t.name,t.type,t.first_party,t.fp_leader,t.fp_phone,t.second_party,
+	t.sp_leader,t.sp_phone,t.total_sum,t.sign_time,t.first_party_id,t.second_party_id,t.command,t.attach,t.del_flag,
+	t.status,t.bid_id,t.siteid,p.project_name,t.status_app,t.contract_category,t.tipNo,t.taxRate,t.qaTime
+	from Tim_Pms_Contract t
+	left join Tim_Pms_Project p
+	on t.project_id=p.id
+	where t.del_flag=0 and nvl(T.STATUS_APP,'NULL') <![CDATA[<>]]> 'voided'
+	<if test="prefix != null and prefix != ''">
+		and t.contract_code like #{prefix}||'%'
+	</if>
+	order by t.contract_code asc
+  </select>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+
+	<update id="updateNullifyProcInstId" >
+    UPDATE TIM_PMS_CONTRACT
+    <set>
+    	NULLIFYPROCINSTID= #{nullifyProcInstId,jdbcType=VARCHAR}
+    </set>
+    WHERE ID = #{contractId}
+    </update>
+</mapper>
+

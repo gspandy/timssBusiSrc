@@ -1,0 +1,36 @@
+<div>
+	<font face="微软雅黑" size="3">
+		尊敬的用户：<br>
+		<br>
+		${nowDate}【${siteId}】打卡记录同步不成功。<br>
+		请科技公司查看日志，请厂里网络维护人员检查考勤机的ip和端口是否可访问。<br>
+		具体的信息如下：<br>
+		<table border="1">
+		<tr>
+			<th></th>
+			<th width="180px">考勤机ip</th>
+			<th width="150px">导入数据时间戳</th>
+			<!-- <th>异常原因</th> -->
+		</tr>
+		#foreach ($machine in $machines)
+		<tr>
+			<td>$velocityCount</td>
+			<td>$machine.getAmIp():$machine.getAmPort()</td>
+			<td>$machine.getLastImportStr()</td>
+			<!-- <td>$machine.getStatus()</td> -->
+		</tr> 
+		#end
+		
+		</table>
+		
+		<br>
+		<br>
+	</font>
+	<div style="border-top:1px solid #000000">
+		<font face="微软雅黑" size="2">
+			本邮件由TIMSS系统自动发出，请勿回复。
+			<br>
+			如不想再接收来自TIMSS的通知邮件，请登录后在“设置>个性化”中关闭邮件通知功能。
+		</font>
+	</div>
+</div>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmWorkOrderVODao">
+	<resultMap type="ItsmWorkOrderVO" id="workOrderVOMap">
+		<!-- 公用 -->
+		<id column="ID" property="id" />
+		<result column="WO_CODE" property="workOrderCode" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="EQUIP_ID" property="epuipId" />
+		<result column="CREATEDATE" property="createDate" />
+		<result column="PRINCIPAL" property="principal" />
+		<result column="WO_SPEC" property="woSpec" />
+		<result column="CURR_STATUS" property="woStatus" />
+		<result column="END_REPORT" property="endReport" />
+	</resultMap>	
+	
+	<!-- 查询所有工单  列表 -->
+	<select id="queryWOVOByAssetId" resultMap="workOrderVOMap">
+		select ID,WO_CODE,EQUIP_ID,b1.enum_val WO_SPEC,DESCRIPTION,u.name PRINCIPAL,CREATEDATE,
+			   b2.enum_val CURR_STATUS,t.end_report END_REPORT
+	    from  itsm_workorder t ,sec_user u,b_enum b1,b_enum b2
+	    where EQUIP_ID=#{assetId} and t.SITEID=#{siteId} and b1.enum_code=t.wo_spec_code 
+	    	  and b2.enum_code=t.curr_status and t.createuser = u.user_id and b1.SITEID=#{siteId}
+	    	  and b2.SITEID=#{siteId}
+	    	  
+	</select>
+	 
+	
+</mapper>

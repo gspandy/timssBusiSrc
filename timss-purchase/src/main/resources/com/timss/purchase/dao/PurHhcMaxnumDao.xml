@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurHhcMaxnumDao">
+	
+	<!-- 查询中间表数据 -->
+	<select id="queryPurHhcMaxnum" parameterType="java.lang.String" resultType="com.timss.purchase.bean.PurHhcMaxnum">
+		select * from pur_hhc_maxnum phm where phm.siteid = #{siteid}
+	</select>
+	
+	<!-- 插入中间表数据 -->
+	<insert id="insertPurHhcMaxnum" parameterType="com.timss.purchase.bean.PurHhcMaxnum">
+		insert into pur_hhc_maxnum
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="maxnum != null"> maxnum, </if>
+	      <if test="siteid != null"> siteid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="maxnum != null"> #{maxnum}, </if>
+	      <if test="siteid != null"> #{siteid}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 更新中间表数据 -->
+	<update id="updatePurHhcMaxnum" parameterType="com.timss.purchase.bean.PurHhcMaxnum">
+		update pur_hhc_maxnum i set i.maxnum=#{maxnum} where i.siteid=#{siteid}
+	</update>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoapplyRiskDao">
+	<resultMap type="WoapplyRisk" id="woapplyRiskMap">
+		<id column="ID" property="id" />
+		<result column="WOAPPLY_ID" property="workapplyId" />
+		<result column="RISK_POINT" property="riskPoint" />
+		<result column="RISK_SOURCE" property="riskSource" /> 
+		<result column="SAFE_ITEM" property="safeItem" />
+		<result column="BEAR_FLAG" property="bearFlag" />
+		<result column="REMARKS" property="remarks" />
+	</resultMap>	
+	
+	<insert id="insertWoapplyRisk" parameterType="WoapplyRisk">  
+        insert into WO_APPLY_RISK
+        ( ID,WOAPPLY_ID, RISK_POINT, RISK_SOURCE, SAFE_ITEM, BEAR_FLAG, REMARKS ) 
+         values( #{id,jdbcType=VARCHAR},
+				#{workapplyId,jdbcType=VARCHAR},
+				#{riskPoint,jdbcType=VARCHAR},
+				#{riskSource,jdbcType=VARCHAR},
+				#{safeItem,jdbcType=VARCHAR},
+				#{bearFlag,jdbcType=VARCHAR},
+				#{remarks,jdbcType=VARCHAR}) 
+	</insert>
+  
+	<!-- 删除 -->
+	<delete id="deleteRiskListByWoapplyId" parameterType="String">
+		delete from WO_APPLY_RISK t 
+		where t.WOAPPLY_ID = #{woapplyId} 
+	</delete>
+	
+	<!-- 查询-->
+	<select id="queryAllWoapplyRisk" parameterType="String" resultMap="woapplyRiskMap" >
+		select ID,WOAPPLY_ID, RISK_POINT, RISK_SOURCE, SAFE_ITEM, BEAR_FLAG, REMARKS
+		from WO_APPLY_RISK t
+		where t.WOAPPLY_ID = #{woapplyId} 
+	</select>
+</mapper>

@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatAcceptDetailDao">
+	<resultMap type="com.timss.inventory.vo.InvMatAcceptDetailVO" id="InvMatAcceptDetailVOMap">
+		<result property="inacdId" column="inacd_id"/>
+		<result property="inacId" column="inac_id"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="puraId" column="pura_id"/>
+		<result property="purapplyUser" column="purapply_user"/>
+		<result property="purapplyUsercode" column="purapply_usercode"/>
+		<result property="taxRate" column="tax_rate"/>
+		<result property="invcateid" column="INVCATEID"/>
+	</resultMap>
+	<resultMap id="BaseResultMap" type="com.timss.inventory.bean.InvMatAcceptDetail" >
+    <id column="INACD_ID" property="inacdId" jdbcType="VARCHAR" />
+    <result column="INAC_ID" property="inacId" jdbcType="VARCHAR" />
+    <result column="ITEMID" property="itemid" jdbcType="VARCHAR" />
+    <result column="ITEMNUM" property="itemnum" jdbcType="DECIMAL" />
+    <result column="ACCEPTNUM" property="acceptnum" jdbcType="DECIMAL" />
+    <result column="ATTR1" property="attr1" jdbcType="VARCHAR" />
+    <result column="ATTR10" property="attr10" jdbcType="VARCHAR" />
+    <result column="ATTR9" property="attr9" jdbcType="VARCHAR" />
+    <result column="ATTR8" property="attr8" jdbcType="VARCHAR" />
+    <result column="ATTR7" property="attr7" jdbcType="VARCHAR" />
+    <result column="ATTR6" property="attr6" jdbcType="VARCHAR" />
+    <result column="ATTR5" property="attr5" jdbcType="VARCHAR" />
+    <result column="ATTR4" property="attr4" jdbcType="VARCHAR" />
+    <result column="ATTR3" property="attr3" jdbcType="VARCHAR" />
+    <result column="ATTR2" property="attr2" jdbcType="VARCHAR" />
+    <result column="SITEID" property="siteid" jdbcType="VARCHAR" />
+    <result column="CREATEUSER" property="createuser" jdbcType="VARCHAR" />
+    <result column="CREATEDATE" property="createdate"  />
+    <result column="MODIFYUSER" property="modifyuser" jdbcType="VARCHAR" />
+    <result column="MODIFYDATE" property="modifydate"  />
+    <result column="DEPTID" property="deptid" jdbcType="VARCHAR" />
+    <result column="DEL_FLAG" property="delFlag" jdbcType="VARCHAR" />
+    <result column="PURA_ID" property="puraId" jdbcType="VARCHAR" />
+    <result column="PURAPPLY_USER" property="purapplyUser" jdbcType="VARCHAR" />
+    <result column="PURAPPLY_USERCODE" property="purapplyUsercode" jdbcType="VARCHAR" />
+    
+    <result column="WAREHOUSEID" property="warehouseid" jdbcType="VARCHAR" />
+    <result column="PRICE" property="price" jdbcType="VARCHAR" />
+    <result column="RECEIVENUM" property="receivenum" jdbcType="VARCHAR" />
+    <result property="taxRate" column="tax_rate" jdbcType="DECIMAL"/>
+    <result property="invcateid" column="INVCATEID" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    INACD_ID, INAC_ID, ITEMID, ITEMNUM, ACCEPTNUM, ATTR1, ATTR10, ATTR9, ATTR8, ATTR7, 
+    ATTR6, ATTR5, ATTR4, ATTR3, ATTR2, SITEID, CREATEUSER, CREATEDATE, MODIFYUSER, MODIFYDATE, 
+    DEPTID, DEL_FLAG, PURA_ID, PURAPPLY_USER, PURAPPLY_USERCODE,PRICE,WAREHOUSEID,TAX_RATE,INVCATEID
+  </sql>
+  <select id="queryByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from INV_MAT_ACCEPT_DETAIL
+    where INACD_ID = #{inacdId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from INV_MAT_ACCEPT_DETAIL
+    where INACD_ID = #{inacdId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByInacId" parameterType="java.lang.String" >
+    delete from INV_MAT_ACCEPT_DETAIL
+    where INAC_ID = #{inacId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.timss.inventory.bean.InvMatAcceptDetail" >
+    insert into INV_MAT_ACCEPT_DETAIL (INACD_ID, INAC_ID, ITEMID, 
+      ITEMNUM, ACCEPTNUM, ATTR1, 
+      ATTR10, ATTR9, ATTR8, 
+      ATTR7, ATTR6, ATTR5, 
+      ATTR4, ATTR3, ATTR2, 
+      SITEID, CREATEUSER, CREATEDATE, 
+      MODIFYUSER, MODIFYDATE, DEPTID, 
+      DEL_FLAG, PURA_ID, PURAPPLY_USER, 
+      PURAPPLY_USERCODE,price,warehouseid,binid,tax_rate,INVCATEID)
+    values (#{inacdId,jdbcType=VARCHAR}, #{inacId,jdbcType=VARCHAR}, #{itemid,jdbcType=VARCHAR}, 
+      #{itemnum,jdbcType=DECIMAL}, #{acceptnum,jdbcType=DECIMAL}, #{attr1,jdbcType=VARCHAR}, 
+      #{attr10,jdbcType=VARCHAR}, #{attr9,jdbcType=VARCHAR}, #{attr8,jdbcType=VARCHAR}, 
+      #{attr7,jdbcType=VARCHAR}, #{attr6,jdbcType=VARCHAR}, #{attr5,jdbcType=VARCHAR}, 
+      #{attr4,jdbcType=VARCHAR}, #{attr3,jdbcType=VARCHAR}, #{attr2,jdbcType=VARCHAR}, 
+      #{siteid,jdbcType=VARCHAR}, #{createuser,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP}, 
+      #{modifyuser,jdbcType=VARCHAR}, #{modifydate,jdbcType=TIMESTAMP}, #{deptid,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=VARCHAR}, #{puraId,jdbcType=VARCHAR}, #{purapplyUser,jdbcType=VARCHAR}, 
+      #{purapplyUsercode,jdbcType=VARCHAR},#{price,jdbcType=DECIMAL},#{warehouseid,jdbcType=VARCHAR},
+      #{binid,jdbcType=VARCHAR},#{taxRate,jdbcType=DECIMAL},#{invcateid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.timss.inventory.bean.InvMatAcceptDetail" >
+    insert into INV_MAT_ACCEPT_DETAIL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="inacdId != null" >
+        INACD_ID,
+      </if>
+      <if test="inacId != null" >
+        INAC_ID,
+      </if>
+      <if test="itemid != null" >
+        ITEMID,
+      </if>
+      <if test="itemnum != null" >
+        ITEMNUM,
+      </if>
+      <if test="acceptnum != null" >
+        ACCEPTNUM,
+      </if>
+      <if test="attr1 != null" >
+        ATTR1,
+      </if>
+      <if test="attr10 != null" >
+        ATTR10,
+      </if>
+      <if test="attr9 != null" >
+        ATTR9,
+      </if>
+      <if test="attr8 != null" >
+        ATTR8,
+      </if>
+      <if test="attr7 != null" >
+        ATTR7,
+      </if>
+      <if test="attr6 != null" >
+        ATTR6,
+      </if>
+      <if test="attr5 != null" >
+        ATTR5,
+      </if>
+      <if test="attr4 != null" >
+        ATTR4,
+      </if>
+      <if test="attr3 != null" >
+        ATTR3,
+      </if>
+      <if test="attr2 != null" >
+        ATTR2,
+      </if>
+      <if test="siteid != null" >
+        SITEID,
+      </if>
+      <if test="createuser != null" >
+        CREATEUSER,
+      </if>
+      <if test="createdate != null" >
+        CREATEDATE,
+      </if>
+      <if test="modifyuser != null" >
+        MODIFYUSER,
+      </if>
+      <if test="modifydate != null" >
+        MODIFYDATE,
+      </if>
+      <if test="deptid != null" >
+        DEPTID,
+      </if>
+      <if test="delFlag != null" >
+        DEL_FLAG,
+      </if>
+      <if test="puraId != null" >
+        PURA_ID,
+      </if>
+      <if test="purapplyUser != null" >
+        PURAPPLY_USER,
+      </if>
+      <if test="purapplyUsercode != null" >
+        PURAPPLY_USERCODE,
+      </if>
+      <if test="taxRate != null" >
+        tax_rate,
+      </if>
+      <if test="invcateid != null" >
+        INVCATEID,
+      </if>      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="inacdId != null" >
+        #{inacdId,jdbcType=VARCHAR},
+      </if>
+      <if test="inacId != null" >
+        #{inacId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemid != null" >
+        #{itemid,jdbcType=VARCHAR},
+      </if>
+      <if test="itemnum != null" >
+        #{itemnum,jdbcType=DECIMAL},
+      </if>
+      <if test="acceptnum != null" >
+        #{acceptnum,jdbcType=DECIMAL},
+      </if>
+      <if test="attr1 != null" >
+        #{attr1,jdbcType=VARCHAR},
+      </if>
+      <if test="attr10 != null" >
+        #{attr10,jdbcType=VARCHAR},
+      </if>
+      <if test="attr9 != null" >
+        #{attr9,jdbcType=VARCHAR},
+      </if>
+      <if test="attr8 != null" >
+        #{attr8,jdbcType=VARCHAR},
+      </if>
+      <if test="attr7 != null" >
+        #{attr7,jdbcType=VARCHAR},
+      </if>
+      <if test="attr6 != null" >
+        #{attr6,jdbcType=VARCHAR},
+      </if>
+      <if test="attr5 != null" >
+        #{attr5,jdbcType=VARCHAR},
+      </if>
+      <if test="attr4 != null" >
+        #{attr4,jdbcType=VARCHAR},
+      </if>
+      <if test="attr3 != null" >
+        #{attr3,jdbcType=VARCHAR},
+      </if>
+      <if test="attr2 != null" >
+        #{attr2,jdbcType=VARCHAR},
+      </if>
+      <if test="siteid != null" >
+        #{siteid,jdbcType=VARCHAR},
+      </if>
+      <if test="createuser != null" >
+        #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyuser != null" >
+        #{modifyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifydate != null" >
+        #{modifydate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="puraId != null" >
+        #{puraId,jdbcType=VARCHAR},
+      </if>
+      <if test="purapplyUser != null" >
+        #{purapplyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="purapplyUsercode != null" >
+        #{purapplyUsercode,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null" >
+       #{taxRate,jdbcType=DECIMAL},
+      </if>
+      <if test="invcateid != null" >
+       #{INVCATEID,jdbcType=VARCHAR},
+      </if>      
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.timss.inventory.bean.InvMatAcceptDetail" >
+    update INV_MAT_ACCEPT_DETAIL
+    <set >
+      <if test="inacId != null" >
+        INAC_ID = #{inacId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemid != null" >
+        ITEMID = #{itemid,jdbcType=VARCHAR},
+      </if>
+      <if test="itemnum != null" >
+        ITEMNUM = #{itemnum,jdbcType=DECIMAL},
+      </if>
+      <if test="acceptnum != null" >
+        ACCEPTNUM = #{acceptnum,jdbcType=DECIMAL},
+      </if>
+      <if test="attr1 != null" >
+        ATTR1 = #{attr1,jdbcType=VARCHAR},
+      </if>
+      <if test="attr10 != null" >
+        ATTR10 = #{attr10,jdbcType=VARCHAR},
+      </if>
+      <if test="attr9 != null" >
+        ATTR9 = #{attr9,jdbcType=VARCHAR},
+      </if>
+      <if test="attr8 != null" >
+        ATTR8 = #{attr8,jdbcType=VARCHAR},
+      </if>
+      <if test="attr7 != null" >
+        ATTR7 = #{attr7,jdbcType=VARCHAR},
+      </if>
+      <if test="attr6 != null" >
+        ATTR6 = #{attr6,jdbcType=VARCHAR},
+      </if>
+      <if test="attr5 != null" >
+        ATTR5 = #{attr5,jdbcType=VARCHAR},
+      </if>
+      <if test="attr4 != null" >
+        ATTR4 = #{attr4,jdbcType=VARCHAR},
+      </if>
+      <if test="attr3 != null" >
+        ATTR3 = #{attr3,jdbcType=VARCHAR},
+      </if>
+      <if test="attr2 != null" >
+        ATTR2 = #{attr2,jdbcType=VARCHAR},
+      </if>
+      <if test="siteid != null" >
+        SITEID = #{siteid,jdbcType=VARCHAR},
+      </if>
+      <if test="createuser != null" >
+        CREATEUSER = #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        CREATEDATE = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyuser != null" >
+        MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifydate != null" >
+        MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptid != null" >
+        DEPTID = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        DEL_FLAG = #{delFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="puraId != null" >
+        PURA_ID = #{puraId,jdbcType=VARCHAR},
+      </if>
+      <if test="purapplyUser != null" >
+        PURAPPLY_USER = #{purapplyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="purapplyUsercode != null" >
+        PURAPPLY_USERCODE = #{purapplyUsercode,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="warehouseid != null" >
+        warehouseid = #{warehouseid,jdbcType=VARCHAR},
+      </if>
+      <if test="binid != null" >
+        binid = #{binid,jdbcType=VARCHAR},
+      </if>
+      <if test="taxRate != null" >
+       tax_rate = #{taxRate,jdbcType=DECIMAL},
+      </if>
+      <if test="invcateid != null" >
+        INVCATEID = #{invcateid,jdbcType=VARCHAR},
+      </if>      
+    </set>
+    where INACD_ID = #{inacdId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.timss.inventory.bean.InvMatAcceptDetail" >
+    update INV_MAT_ACCEPT_DETAIL
+    set INAC_ID = #{inacId,jdbcType=VARCHAR},
+      ITEMID = #{itemid,jdbcType=VARCHAR},
+      ITEMNUM = #{itemnum,jdbcType=DECIMAL},
+      ACCEPTNUM = #{acceptnum,jdbcType=DECIMAL},
+      ATTR1 = #{attr1,jdbcType=VARCHAR},
+      ATTR10 = #{attr10,jdbcType=VARCHAR},
+      ATTR9 = #{attr9,jdbcType=VARCHAR},
+      ATTR8 = #{attr8,jdbcType=VARCHAR},
+      ATTR7 = #{attr7,jdbcType=VARCHAR},
+      ATTR6 = #{attr6,jdbcType=VARCHAR},
+      ATTR5 = #{attr5,jdbcType=VARCHAR},
+      ATTR4 = #{attr4,jdbcType=VARCHAR},
+      ATTR3 = #{attr3,jdbcType=VARCHAR},
+      ATTR2 = #{attr2,jdbcType=VARCHAR},
+      SITEID = #{siteid,jdbcType=VARCHAR},
+      CREATEUSER = #{createuser,jdbcType=VARCHAR},
+      CREATEDATE = #{createdate,jdbcType=TIMESTAMP},
+      MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+      MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP},
+      DEPTID = #{deptid,jdbcType=VARCHAR},
+      DEL_FLAG = #{delFlag,jdbcType=VARCHAR},
+      PURA_ID = #{puraId,jdbcType=VARCHAR},
+      PURAPPLY_USER = #{purapplyUser,jdbcType=VARCHAR},
+      PURAPPLY_USERCODE = #{purapplyUsercode,jdbcType=VARCHAR},
+      price = #{price,jdbcType=VARCHAR},
+      warehouseid = #{warehouseid,jdbcType=VARCHAR},
+      binid = #{binid,jdbcType=VARCHAR},
+      tax_rate = #{taxRate,jdbcType=DECIMAL},
+      INVCATEID = #{invcateid,jdbcType=VARCHAR}
+    where INACD_ID = #{inacdId,jdbcType=VARCHAR}
+  </update>
+  <select id="queryInvMatAcceptDetailList" resultMap="InvMatAcceptDetailVOMap"  >
+    SELECT t.INACD_ID, 
+    		t.INAC_ID, 
+    		t.ITEMID, 
+    		t.ITEMNUM, 
+    		t.ACCEPTNUM, 
+    		t.ATTR1, 
+    		t.ATTR10, 
+    		t.ATTR9, 
+    		t.ATTR8, 
+    		t.ATTR7, 
+    		t.ATTR6, 
+    		t.ATTR5, 
+    		t.ATTR4, 
+    		t.ATTR3, 
+    		t.ATTR2, 
+    		t.SITEID, 
+    		t.CREATEUSER, 
+    		t.CREATEDATE, 
+    		t.MODIFYUSER, 
+    		t.MODIFYDATE, 
+    		t.DEPTID, 
+    		t.DEL_FLAG, 
+    		t.PURA_ID, 
+    		t.PURAPPLY_USER, 
+    		t.PURAPPLY_USERCODE,
+    		t.PRICE,
+    		t.WAREHOUSEID,
+    		IW.WAREHOUSENAME AS WAREHOUSE,
+    		t.BINID,
+		   	II.ITEMCODE,
+		   	II.ITEMNAME,
+           	II.CUSMODEL,
+           	IU.UNITID,
+           	IU.UNITNAME AS UNIT,
+           	IWP.SHEET_ID AS PURA_ID, 
+           	IWP.SHEETNO AS applysheetno,
+           	NVL(P.RECEIVENUM,0) AS RECEIVENUM,
+           	T.TAX_RATE,
+           	T.INVCATEID
+    FROM INV_MAT_ACCEPT_DETAIL t
+    LEFT JOIN INV_WAREHOUSE IW ON t.WAREHOUSEID = IW.WAREHOUSEID 
+    LEFT JOIN INV_ITEM II ON t.ITEMID = II.ITEMID 
+    LEFT JOIN INV_UNIT IU ON II.UNIT1 = IU.UNITID AND II.SITE_ID = IU.SITE_ID
+    LEFT JOIN ITCEAM_WORKFLOW_PURCHAPPLY IWP ON t.PURA_ID = IWP.SHEET_ID
+    LEFT JOIN INV_MAT_ACCEPT MA on MA.INAC_ID = t.INAC_ID
+    LEFT JOIN 
+             (
+                 SELECT IMM.OUTTERID,
+                        IMM.ITEMCODE,
+                        SUM(IMTD.IN_QTY) AS RECEIVENUM 
+                 FROM INV_MAT_MAP IMM,
+                      INV_MAT_TRAN_REC IMTD
+                 WHERE IMM.IMTDID = IMTD.IMTDID
+                 GROUP BY IMM.OUTTERID,IMM.ITEMCODE
+             ) P ON MA.PO_ID = P.OUTTERID AND II.ITEMCODE = P.ITEMCODE
+    <where>
+      <if test="inacId != null" >
+      AND  t.INAC_ID = #{inacId,jdbcType=VARCHAR}
+      </if>
+      <if test="itemid != null" >
+      AND  t.ITEMID = #{itemid,jdbcType=VARCHAR}
+      </if>
+      <if test="itemnum != null" >
+      AND  t.ITEMNUM = #{itemnum,jdbcType=DECIMAL}
+      </if>
+      <if test="acceptnum != null" >
+      AND  t.ACCEPTNUM = #{acceptnum,jdbcType=DECIMAL}
+      </if>
+      <if test="attr1 != null" >
+      AND  t.ATTR1 = #{attr1,jdbcType=VARCHAR}
+      </if>
+      <if test="attr10 != null" >
+      AND  t.ATTR10 = #{attr10,jdbcType=VARCHAR}
+      </if>
+      <if test="attr9 != null" >
+      AND  t.ATTR9 = #{attr9,jdbcType=VARCHAR}
+      </if>
+      <if test="attr8 != null" >
+      AND  t.ATTR8 = #{attr8,jdbcType=VARCHAR}
+      </if>
+      <if test="attr7 != null" >
+      AND  t.ATTR7 = #{attr7,jdbcType=VARCHAR}
+      </if>
+      <if test="attr6 != null" >
+      AND  t.ATTR6 = #{attr6,jdbcType=VARCHAR}
+      </if>
+      <if test="attr5 != null" >
+      AND  t.ATTR5 = #{attr5,jdbcType=VARCHAR}
+      </if>
+      <if test="attr4 != null" >
+      AND  t.ATTR4 = #{attr4,jdbcType=VARCHAR}
+      </if>
+      <if test="attr3 != null" >
+      AND  t.ATTR3 = #{attr3,jdbcType=VARCHAR}
+      </if>
+      <if test="attr2 != null" >
+      AND  t.ATTR2 = #{attr2,jdbcType=VARCHAR}
+      </if>
+      <if test="siteid != null" >
+      AND  t.SITEID = #{siteid,jdbcType=VARCHAR}
+      </if>
+      <if test="createuser != null" >
+      AND  t.CREATEUSER = #{createuser,jdbcType=VARCHAR}
+      </if>
+      <if test="createdate != null" >
+      AND  t.CREATEDATE = #{createdate,jdbcType=TIMESTAMP}
+      </if>
+      <if test="modifyuser != null" >
+      AND  t.MODIFYUSER = #{modifyuser,jdbcType=VARCHAR}
+      </if>
+      <if test="modifydate != null" >
+      AND  t.MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deptid != null" >
+      AND  t.DEPTID = #{deptid,jdbcType=VARCHAR}
+      </if>
+      <if test="delFlag != null" >
+      AND  t.DEL_FLAG = #{delFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="puraId != null" >
+      AND  t.PURA_ID = #{puraId,jdbcType=VARCHAR}
+      </if>
+      <if test="purapplyUser != null" >
+      AND  t.PURAPPLY_USER = #{purapplyUser,jdbcType=VARCHAR}
+      </if>
+      <if test="purapplyUsercode != null" >
+      AND  t.PURAPPLY_USERCODE = #{purapplyUsercode,jdbcType=VARCHAR}
+      </if>
+      ORDER BY II.ITEMCODE ASC, T.PURA_ID ASC
+    </where>
+  </select>
+  
+
+	<!-- 根据采购合同查询到验收记录明细 -->
+	<select id="queryItem2InvMatAcceptDetail" resultMap="InvMatAcceptDetailVOMap">
+             SELECT II.ITEMID,
+                 II.ITEMCODE,
+                 II.ITEMNAME,
+                 II.CUSMODEL,
+                 IWI.WAREHOUSEID,
+                 FORMATNUM2(IWOE.ITEMNUM) AS ITEMNUM,
+                 FORMATNUM2(NVL(T.RECEIVENUM,0)) AS RECEIVENUM,
+                 IU.UNITID,
+                 IU.UNITNAME AS UNIT,
+                 IWP.SHEET_ID AS PURA_ID, 
+                 IWP.SHEETNO AS APPLYSHEETNO,
+                 IWP.CREATEACCOUNT AS PURAPPLY_USERCODE,
+                 SU.NAME AS PURAPPLY_USER,
+                 IWI.DEF_BINID AS BINID,
+                 IWOE.COST AS PRICE,
+                 IW.WAREHOUSENAME AS WAREHOUSE,
+                 (IWOE.TAX_RATE/100) AS TAX_RATE,
+                 IWOE.INVCATEID AS INVCATEID
+          FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE
+          INNER JOIN INV_ITEM II ON IWOE.ITEMID = II.ITEMCODE
+          INNER JOIN INV_WAREHOUSE_ITEM IWI ON II.ITEMID = IWI.ITEMID AND II.SITE_ID = IWI.SITE_ID AND IWI.WAREHOUSEID = IWOE.WAREHOUSEID
+          AND IWI.INVCATEID = IWOE.INVCATEID
+          INNER JOIN INV_WAREHOUSE IW ON IWI.WAREHOUSEID = IW.WAREHOUSEID AND IWI.SITE_ID = IW.SITE_ID
+          INNER JOIN INV_UNIT IU ON II.UNIT1 = IU.UNITID AND II.SITE_ID = IU.SITE_ID
+          INNER JOIN ITCEAM_WORKFLOW_PURCHAPPLY IWP ON IWOE.APPLY_SHEET_ID = IWP.SHEET_ID
+          INNER JOIN SEC_USER SU ON IWP.CREATEACCOUNT = SU.USER_ID
+          LEFT JOIN 
+                     (
+                         SELECT IMM.OUTTERID,
+                                IMM.ITEMCODE,
+                                NVL(SUM(IMTD.IN_QTY)-NVL(SUM(IMRD.RETURN_QTY),0),0) AS RECEIVENUM,
+                                IMTD.WAREHOUSEID,
+                                IMTD.PURA_ID,
+                                IMTD.INVCATEID
+                         FROM INV_MAT_MAP IMM,
+                              INV_MAT_TRAN_REC IMTD 
+                              LEFT JOIN INV_MAT_RETURNS_DETAIL IMRD ON IMTD.IMTDID = IMRD.IMTDID
+                         WHERE IMM.IMTDID = IMTD.IMTDID 
+                         GROUP BY IMM.OUTTERID,IMM.ITEMCODE,IMTD.WAREHOUSEID,IMTD.PURA_ID,IMTD.INVCATEID
+                     ) T ON IWOE.SHEET_ID = T.OUTTERID AND IWOE.ITEMID = T.ITEMCODE AND IWOE.APPLY_SHEET_ID = T.PURA_ID AND IWOE.WAREHOUSEID = T.WAREHOUSEID
+          WHERE IWOE.SHEET_ID = #{poId}
+         	AND IWOE.ITEMNUM > NVL(T.RECEIVENUM,0)
+ 			ORDER BY ITEMCODE ASC, PURA_ID ASC
+	</select>
+</mapper>

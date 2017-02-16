@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatMapDao">
+	<!-- 插入映射表记录 -->
+	<insert id="insertInvMatMap" parameterType="com.timss.inventory.bean.InvMatMap">
+		insert into inv_mat_map 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> imtdid, </if>
+	      <if test="outterid != null"> outterid, </if>
+	      <if test="tranType != null"> tran_type, </if>
+	      <if test="itemcode != null"> itemcode, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> #{imtdid,jdbcType=VARCHAR}, </if>
+	      <if test="outterid != null"> #{outterid,jdbcType=VARCHAR}, </if>
+	      <if test="tranType != null"> #{tranType,jdbcType=VARCHAR}, </if>
+	      <if test="itemcode != null"> #{itemcode,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	<!-- 通过imtdid删除映射信息 -->
+	<delete id="deleteInvMatMapByImtdid">
+		delete from inv_mat_map imm where imm.imtdid=#{params.imtdid}
+	</delete>
+
+</mapper>

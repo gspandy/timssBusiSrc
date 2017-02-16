@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.asset.dao.AstBorrowRecordDao">
+	<resultMap type="com.timss.asset.bean.AstBorrowRecordBean" id="astBorrowRecord">
+		<result property="borrowRecordId" column="borrow_record_id"/>
+		<result property="assetId" column="asset_id"/>
+		<result property="borrowUserId" column="borrow_user_id"/>
+		<result property="borrowDate" column="borrow_date"/>
+		<result property="returnUserId" column="return_user_id"/>
+		<result property="returnDate" column="return_date"/>
+		<result property="createuser" column="create_user"/>
+		<result property="createdate" column="create_date"/>
+		<result property="modifyuser" column="modify_user"/>
+		<result property="modifydate" column="modify_date"/>
+		<result property="siteid" column="site_id"/>
+		<result property="memo" column="memo"/>
+		<result property="deptid" column="dept_id"/>
+		<result property="borrowUserDeptId" column="borrow_user_dept_id"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.asset.vo.AstBorrowRecordVo" id="astBorrowRecordVo">
+		<result property="borrowRecordId" column="borrow_record_id"/>
+		<result property="assetId" column="asset_id"/>
+		<result property="borrowUserId" column="borrow_user_id"/>
+		<result property="borrowDate" column="borrow_date"/>
+		<result property="returnUserId" column="return_user_id"/>
+		<result property="returnDate" column="return_date"/>
+		<result property="createuser" column="create_user"/>
+		<result property="createdate" column="create_date"/>
+		<result property="modifyuser" column="modify_user"/>
+		<result property="modifydate" column="modify_date"/>
+		<result property="siteid" column="site_id"/>
+		<result property="memo" column="memo"/>
+		<result property="deptid" column="dept_id"/>
+		<result property="borrowUserDeptId" column="borrow_user_dept_id"/>
+		<result property="borrowUserName" column="borrow_user_name"/>
+		<result property="returnUserName" column="return_user_name"/>
+		<result property="borrowUserDeptName" column="borrow_user_dept"/>
+		<result property="imrdid" column="imrdid"/>
+	</resultMap>
+
+	<!-- 通过assetId显示领用记录 -->
+	<select id="getDataList" resultMap="astBorrowRecordVo">
+	select a.borrow_date,
+		   a.return_date,
+		   a.return_user_id,
+		   a.memo,
+		   a.imrdid,
+		   c.name as BORROW_USER_DEPT,
+		   d.name as BORROW_USER_NAME,
+		   e.name as RETURN_USER_NAME
+	  from ast_borrow_record a
+	  left join sec_organization c on a.borrow_user_dept_id = c.org_code
+	  left join sec_user d on d.user_id = a.borrow_user_id
+	  left join sec_user e on e.user_id = a.return_user_id
+	 where asset_id = #{assetId}
+	 order by a.borrow_date asc,a.borrow_record_id asc
+
+	</select>
+	
+	<!-- 添加数据 -->
+	<insert id="insertAstBorrowRecord" parameterType="com.timss.asset.bean.AstBorrowRecordBean">
+		<selectKey resultType="int" keyProperty="borrowRecordId" order="BEFORE">
+        select SEQ_AST_BORROW_RECORD.nextval from dual
+    	</selectKey>
+		insert into AST_BORROW_RECORD
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		  <if test="borrowRecordId != null"> borrow_record_id, </if>
+	      <if test="assetId != null"> asset_id, </if>
+	      <if test="borrowUserId != null"> borrow_user_id, </if>
+	      <if test="borrowDate != null"> borrow_date, </if>
+	      <if test="returnUserId != null"> return_user_id, </if>
+	      <if test="returnDate != null"> return_date, </if>
+	      <if test="createuser != null"> create_user, </if>
+	      <if test="createdate != null"> create_date, </if>
+	      <if test="modifyuser != null"> modify_user, </if>
+	      <if test="modifydate != null"> modify_date, </if>
+	      <if test="siteid != null"> site_id, </if>
+	      <if test="memo != null"> memo, </if>
+	      <if test="deptid != null">dept_id,</if>
+	      <if test="borrowUserDeptId != null">borrow_user_dept_id,</if>
+	      <if test="imrdid != null">imrdid,</if>
+	     </trim>
+	     <trim prefix="values (" suffix=")" suffixOverrides=",">
+		  <if test="borrowRecordId != null"> #{borrowRecordId,jdbcType=NUMERIC}, </if>
+	      <if test="assetId != null"> #{assetId,jdbcType=VARCHAR}, </if>
+	      <if test="borrowUserId != null"> #{borrowUserId,jdbcType=VARCHAR}, </if>
+	      <if test="borrowDate != null"> #{borrowDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="returnUserId != null"> #{returnUserId,jdbcType=VARCHAR}, </if>
+	      <if test="returnDate != null"> #{returnDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="memo != null"> #{memo,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+	      <if test="borrowUserDeptId != null"> #{borrowUserDeptId,jdbcType=VARCHAR}, </if>
+	      <if test="imrdid != null"> #{imrdid,jdbcType=VARCHAR}, </if>
+	     </trim>
+	</insert>
+	
+	<!-- 删除数据 -->
+	<delete id="deleteAstBorrowRecord" >
+		delete from AST_BORROW_RECORD where borrow_record_id = #{id}
+	</delete>
+	
+	<!-- 修改数据 -->
+	<update id="updateAstBorrowRecord" parameterType="com.timss.asset.bean.AstBorrowRecordBean">
+		update AST_BORROW_RECORD t
+		<set>
+	      <if test="returnUserId != null"> return_user_id=#{returnUserId,jdbcType=VARCHAR}, </if>
+	      <if test="returnUserDeptId != null"> return_user_dept_id=#{returnUserDeptId,jdbcType=VARCHAR}, </if>
+	      <if test="returnDate != null"> return_date=#{returnDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> modify_user=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> modify_date=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="memo != null"> memo=#{memo,jdbcType=VARCHAR}, </if>
+		</set>
+		where t.asset_id=#{assetId,jdbcType=VARCHAR} and t.return_user_id is null and t.borrow_record_id = #{borrowRecordId,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 获取领用，归回按钮的显示状态标志位 -->
+	<select id="getDetail" resultMap="astBorrowRecord">
+    select borrow_date, borrow_user_id, memo
+      from AST_BORROW_RECORD t
+     where t.asset_id = #{assetId}
+       and t.return_user_id is null
+
+	</select>
+	
+	<!-- 获取归还登记弹出框的初始值 -->
+	<select id="getInfo" resultMap="astBorrowRecordVo">
+	select a.borrow_record_id,
+           a.borrow_date,
+           a.memo,
+           d.name || '/' || c.name as borrow_user_dept
+      from ast_borrow_record a
+      left join sec_organization_user b
+        on a.borrow_user_id = b.user_id
+      left join sec_organization c
+        on b.org_code = c.org_code
+      left join sec_user d
+        on d.user_id = a.borrow_user_id
+      left join sec_user e
+        on e.user_id = a.return_user_id
+     where asset_id = #{assetId}
+       and a.return_user_id is null
+	</select>
+	
+	<!-- 查询领用归还记录 -->
+	<select id="queryAstBorrowRecordList" resultMap="astBorrowRecordVo">
+		select t.borrow_record_id,t.asset_id,t.imrdid,t.borrow_user_id,t.return_user_id,t.site_id,t.memo 
+		from ast_borrow_record t 
+		where t.site_id = #{params.siteId}
+		<if test="params.assetId != null and params.assetId != ''">
+		  	and t.asset_id like '%'||'${params.assetId}'||'%' 
+		</if>	
+		<if test="params.imrdid != null and params.imrdid != ''">
+			and t.imrdid = '${ params.imrdid }'
+		</if>
+	</select>	
+</mapper>

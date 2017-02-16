@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmAttachmentDao">
+
+	<resultMap type="ItsmAttachment" id="attachmentMap">
+		<id column="ID" property="id" />
+		<result column="TYPE" property="type" />
+		<result column="ATTACH_ID" property="attachId" />
+		<result column="LOAD_PHASE" property="loadPhase" />
+		<result column="LOAD_TIME" property="loadTime" />
+		<result column="LOAD_USER" property="loadUser" />
+		<result column="DELETE_USER" property="deleteUser" />
+		<result column="SITEID" property="siteid" />
+		<result column="YXBZ" property="yxbz" />
+	</resultMap>	
+	
+	<insert id="insertAttachment" >
+		insert into itsm_attachment_temp(ID,TYPE,ATTACH_ID,LOAD_PHASE,LOAD_TIME,LOAD_USER,SITEID,YXBZ) 
+		values( #{id},
+				#{type,jdbcType=VARCHAR},
+				#{attachId,jdbcType=VARCHAR},
+				#{loadPhase,jdbcType=VARCHAR},
+				#{loadTime,jdbcType=TIMESTAMP},
+				#{loadUser,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC}
+				) 
+	</insert>
+	
+	<select id="queryAttachmentById" resultMap="attachmentMap">
+		select * 
+		from itsm_attachment_temp t 
+		where t.id= #{ id } and t.type = #{type} and t.yxbz=1
+		<if test="loadPhase != null">
+	        and LOAD_PHASE=#{loadPhase}
+	    </if>
+	     order by t.load_time asc
+	</select>
+
+	
+	<!-- 删除附件-->
+	<update id="deleteAttachment" parameterType="HashMap">
+		update itsm_attachment_temp t
+		set  YXBZ= 0 , t.DELETE_USER=#{deleteUser}
+		where ID=#{id} and TYPE=#{type}
+				<if test="attachId != null">
+			        and ATTACH_ID=#{attachId}
+			    </if>
+	</update>
+</mapper>

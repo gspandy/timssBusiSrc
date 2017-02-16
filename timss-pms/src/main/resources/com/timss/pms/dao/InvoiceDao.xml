@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.InvoiceDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+ 
+	
+	<resultMap type="com.timss.pms.vo.InvoiceVo" id="invoiceVoMap">
+		<id property="id" column="id"/>
+		<result property="code" column="code"/>
+		<result property="rate" column="rate"/>
+		<result property="sum" column="sum"/>
+		<result property="command" column="command"/>
+		<result property="tax" column="tax"/>
+		<result property="withoutTax" column="without_tax"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="siteid" column="siteid"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		<result property="payId" column="pay_id"/>
+		<result property="status" column="status"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="invoiceCode" column="invoice_code"/>
+		<result property="invoiceDate" column="invoice_date"/>
+		
+		<result property="contractCode" column="contract_code"/>
+		<result property="name" column="name"/>
+		<result property="ischeck" column="ischeck"/>
+		<result property="checkDate" column="check_date"/>
+		<result property="ctype" column="ctype" />
+		<result property="firstParty" column="firstParty" />
+	
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.InvoiceDtlVo" id="invoiceDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="code" column="code"/>
+		<result property="rate" column="rate"/>
+		<result property="sum" column="sum"/>
+		<result property="command" column="command"/>
+		<result property="tax" column="tax"/>
+		<result property="withoutTax" column="without_tax"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="siteid" column="siteid"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		<result property="payId" column="pay_id"/>
+		<result property="status" column="status"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="invoiceCode" column="invoice_code"/>
+		<result property="invoiceDate" column="invoice_date"/>
+		
+		<result property="contractCode" column="contract_code"/>
+		<result property="name" column="name"/>
+		<result property="ischeck" column="ischeck"/>
+		<result property="checkDate" column="check_date"/>
+		
+		<result property="ctype" column="ctype" />
+	</resultMap>
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,code,rate,sum,command,tax,without_tax,create_time,
+    	create_user,siteid,contract_id,pay_id,payplan_id,del_flag,invoice_date,invoice_code
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertInvoice" parameterType="com.timss.pms.bean.Invoice">
+    <selectKey resultType="int" keyProperty="id" order="BEFORE">
+        select SEQ_PMS_PLAN.nextval from dual
+    </selectKey>
+    insert into Tim_Pms_INVOICE(<include refid="columnBasic"/>,ischeck)
+    values (#{id,jdbcType=NUMERIC},#{code,jdbcType=VARCHAR},#{rate,jdbcType=NUMERIC},
+    	#{sum,jdbcType=NUMERIC},#{command,jdbcType=VARCHAR},#{tax,jdbcType=NUMERIC},
+    	#{withoutTax,jdbcType=NUMERIC},#{createTime,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR},
+    	#{siteid,jdbcType=VARCHAR},
+    	#{contractId,jdbcType=NUMERIC},#{payId,jdbcType=NUMERIC},#{payplanId,jdbcType=NUMERIC},0,
+    	#{invoiceDate,jdbcType=TIMESTAMP},#{invoiceCode,jdbcType=VARCHAR},'N')
+</insert>
+
+<update id="updateInvoice">
+	update Tim_Pms_Invoice
+	set code=#{code,jdbcType=VARCHAR},rate=#{rate,jdbcType=NUMERIC},
+    	sum=#{sum,jdbcType=NUMERIC},command=#{command,jdbcType=VARCHAR},tax=#{tax,jdbcType=NUMERIC},
+    	without_tax=#{withoutTax,jdbcType=NUMERIC},create_time=#{createTime,jdbcType=TIMESTAMP},create_user=#{createUser,jdbcType=VARCHAR},
+    	siteid=#{siteid,jdbcType=VARCHAR},
+    	contract_id=#{contractId,jdbcType=NUMERIC},pay_id=#{payId,jdbcType=NUMERIC},
+    	payplan_id=#{payplanId,jdbcType=NUMERIC},
+    	invoice_date=#{invoiceDate,jdbcType=TIMESTAMP},invoice_code=#{invoiceCode,jdbcType=VARCHAR}
+    where id=#{id}
+</update>
+
+<update id="checkReceipt">
+	update Tim_Pms_Invoice
+	set ischeck='Y',check_date=#{checkDate,jdbcType=TIMESTAMP},
+    	check_time=#{checkTime,jdbcType=TIMESTAMP},check_user=#{checkUser,jdbcType=VARCHAR}
+    	
+    where id=#{id}
+</update>
+
+<select id="queryInvoiceById" resultMap="invoiceDtlVoMap">
+	select t.id,t.contract_id,t.payplan_id,t.code,t.rate,t.sum,t.command,t.siteid,t.invoice_code,t.invoice_date,
+	t.ischeck,t.check_date,c.contract_code,c.name,t.tax,t.without_tax
+	from Tim_Pms_Invoice t
+	left join Tim_Pms_Contract c 
+	on t.contract_id=c.id
+	where t.del_flag='0' and t.id=#{id}
+</select>
+
+<select id="queryInvoiceListByPayId" resultMap="invoiceVoMap">
+	select <include refid="columnBasic"/>
+	from Tim_Pms_Invoice t
+	where pay_id=#{payId} and del_flag='0'
+</select>
+
+<select id="queryInvoiceListByContractId" resultMap="invoiceVoMap">
+	select <include refid="columnBasic"/>
+	from Tim_Pms_Invoice t
+	where contract_id=#{contractId} and del_flag='0'
+</select>
+<select id="queryInvoiceList" resultMap="invoiceVoMap">
+	select t.id,t.contract_id,t.payplan_id,t.code,t.rate,t.sum,t.command,t.siteid,t.invoice_code,t.invoice_date,
+	t.ischeck,t.check_date,c.contract_code,c.name,t.tax,t.without_tax,c.type as ctype,c.first_party as firstParty
+	from Tim_Pms_Invoice t
+	left join Tim_Pms_Contract c 
+	on t.contract_id=c.id
+	where t.del_flag='0'
+</select>
+
+<delete id="deleteInvoice">
+    delete from Tim_Pms_Invoice t 
+    where t.id=#{id}
+</delete>
+
+<delete id="deleteInvoiceListWithPayId">
+	delete from Tim_Pms_Invoice t 
+    where t.pay_id=#{payId}
+</delete>
+</mapper>

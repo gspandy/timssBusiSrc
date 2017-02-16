@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.SFCCheckoutDao">
+
+	
+	  <resultMap type="com.timss.pms.vo.CheckoutVo" id="checkoutVoMap">
+		<id property="id" column="id"/>
+		<result property="type" column="type"/>
+		<result property="time" column="time"/>
+		<result property="address" column="address"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="status" column="status"/>
+		<result property="command" column="command"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="siteid" column="siteid"/>
+		<result property="checkStage" column="check_stage"/>
+		<result property="attach" column="attach"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		
+		<result property="contractName" column="contractName"/>
+		<result property="contractCode" column="contractCode"/>
+		<result property="contractType" column="contractType"/>
+		
+		<result property="payTypeName" column="payType"/>
+		<result property="flowid" column="flowid"/>
+		
+		<result property="isProjectChange" column="is_project_change"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="checkUser" column="check_user"/>
+		<result property="payDecription" column="pay_decription"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.CheckoutDtlVo" id="checkoutDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="type" column="type"/>
+		<result property="time" column="time"/>
+		<result property="address" column="address"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="status" column="status"/>
+		<result property="command" column="command"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="siteid" column="siteid"/>
+		<result property="checkStage" column="check_stage"/>
+		<result property="attach" column="attach"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		
+		<result property="isProjectChange" column="is_project_change"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="checkUser" column="check_user"/>
+		<result property="payDecription" column="pay_decription"/>
+	</resultMap>
+
+
+
+
+
+
+
+<select id="queryCheckoutList" resultMap="checkoutVoMap">
+	select t.id,t.type,t.time,t.address,t.create_user,t.create_time,t.status,t.command,
+	t.del_flag,t.siteid,t.check_stage,t.attach,t.contract_id,t.payplan_id,t.project_name projectName,
+	t.contract_name contractName,t.project_leader projectLeader,t.first_party firstParty,t.fp_leader fpLeader,t.flow_id flowId
+	,t.flow_status flowStatus
+	from Tim_Pms_Checkout t
+	where t.del_flag=0 and t.status!='voided'
+</select>
+<select id="queryCheckoutListAndFilter" resultMap="checkoutVoMap">
+	select t.id,t.type,t.time,t.address,t.create_user,t.create_time,t.status,t.command,
+	t.del_flag,t.siteid,t.check_stage,t.attach,t.contract_id,t.payplan_id,t.project_name projectName,
+	t.contract_name contractName,t.project_leader projectLeader,t.first_party firstParty,t.fp_leader fpLeader,
+	t.flow_id flowId,t.flow_status flowStatus,p.contract_code as contractCode
+	from Tim_Pms_Checkout t
+	left join Tim_PMS_Contract p on t.contract_id=p.id
+	where t.del_flag=0 
+</select>
+
+
+
+<select id="queryCheckoutById"  resultMap="checkoutDtlVoMap">
+    select t.id,t.type,t.time,t.address,t.create_user,t.create_time,t.status,t.command,
+	t.del_flag,t.siteid,t.check_stage,t.attach,t.contract_id,t.payplan_id,t.flow_id flowId,t.project_name projectName,
+	t.contract_name contractName,t.project_leader projectLeader,t.first_party firstParty,t.fp_leader fpLeader,t.process_inst_id
+	processInstId,t.flow_status flowStatus
+    from Tim_Pms_Checkout t
+    where t.del_flag=0 and t.id=#{id}
+</select>
+
+
+</mapper>

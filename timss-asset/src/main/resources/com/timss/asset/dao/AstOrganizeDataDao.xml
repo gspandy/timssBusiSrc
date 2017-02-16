@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.asset.dao.AstOrganizeDataDao">
+	
+	<!-- 查询中间表中数据 -->
+	<select id="queryAstOrganizeData" resultType="com.timss.asset.bean.AstOrganizeData">
+		SELECT A.PARENTID,
+			A.ASSETID,
+			A.ASSETNAME,
+			A.SPEC,
+			A.DESCRIPTION,
+			A.MODELDESC,
+			A.MANUFACTURER,
+			A.PRODUCEDATE,
+			A.ISROOT,
+			A.CUMODEL,
+			A.SITEID,
+			A.STATUS,
+			A.REMARK 
+		FROM AST_ORGANIZE_DATA A
+		WHERE A.SITEID = '${params.siteid}'
+		<if test="params.parentid != null and params.parentid != ''">
+		  	AND INSTR(A.PARENTID,'${params.parentid}')<![CDATA[>]]>0
+		</if>
+		<if test="params.assetid != null and params.assetid != ''">
+		  	AND INSTR(A.ASSETID,'${params.assetid}')<![CDATA[>]]>0
+		</if>
+		<if test="params.assetname != null and params.assetname != ''">
+		  	AND INSTR(A.ASSETNAME,'${params.assetname}')<![CDATA[>]]>0
+		</if>
+		<if test="params.spec != null and params.spec != ''">
+		  	AND INSTR(A.SPEC,'${params.spec}')<![CDATA[>]]>0
+		</if>
+		<if test="params.description != null and params.description != ''">
+		  	AND INSTR(A.DESCRIPTION,'${params.description}')<![CDATA[>]]>0
+		</if>
+		<if test="params.modeldesc != null and params.modeldesc != ''">
+		  	AND INSTR(A.MODELDESC,'${params.modeldesc}')<![CDATA[>]]>0
+		</if>
+		<if test="params.manufacturer != null and params.manufacturer != ''">
+		  	AND INSTR(A.MANUFACTURER,'${params.manufacturer}')<![CDATA[>]]>0 
+		</if>
+		<if test="params.producedate != null and params.producedate != ''">
+		  	AND INSTR(A.PRODUCEDATE,'${params.producedate}')<![CDATA[>]]>0 
+		</if>
+		<if test="params.isroot != null and params.isroot != ''">
+		  	AND INSTR(A.ISROOT,'${params.isroot}')<![CDATA[>]]>0 
+		</if>
+		<if test="params.cumodel != null and params.cumodel != ''">
+		  	AND INSTR(A.CUMODEL,'${params.cumodel}')<![CDATA[>]]>0  
+		</if>
+		<if test="params.remark != null and params.remark != ''">
+		  	AND INSTR(A.REMARK,'${params.remark}')<![CDATA[>]]>0   
+		</if>
+		<if test="params.status != null and params.status != ''">
+		  	AND A.STATUS = '${params.status}'   
+		</if>
+		ORDER BY A.STATUS ASC
+	</select>
+	
+	<!-- 删除中间表中数据 -->
+	<delete id="deleteAstOrganizeData" parameterType="com.timss.asset.bean.AstOrganizeData">
+		DELETE FROM AST_ORGANIZE_DATA A WHERE A.SITEID = #{siteid} 
+		<if test="parentid != null and parentid != ''">
+		  	AND A.PARENTID = '${parentid}' 
+		</if>
+		<if test="assetid != null and assetid != ''">
+		  	AND A.ASSETID = '${assetid}'
+		</if>
+		<if test="assetname != null and assetname != ''">
+		  	AND A.ASSETNAME = '${assetname}'
+		</if>
+		<if test="spec != null and spec != ''">
+		  	AND A.SPEC = '${spec}'
+		</if>
+		<if test="description != null and description != ''">
+		  	AND A.DESCRIPTION = '${description}'
+		</if>
+		<if test="modeldesc != null and modeldesc != ''">
+		  	AND A.MODELDESC = '${modeldesc}'
+		</if>
+		<if test="manufacturer != null and manufacturer != ''">
+		  	AND A.MANUFACTURER = '${manufacturer}'
+		</if>
+		<if test="producedate != null and producedate != ''">
+		  	AND A.PRODUCEDATE = '${producedate}'
+		</if>
+		<if test="isroot != null and isroot != ''">
+		  	AND A.ISROOT = '${isroot}'
+		</if>
+		<if test="cumodel != null and cumodel != ''">
+		  	AND A.CUMODEL = '${cumodel}'
+		</if>
+		<if test="remark != null and remark != ''">
+		  	AND A.REMARK = '${remark}'
+		</if>
+	</delete>
+	
+	<!-- 插入中间表中数据 -->
+	<insert id="insertAstOrganizeData" parameterType="com.timss.asset.bean.AstOrganizeData">
+		INSERT INTO AST_ORGANIZE_DATA 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      	<if test="parentid != null">PARENTID,</if>
+			<if test="assetid != null">ASSETID,</if>
+			<if test="assetname != null">ASSETNAME,</if>
+			<if test="spec != null">SPEC,</if>
+			<if test="description != null">DESCRIPTION,</if>
+			<if test="modeldesc != null">MODELDESC,</if>
+			<if test="manufacturer != null">MANUFACTURER,</if>
+			<if test="producedate != null">PRODUCEDATE,</if>
+			<if test="isroot != null">ISROOT,</if>
+			<if test="cumodel != null">CUMODEL,</if>
+			<if test="remark != null">REMARK,</if>
+			<if test="siteid != null">SITEID,</if>
+			<if test="status != null">STATUS,</if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="parentid != null">#{parentid,jdbcType=VARCHAR},</if>
+			<if test="assetid != null">#{assetid,jdbcType=VARCHAR},</if>
+			<if test="assetname != null">#{assetname,jdbcType=VARCHAR},</if>
+			<if test="spec != null">#{spec,jdbcType=VARCHAR},</if>
+			<if test="description != null">#{description,jdbcType=VARCHAR},</if>
+			<if test="modeldesc != null">#{modeldesc,jdbcType=VARCHAR},</if>
+			<if test="manufacturer != null">#{manufacturer,jdbcType=VARCHAR},</if>
+			<if test="producedate != null">#{producedate,jdbcType=VARCHAR},</if>
+			<if test="isroot != null">#{isroot,jdbcType=VARCHAR},</if>
+			<if test="cumodel != null">#{cumodel,jdbcType=VARCHAR},</if>
+			<if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
+			<if test="siteid != null">#{siteid,jdbcType=VARCHAR},</if>
+			<if test="status != null">#{status,jdbcType=VARCHAR},</if>
+	    </trim>
+	</insert>
+	
+	<!-- 调用存储过程执行数据的整理 -->
+	<parameterMap type="map" id="CALLParamMap">  
+	   <parameter property="siteid" jdbcType="VARCHAR" mode="IN"/>  
+	   <parameter property="flag" jdbcType="VARCHAR" mode="OUT"/>  
+	</parameterMap> 
+	<update id="callAstOrganizeDataInit" parameterMap="CALLParamMap" statementType="CALLABLE">
+		{call SP_AST_ORGANIZE_DATA(?,?)} 
+	</update>
+</mapper>

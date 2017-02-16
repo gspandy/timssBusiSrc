@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.attendance.dao.ExemptDao">
+
+	<select id="queryRelatedToUsersOrOrgs" parameterType="String" resultType="ExemptBean">
+		select id,relationId,type,siteId from atd_exempt where siteId= #{ siteId } and menuId= #{menuId}
+	</select>
+	
+	
+	<!-- 批量插入 -->
+	<insert id="batchInsertExempt" parameterType="java.util.List">
+		INSERT INTO atd_exempt(ID, RELATIONID, TYPE, SITEID, MENUID )  
+			<foreach collection="list" item="item" index="index" separator="union all">
+				select  #{item.id} id , #{item.relationId} relationId,  
+				#{item.type} type, #{item.siteId} siteId, #{item.menuId} 
+				from dual
+			</foreach>
+	</insert>
+	
+	<!-- 批量删除 -->
+	<delete id="batchDeleteExempt" parameterType="java.util.List">
+		DELETE FROM atd_exempt A
+		where exists 
+		  ( 
+		   select 1 from(
+		    <foreach collection="list" item="item" index="index" separator="union all">  
+		     select  B.* from atd_exempt B where 1=1 and  B.type=#{item.type} and B.siteId=#{item.siteId} and 
+		      B.relationId=#{item.relationId} and B.menuId = #{item.menuId}
+		    </foreach>
+		    )S where  A.id=S.id
+		  )
+	</delete>
+</mapper> 
+  

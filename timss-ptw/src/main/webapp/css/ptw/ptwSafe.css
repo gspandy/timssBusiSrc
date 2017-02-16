@@ -1,0 +1,93 @@
+.wrap-underline {
+	border-bottom-color: rgb(226, 233, 243);
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	padding-left: 40px;
+	padding-right: 200px;
+	position: relative;
+}
+.wrap-underline-single{
+	padding-right: 0px;
+}
+
+.safe-input {
+	border-width: 0px;
+	border-style: none;
+	width: 96%;
+	font-size: 12px;
+	outline: none;
+	line-height: 26px;
+	height: 26px;
+	background-color: #FFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #FFF;
+	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.safe-input:focus {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #3366cc;
+}
+
+.wrap-underline>span{
+	font-size: 12px;
+	line-height: 28px;
+	vertical-align: middle;
+}
+.safe-input-content{
+	font-size: 12px;
+	line-height: 28px;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.safe-number-span {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin-left: 20px;
+	
+}
+#safeItem1{counter-reset:safeItem1;}
+#safeItem1 .safe-number-span:before{counter-increment:safeItem1;content:counter(safeItem1) ". ";}
+#safeItem2{counter-reset:safeItem2;}
+#safeItem2 .safe-number-span:before{counter-increment:safeItem2;content:counter(safeItem2) ". ";}
+#safeItem3{counter-reset:safeItem3;}
+#safeItem3 .safe-number-span:before{counter-increment:safeItem3;content:counter(safeItem3) ". ";}
+#safeItem4{counter-reset:safeItem4;}
+#safeItem4 .safe-number-span:before{counter-increment:safeItem4;content:counter(safeItem4) ". ";}
+#safeItem5{counter-reset:safeItem5;}
+#safeItem5 .safe-number-span:before{counter-increment:safeItem5;content:counter(safeItem5) ". ";}
+
+.exec-span {
+	position: absolute;
+	top: 0;
+	right: 300px;
+	display:block;
+	width: 100px;
+}
+.safe-unremove-remarks{
+	position: absolute;
+	top: 0;
+	right: 100px;
+	display:block;
+	width: 200px;
+}
+.remover-span {
+	position: absolute;
+	top: 0;
+	right: 0;
+	display:block;
+	width: 100px;
+}
+.exec-span:before {
+	content: "执行人: ";
+}
+.safe-unremove-remarks:before{
+	content: "备注: ";
+}
+.remover-span:before {
+	content: "解除人: ";
+}

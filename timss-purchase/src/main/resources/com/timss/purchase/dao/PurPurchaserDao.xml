@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurPurchaserDao">
+	
+	<resultMap type="com.timss.purchase.bean.PurPurchaserBean" id="PurPurchaserBeanMap">
+		<id property="purchaserId" column="PURCHASERID"/>
+		<result property="purchaserName" column="PURCHASERNAME"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="phone" column="PHONE"/>
+		<result property="fax" column="FAX"/>
+		<result property="bank" column="BANK"/>
+		<result property="account" column="ACCOUNT"/>
+		<result property="sort" column="SORT"/>
+		<result property="zip" column="ZIP"/>
+		<result property="taxNo" column="TAX_NO"/>
+		
+		<result property="createdate" column="CREATETIME"/>
+		<result property="createuser" column="CREATEID"/>
+		<result property="modifydate" column="UPDATETIME"/>
+		<result property="modifyuser" column="UPDATEID"/>
+		<result property="siteid" column="SITEID"/>
+	</resultMap>
+	<resultMap type="com.timss.purchase.bean.PurOrderPurchaserBean" id="PurOrderPurchaserBeanMap">
+		<id property="sheetId" column="SHEETID"/>
+		<result property="purchaserName" column="PURCHASERNAME"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="phone" column="PHONE"/>
+		<result property="fax" column="FAX"/>
+		<result property="bank" column="BANK"/>
+		<result property="account" column="ACCOUNT"/>
+		<result property="sort" column="SORT"/>
+		<result property="zip" column="ZIP"/>
+		<result property="taxNo" column="TAX_NO"/>
+		<result property="siteid" column="SITEID"/>
+	</resultMap>
+	<!-- 根据站点查询买方合同信息 -->
+	<select id="queryPurPurchaserBySiteId" resultMap="PurPurchaserBeanMap">
+		select t.purchaserid, t.purchasername, t.address, t.phone, t.fax, t.bank, t.account, t.zip, t.tax_no, t.sort, t.siteid, t.createtime 
+		from itceam_workflow_purchaser_temp t where t.siteid=#{siteId} and rownum=1
+	</select>
+	
+	<!-- 增加买方合同信息 -->
+	<insert id="insertPurPurchaser" parameterType="com.timss.purchase.bean.PurPurchaserBean">
+	    insert into ITCEAM_WORKFLOW_PURCHASER_TEMP(
+	    	purchaserid,
+	    	purchasername,
+	    	address,
+	    	phone,
+	    	fax,
+	    	bank,
+	    	account,
+	    	zip,
+	    	tax_no, 
+	    	sort,
+	    	createtime,
+	    	createid,
+	    	siteid ) 
+	    values(
+	    	#{purchaserId,jdbcType=VARCHAR},
+	    	#{purchaserName,jdbcType=VARCHAR},
+	    	#{address,jdbcType=VARCHAR},
+	    	#{phone,jdbcType=VARCHAR},
+	    	#{fax,jdbcType=VARCHAR},
+    		#{bank,jdbcType=VARCHAR},
+    		#{account,jdbcType=VARCHAR},
+    		#{zip,jdbcType=VARCHAR},
+    		#{taxNo,jdbcType=VARCHAR},
+    		#{sort,jdbcType=NUMERIC},
+    		#{createdate,jdbcType=TIMESTAMP},
+    		#{createuser,jdbcType=VARCHAR}, 
+    		#{siteid,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 修改买方合同信息 -->
+	<update id="updatePurPurchaser" parameterType="com.timss.purchase.bean.PurPurchaserBean">
+	    update ITCEAM_WORKFLOW_PURCHASER_TEMP t set 
+		    t.purchasername=#{purchaserName,jdbcType=VARCHAR}, 
+		    t.address=#{address,jdbcType=VARCHAR}, 
+		    t.phone=#{phone,jdbcType=VARCHAR}, 
+		    t.fax=#{fax,jdbcType=VARCHAR}, 
+		    t.bank=#{bank,jdbcType=VARCHAR},  
+		    t.account=#{account,jdbcType=VARCHAR},  
+		    t.zip=#{zip,jdbcType=VARCHAR},
+		    t.tax_no=#{taxNo,jdbcType=VARCHAR},  
+		    t.sort=#{sort,jdbcType=NUMERIC}, 
+		    t.updatetime=#{modifydate,jdbcType=TIMESTAMP},  
+		    t.updateid=#{modifyuser,jdbcType=VARCHAR}, 
+		    t.siteid=#{siteid,jdbcType=VARCHAR} 
+	    where t.purchaserid=#{purchaserId,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 根据采购申请id查询买方合同信息 -->
+	<select id="queryPurchaserBySheetId" resultMap="PurOrderPurchaserBeanMap">
+		SELECT T.SHEETID, T.PURCHASERNAME, T.ADDRESS, T.PHONE, T.FAX, T.BANK, T.ACCOUNT, T.ZIP, T.TAX_NO, T.SITEID
+		FROM ITCEAM_WORKFLOW_PURCHASER T 
+		WHERE T.SHEETID=#{sheetId} AND T.SITEID=#{siteid} AND ROWNUM=1
+	</select>
+	
+	<!-- 增加买方合同信息 -->
+	<insert id="insertPurOrderPurchaser" parameterType="com.timss.purchase.bean.PurOrderPurchaserBean">
+	    INSERT INTO ITCEAM_WORKFLOW_PURCHASER(
+	    	SHEETID,
+	    	PURCHASERNAME,
+	    	ADDRESS,
+	    	PHONE,
+	    	FAX,
+	    	BANK,
+	    	ACCOUNT,
+	    	ZIP,
+	    	TAX_NO,
+	    	SITEID
+	    	) 
+	    VALUES(
+	    	#{sheetId,jdbcType=VARCHAR},
+	    	#{purchaserName,jdbcType=VARCHAR},
+	    	#{address,jdbcType=VARCHAR},
+	    	#{phone,jdbcType=VARCHAR},
+	    	#{fax,jdbcType=VARCHAR},
+    		#{bank,jdbcType=VARCHAR},
+    		#{account,jdbcType=VARCHAR},
+    		#{zip,jdbcType=VARCHAR},
+    		#{taxNo,jdbcType=VARCHAR},
+    		#{siteid,jdbcType=VARCHAR})
+	</insert>
+</mapper>

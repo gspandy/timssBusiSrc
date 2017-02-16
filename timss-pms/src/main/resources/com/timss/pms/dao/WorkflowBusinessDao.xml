@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.WorkflowBusinessDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+ 
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,instance_Id,business_Id
+	</sql>
+	
+	
+
+<insert id="insertWorkflowBusiness" parameterType="com.timss.pms.bean.WorkflowBusiness">
+
+    insert into Tim_Pms_Workflow_Business(<include refid="columnBasic"/> ) 
+    values (#{id},#{instanceId},#{businessId})
+</insert>
+
+<select id="queryWorkflowIdByBusinessId" resultType="string">
+    select t.instance_id
+    from Tim_Pms_Workflow_Business t
+    where t.business_id=#{bId} 
+</select>
+
+<select id="queryWorkflowIdByBusinessIdAndInstancePreffix" resultType="string">
+    select t.instance_id
+    from Tim_Pms_Workflow_Business t
+    where t.business_id=#{bid} and t.instance_id like #{instancePreffix}||'%'
+</select>
+
+<select id="queryBusinessIdByWorkflowId" resultType="string">
+    select business_id
+    from Tim_Pms_Workflow_Business t
+    where t.instance_id=#{wfId}
+</select>
+
+<select id="queryBusinessIdById" resultType="string">
+    select business_id
+    from Tim_Pms_Workflow_Business t
+    where t.id=#{id}
+</select>
+
+<delete id="deleteWorkflwoBusinessByWFId" parameterType="string">
+    delete from Tim_Pms_Workflow_Business t where t.instance_id=#{wfId}
+</delete>
+
+<update id="updateWorkflowBusiness">
+	update Tim_Pms_Workflow_Business
+	set instance_id=#{instanceId,jdbcType=VARCHAR},business_id=#{businessId,jdbcType=VARCHAR}
+	where id=#{id}
+</update>
+
+<select id="queryIdByBusinessId" resultType="string">
+    select id
+    from Tim_Pms_Workflow_Business t
+    where t.business_id=#{bId}
+</select>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>

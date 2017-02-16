@@ -1,0 +1,22 @@
+var InvItemPriv={
+	init:function(){
+		InvItemPriv.set();
+		InvItemPriv.apply();
+	},
+	set:function(){//定义权限
+		//新建
+		Priv.map("privMapping.itemList_new","itemList_new");
+		//新建领料单
+		Priv.map("privMapping.storeQuery_itemapply","storeQuery_itemapply");
+		//移库
+		Priv.map("privMapping.INVMATTRANSFER_NEW","INVMATTRANSFER_NEW");
+		//转为历史库存
+		Priv.map("privMapping.storeQuery_tohistory","storeQuery_tohistory");
+		//初始化物资实时数据
+		Priv.map("privMapping.itemList_initRealTimeData","itemList_initRealTimeData");
+	},
+	apply:function(){//应用权限
+		//应用
+		Priv.apply();
+	}
+};

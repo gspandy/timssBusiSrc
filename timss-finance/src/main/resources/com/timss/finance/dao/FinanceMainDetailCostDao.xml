@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceMainDetailCostDao">
+	<!-- 在resultMap中设置为指定的ID，然后即可将数据库中的column名称转换为bean中的属性。名字一样的可以不写在result中。 -->
+	<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="allColumn">
+		id,cost_id,cost_type,amount,siteid,deptid
+	</sql>
+	
+ 	<insert id="insertFinanceMainDetailCost" parameterType="FinanceMainDetailCost">
+		insert into 
+		FIN_MAIN_DETAILS_COST
+		(<include refid="allColumn"/>) 
+		values
+		(
+			#{id,jdbcType=VARCHAR},#{cost_id,jdbcType=VARCHAR},
+			#{cost_type,jdbcType=VARCHAR},#{amount,jdbcType=NUMERIC},
+			#{siteid,jdbcType=VARCHAR},#{deptid,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<delete id="deleteFinanceMainDetailCostByFid">
+		delete from FIN_MAIN_DETAILS_COST where id in (select id from FIN_MAIN_DETAILS
+		where fid = #{fid})
+	</delete>
+	
+	
+	 <update id = "updateAFinMainDetailAmount"  parameterType="HashMap">
+           update FIN_MAIN_DETAILS_COST t
+           set t.amount=#{amount} 
+           where id = #{id} and t.cost_id =#{costId}
+   	 </update>
+</mapper> 

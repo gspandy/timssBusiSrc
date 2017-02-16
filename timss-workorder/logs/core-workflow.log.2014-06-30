@@ -1,0 +1,5 @@
+2014-06-30 14:31:54,829 DEBUG [com.timss.workorder.dao.JobPlanDao.queryStandardJP.debug] - ==>  Preparing: SELECT COUNT(1) FROM (select * from ( select ID, JOBPLAN_CODE,SPEC, description, remarks from wo_jobplan t where t.JP_TYPE = 'standard' ) ) RS_TOTAL 
+2014-06-30 14:31:54,896 DEBUG [com.timss.workorder.dao.JobPlanDao.queryStandardJP.debug] - ==> Parameters: 
+2014-06-30 14:31:54,964 DEBUG [com.timss.workorder.dao.JobPlanDao.queryStandardJP.debug] - ==>  Preparing: SELECT RS_.* FROM (SELECT ROW_.*, ROWNUM ROWNUM_ FROM (select ID, JOBPLAN_CODE,SPEC, description, remarks from wo_jobplan t where t.JP_TYPE = 'standard') ROW_ ) RS_ WHERE ROWNUM_ > 0 AND ROWNUM_ <= 10 
+2014-06-30 14:31:54,964 DEBUG [com.timss.workorder.dao.JobPlanDao.queryStandardJP.debug] - ==> Parameters: 
+2014-06-30 14:31:54,973 DEBUG [com.timss.workorder.dao.JobPlanDao.queryStandardJP.debug] - <==      Total: 1

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.purchase.dao.PurEnquiryDao">
+	<!-- 查询列表 -->
+	<select id="queryPurEnquiry" resultType="com.timss.purchase.vo.PurEnquiryVO">
+		select * from (
+			select t.ENQUIRYID, t.ENQUIRYNAME, t.CONTACTNAME,t.CONTACTPHONE, formatdate(t.EXPIRYDATE) EXPIRYDATE,
+		       (select b.enum_val from b_enum b where b.ecat_code = 'PUR_ENQUIRY_STATUS' and b.enum_code = t.STATUS) STATUS,
+		       t.DISCRIPTION, formatdatetime(t.createdate) createdate,
+		       t.Siteid, t.deptid,t.DELIVERPLACE,t.CREATEUSER,t.PURCHASEORDERNO,
+		       t.MODIFYUSER,formatdatetime(t.MODIFYDATE) MODIFYDATE
+		  	from ITCEAM_ENQUIRY t
+		  	where 1=1 
+		  	<if test="params.createuser != null">
+			  	and t.createuser = #{params.createuser}
+			</if>
+		  ) m
+		 where 1=1 
+		 <if test="params.enquiryid != null and params.enquiryid != ''">
+		  	and m.enquiryid like '%'||'${params.enquiryid}'||'%'  
+		 </if>
+		 <if test="params.enquiryname != null and params.enquiryname != ''">
+		  	and m.enquiryname like '%'||'${params.enquiryname}'||'%'  
+		 </if>
+		 <if test="params.contactname != null and params.contactname != ''">
+		  	and m.contactname like '%'||'${params.contactname}'||'%'  
+		 </if>
+		 <if test="params.contactphone != null and params.contactphone != ''">
+		  	and m.contactphone like '%'||'${params.contactphone}'||'%'  
+		 </if>
+		 <if test="params.expirydate != null and params.expirydate != ''">
+		  	and m.expirydate like '%'||'${params.expirydate}'||'%'  
+		 </if>
+		 <if test="params.status != null and params.status != ''">
+		  	and m.status like '%'||'${params.status}'||'%' 
+		 </if>
+		 order by m.ENQUIRYID desc
+	</select>
+	
+	<!-- 删除列表中选中的记录 -->
+	<delete id="deletePurEnquiryDataByrowId">
+		delete from ITCEAM_ENQUIRY t where t.enquiryid in (#{params.rowId})
+	</delete>
+	
+	<!-- 根据rowid查询详细信息 -->
+	<select id="queryPurEnquiryByrowId"  resultType="com.timss.purchase.vo.PurEnquiryVO">
+		select t.ENQUIRYID, t.ENQUIRYNAME, t.DISCRIPTION, t.CONTACTNAME, t.PURCHASEORDERNO, t.CONTACTPHONE, t.DELIVERPLACE, 
+			formatdatetime(t.CREATEDATE) CREATEDATE, 
+			(select su.name from sec_user su where su.user_id = t.CREATEUSER) CREATEUSER, 
+			formatdatetime(t.MODIFYDATE) MODIFYDATE, 
+			(select su.name from sec_user su where su.user_id = t.MODIFYUSER) MODIFYUSER, 
+			(select b.enum_val from b_enum b where b.ecat_code = 'PUR_ENQUIRY_STATUS' and b.enum_code = t.STATUS) STATUS, 
+			formatdate(t.EXPIRYDATE) EXPIRYDATE, t.deptid, t.siteid 
+		from ITCEAM_ENQUIRY t 
+		where t.ENQUIRYID = #{params.rowId}
+		order by t.ENQUIRYID desc
+	</select>
+	
+	<!-- 通过id找到enquiry明细列表 -->
+	<select id="queryPurEnquiryItemsById" resultType="com.timss.purchase.vo.PurEnquiryItemVO">
+		select t.ITEMID, i.ITEMNAME, i.ORDERUNITNAME, i.CLASSNAME, t.ITEMNUMBER AS ITEMNUM 
+		from ITCEAM_ENQUIRY_PURCHASEITEM t, itceam_item i 
+		where t.itemid = i.itemid and t.enquiryid = #{params.id}
+	</select>
+	
+	
+	<insert id="insertPurEnquiry" parameterType="com.timss.purchase.bean.PurEnquiry">
+		<selectKey resultType="int" keyProperty="enquiryid" order="BEFORE">
+	        select ENQUIRY_ID.nextval from dual
+	    </selectKey>
+	    insert into itceam_enquiry(ENQUIRYID,ENQUIRYNAME,CONTACTNAME,CONTACTPHONE,DISCRIPTION,
+	    							DELIVERPLACE,EXPIRYDATE,PURCHASEORDERNO,
+	    							STATUS, CREATEUSER, CREATEDATE,deptid, siteid) 
+	    values(#{enquiryid},#{enquiryname},#{contactname},#{contactphone},#{discription},
+	    		#{deliverplace},to_date(#{expirydate},'yyyy-MM-dd'),#{purchaseorderno},
+	    		#{status},#{creator},sysdate,#{deptid}, #{siteid})
+	</insert>
+	
+	<insert id="insertPurEnquiryItem" parameterType="com.timss.purchase.bean.PurEnquiryItem">
+		insert into itceam_enquiry_purchaseitem values(#{enquiryid},#{itemid},#{itemnumber})
+	</insert>
+</mapper> 

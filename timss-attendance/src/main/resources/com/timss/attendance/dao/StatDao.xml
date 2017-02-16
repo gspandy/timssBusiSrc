@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.StatDao">
+	
+	<sql id="statBeanField">
+		id, userId, userName, yearLeave, annualLevel, 
+		annualRemain, compensateRemain, enventLeave, sickLeave, marryLeave, 
+		birthLeave, otherLeave, overTime, compensateLeave, createDate, 
+		siteId, deptId, deptName, annual, userStatus, 
+		countDays, noCompensateLeave, subAnualLeave, remark1, remark2,
+		category_8,category_9,category_10,category_11,category_12,
+		category_13,category_14,category_15,category_16,category_17
+	</sql>
+	
+	<sql id="statTempBeanField">
+		id, userId, userName, yearLeave, annualLevel, 
+		annualRemain, compensateRemain, enventLeave, sickLeave, marryLeave, 
+		birthLeave, otherLeave, overTime, compensateLeave, createDate, 
+		siteId, deptId, deptName, annual, userStatus, 
+		countDays, noCompensateLeave, startDate, endDate,
+		category_8,category_9,category_10,category_11,category_12,
+		category_13,category_14,category_15,category_16,category_17
+	</sql>
+	
+	<sql id="statHistoryBeanField">
+		id, userId, userName, yearLeave, annualLevel, 
+		annualRemain, compensateRemain, enventLeave, sickLeave, marryLeave, 
+		birthLeave, otherLeave, overTime, compensateLeave, createDate, 
+		siteId, deptId, deptName, annual, userStatus, 
+		countDays, noCompensateLeave, subAnualLeave, remark1, remark2,
+		category_8,category_9,category_10,category_11,category_12,
+		category_13,category_14,category_15,category_16,category_17
+	</sql>
+
+	<select id="queryLeaveByDate" parameterType="Map" resultType="StatVo">
+		select leaveTemp.* from ( SELECT leave.CREATEBY userId,LEAVE.USERNAME userName,
+		${ categorySql }
+		ITEM.startDate STARTDATE , ITEM.ENDDATE endDate, LEAVE.STATUS STATUS,LEAVE.SITEID siteId
+		FROM ( SELECT * FROM ATD_LEAVE WHERE SITEID= #{ siteId }) leave LEFT JOIN ATD_LEAVE_ITEM item on LEAVE.id = ITEM.LEAVEID ) leaveTemp
+		where LEAVETEMP.STATUS = #{ status } and ( ( leaveTemp.startDate &gt;= #{startDate} and leaveTemp.startDate &lt;= #{ endDate } )
+		or ( leaveTemp.startDate &lt;= #{startDate} and leaveTemp.endDate &gt;= #{ endDate } ) or
+		( leaveTemp.endDate &gt;= #{startDate} and leaveTemp.endDate &lt;= #{ endDate } ) )
+	</select>
+	
+
+	<select id="queryOvertimeByDate" parameterType="Map" resultType="StatVo">
+		select overTemp.USERID userId ,sum(OVERTEMP.REALOVERHOURS) overtime from ( 
+		SELECT oi.userid userId, oi.userName userName, oi.realOverHours realOverHours,oi.startDate startDate ,
+		oi.endDate endDate, o.status status
+		FROM ( SELECT * FROM ATD_OVERTIME  WHERE SITEID= #{ siteId } ) o LEFT JOIN ATD_OVERTIME_ITEM oi 
+		on o.id = oi.overtimeid ) overTemp where overTemp.status = #{ status } and overTemp.startDate between #{startDate} and #{ endDate }
+		GROUP BY OVERTEMP.USERID
+	</select>
+	
+	<!-- 批量操作 -->
+	<insert id="insertBatchStat" parameterType="java.util.List">
+		insert into  ATD_STAT( 
+			id,userId, userName, yearLeave,  annualLevel, annualRemain,
+			compensateRemain,enventLeave, sickLeave, marryLeave,  birthLeave, otherLeave,
+			overTime,compensateLeave, createDate, siteId,  deptId, deptName,annual,userStatus,countDays,noCompensateLeave,
+			category_8,category_9,category_10,category_11,category_12,
+			category_13,category_14,category_15,category_16,category_17
+		 ) 
+		select SEQ_ATD_STAT.nextval, temp.* from (
+			<foreach collection="list" item="item" index="index" separator="union all">
+				 select  #{item.userId,jdbcType=VARCHAR } userId, #{ item.userName ,jdbcType=VARCHAR} userName, 
+				 #{ item.yearLeave,jdbcType=INTEGER } yearLeave, #{  item.annualLevel ,jdbcType=DOUBLE} annualLevel,
+				 #{ item.annualRemain ,jdbcType=DOUBLE} annualRemain, 
+				 #{ item.compensateRemain ,jdbcType=DOUBLE} compensateRemain, #{item.enventLeave,jdbcType=DOUBLE } enventLeave, 
+				 #{ item.sickLeave,jdbcType=DOUBLE } sickLeave, #{ item.marryLeave ,jdbcType=DOUBLE} marryLeave, 
+				 #{ item.birthLeave,jdbcType=DOUBLE } birthLeave,#{ item.otherLeave ,jdbcType=DOUBLE} otherLeave,
+				 #{ item.overTime ,jdbcType=DOUBLE} overTime, #{item.compensateLeave ,jdbcType=DOUBLE} compensateLeave,
+				 #{ item.createDate,jdbcType=TIMESTAMP } createDate, #{ item.siteId,jdbcType=VARCHAR  } siteId, #{  item.deptId ,jdbcType=VARCHAR } deptId,
+				 #{ item.deptName,jdbcType=VARCHAR  } deptName, #{item.annual,jdbcType=INTEGER  } annual,
+				 #{item.userStatus ,jdbcType=VARCHAR} userStatus, #{item.countDays ,jdbcType=DOUBLE} countDays,
+				 #{item.noCompensateLeave ,jdbcType=DOUBLE} noCompensateLeave,
+				 #{item.category_8 ,jdbcType=NUMERIC} category_8,#{item.category_9 ,jdbcType=NUMERIC} category_9,#{item.category_10 ,jdbcType=NUMERIC} category_10,
+				 #{item.category_11 ,jdbcType=NUMERIC} category_11,#{item.category_12 ,jdbcType=NUMERIC} category_12,#{item.category_13 ,jdbcType=NUMERIC} category_13,
+				 #{item.category_14 ,jdbcType=NUMERIC} category_14,#{item.category_15 ,jdbcType=NUMERIC} category_15,#{item.category_16 ,jdbcType=NUMERIC} category_16,
+				 #{item.category_17 ,jdbcType=NUMERIC} category_17
+				from dual
+			</foreach>
+		) temp
+	</insert>
+	
+	<update id="updateBatchStat" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_STAT 
+			<set> 
+			annualLevel = #{ item.annualLevel,jdbcType=NUMERIC }, enventLeave = #{ item.enventLeave,jdbcType=NUMERIC },
+			sickLeave = #{ item.sickLeave,jdbcType=NUMERIC }, marryLeave = #{ item.marryLeave,jdbcType=NUMERIC },
+			birthLeave = #{ item.birthLeave,jdbcType=NUMERIC }, otherLeave = #{ item.otherLeave,jdbcType=NUMERIC },
+			overTime = #{ item.overTime,jdbcType=NUMERIC },
+			compensateLeave = #{ item.compensateLeave,jdbcType=NUMERIC }, annual = #{ item.annual,jdbcType=NUMERIC },
+			countDays = #{ item.countDays,jdbcType=NUMERIC },  userStatus = #{item.userStatus,jdbcType=VARCHAR },  noCompensateLeave = #{item.noCompensateLeave,jdbcType=NUMERIC },
+			category_8 = #{item.category_8 ,jdbcType=NUMERIC} ,category_9 = #{item.category_9 ,jdbcType=NUMERIC} ,category_10 = #{item.category_10 ,jdbcType=NUMERIC} ,
+			category_11 = #{item.category_11 ,jdbcType=NUMERIC} ,category_12 = #{item.category_12 ,jdbcType=NUMERIC} ,category_13 = #{item.category_13 ,jdbcType=NUMERIC} ,
+			category_14 = #{item.category_14 ,jdbcType=NUMERIC} ,category_15 = #{item.category_15 ,jdbcType=NUMERIC} ,category_16 = #{item.category_16 ,jdbcType=NUMERIC} ,
+			category_17 = #{item.category_17 ,jdbcType=NUMERIC} 
+			</set> 
+			where userId = #{ item.userId,jdbcType=VARCHAR } and yearLeave = #{ item.yearLeave,jdbcType=NUMERIC } and siteId = #{ item.siteId,jdbcType=VARCHAR }
+		</foreach>
+	</update>
+	
+	<update id="updateCompensateBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_STAT 
+			<set> 
+			annualRemain = #{ item.annualRemain,jdbcType=NUMERIC }, compensateRemain = #{ item.compensateRemain,jdbcType=NUMERIC }
+			</set> 
+			where userId = #{ item.userId,jdbcType=VARCHAR } and yearLeave = #{ item.yearLeave,jdbcType=NUMERIC } and siteId = #{ item.siteId,jdbcType=VARCHAR }
+		</foreach>
+	</update>
+	
+	<sql id="atd_exempt">
+		and not exists (
+	        select 1 from atd_exempt e 
+	        where ((e.type='user_id' and e.relationid=userid) or (e.type='org_code' and e.relationid=deptid))
+	        	and e.menuid='atdFreeAtd'
+	    ) 
+	</sql>
+	
+	<select id="queryAllStatHistory" parameterType="Map" resultType="StatVo">
+		select <include refid="statHistoryBeanField"/> from ATD_STAT_HISTORY where siteId = #{ siteId } and yearLeave = #{ year }
+	</select>
+	
+	<select id="queryStatBySiteId" resultType="StatVo">
+		SELECT <include refid="statBeanField"/> 
+		FROM ATD_STAT s
+		where 1=1 <include refid="atd_exempt"/>
+		<if test="params.siteId!=null and params.siteId!=''">
+			and siteId = #{ params.siteId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.year!=null and params.year!=''">
+			and yearleave = #{ params.year,jdbcType=NUMERIC }
+		</if>
+		<if test="params.deptId!=null and params.deptId!=''">
+			and deptId = #{ params.deptId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.userId!=null and params.userId!=''">
+			and userId = #{ params.userId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.isCurrentYear == true ">
+			and userStatus = '${ params.onStatus }'
+		</if>
+	</select>
+	<select id="queryAllStat"  parameterType="Map" resultType="StatVo">
+		SELECT <include refid="statBeanField"/> 
+		FROM ATD_STAT s
+		where 1=1 <!-- <include refid="atd_exempt"/> -->
+		<if test="siteId!=null and siteId!=''">
+			and siteId = #{ siteId,jdbcType=VARCHAR }
+		</if>
+		<if test="year!=null and year!=''">
+			and yearleave = #{ year,jdbcType=NUMERIC }
+		</if>
+		<if test="userId!=null and userId!=''">
+			and userId = #{ userId,jdbcType=VARCHAR }
+		</if>
+	</select>
+		
+	<select id="queryStatBySiteIdSearch" resultType="StatVo">
+		SELECT <include refid="statBeanField"/> 
+		FROM ATD_STAT 
+		where 1=1 <include refid="atd_exempt"/>
+		<if test="params.siteId!=null and params.siteId!=''">
+			and siteId = #{ params.siteId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.year!=null and params.year!=''">
+			and yearleave = #{ params.year,jdbcType=NUMERIC }
+		</if>
+		<if test="params.deptId!=null and params.deptId!=''">
+			and deptId = #{ params.deptId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.userId!=null and params.userId!=''">
+			and userId = #{ params.userId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.userName != null and params.userName != ''">
+		 	and userName like '%${ params.userName }%'
+		</if>
+		<if test="params.annualRemain != null and params.annualRemain != ''">
+		 	and annualRemain =${ params.annualRemain }=
+		</if>
+		<if test="params.compensateRemain != null and params.compensateRemain != ''">
+		 	and compensateRemain =${ params.compensateRemain }
+		</if>
+		<if test="params.annualLevel != null and params.annualLevel !=''">
+		 	and annualLevel =${ params.annualLevel }
+		</if>
+		<if test="params.annual != null and params.annual !=''">
+		 	and annual =${ params.annual }
+		</if>
+		<if test="params.subAnualLeave != null and params.subAnualLeave !=''">
+		 	and subAnualLeave =${ params.subAnualLeave }
+		</if>
+		<if test="params.leftLeave != null and params.leftLeave !=''">
+		 	and (annual + annualRemain - subAnualLeave - annualLevel) =${ params.leftLeave }
+		</if>
+		<if test="params.enventLeave != null and params.enventLeave != ''">
+		 	and enventLeave =${ params.enventLeave }
+		</if>
+		<if test="params.sickLeave != null and params.sickLeave != ''">
+		 	and sickLeave =${ params.sickLeave }
+		</if>
+		<if test="params.marryLeave != null and params.marryLeave != ''">
+		 	and marryLeave =${ params.marryLeave }
+		</if>
+		<if test="params.birthLeave != null and params.birthLeave !=''">
+		 	and birthLeave =${ params.birthLeave }
+		</if>
+		<if test="params.otherLeave != null and params.otherLeave != ''">
+		 	and otherLeave =${ params.otherLeave }
+		</if>
+		<if test="params.overTime != null and params.overTime != ''">
+		 	and overTime =${ params.overTime }
+		</if>
+		<if test="params.compensateLeave != null and params.compensateLeave != ''">
+		 	and compensateLeave =${ params.compensateLeave }
+		</if>
+		 <if test="params.noCompensateLeave != null and params.noCompensateLeave !=''">
+		 	and noCompensateLeave =${ params.noCompensateLeave }
+		</if> 
+		<if test="params.countDays != null and params.countDays != ''">
+		 	and countDays =${ params.countDays }
+		</if>
+		<if test="params.deptName != null and params.deptName != ''">
+		 	and deptName like '%${ params.deptName }%'
+		</if>
+		<if test="params.userStatus != null and params.userStatus != ''">
+		 	and userStatus like '%${ params.userStatus }%'
+		</if>
+		<if test="params.onStatus == 0 ">
+		 	and userStatus = '${ params.checkStatus }'
+		</if>
+	</select>
+		
+	<delete id="deleteStatTempByMap" parameterType="Map" >
+		delete  FROM ATD_STAT_TEMP where SITEID = #{ siteId } AND startDate = #{ startDate ,jdbcType=TIMESTAMP } and endDate = #{ endDate ,jdbcType=TIMESTAMP}
+	</delete>
+	
+	<!-- 批量操作 -->
+	<insert id="insertBatchStatTemp" parameterType="java.util.List">
+		insert into  ATD_STAT_TEMP( 
+			id,userId, userName, yearLeave,  annualLevel, annualRemain,
+			compensateRemain,enventLeave, sickLeave, marryLeave,  birthLeave, otherLeave,
+			overTime,compensateLeave, createDate, siteId,  deptId, deptName,annual,userStatus,countDays,noCompensateLeave,startDate,endDate,
+			category_8,category_9,category_10,category_11,category_12,
+			category_13,category_14,category_15,category_16,category_17
+		 ) 
+		select SEQ_ATD_STAT_TEMP.nextval, temp.* from (
+			<foreach collection="list" item="item" index="index" separator="union all">
+				 select  #{item.userId,jdbcType=VARCHAR } userId, #{ item.userName ,jdbcType=VARCHAR} userName, 
+				 #{ item.yearLeave,jdbcType=INTEGER } yearLeave, #{  item.annualLevel ,jdbcType=DOUBLE} annualLevel,
+				 #{ item.annualRemain ,jdbcType=DOUBLE} annualRemain, 
+				 #{ item.compensateRemain ,jdbcType=DOUBLE} compensateRemain, #{item.enventLeave,jdbcType=DOUBLE } enventLeave, 
+				 #{ item.sickLeave,jdbcType=DOUBLE } sickLeave, #{ item.marryLeave ,jdbcType=DOUBLE} marryLeave, 
+				 #{ item.birthLeave,jdbcType=DOUBLE } birthLeave,#{ item.otherLeave ,jdbcType=DOUBLE} otherLeave,
+				 #{ item.overTime ,jdbcType=DOUBLE} overTime, #{item.compensateLeave ,jdbcType=DOUBLE} compensateLeave,
+				 #{ item.createDate,jdbcType=TIMESTAMP } createDate, #{ item.siteId,jdbcType=VARCHAR  } siteId, #{  item.deptId ,jdbcType=VARCHAR } deptId,
+				 #{ item.deptName,jdbcType=VARCHAR  } deptName, #{item.annual,jdbcType=INTEGER  } annual,
+				 #{item.userStatus ,jdbcType=VARCHAR} userStatus, #{item.countDays ,jdbcType=DOUBLE} countDays,
+				 #{item.noCompensateLeave ,jdbcType=DOUBLE} noCompensateLeave,
+				 #{item.startDate ,jdbcType=TIMESTAMP} startDate,
+				 #{item.endDate ,jdbcType=TIMESTAMP} endDate,
+				 #{item.category_8 ,jdbcType=NUMERIC} category_8,#{item.category_9 ,jdbcType=NUMERIC} category_9,#{item.category_10 ,jdbcType=NUMERIC} category_10,
+				 #{item.category_11 ,jdbcType=NUMERIC} category_11,#{item.category_12 ,jdbcType=NUMERIC} category_12,#{item.category_13 ,jdbcType=NUMERIC} category_13,
+				 #{item.category_14 ,jdbcType=NUMERIC} category_14,#{item.category_15 ,jdbcType=NUMERIC} category_15,#{item.category_16 ,jdbcType=NUMERIC} category_16,
+				 #{item.category_17 ,jdbcType=NUMERIC} category_17
+				from dual
+			</foreach>
+		) temp
+	</insert>
+	
+	<select id="queryStatTemp" resultType="StatVo">
+		SELECT <include refid="statTempBeanField"/> 
+		FROM ATD_STAT_Temp 
+		where SITEID = #{ params.siteId } <include refid="atd_exempt"/>
+		<if test="params.deptId!=null and params.deptId!=''">
+			and deptId = #{ params.deptId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.userId!=null and params.userId!=''">
+			and userId = #{ params.userId,jdbcType=VARCHAR }
+		</if>
+		and startDate = #{ params.startDate,jdbcType=TIMESTAMP } and endDate = #{ params.endDate,jdbcType=TIMESTAMP }
+		<if test="params.userName != null and params.userName != ''">
+		 	and userName like '%${ params.userName }%'
+		</if>
+		<if test="params.annualRemain != null and params.annualRemain != ''">
+		 	and annualRemain like '%${ params.annualRemain }%'
+		</if>
+		<if test="params.compensateRemain != null and params.compensateRemain != ''">
+		 	and compensateRemain like '%${ params.compensateRemain }%'
+		</if>
+		<if test="params.annualLevel != null and params.annualLevel !=''">
+		 	and ( annualLevel + subAnualLeave ) like '%${ params.annualLevel }%'
+		</if>
+		<if test="params.enventLeave != null and params.enventLeave != ''">
+		 	and enventLeave like '%${ params.enventLeave }%'
+		</if>
+		<if test="params.sickLeave != null and params.sickLeave != ''">
+		 	and sickLeave like '%${ params.sickLeave }%'
+		</if>
+		<if test="params.marryLeave != null and params.marryLeave != ''">
+		 	and marryLeave like '%${ params.marryLeave }%'
+		</if>
+		<if test="params.birthLeave != null and params.birthLeave !=''">
+		 	and birthLeave like '%${ params.birthLeave }%'
+		</if>
+		<if test="params.otherLeave != null and params.otherLeave != ''">
+		 	and otherLeave like '%${ params.otherLeave }%'
+		</if>
+		<if test="params.overTime != null and params.overTime != ''">
+		 	and overTime like '%${ params.overTime }%'
+		</if>
+		<if test="params.compensateLeave != null and params.compensateLeave != ''">
+		 	and compensateLeave like '%${ params.compensateLeave }%'
+		</if>
+		<if test="params.noCompensateLeave != null and params.noCompensateLeave !=''">
+		 	and noCompensateLeave like '%${ params.noCompensateLeave }%'
+		</if> 
+		<if test="params.countDays != null and params.countDays != ''">
+		 	and countDays like '%${ params.countDays }%'
+		</if>
+		<if test="params.deptName != null and params.deptName != ''">
+		 	and deptName like '%${ params.deptName }%'
+		</if>
+		<if test="params.userStatus != null and params.userStatus != ''">
+		 	and userStatus like '%${ params.userStatus }%'
+		</if>
+		<if test="params.onStatus == 0 ">
+		 	and userStatus = '${ params.checkStatus }'
+		</if>
+	</select>
+	
+	<update id="updateStatSubAnnual" parameterType="Map">
+		UPDATE ATD_STAT SET remark1 = #{ remark }, subAnualLeave = subAnualLeave + #{ subAnualLeave,jdbcType=DOUBLE } 
+		where siteId = #{ siteId } and yearLeave = #{ year }
+	</update>
+	
+	<update id="updateStatRemain" parameterType="StatVo">
+		UPDATE ATD_STAT SET annualRemain = #{ annualRemain } , compensateRemain = #{ compensateRemain },
+		 remark2 = #{ remark2 }, subAnualLeave = #{ subAnualLeave,jdbcType=DOUBLE } where id = #{ id }
+	</update>
+	
+	<select id="queryStatById" parameterType="int" resultType="StatVo">
+		select <include refid="statBeanField"/> from ATD_STAT where id = #{ id }
+	</select>
+	
+	<select id="queryStatOvertimeDetail" parameterType="Map" resultType="StatDetailVo">
+		select overTemp.USERID userId ,overTemp.userName, overTemp.countDays, overTemp.startDate, overTemp.endDate from ( 
+		SELECT oi.userid userId, oi.userName userName, oi.realOverHours countDays,oi.startDate startDate ,
+		oi.endDate endDate, o.status status
+		FROM ( SELECT * FROM ATD_OVERTIME_ITEM  WHERE userId= #{ userId } ) oi RIGHT JOIN ATD_OVERTIME o 
+		on o.id = oi.overtimeid ) overTemp where overTemp.status = #{ status } 
+		and overTemp.startDate between #{startDate} and #{ endDate }
+		ORDER BY OVERTEMP.startDate
+	</select>
+	
+	<select id="queryStatLeaveDetail" parameterType="Map" resultType="StatDetailVo">
+		SELECT leaveTemp.userId, leaveTemp.userName, leaveTemp.startDate, leaveTemp.endDate, leaveTemp.countDays  
+		FROM ( SELECT leave.createBy userId, leave.userName userName, ITEM.category category,
+		ITEM.startDate startDate , ITEM.ENDDATE endDate, ITEM.leaveDays countDays, leave.status status
+		FROM ( SELECT * FROM ATD_LEAVE WHERE createBy= #{ userId }) leave LEFT JOIN ATD_LEAVE_ITEM ITEM on LEAVE.id = ITEM.LEAVEID ) leaveTemp
+		where LEAVETEMP.STATUS = #{ status }
+		and leaveTemp.category = #{ category }
+		and ( ( leaveTemp.startDate &gt;= #{startDate} and leaveTemp.startDate &lt;= #{ endDate } )
+		or ( leaveTemp.startDate &lt;= #{startDate} and leaveTemp.endDate &gt;= #{ endDate } ) or
+		( leaveTemp.endDate &gt;= #{startDate} and leaveTemp.endDate &lt;= #{ endDate } ) )
+		ORDER BY startDate
+	</select>
+	
+	<update id="updateBatchStatStatus" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_STAT 
+			<set> 
+			userStatus = #{ item.userStatus }
+			</set> 
+			where userId = #{ item.userId } and yearLeave = #{ item.yearLeave }
+		</foreach>
+	</update>
+	<select id="queryStatList" resultType="StatBean">
+		SELECT id, userId, userName, yearLeave, deptId, deptName, userStatus,
+		createDate, updateDate, siteId, 
+		annualLevel, annualRemain, annual, subAnualLeave, remark1, remark2,
+		(annualRemain+annual-subAnualLeave-annualLevel) surplusAnnual,
+		enventLeave, sickLeave, marryLeave, birthLeave, otherLeave, 
+		overTime, compensateRemain,compensateLeave, transferCompensate,
+		(compensateRemain+transferCompensate-compensateLeave) surplusCompensate,
+		countDays, 
+		category_8,category_9,category_10,category_11,category_12,
+		category_13,category_14,category_15,category_16,category_17
+		FROM ATD_STAT s
+		where siteId = #{ params.siteId } <include refid="atd_exempt"/>
+		<if test="params.year!=null">
+			and yearleave = #{ params.year }
+		</if>
+		<if test="params.deptId!=null and params.deptId!=''">
+			and deptId = #{ params.deptId }
+		</if>
+		<if test="params.userId!=null and params.userId!=''">
+			and userId = #{ params.userId }
+		</if>
+	</select>
+	<select id="queryStatListUntilMonth" resultType="StatBean">
+		SELECT s.id, s.userId, s.userName, s.yearLeave, s.deptId, s.deptName, s.userStatus,
+		s.createDate, s.updateDate, s.siteId, 
+		i.annualLevel, s.annualRemain, s.annual, s.subAnualLeave, s.remark1, s.remark2,
+		(s.annualRemain+s.annual-s.subAnualLeave-nvl(i.annualLevel,0)) surplusAnnual,
+		i.enventLeave, i.sickLeave, i.marryLeave, i.birthLeave, i.otherLeave, 
+		i.overTime, s.compensateRemain,i.compensateLeave, i.transferCompensate,
+		(s.compensateRemain+nvl(i.transferCompensate,0)-nvl(i.compensateLeave,0)) surplusCompensate,
+		i.countDays, 
+		i.category_8,i.category_9,i.category_10,i.category_11,i.category_12,
+		i.category_13,i.category_14,i.category_15,i.category_16,i.category_17
+		FROM ATD_STAT s
+		left join (
+			select i.statid,
+			sum(i.annualLevel) annualLevel,
+			sum(i.enventLeave) enventLeave, sum(i.sickLeave) sickLeave, sum(i.marryLeave) marryLeave, sum(i.birthLeave) birthLeave, sum(i.otherLeave) otherLeave, 
+			sum(i.overTime) overTime, sum(i.compensateLeave) compensateLeave, sum(i.transferCompensate) transferCompensate,
+			sum(i.countDays) countDays, 
+			sum(i.category_8) category_8,sum(i.category_9) category_9,sum(i.category_10) category_10,sum(i.category_11) category_11,sum(i.category_12) category_12,
+			sum(i.category_13) category_13,sum(i.category_14) category_14,sum(i.category_15) category_15,sum(i.category_16) category_16,sum(i.category_17) category_17
+			from atd_stat_item i 
+			left join ATD_STAT s on s.id=i.statid
+			where s.siteId = #{ params.siteId } <include refid="atd_exempt"/>
+				and i.monthleave &lt;= #{ params.month }
+				and s.yearleave = #{ params.year }
+			<if test="params.deptId!=null and params.deptId!=''">
+				and s.deptId = #{ params.deptId }
+			</if>
+			<if test="params.userId!=null and params.userId!=''">
+				and s.userId = #{ params.userId }
+			</if>
+			group by i.statid
+		)i on i.statid=s.id
+		where s.siteId = #{ params.siteId } <include refid="atd_exempt"/>
+			and s.yearleave = #{ params.year }
+		<if test="params.deptId!=null and params.deptId!=''">
+			and deptId = #{ params.deptId }
+		</if>
+		<if test="params.userId!=null and params.userId!=''">
+			and userId = #{ params.userId }
+		</if>		
+	</select>
+	<select id="queryStatListInMonth" resultType="StatBean">
+		SELECT s.id, s.userId, s.userName, s.yearLeave, s.deptId, s.deptName, s.userStatus,
+		s.createDate, s.updateDate, s.siteId, 
+		i.annualLevel, s.annualRemain, s.annual, s.subAnualLeave, s.remark1, s.remark2,
+		(s.annualRemain+s.annual-s.subAnualLeave-nvl(u.annualLevel,0)) surplusAnnual,
+		i.enventLeave, i.sickLeave, i.marryLeave, i.birthLeave, i.otherLeave, 
+		i.overTime, s.compensateRemain,i.compensateLeave, i.transferCompensate,
+		(s.compensateRemain+nvl(u.transferCompensate,0)-nvl(u.compensateLeave,0)) surplusCompensate,
+		i.countDays, 
+		i.category_8,i.category_9,i.category_10,i.category_11,i.category_12,
+		i.category_13,i.category_14,i.category_15,i.category_16,i.category_17
+		FROM ATD_STAT s
+		left join atd_stat_item i on i.statid=s.id and i.monthleave = #{ params.month }
+		left join (
+			select i.statid,
+			sum(i.annualLevel) annualLevel,
+			sum(i.overTime) overTime,sum(i.transferCompensate) transferCompensate, sum(i.compensateLeave) compensateLeave
+			from atd_stat_item i 
+			left join ATD_STAT s on s.id=i.statid
+			where s.siteId = #{ params.siteId } <include refid="atd_exempt"/>
+				and i.monthleave &lt;= #{ params.month }
+				and s.yearleave = #{ params.year }
+			<if test="params.deptId!=null and params.deptId!=''">
+				and s.deptId = #{ params.deptId }
+			</if>
+			<if test="params.userId!=null and params.userId!=''">
+				and s.userId = #{ params.userId }
+			</if>
+			group by i.statid
+		)u on u.statid=s.id
+		where s.siteId = #{ params.siteId } <include refid="atd_exempt"/>
+			and s.yearleave = #{ params.year }
+		<if test="params.deptId!=null and params.deptId!=''">
+			and deptId = #{ params.deptId }
+		</if>
+		<if test="params.userId!=null and params.userId!=''">
+			and userId = #{ params.userId }
+		</if>		
+	</select>
+	<select id="queryStatMap" resultType="StatBean">
+		SELECT concat(yearLeave,concat('_',userid)) flag,
+		id, userId, userName, yearLeave, deptId, deptName, userStatus,
+		createDate, updateDate, siteId, 
+		annualLevel, annualRemain, annual, subAnualLeave, remark1, remark2,
+		(annualRemain+annual-subAnualLeave-annualLevel) surplusAnnual,
+		enventLeave, sickLeave, marryLeave, birthLeave, otherLeave, 
+		overTime, compensateRemain,compensateLeave, transferCompensate,
+		(compensateRemain+transferCompensate-compensateLeave) surplusCompensate,
+		countDays, 
+		category_8,category_9,category_10,category_11,category_12,
+		category_13,category_14,category_15,category_16,category_17
+		FROM ATD_STAT s
+		where 1=1
+		<if test="startYear!=null">
+			and yearleave &gt;= #{startYear} 
+		</if>
+		<if test="endYear!=null">
+			and yearleave &lt;= #{endYear} 
+		</if>
+		<if test="siteId!=null and siteId!=''">
+			AND SITEID = #{ siteId }
+		</if>
+		<if test="userIds != null  and userIds.length>0">
+		 	and userId in
+		 	<foreach collection="userIds" item="item" index="index" open="(" close=")" separator=",">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</select>
+	
+	<delete id="deleteStatByYear">
+		delete FROM ATD_STAT where 1=1
+		<if test="startYear!=null">
+			and yearleave &gt;= #{startYear} 
+		</if>
+		<if test="endYear!=null">
+			and yearleave &lt;= #{endYear} 
+		</if>
+		<if test="siteId!=null and siteId!=''">
+			AND SITEID = #{ siteId }
+		</if>
+		<if test="userStatus!=null and userStatus!=''">
+			AND userStatus = #{ userStatus }
+		</if>
+	</delete>
+	<delete id="deleteStatItemByYear">
+		delete FROM ATD_STAT_ITEM i where exists(
+			select 1 from atd_stat s
+			where s.id=i.statid
+			<if test="startYear!=null">
+				and s.yearleave &gt;= #{startYear} 
+			</if>
+			<if test="endYear!=null">
+				and s.yearleave &lt;= #{endYear} 
+			</if>
+			<if test="siteId!=null and siteId!=''">
+				AND s.SITEID = #{ siteId }
+			</if>
+			<if test="userIds != null  and userIds.length>0">
+			 	and s.userId in
+			 	<foreach collection="userIds" item="item" index="index" open="(" close=")" separator=",">
+					#{item,jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		)
+	</delete>
+	
+	<insert id="createStatByUserAndYear">
+		insert into  ATD_STAT( 
+			id, userId, userName, yearLeave, deptId, deptName, userStatus,
+			createDate, siteId
+		 ) 
+		select SEQ_ATD_STAT.nextval, temp.* from (
+			<foreach collection="userList" item="user" index="index1" separator="union all">
+				<foreach collection="yearList" item="year" index="index2" separator="union all">
+				 select  #{user.id,jdbcType=VARCHAR } userId, #{ user.name ,jdbcType=VARCHAR} userName, 
+					#{year,jdbcType=Integer } yearLeave, #{user.currOrgCode,jdbcType=VARCHAR } deptId, 
+					#{user.currOrgName,jdbcType=VARCHAR } deptName, '在职' userStatus,
+					sysdate, #{siteId,jdbcType=VARCHAR } siteId
+				from dual
+				</foreach>
+			</foreach>
+		) temp
+	</insert>
+	
+	<select id="queryStatItemMap" resultType="StatItemBean">
+		SELECT s.yearLeave||'-'||to_char(i.monthleave,'FM00')||'_'||s.userid flag,
+		i.id, i.statId, s.yearLeave, i.monthLeave,
+		i.annualLevel, 
+		i.enventLeave, i.sickLeave, i.marryLeave, i.birthLeave, i.otherLeave, 
+		i.overTime, i.compensateLeave, i.transferCompensate,
+		i.countDays, 
+		i.category_8,i.category_9,i.category_10,i.category_11,i.category_12,
+		i.category_13,i.category_14,i.category_15,i.category_16,i.category_17
+		FROM ATD_STAT_item i 
+		left join atd_stat s on i.statid=s.id
+		where 1=1
+		<if test="startYear!=null">
+			and s.yearleave &gt;= #{startYear} 
+		</if>
+		<if test="endYear!=null">
+			and s.yearleave &lt;= #{endYear} 
+		</if>
+		<if test="siteId!=null and siteId!=''">
+			AND s.SITEID = #{ siteId }
+		</if>
+		<if test="userIds != null  and userIds.length>0">
+		 	and s.userId in
+		 	<foreach collection="userIds" item="item" index="index" open="(" close=")" separator=",">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</select>
+	<insert id="insertStatItem" parameterType="StatItemBean">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_ATD_STAT_ITEM.nextval from dual
+		</selectKey>
+		insert into  atd_stat_item(
+			id,monthLeave,createDate,updateDate,statid,
+			annualLevel, enventLeave, sickLeave, marryLeave,  birthLeave, otherLeave,
+			overTime,compensateLeave, transferCompensate,countDays,
+			category_8,category_9,category_10,category_11,category_12,
+			category_13,category_14,category_15,category_16,category_17
+		) 
+		values(
+			#{id, jdbcType=NUMERIC },#{ item.monthLeave,jdbcType=NUMERIC },
+			 sysdate,sysdate, #{ item.statId,jdbcType=NUMERIC },
+			 nvl(#{ item.annualLevel ,jdbcType=NUMERIC},0),nvl(#{item.enventLeave,jdbcType=NUMERIC },0), 
+			 nvl(#{ item.sickLeave,jdbcType=NUMERIC },0), nvl(#{ item.marryLeave ,jdbcType=NUMERIC},0), 
+			 nvl(#{ item.birthLeave,jdbcType=NUMERIC },0),nvl(#{ item.otherLeave ,jdbcType=NUMERIC},0),
+			 nvl(#{ item.overTime ,jdbcType=NUMERIC},0), nvl(#{item.compensateLeave ,jdbcType=NUMERIC},0),
+			 nvl(#{item.transferCompensate ,jdbcType=NUMERIC},0),nvl(#{item.countDays ,jdbcType=NUMERIC},0),
+			 nvl(#{item.category_8 ,jdbcType=NUMERIC},0),nvl(#{item.category_9 ,jdbcType=NUMERIC},0),nvl(#{item.category_10 ,jdbcType=NUMERIC},0),
+			 nvl(#{item.category_11 ,jdbcType=NUMERIC},0),nvl(#{item.category_12 ,jdbcType=NUMERIC},0),nvl(#{item.category_13 ,jdbcType=NUMERIC},0),
+			 nvl(#{item.category_14 ,jdbcType=NUMERIC},0),nvl(#{item.category_15 ,jdbcType=NUMERIC},0),nvl(#{item.category_16 ,jdbcType=NUMERIC},0),
+			 nvl(#{item.category_17 ,jdbcType=NUMERIC},0)   
+		)
+	</insert>
+	<!-- 批量操作 -->
+	<insert id="batchInsertStatItem" parameterType="java.util.List">
+		insert into  atd_stat_item(
+			id,monthLeave,createDate,updateDate,statid,
+			annualLevel, enventLeave, sickLeave, marryLeave,  birthLeave, otherLeave,
+			overTime,compensateLeave,transferCompensate, countDays,
+			category_8,category_9,category_10,category_11,category_12,
+			category_13,category_14,category_15,category_16,category_17
+		) 
+		select SEQ_ATD_STAT_ITEM.nextval, temp.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			select 
+				 #{ item.monthLeave,jdbcType=NUMERIC } monthLeave,
+				 sysdate createDate,sysdate updateDate, #{ item.statId,jdbcType=NUMERIC } statid,
+				 nvl(#{ item.annualLevel ,jdbcType=NUMERIC},0) annualLevel,nvl(#{item.enventLeave,jdbcType=NUMERIC },0) enventLeave, 
+				 nvl(#{ item.sickLeave,jdbcType=NUMERIC },0) sickLeave, nvl(#{ item.marryLeave ,jdbcType=NUMERIC},0) marryLeave, 
+				 nvl(#{ item.birthLeave,jdbcType=NUMERIC },0) birthLeave,nvl(#{ item.otherLeave ,jdbcType=NUMERIC},0) otherLeave,
+				 nvl(#{ item.overTime ,jdbcType=NUMERIC},0) overTime, nvl(#{item.compensateLeave ,jdbcType=NUMERIC},0) compensateLeave,
+				 nvl(#{item.transferCompensate ,jdbcType=NUMERIC},0),nvl(#{item.countDays ,jdbcType=NUMERIC},0) countDays,
+				 nvl(#{item.category_8 ,jdbcType=NUMERIC},0) category_8,nvl(#{item.category_9 ,jdbcType=NUMERIC},0) category_9,nvl(#{item.category_10 ,jdbcType=NUMERIC},0) category_10,
+				 nvl(#{item.category_11 ,jdbcType=NUMERIC},0) category_11,nvl(#{item.category_12 ,jdbcType=NUMERIC},0) category_12,nvl(#{item.category_13 ,jdbcType=NUMERIC},0) category_13,
+				 nvl(#{item.category_14 ,jdbcType=NUMERIC},0) category_14,nvl(#{item.category_15 ,jdbcType=NUMERIC},0) category_15,nvl(#{item.category_16 ,jdbcType=NUMERIC},0) category_16,
+				 nvl(#{item.category_17 ,jdbcType=NUMERIC},0) category_17  
+			from dual
+			</foreach>
+		) temp
+	</insert>
+	<update id="updateStatItemPlusDays" parameterType="StatItemBean"  >
+		update atd_stat_item set 
+			updateDate=sysdate,
+			annualLevel=annualLevel+nvl(#{ item.annualLevel ,jdbcType=NUMERIC},0), 
+			enventLeave=enventLeave+nvl(#{item.enventLeave,jdbcType=NUMERIC },0), 
+			sickLeave=sickLeave+nvl(#{ item.sickLeave,jdbcType=NUMERIC },0), 
+			marryLeave=marryLeave+nvl(#{ item.marryLeave ,jdbcType=NUMERIC},0),  
+			birthLeave=birthLeave+nvl(#{ item.birthLeave,jdbcType=NUMERIC },0), 
+			otherLeave=otherLeave+nvl(#{ item.otherLeave ,jdbcType=NUMERIC},0),
+			overTime=overTime+nvl(#{ item.overTime ,jdbcType=NUMERIC},0),
+			transferCompensate=transferCompensate+nvl(#{ item.transferCompensate ,jdbcType=NUMERIC},0),
+			compensateLeave=compensateLeave+nvl(#{item.compensateLeave ,jdbcType=NUMERIC},0), 
+			countDays=countDays+nvl(#{item.countDays ,jdbcType=NUMERIC},0),
+			category_8=category_8+nvl(#{item.category_8 ,jdbcType=NUMERIC},0),
+			category_9=category_9+nvl(#{item.category_9 ,jdbcType=NUMERIC},0),
+			category_10=category_10+nvl(#{item.category_10 ,jdbcType=NUMERIC},0),
+			category_11=category_11+nvl(#{item.category_11 ,jdbcType=NUMERIC},0),
+			category_12=category_12+nvl(#{item.category_12 ,jdbcType=NUMERIC},0),
+			category_13=category_13+nvl(#{item.category_13 ,jdbcType=NUMERIC},0),
+			category_14=category_14+nvl(#{item.category_14 ,jdbcType=NUMERIC},0),
+			category_15=category_15+nvl(#{item.category_15 ,jdbcType=NUMERIC},0),
+			category_16=category_16+nvl(#{item.category_16 ,jdbcType=NUMERIC},0),
+			category_17=category_17+nvl(#{item.category_17 ,jdbcType=NUMERIC},0)
+		where id=#{item.id, jdbcType=NUMERIC }
+	</update>
+	<update id="batchUpdateStatItemPlusDays" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update atd_stat_item
+			<set> 
+				updateDate=sysdate,
+				annualLevel=annualLevel+nvl(#{ item.annualLevel ,jdbcType=NUMERIC},0), 
+				enventLeave=enventLeave+nvl(#{item.enventLeave,jdbcType=NUMERIC },0), 
+				sickLeave=sickLeave+nvl(#{ item.sickLeave,jdbcType=NUMERIC },0), 
+				marryLeave=marryLeave+nvl(#{ item.marryLeave ,jdbcType=NUMERIC},0),  
+				birthLeave=birthLeave+nvl(#{ item.birthLeave,jdbcType=NUMERIC },0), 
+				otherLeave=otherLeave+nvl(#{ item.otherLeave ,jdbcType=NUMERIC},0),
+				overTime=overTime+nvl(#{ item.overTime ,jdbcType=NUMERIC},0),
+				transferCompensate=transferCompensate+nvl(#{ item.transferCompensate ,jdbcType=NUMERIC},0),
+				compensateLeave=compensateLeave+nvl(#{item.compensateLeave ,jdbcType=NUMERIC},0), 
+				countDays=countDays+nvl(#{item.countDays ,jdbcType=NUMERIC},0),
+				category_8=category_8+nvl(#{item.category_8 ,jdbcType=NUMERIC},0),
+				category_9=category_9+nvl(#{item.category_9 ,jdbcType=NUMERIC},0),
+				category_10=category_10+nvl(#{item.category_10 ,jdbcType=NUMERIC},0),
+				category_11=category_11+nvl(#{item.category_11 ,jdbcType=NUMERIC},0),
+				category_12=category_12+nvl(#{item.category_12 ,jdbcType=NUMERIC},0),
+				category_13=category_13+nvl(#{item.category_13 ,jdbcType=NUMERIC},0),
+				category_14=category_14+nvl(#{item.category_14 ,jdbcType=NUMERIC},0),
+				category_15=category_15+nvl(#{item.category_15 ,jdbcType=NUMERIC},0),
+				category_16=category_16+nvl(#{item.category_16 ,jdbcType=NUMERIC},0),
+				category_17=category_17+nvl(#{item.category_17 ,jdbcType=NUMERIC},0)
+			</set> 
+			where id=#{item.id}
+		</foreach>
+	</update>
+	
+	<insert id="insertStat" parameterType="StatBean">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_ATD_STAT.nextval from dual
+		</selectKey>
+		insert into atd_stat(
+			id,userId, userName, yearLeave, createDate,updateDate, siteId, userStatus, deptId, deptName,
+			annualRemain,annual,compensateRemain,SUBANUALLEAVE,REMARK1,REMARK2
+		) 
+		values(
+			#{id, jdbcType=NUMERIC },#{item.userId,jdbcType=VARCHAR }, #{item.userName ,jdbcType=VARCHAR}, 
+			#{item.yearLeave,jdbcType=NUMERIC }, sysdate,sysdate,
+			#{item.siteId,jdbcType=VARCHAR  },#{item.userStatus ,jdbcType=VARCHAR},
+			#{item.deptId ,jdbcType=VARCHAR },#{item.deptName,jdbcType=VARCHAR  },
+			nvl(#{item.annualRemain ,jdbcType=NUMERIC},0),
+			nvl(#{item.annual,jdbcType=NUMERIC  },0),
+			nvl(#{item.compensateRemain ,jdbcType=NUMERIC},0),
+			nvl(#{item.subAnualLeave ,jdbcType=NUMERIC},0),
+			#{item.remark1,jdbcType=VARCHAR  },#{item.remark2 ,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="batchInsertStat" parameterType="java.util.List">
+		insert into atd_stat(
+			id,userId, userName, yearLeave, createDate,updateDate, siteId, userStatus, deptId, deptName,
+			annualRemain,annual,compensateRemain,SUBANUALLEAVE,REMARK1,REMARK2
+		 ) 
+		select SEQ_ATD_STAT.nextval, temp.* from (
+			<foreach collection="list" item="item" index="index" separator="union all">
+				select 1 #{item.userId,jdbcType=VARCHAR } userId, #{item.userName ,jdbcType=VARCHAR} userName, 
+				#{item.yearLeave,jdbcType=NUMERIC } yearLeave, sysdate createDate,sysdate updateDate,
+				#{item.siteId,jdbcType=VARCHAR  } siteId,#{item.userStatus ,jdbcType=VARCHAR} userStatus,
+				#{item.deptId ,jdbcType=VARCHAR } deptId,#{item.deptName,jdbcType=VARCHAR  } deptName,
+				nvl(#{item.annualRemain ,jdbcType=NUMERIC},0) annualRemain,
+				nvl(#{item.annual,jdbcType=NUMERIC  },0) annual,
+				nvl(#{item.compensateRemain ,jdbcType=NUMERIC},0) compensateRemain,
+				nvl(#{item.subAnualLeave ,jdbcType=NUMERIC},0) subAnualLeave,
+				#{item.remark1,jdbcType=VARCHAR  } remark1,#{item.remark2 ,jdbcType=VARCHAR} remark2
+			from dual
+			</foreach>
+		) temp
+	</insert>
+	<update id="updateStatPlusDaysByStatItem" parameterType="StatItemBean"  >
+		update atd_stat set 
+			updateDate=sysdate,
+			annualLevel=annualLevel+nvl(#{ item.annualLevel ,jdbcType=NUMERIC},0), 
+			enventLeave=enventLeave+nvl(#{item.enventLeave,jdbcType=NUMERIC },0), 
+			sickLeave=sickLeave+nvl(#{ item.sickLeave,jdbcType=NUMERIC },0), 
+			marryLeave=marryLeave+nvl(#{ item.marryLeave ,jdbcType=NUMERIC},0),  
+			birthLeave=birthLeave+nvl(#{ item.birthLeave,jdbcType=NUMERIC },0), 
+			otherLeave=otherLeave+nvl(#{ item.otherLeave ,jdbcType=NUMERIC},0),
+			overTime=overTime+nvl(#{ item.overTime ,jdbcType=NUMERIC},0),
+			transferCompensate=transferCompensate+nvl(#{ item.transferCompensate ,jdbcType=NUMERIC},0),
+			compensateLeave=compensateLeave+nvl(#{item.compensateLeave ,jdbcType=NUMERIC},0), 
+			countDays=countDays+nvl(#{item.countDays ,jdbcType=NUMERIC},0),
+			category_8=category_8+nvl(#{item.category_8 ,jdbcType=NUMERIC},0),
+			category_9=category_9+nvl(#{item.category_9 ,jdbcType=NUMERIC},0),
+			category_10=category_10+nvl(#{item.category_10 ,jdbcType=NUMERIC},0),
+			category_11=category_11+nvl(#{item.category_11 ,jdbcType=NUMERIC},0),
+			category_12=category_12+nvl(#{item.category_12 ,jdbcType=NUMERIC},0),
+			category_13=category_13+nvl(#{item.category_13 ,jdbcType=NUMERIC},0),
+			category_14=category_14+nvl(#{item.category_14 ,jdbcType=NUMERIC},0),
+			category_15=category_15+nvl(#{item.category_15 ,jdbcType=NUMERIC},0),
+			category_16=category_16+nvl(#{item.category_16 ,jdbcType=NUMERIC},0),
+			category_17=category_17+nvl(#{item.category_17 ,jdbcType=NUMERIC},0)
+		where id=#{item.statId, jdbcType=NUMERIC }
+	</update>
+	<update id="batchUpdateStatPlusDaysByStatItem" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update atd_stat
+			<set> 
+				updateDate=sysdate,
+				annualLevel=annualLevel+nvl(#{ item.annualLevel ,jdbcType=NUMERIC},0), 
+				enventLeave=enventLeave+nvl(#{item.enventLeave,jdbcType=NUMERIC },0), 
+				sickLeave=sickLeave+nvl(#{ item.sickLeave,jdbcType=NUMERIC },0), 
+				marryLeave=marryLeave+nvl(#{ item.marryLeave ,jdbcType=NUMERIC},0),  
+				birthLeave=birthLeave+nvl(#{ item.birthLeave,jdbcType=NUMERIC },0), 
+				otherLeave=otherLeave+nvl(#{ item.otherLeave ,jdbcType=NUMERIC},0),
+				overTime=overTime+nvl(#{ item.overTime ,jdbcType=NUMERIC},0),
+				transferCompensate=transferCompensate+nvl(#{ item.transferCompensate ,jdbcType=NUMERIC},0),
+				compensateLeave=compensateLeave+nvl(#{item.compensateLeave ,jdbcType=NUMERIC},0), 
+				countDays=countDays+nvl(#{item.countDays ,jdbcType=NUMERIC},0),
+				category_8=category_8+nvl(#{item.category_8 ,jdbcType=NUMERIC},0),
+				category_9=category_9+nvl(#{item.category_9 ,jdbcType=NUMERIC},0),
+				category_10=category_10+nvl(#{item.category_10 ,jdbcType=NUMERIC},0),
+				category_11=category_11+nvl(#{item.category_11 ,jdbcType=NUMERIC},0),
+				category_12=category_12+nvl(#{item.category_12 ,jdbcType=NUMERIC},0),
+				category_13=category_13+nvl(#{item.category_13 ,jdbcType=NUMERIC},0),
+				category_14=category_14+nvl(#{item.category_14 ,jdbcType=NUMERIC},0),
+				category_15=category_15+nvl(#{item.category_15 ,jdbcType=NUMERIC},0),
+				category_16=category_16+nvl(#{item.category_16 ,jdbcType=NUMERIC},0),
+				category_17=category_17+nvl(#{item.category_17 ,jdbcType=NUMERIC},0)
+			</set> 
+			where id=#{item.statId}
+		</foreach>
+	</update>
+	<update id="updateStatAnnualAndUser" parameterType="StatBean"  >
+		update atd_stat set 
+			updateDate=sysdate,
+			annual=nvl(#{ item.annual,jdbcType=NUMERIC},0),
+			deptId=#{item.deptId,jdbcType=VARCHAR},
+			deptName=#{item.deptName,jdbcType=VARCHAR},
+			userStatus=#{item.userStatus,jdbcType=VARCHAR}
+		where id=#{item.id, jdbcType=NUMERIC }
+	</update>
+	<update id="batchUpdateStatAnnualAndUser" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update atd_stat
+			<set> 
+				updateDate=sysdate,
+				annual=nvl(#{ item.annual,jdbcType=NUMERIC},0),
+				deptId=#{item.deptId,jdbcType=VARCHAR},
+				deptName=#{item.deptName,jdbcType=VARCHAR},
+				userStatus=#{item.userStatus,jdbcType=VARCHAR}
+			</set> 
+			where id=#{item.id}
+		</foreach>
+	</update>
+	
+	<update id="updateUserStatStatus" parameterType="java.util.List">
+		update atd_stat 
+		set userStatus=#{status}
+		where userId in 
+		<foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+	</update>
+</mapper> 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.purchase.dao.PurAttachMappingDao">
+	<insert id="insertPurAttachMapping" parameterType="com.timss.purchase.bean.PurAttachMapping" >
+    	INSERT INTO PUR_ATTACH_MAPPING (SHEETNO, ATTACHID)
+    	VALUES (#{sheetno,jdbcType=VARCHAR},#{attachid,jdbcType=VARCHAR})
+    </insert>
+    
+    <delete id="deletePurAttachMappingBySheetno" parameterType="java.lang.String">
+    	DELETE FROM PUR_ATTACH_MAPPING PAM WHERE PAM.SHEETNO=#{sheetno}
+    </delete>
+    
+    <select id="queryPurAttachMappingBysheetno" parameterType="java.lang.String" resultType="com.timss.purchase.bean.PurAttachMapping">
+    	SELECT PAM.SHEETNO,PAM.ATTACHID FROM PUR_ATTACH_MAPPING PAM WHERE PAM.SHEETNO=#{sheetno}
+    </select>
+</mapper>

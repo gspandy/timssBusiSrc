@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.ModeDao">
+	
+	<!-- 批量操作 -->
+	<insert id="insertBatchMode" parameterType="java.util.List">
+		insert into  opr_mode( modeId, jobId, assetId, modeVal, isDelete, deptId,
+		siteId, createUser, createUserName, createDate, team, sortNum ) 
+		select  temp.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			 select #{  item.modeId, jdbcType=VARCHAR}, #{  item.jobId, jdbcType=NUMERIC}, 
+			 #{  item.assetId, jdbcType=VARCHAR},
+			 #{  item.modeVal, jdbcType=VARCHAR},
+			 #{  item.isDelete, jdbcType=VARCHAR}, #{  item.deptid, jdbcType=VARCHAR}, 
+ 			 #{  item.siteid, jdbcType=VARCHAR}, #{  item.createuser, jdbcType=VARCHAR},
+ 			 #{  item.createUserName, jdbcType=VARCHAR}, #{  item.createdate, jdbcType=TIMESTAMP },
+ 			 #{  team, jdbcType=VARCHAR}, #{  item.sortNum, jdbcType=NUMERIC}
+ 			 from dual
+		</foreach>
+		) temp
+	</insert>
+	
+	<insert id="insertMode" parameterType="ModeBean">
+		insert into  opr_mode( modeId, jobId, assetId, modeVal, isDelete, deptId,
+		siteId, createUser, createUserName, createDate, team, sortNum
+		<if test="nowModeVal != null and nowModeVal !=''">,nowModeVal</if> ) 
+		values( #{  modeId, jdbcType=VARCHAR}, #{  jobId, jdbcType=NUMERIC}, 
+			 #{  assetId, jdbcType=VARCHAR},
+			 #{  modeVal, jdbcType=VARCHAR},
+			 #{  isDelete, jdbcType=VARCHAR}, #{  deptid, jdbcType=VARCHAR}, 
+ 			 #{  siteid, jdbcType=VARCHAR}, #{  createuser, jdbcType=VARCHAR},
+ 			 #{  createUserName, jdbcType=VARCHAR}, #{  createdate, jdbcType=TIMESTAMP },
+ 			 #{  team, jdbcType=VARCHAR},#{  sortNum, jdbcType=NUMERIC}<if test="nowModeVal != null and nowModeVal !=''">,#{  nowModeVal, jdbcType=VARCHAR}</if>
+ 			  )
+	</insert>
+	
+	<update id="updateMode" parameterType="ModeBean">
+	update opr_mode set modeVal = #{  modeVal, jdbcType=VARCHAR},
+	team = #{  team, jdbcType=VARCHAR},
+	<if test="nowModeVal != null and nowModeVal !=''">nowModeVal=#{nowModeVal, jdbcType=VARCHAR},</if>
+	<if test="sortNum != null and sortNum !=''">sortNum = #{ sortNum,jdbcType=NUMERIC},</if>
+	modifyUserName = #{modifyUserName, jdbcType=VARCHAR}, 
+	modifyuser = #{ modifyuser, jdbcType=VARCHAR},
+	modifydate = #{ modifydate, jdbcType=VARCHAR}
+	where jobId = #{ jobId, jdbcType=NUMERIC}
+	AND assetId = #{ assetId, jdbcType=VARCHAR}
+	AND isDelete = #{ isDelete, jdbcType=VARCHAR}
+	</update>
+		
+	<update id="updateNowModeVal" parameterType="ModeBean">
+		update opr_mode set nowModeVal = #{  nowModeVal, jdbcType=VARCHAR},
+		modifyUserName = #{modifyUserName, jdbcType=VARCHAR}, 
+		modifyuser = #{ modifyuser, jdbcType=VARCHAR},
+		modifydate = #{ modifydate, jdbcType=VARCHAR}
+		where jobId = #{ jobId, jdbcType=NUMERIC}
+		AND assetId = #{ assetId, jdbcType=VARCHAR}
+		AND team = #{ team, jdbcType=VARCHAR}
+	</update>
+	
+	<update id="deleteMode" parameterType="ModeBean">
+	update opr_mode set isDelete ='Y',
+	modifyUserName = #{modifyUserName, jdbcType=VARCHAR}, 
+	modifyuser = #{ modifyuser, jdbcType=VARCHAR},
+	modifydate = #{ modifydate, jdbcType=VARCHAR}
+	where jobId = #{ jobId, jdbcType=NUMERIC}
+	AND assetId = #{ assetId, jdbcType=VARCHAR}
+	AND isDelete = #{ isDelete, jdbcType=VARCHAR}
+	</update>
+		
+	<select id="queryModeById" parameterType="String" resultType="ModeBean">
+		select m.modeId, m.jobId, m.assetId, a.assetName, m.modeVal, m.isDelete, m.deptId,
+		m.siteId, m.createUser, m.createUserName, m.createDate, m.team,m.sortNum,m.nowModeVal 
+		from opr_mode m
+		left join ast_asset a on a.assetId=m.assetId 
+		where modeid= #{ id, jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="deleteModeById" parameterType="String">
+		delete from opr_mode where modeid= #{ id, jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="queryAllModeList" resultType="ModeListVo">
+		select t.jobId, t.jobName, t.deptId, t.deptName, t.siteId, m.checkPoint 
+		from ( 
+			select jobId, count( jobId ) checkPoint 
+			FROM opr_mode m
+			where siteId = #{params.siteId, jdbcType=VARCHAR} and isDelete = #{params.isDelete, jdbcType=VARCHAR} 
+			 and exists(select 1 from ast_asset a where a.assetid=m.assetid and a.del_ind!='Y')
+			group by jobId 
+		) m right join ( 
+			select j.id jobId,j.name jobName,j.stationid deptId,d.name deptName,j.siteId siteId
+			from (
+				select * from opr_jobs where siteid = #{params.siteId, jdbcType=VARCHAR} and del_ind!='Y'
+			) J left join ( 
+				select * from  opr_dept where siteId = #{params.siteId, jdbcType=VARCHAR} 
+			)d on j.stationid = d.deptid 
+		) t on m.jobid = t.jobId
+	</select>
+	
+	<!-- queryByPage 暂时不用 -->
+	<select id="queryModeByPage" resultType="ModeBean">
+		select * from opr_mode where modeId like '%${ params.modeId }%'
+	</select>
+	
+	<select id="queryModeAssetByJobId" resultType="ModeAssetVo">
+	   select m.assetId   assetId,
+       a.assetName assetName,
+       m.modeVal modeVal,
+       m.jobid jobId,
+       m.team team,
+       m.sortNum sortNum,
+       m.nowModeVal,
+       a.assetType assetType,
+       a.spec spec
+	   from ( select * from  opr_mode where jobId = #{jobId, jdbcType=NUMERIC } and isDelete = 'N' 
+	   	<if test="team != null and team !=''">
+			and team=#{ team, jdbcType=VARCHAR }
+		 </if>
+	   ) m
+	   inner join ast_asset a on m.assetid = a.assetId and a.del_ind!='Y'
+	   order by m.team, m.sortNum asc, a.assetName
+	</select>
+	
+	<select id="queryModeAssetByAssetId" parameterType="String" resultType="ModeAssetVo">
+	   select a.assetid, a.assetname, a.assettype, a.spec from ast_asset a
+	   where a.assetid = #{ assetId, jdbcType=VARCHAR }
+	</select>
+	
+	<select id="queryModeTeamByJobsId" parameterType="Integer" resultType="String">
+	  		select team from opr_mode where jobid=#{ jobsId, jdbcType=NUMERIC } and isdelete!='Y' group by team order by team
+	</select>
+	
+</mapper> 

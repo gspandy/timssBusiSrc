@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.OvertimeDao">
+
+	<sql id="overtimeBeanField">
+		id, num, createDay, siteId, overTimeReason, createBy,userName,deptId,deptName,
+		createDate, updateBy, updateDate, instantId, status, currentDealUser
+	</sql>
+	
+	<!--说明：#{}内的参数，需要与传入的Dept中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertOvertime" parameterType="OvertimeBean">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_ATD_OVERTIME.nextval from dual
+		</selectKey>
+			insert into ATD_OVERTIME( id, num, 
+			siteId, overTimeReason,userName,deptId,deptName,
+			createBy, createDate,status )
+			values( #{id,jdbcType=NUMERIC}, #{ num,jdbcType=VARCHAR }, 
+					#{ siteId,jdbcType=VARCHAR}, #{ overTimeReason,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{deptId,jdbcType=VARCHAR}, #{ deptName,jdbcType=VARCHAR },
+					#{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{ status,jdbcType=VARCHAR }
+			)
+	</insert>
+	<update id="updateOvertime" parameterType="OvertimeBean">
+		update ATD_OVERTIME set 
+		overTimeReason = #{overTimeReason,jdbcType=VARCHAR}, updateBy = #{updateBy,jdbcType=VARCHAR},  
+		updateDate = #{updateDate,jdbcType=TIMESTAMP}
+		where id = #{ id,jdbcType=NUMERIC }
+	</update>
+	<update id="updateOvertimeCreateDay" parameterType="OvertimeBean">
+		update ATD_OVERTIME set 
+		createDay = #{createDay,jdbcType=TIMESTAMP}, updateBy = #{updateBy,jdbcType=VARCHAR},  
+		updateDate = #{updateDate,jdbcType=TIMESTAMP}
+		where id = #{ id,jdbcType=NUMERIC }
+	</update>
+	<resultMap id="overtimeMap" type="OvertimeBean">
+		<id property="id" column="id"/>
+		<result property="num" column="num"/>
+		<result property="createDay" column="createDay"/>
+		<result property="overTimeReason" column="overTimeReason"/>
+		<result property="instantId" column="instantId"/>
+		<result property="status" column="status"/>
+		<result property="createBy" column="createBy"/>	
+		<result property="userName" column="userName"/>	
+		<result property="deptId" column="deptId"/>
+		<result property="deptName" column="deptName"/>
+		<result property="siteId" column="siteId"/>
+		<collection property="itemList" column="id" javaType="ArrayList" ofType="OvertimeItemBean" resultMap="overtimeItemMap"/>
+	</resultMap>
+    <resultMap id="overtimeItemMap" type="OvertimeItemBean">
+		<id property="id" column="i_id"/>
+		<result property="realOverHours" column="i_realOverHours"/>
+		<result property="transferCompensate" column="i_transferCompensate"/>
+		<result property="planOverHours" column="i_planOverHours"/>
+		<result property="startDate" column="i_startDate"/>		
+		<result property="endDate" column="i_endDate"/>
+		<result property="overtimeId" column="i_overtimeId"/>
+		<result property="userName" column="i_userName"/>	
+		<result property="userId" column="i_userId"/>
+		<result property="deptId" column="i_deptId"/>
+		<result property="deptName" column="i_deptName"/>
+		<result property="remarks" column="i_remarks"/>		
+		<result property="totalHours" column="i_totalHours"/>	
+	</resultMap>
+	<select id="queryOvertimeByIdWithItems" parameterType="int" resultMap="overtimeMap">
+		select 
+			over.id, over.num, over.createDay, over.overTimeReason, over.instantId, over.status, 
+			over.createBy,over.userName,over.deptId,over.deptName,over.siteId,
+		 	item.id i_id,item.realOverHours i_realOverHours,item.transferCompensate i_transferCompensate,item.planOverHours i_planOverHours,item.startDate i_startDate,
+		 	item.endDate i_endDate,item.overtimeId i_overtimeId,item.userName i_userName,item.userId i_userId,
+		 	item.deptId i_deptId,item.deptName i_deptName,item.remarks i_remarks,
+(select nvl(sum(i.realoverhours),0)
+from atd_overtime_item i
+left join atd_overtime t on t.id=i.overtimeid
+where t.siteid=over.siteId
+and t.status in ('已归档')
+and to_char(i.startdate,'YYYY-MM') = to_char(item.startdate,'YYYY-MM')
+and i.userid=item.userId) i_totalHours
+		from ATD_OVERTIME over
+		left join ATD_OVERTIME_ITEM item on over.id = item.overtimeId
+		where over.id = #{ id } 
+	</select>
+	<select id="queryOvertimeById" parameterType="int" resultType="OvertimeBean">
+		select <include refid="overtimeBeanField"/> from ATD_OVERTIME 
+		where id = #{ id }
+	</select>
+	<select id="queryOvertimeByNum" parameterType="Map" resultType="OvertimeBean">
+		select <include refid="overtimeBeanField"/> from ATD_OVERTIME where num = #{ num } and siteId = #{ siteId }
+	</select>
+	<delete id="deleteOvertimeById" parameterType="int">
+		delete from ATD_OVERTIME where id = #{ id }
+	</delete>
+	<update id="updateOperUserById" parameterType="HashMap"  >
+		update ATD_OVERTIME set 
+		<if test="status != null">
+		status = #{ status, jdbcType=VARCHAR  }
+		</if>
+		<if test="currentDealUser != null">
+		 	,currentDealUser = #{ currentDealUser, jdbcType=VARCHAR  }
+		</if>
+		<if test="instanceId != null">
+		 	,INSTANTID = #{ instanceId, jdbcType=VARCHAR  }
+		</if>
+		<if test="updateDate != null">
+		 	, updateDate = #{updateDate}
+		</if>
+		where id = #{ id }
+	</update>
+	
+	<select id="queryOvertimeBySearch" resultType="OvertimeBean" >
+		select over.id id, over.num num, over.createDay createDay,
+				over.overTimeReason overTimeReason,over.createBy,
+				over.status status, over.userName userName,
+				over.deptId deptId, over.deptName deptName
+		from ATD_OVERTIME over 
+		where 1 = 1
+		<if test="params.itemUserInfo != null and params.itemUserInfo != ''">
+			and over.id in (
+				select i.overtimeid
+				from atd_overtime_item i 
+				where i.userid like '%${ params.itemUserInfo }%' or i.username like '%${ params.itemUserInfo }%'
+			)
+		</if>
+		<if test="params.num != null and params.num != ''">
+		 	and over.num like '%${ params.num }%'
+		</if>
+		<if test="params.userName != null  and params.userName != ''">
+		 	and over.userName like '%${ params.userName }%'
+		</if>
+		<if test="params.deptName != null  and params.deptName != ''">
+		 	and over.deptName like '%${ params.deptName }%'
+		</if>
+		<if test="params.createDay != null  and params.createDay != ''">
+		 	and to_char(over.createDay,'YYYY-MM-DD HH24:MI') like '%${ params.createDay }%'
+		</if>
+		<if test="params.overTimeReason != null  and params.overTimeReason != ''">
+		 	and over.overTimeReason like '%${ params.overTimeReason }%'
+		</if>
+		<if test="params.status != null  and params.status != ''">
+		 	and over.status like '%${ params.status }%'
+		</if>
+		AND over.siteId = '${ params.siteId }'  and Over.status != '${ params.statusTemp }'
+	</select>
+	<select id="queryOvertimeBySiteId" resultType="OvertimeBean">
+		select over.id id, over.num num, over.createDay createDay,
+				over.overTimeReason overTimeReason,over.createBy createBy,
+				over.status status, over.userName userName,
+				over.deptId deptId, over.deptName deptName
+		from ATD_OVERTIME over
+		where over.siteId = '${ params.siteId }' 
+		and Over.status !=  '${ params.status }' 
+	</select>
+	
+	<insert id="insertOvertimeItem" parameterType="OvertimeItemBean">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_ATD_OVERTIME_ITEM.nextval from dual
+		</selectKey>
+			insert into ATD_OVERTIME_ITEM( id, planOverHours, startDate,
+			endDate, overTimeId, realOverHours,transferCompensate,
+			userName, userId, deptId, deptName )
+			values( #{id,jdbcType=NUMERIC}, #{ planOverHours,jdbcType=NUMERIC }, #{ startDate,jdbcType=TIMESTAMP}, 
+					#{ endDate,jdbcType=TIMESTAMP}, #{ overtimeId,jdbcType=NUMERIC}, #{ realOverHours,jdbcType=NUMERIC },#{ transferCompensate,jdbcType=NUMERIC },
+					#{ userName,jdbcType=VARCHAR}, #{ userId,jdbcType=VARCHAR}, #{ deptId,jdbcType=VARCHAR}, #{ deptName,jdbcType=VARCHAR}
+			)
+	</insert>
+	<insert id="insertBatchOvertimeItem">
+		insert into  ATD_OVERTIME_ITEM(
+			id, planOverHours, startDate,
+			endDate, overTimeId, realOverHours, transferCompensate,
+			userName, userId, deptId, deptName, remarks 
+		) 
+		select SEQ_ATD_OVERTIME_ITEM.nextval,temp.* from (
+		<foreach collection="itemList" item="item" index="index" separator="union all">
+			select 
+					#{ item.planOverHours, jdbcType=NUMERIC }, #{ item.startDate, jdbcType=TIMESTAMP }, #{ item.endDate, jdbcType=TIMESTAMP }, 
+					#{ overtimeId, jdbcType=NUMERIC}, #{ item.realOverHours, jdbcType=NUMERIC }, #{ item.transferCompensate, jdbcType=NUMERIC },
+					#{ item.userName, jdbcType=VARCHAR}, #{ item.userId, jdbcType=VARCHAR}, #{ item.deptId, jdbcType=VARCHAR}, 
+					(select name from sec_organization where org_code=#{ item.deptId, jdbcType=VARCHAR}), 
+					#{ item.remarks, jdbcType=VARCHAR}
+			from dual
+			</foreach>
+		) temp
+	</insert>
+	<update id="updateOvertimeItemTransferCompensateByRealOverHours">
+		update ATD_OVERTIME_ITEM
+		<set> 
+			transferCompensate=realOverHours
+		</set>	
+		where overtimeId=#{overtimeId, jdbcType=NUMERIC}
+	</update>
+	<update id="updateBatchOvertimeItemTransferCompensate" parameterType="java.util.List">
+		<foreach collection="itemList" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_OVERTIME_ITEM
+			<set> 
+				transferCompensate=#{ item.transferCompensate, jdbcType=NUMERIC }
+			</set>	
+			where id=#{item.id, jdbcType=NUMERIC}
+		</foreach>
+	</update>
+	<update id="updateOvertimeItemRealOverHoursByPlanOverHours">
+		update ATD_OVERTIME_ITEM
+		<set> 
+			realOverHours=planOverHours
+		</set>	
+		where overtimeId=#{overtimeId, jdbcType=NUMERIC}
+	</update>
+	<update id="updateBatchOvertimeItemRealOverHours" parameterType="java.util.List">
+		<foreach collection="itemList" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_OVERTIME_ITEM
+			<set> 
+				realOverHours=#{ item.realOverHours, jdbcType=NUMERIC }
+			</set>	
+			where id=#{item.id, jdbcType=NUMERIC}
+		</foreach>
+	</update>
+	<update id="updateBatchOvertimeItem" parameterType="java.util.List">
+		<foreach collection="itemList" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_OVERTIME_ITEM
+			<set> 
+				planOverHours=#{ item.planOverHours, jdbcType=NUMERIC },
+				startDate=#{ item.startDate, jdbcType=TIMESTAMP },
+				endDate=#{ item.endDate, jdbcType=TIMESTAMP },
+				realOverHours=#{ item.realOverHours, jdbcType=NUMERIC },
+				transferCompensate=#{ item.transferCompensate, jdbcType=NUMERIC },
+				remarks=#{ item.remarks, jdbcType=VARCHAR}
+			</set>	
+			where id=#{item.id, jdbcType=NUMERIC}
+		</foreach>
+	</update>
+	<delete id="deleteOvertimeItem" parameterType="int" >
+		delete from ATD_OVERTIME_ITEM where overtimeId = #{ overtimeId }
+	</delete>
+	<delete id="deleteBatchOvertimeItem" parameterType="java.util.List" >
+		delete from ATD_OVERTIME_ITEM where id in 
+		<foreach collection="itemList" item="item" index="index" open="(" close=")" separator=",">
+		#{item.id,jdbcType=NUMERIC}
+		</foreach>
+	</delete>
+	<select id="queryOvertimeByDiffDay" parameterType="Map" resultType="LeaveContainItemVo">
+		select over.id id, over.num num, item.userid createBy, item.userName userName,
+				item.transferCompensate leaveDays,item.realOverHours originalLeaveDays,item.startDate startDate , item.endDate endDate, 'overtime' category,over.SITEID siteId
+		FROM ATD_overtime_ITEM item
+		left join ATD_overtime	over on over.id = ITEM.overtimeID
+		where over.siteid=#{siteId,jdbcType=VARCHAR} and over.status in ${status}
+		<if test="userIds != null  and userIds.length>0">
+		 	and item.userid in
+		 	<foreach collection="userIds" item="item" index="index" open="(" close=")" separator=",">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<choose>
+		<when test="startDate != null and startDate != ''">
+			<choose>
+			<when test="endDate != null and endDate != ''">
+				and (
+					(item.startDate &gt;= #{startDate} and item.startDate &lt;= #{ endDate } )
+					or ( item.startDate &lt;= #{startDate} and item.endDate &gt;= #{ endDate } ) 
+					or ( item.endDate &gt;= #{startDate} and item.endDate &lt;= #{ endDate } )
+				)
+			</when>
+			<otherwise>
+				and item.endDate &gt;= #{startDate}
+			</otherwise>
+			</choose>	
+		</when>
+		<otherwise>
+			<if test="endDate != null and endDate != ''">
+				and item.startDate &lt;= #{ endDate }
+			</if>
+		</otherwise>	
+		</choose>
+		order by item.id desc
+	</select>
+	
+	<insert id="insertBatchOvertimeFile">
+		insert into  ATD_OVERTIME_FILE( fileId,overTimeId) 
+		select  temp.* from (
+		<foreach collection="ids" item="item" index="index" separator="union all">
+			 select #{item, jdbcType=VARCHAR },#{overtimeId, jdbcType=NUMERIC} from dual
+		</foreach>
+		) temp
+	</insert>
+	<select id="queryFileByOvertimeId" parameterType="String" resultType="OvertimeFileBean">
+		select fileId, overtimeId from ATD_OVERTIME_FILE where overtimeId = #{ overtimeId }
+	</select>
+	<delete id="deleteOvertimeFile" parameterType="int" >
+		delete from ATD_OVERTIME_FILE where overtimeId = #{ overtimeId }
+	</delete>
+	
+	<select id="queryOvertimeTotalHoursByMonth" resultType="Double">
+select nvl(sum(i.realoverhours),0)
+from atd_overtime_item i
+left join atd_overtime t on t.id=i.overtimeid
+where t.siteid=#{siteId} 
+and t.status in 
+<foreach collection="statusList" item="item" index="index" open="(" close=")" separator=",">
+#{item}
+</foreach>
+and to_char(i.startdate,'YYYY-MM') = #{monthStr} 
+<if test="userId != null  and userId != ''">
+ 	and i.userid=#{userId}
+</if>
+	</select>
+</mapper> 

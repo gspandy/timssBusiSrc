@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.PayDao">
+	<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<resultMap type="com.timss.pms.vo.PayVo" id="payVoMap">
+		<id property="id" column="id"/>
+		<result property="fcondition" column="fcondition"/>
+		<result property="ptype" column="ptype"/>
+		<result property="type" column="type"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/>
+		<result property="bepay" column="bepay"/>
+		<result property="actualpay" column="actualpay"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="siteid" column="siteid"/>
+		<result property="attach" column="attach"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		<result property="payway" column="payway"/>
+		<result property="contractName" column="contractName"/>
+		<result property="contractCode" column="contractCode"/>
+		<result property="contractType" column="contractType"/>
+		<result property="payTypeName" column="payType"/>
+		<result property="flowid" column="flowid"/>
+		<result property="payDate" column="pay_date"/>
+		<result property="sendedtoerp" column="sendedtoerp"/>
+		<result property="undoRemark" column="undoremark"/>
+		<result property="undoFlowCode" column="undoflowcode"/>
+		<result property="undoFlowId" column="undoflowid"/>
+		<result property="undoStatus" column="undostatus"/>
+	</resultMap>
+	<resultMap type="com.timss.pms.vo.PayDtlVo" id="payDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="fcondition" column="fcondition"/>
+		<result property="ptype" column="ptype"/>
+		<result property="type" column="type"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/>
+		<result property="bepay" column="bepay"/>
+		<result property="actualpay" column="actualpay"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="siteid" column="siteid"/>
+		<result property="attach" column="attach"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payplanId" column="payplan_id"/>
+		<result property="payway" column="payway"/>
+		<result property="payDate" column="pay_date"/>
+		<result property="sendedtoerp" column="sendedtoerp"/>
+		<result property="undoRemark" column="undoremark"/>
+		<result property="undoFlowCode" column="undoflowcode"/>
+		<result property="undoFlowId" column="undoflowid"/>
+		<result property="undoStatus" column="undostatus"/>
+	</resultMap>
+	
+	<sql id="columnBasic">
+		id,fcondition,type,del_flag,status,bepay,actualpay,create_user,create_time,siteid,attach,contract_id,payplan_id,payway,pay_date,sendedtoerp
+		,undoremark,undoflowcode,undoflowid,undostatus,payspno
+	</sql>
+	
+	<insert id="insertPay" >
+	    <selectKey resultType="int" keyProperty="id" order="BEFORE">
+	        select SEQ_PMS_PAY.nextval from dual
+	    </selectKey>
+	    insert into Tim_Pms_PAY(<include refid="columnBasic"/> ,payCondition) 
+	    values (#{id,jdbcType=NUMERIC},#{fcondition,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},0,
+	    	#{status,jdbcType=VARCHAR},#{bepay,jdbcType=NUMERIC},#{actualpay,jdbcType=NUMERIC},
+	    	#{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{siteid,jdbcType=VARCHAR}
+	    	,#{attach,jdbcType=VARCHAR},#{contractId,jdbcType=NUMERIC},#{payplanId,jdbcType=NUMERIC}
+	    	,#{payway,jdbcType=VARCHAR},#{payDate,jdbcType=TIMESTAMP},'0','','','','',#{paySpNo,jdbcType=VARCHAR},#{payCondition,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="queryHasPayByContractId" resultType="java.lang.Double">
+		select sum(t.actualpay) 
+		from Tim_Pms_Pay t
+		where contract_id=#{contractId} and t.del_flag=0 and t.status='approved'
+	</select>
+	
+	<select id="queryPayListByPayplanId" resultMap="payVoMap">
+		select <include refid="columnBasic" />,payCondition
+		from Tim_Pms_Pay t
+		where t.payplan_id=#{id} and t.del_flag=0 and t.status!='voided'
+	</select>
+	
+	<select id="queryPayListByProjectId" resultMap="payVoMap">
+		select t.id,t.fcondition,t.type,t.del_flag,t.status,t.bepay,t.actualpay,t.create_user,t.create_time,
+		t.siteid,t.attach,t.contract_id,t.payplan_id,t.payway,p.name as contractName,p.contract_code as contractCode,
+		p.type as contractType,pp.pay_type as payType,t.pay_date,t.sendedtoerp ,t.payCondition,t.payspno
+		from (select id,project_name from tim_pms_project where id=#{projectId}) pr
+		left join tim_pms_contract p on p.project_id=pr.id
+		left join tim_pms_pay t on t.contract_id= p.id
+		left join tim_pms_payplan pp on t.payplan_id=pp.id
+		
+		where t.del_flag=0 and t.status!='voided'
+	</select>
+	
+	<select id="queryPayList" resultMap="payVoMap">
+		select t.id,t.fcondition,t.type,t.del_flag,t.status,t.bepay,t.actualpay,t.create_user,t.create_time,
+		t.siteid,t.attach,t.contract_id,t.payplan_id,t.payway,p.name as contractName,p.contract_code as contractCode,
+		p.type as contractType,pp.pay_type as payType,wf.id as flowid,t.pay_date ,t.sendedtoerp,t.payCondition,t.payspno
+		from Tim_Pms_Pay t
+		left join tim_pms_contract p on t.contract_id=p.id
+		left join tim_pms_payplan pp on t.payplan_id=pp.id
+		left join Tim_PMS_workflow_business wf on wf.business_id='pay_' || t.id or wf.business_id='receipt_' || t.id 
+		where t.del_flag=0 and t.status!='voided'
+	</select>
+	
+	<select id="queryPayListAndFilter" resultMap="payVoMap">
+		select t.id,t.fcondition,t.type,t.del_flag,t.status,t.bepay,t.actualpay,t.create_user,t.create_time,
+		t.siteid,t.attach,t.contract_id,t.payplan_id,t.payway,p.name as contractName,p.contract_code as contractCode,
+		p.type as contractType,pp.pay_type as payType,wf.id as flowid,t.pay_date ,t.sendedtoerp ,t.undostatus,t.payCondition,t.paySpNo
+		from Tim_Pms_Pay t
+		left join tim_pms_contract p on t.contract_id=p.id
+		left join tim_pms_payplan pp on t.payplan_id=pp.id
+		left join Tim_PMS_workflow_business wf on wf.business_id='pay_' || t.id or wf.business_id='receipt_' || t.id 
+		where t.del_flag=0 
+	</select>
+	
+	<select id="queryPayByCondition" resultMap="payVoMap">
+		SELECT <include refid="columnBasic" />,payCondition
+		FROM TIM_PMS_PAY T
+		WHERE 1=1
+		<if test="undoFlowId!=null and undoFlowId!='' ">
+			AND T.UNDOFLOWID=#{undoFlowId}
+		</if>
+	</select>
+	
+	<update id="updatePay" >
+	    update Tim_Pms_PAY 
+	    set fcondition=#{fcondition,jdbcType=VARCHAR},type=#{type,jdbcType=VARCHAR},
+	    	status=#{status,jdbcType=VARCHAR},bepay=#{bepay,jdbcType=NUMERIC},actualpay=#{actualpay,jdbcType=NUMERIC},
+	    	update_user=#{updateUser,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=TIMESTAMP},
+	    	siteid=#{siteid,jdbcType=VARCHAR},attach=#{attach,jdbcType=VARCHAR},
+	    	contract_id=#{contractId,jdbcType=NUMERIC},payplan_id=#{payplanId,jdbcType=NUMERIC}
+	    	,payway=#{payway,jdbcType=VARCHAR},pay_date=#{payDate,jdbcType=TIMESTAMP}
+	    	,undoflowid=#{undoFlowId,jdbcType=VARCHAR},undoflowcode=#{undoFlowCode,jdbcType=VARCHAR},undoremark=#{undoRemark,jdbcType=VARCHAR},undostatus=#{undoStatus,	jdbcType=VARCHAR}
+	    	,payCondition = #{payCondition,jdbcType=VARCHAR}
+	    	<if test="''!=paySpNo and null!=paySpNo">
+	    	,paySpNo = #{paySpNo,jdbcType=VARCHAR}
+	    	</if>
+	    where id=#{id}
+	</update>
+	
+	<update id="updateSendedToERP" >
+	    update Tim_Pms_PAY 
+	    set sendedtoerp=#{sendedtoerp,jdbcType=VARCHAR}
+	    where id=#{id}
+	</update>
+	
+	<select id="queryPayById"  resultMap="payDtlVoMap">
+	    select <include refid="columnBasic"/>,payCondition
+	    from Tim_Pms_Pay t
+	    where t.del_flag=0 and t.id=#{id}
+	</select>
+	
+	<delete id="deletePay" >
+		delete from Tim_Pms_Pay t
+		where t.id=#{id}
+	</delete>
+	
+	<select id="selectByPaySpNoAndSiteid"  resultType="int">
+	    SELECT COUNT(T.ID)
+	    FROM TIM_PMS_PAY T
+	    WHERE T.DEL_FLAG='0' AND T.STATUS <![CDATA[<>]]> 'voided' 
+	    AND T.SITEID=#{siteid} AND T.PAYSPNO=#{paySpNo} 
+	</select>
+	
+	<select id="queryPayListWithPaySpNoPrefix" resultMap="payVoMap">
+		SELECT <include refid="columnBasic" />
+		FROM TIM_PMS_PAY T
+		WHERE T.DEL_FLAG=0 AND T.STATUS <![CDATA[<>]]> 'voided'
+		<if test="prefix != null and prefix != ''">
+			AND T.PAYSPNO LIKE #{prefix}||'%'
+		</if>
+		ORDER BY T.PAYSPNO ASC
+	</select>
+</mapper>

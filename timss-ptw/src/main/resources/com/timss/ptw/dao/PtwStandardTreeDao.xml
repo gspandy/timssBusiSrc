@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwStandardTreeDao">
+
+	<sql id="standardTreeField">
+		id,	name, code, parentId,
+		equipmentId, remark, yxbz, 
+		createuser,createdate, siteId
+	</sql>
+	
+	<sql id="queryStandardTreeField">
+		id,	name, code, parentId,
+		equipmentId, remark, yxbz, 
+		createuser,createdate, siteId,
+		deptId,modifyuser, modifydate
+	</sql>
+	
+	<sql id="insertStandardTreeField">
+		#{id},#{name,jdbcType=VARCHAR},#{code,jdbcType=NUMERIC},#{parentId,jdbcType=NUMERIC},
+		#{equipmentId,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{yxbz,jdbcType=NUMERIC},
+		#{createuser,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP},#{siteId,jdbcType=VARCHAR}
+	</sql>
+		
+	<insert id="insertStandardTree" parameterType="PtwStdTreeVo">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_STD_TREE.nextval from dual
+		</selectKey>
+		insert into PTW_STD_TREE(
+			<include refid="standardTreeField"/>
+		)
+		values (
+			<include refid="insertStandardTreeField"/>
+			)
+	</insert>
+	
+	<update id="updateStandardTree" parameterType="PtwStdTreeVo" >
+		update PTW_STD_TREE
+		set 
+		name = #{name,jdbcType=VARCHAR},code=#{code,jdbcType=NUMERIC},equipmentId=#{equipmentId,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},modifyuser=#{modifyuser,jdbcType=VARCHAR},modifydate=#{modifydate,jdbcType=TIMESTAMP}
+		where id = #{id}
+	</update>
+	
+	<select id="queryStandardTreeById" parameterType="int" resultType="PtwStdTreeVo">
+		select <include refid="queryStandardTreeField"/> 
+		from PTW_STD_TREE p
+		where p.id = #{ id } and p.YXBZ = 1
+	</select>
+	
+	<select id="queryPtwStdByParentId" parameterType="Map" resultType="PtwStdTreeVo">
+		select <include refid="queryStandardTreeField"/> 
+		from PTW_STD_TREE p
+		where p.parentId = #{ parentId } and p.YXBZ = 1
+		<if test="siteId != null and siteId != '' ">
+			and siteId = #{ siteId }
+		</if>
+	</select>
+	
+	<select id="queryPtwStdSearch" parameterType="Map" resultType="Map">
+		select id  as &quot;id&quot;, 
+		 name as &quot;name&quot;
+		from PTW_STD_TREE p
+		where p.siteId = #{ siteId } and p.YXBZ = 1
+		and  ( upper( name ) like '%${keyWord}%' 
+		OR  upper( code ) like '%${keyWord}%'  )
+		  and rownum&lt;=11
+	</select>
+	
+	<select id="searchHintPtwStdParentIds" parameterType="int" resultType="String">
+		  select 
+        	p.id as id
+		from  PTW_STD_TREE p
+		WHERE p.YXBZ = 1
+		start with p.id = #{id}
+		connect by p.id = prior parentId
+	</select>
+	
+	<update id="updateDropStdTreeNode" parameterType="Map">
+		update  PTW_STD_TREE p
+		set p.parentId = #{parentId}
+		where p.id = #{id}
+	</update>
+	
+	<update id="deleteStandardTree" parameterType="int">
+		 	update PTW_STD_TREE set YXBZ = 0
+		 	WHERE id in (
+		 	select p.id 
+			from PTW_STD_TREE p
+			start with p.id= #{ id }
+			connect by prior p.id= p.parentId )
+	</update>
+<!-- 	<delete id="deleteStandardTree" parameterType="int">
+		 	delete PTW_STD_TREE 
+		 	WHERE id in (
+		 	select p.id 
+			from PTW_STD_TREE p
+			start with p.id= #{ id }
+			connect by prior p.id= p.parentId )
+	</delete> -->
+</mapper> 

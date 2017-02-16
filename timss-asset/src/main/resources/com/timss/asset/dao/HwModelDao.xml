@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.asset.dao.HwModelDao">
+    <sql id='attrs'>
+attr01, attr02, attr03, attr04, attr05, attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, attr16, attr17, attr18, attr19, attr20, 
+long_attr01 as longAttr01, long_attr02 as longAttr02, long_attr03 as longAttr03, long_attr04 as longAttr04, long_attr05 as longAttr05, 
+long_attr06 as longAttr06, long_attr07 as longAttr07, long_attr08 as longAttr08, long_attr09 as longAttr09, long_attr10 as longAttr10
+    </sql>
+    
+    <select id="queryList" resultType="HwModelBean">
+select 
+m.model_id as modelId,
+m.model_type as modelType,
+m.model_name as modelName
+from ast_hw_model m
+where m.site_id=#{params.siteId}		
+    </select>
+    
+    <select id="queryHwModelByType" resultType="HwModelBean">
+		select 
+		m.model_id as modelId,
+		m.model_type as modelType,
+		m.model_name as modelName
+		from ast_hw_model m
+		where m.site_id=#{params.siteId} and m.model_type = #{ params.modelType }
+		order by m.model_name
+    </select>
+    
+    <select id="queryHwModelByTypeSearch" resultType="HwModelBean">
+		select 
+		m.model_id as modelId,
+		m.model_type as modelType,
+		m.model_name as modelName
+		from ast_hw_model m
+		where m.site_id=#{params.siteId} and m.model_type = #{ params.modelType }
+		<if test="params.modelName != null and params.modelName != '' ">
+			and m.model_name like '%${ params.modelName }%'
+		</if>
+		order by m.model_name
+    </select>
+    
+    <select id="queryDetail" resultType="HwModelBean">
+select 
+model_id as modelId, 
+model_name as modelName, 
+model_type as modelType, 
+<include refid="attrs"/>
+from ast_hw_model m
+where m.model_id=#{id}	
+    </select>
+    
+    <select id="queryHwModelByNameAndType" resultType="HwModelBean">
+select 
+model_id as modelId, 
+model_name as modelName, 
+model_type as modelType, 
+<include refid="attrs"/>
+from ast_hw_model m
+where m.model_type=#{type} and m.model_name=#{name} and m.site_id=#{siteId}	
+    </select>
+    
+    <insert id="insert" parameterType="HwModelBean" >
+    	insert into ast_hw_model (
+model_id, model_name, model_type, site_id, 
+created_by, create_time, updated_by, update_time, 
+attr01, attr02, attr03, attr04, attr05, 
+attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, 
+attr16, attr17, attr18, attr19, attr20, 
+long_attr01, long_attr02, long_attr03, long_attr04, long_attr05, 
+long_attr06, long_attr07, long_attr08, long_attr09, long_attr10
+		)
+    	values (
+#{modelId,jdbcType=VARCHAR},#{modelName,jdbcType=VARCHAR},#{modelType,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR},
+#{createuser,jdbcType=VARCHAR},#{createdate,jdbcType=TIMESTAMP},#{modifyuser,jdbcType=VARCHAR},#{modifydate,jdbcType=TIMESTAMP},
+#{attr01,jdbcType=VARCHAR},#{attr02,jdbcType=VARCHAR},#{attr03,jdbcType=VARCHAR},#{attr04,jdbcType=VARCHAR},#{attr05,jdbcType=VARCHAR},
+#{attr06,jdbcType=VARCHAR},#{attr07,jdbcType=VARCHAR},#{attr08,jdbcType=VARCHAR},#{attr09,jdbcType=VARCHAR},#{attr10,jdbcType=VARCHAR},
+#{attr11,jdbcType=VARCHAR},#{attr12,jdbcType=VARCHAR},#{attr13,jdbcType=VARCHAR},#{attr14,jdbcType=VARCHAR},#{attr15,jdbcType=VARCHAR},
+#{attr16,jdbcType=VARCHAR},#{attr17,jdbcType=VARCHAR},#{attr18,jdbcType=VARCHAR},#{attr19,jdbcType=VARCHAR},#{attr20,jdbcType=VARCHAR},
+#{longAttr01,jdbcType=VARCHAR},#{longAttr02,jdbcType=VARCHAR},#{longAttr03,jdbcType=VARCHAR},#{longAttr04,jdbcType=VARCHAR},#{longAttr05,jdbcType=VARCHAR},
+#{longAttr06,jdbcType=VARCHAR},#{longAttr07,jdbcType=VARCHAR},#{longAttr08,jdbcType=VARCHAR},#{longAttr09,jdbcType=VARCHAR},#{longAttr10,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <update id="update" parameterType="HwModelBean">
+        update ast_hw_model set 
+model_name = #{modelName,jdbcType=VARCHAR},
+updated_by = #{modifyuser,jdbcType=VARCHAR}, update_time = #{modifydate,jdbcType=TIMESTAMP},
+attr01=#{attr01,jdbcType=VARCHAR},attr02=#{attr02,jdbcType=VARCHAR},attr03=#{attr03,jdbcType=VARCHAR},attr04=#{attr04,jdbcType=VARCHAR},attr05=#{attr05,jdbcType=VARCHAR},
+attr06=#{attr06,jdbcType=VARCHAR},attr07=#{attr07,jdbcType=VARCHAR},attr08=#{attr08,jdbcType=VARCHAR},attr09=#{attr09,jdbcType=VARCHAR},attr10=#{attr10,jdbcType=VARCHAR},
+attr11=#{attr11,jdbcType=VARCHAR},attr12=#{attr12,jdbcType=VARCHAR},attr13=#{attr13,jdbcType=VARCHAR},attr14=#{attr14,jdbcType=VARCHAR},attr15=#{attr15,jdbcType=VARCHAR},
+attr16=#{attr16,jdbcType=VARCHAR},attr17=#{attr17,jdbcType=VARCHAR},attr18=#{attr18,jdbcType=VARCHAR},attr19=#{attr19,jdbcType=VARCHAR},attr20=#{attr20,jdbcType=VARCHAR}, 
+long_attr01=#{longAttr01,jdbcType=VARCHAR},long_attr02=#{longAttr02,jdbcType=VARCHAR},long_attr03=#{longAttr03,jdbcType=VARCHAR},long_attr04=#{longAttr04,jdbcType=VARCHAR},long_attr05=#{longAttr05,jdbcType=VARCHAR},
+long_attr06=#{longAttr06,jdbcType=VARCHAR},long_attr07=#{longAttr07,jdbcType=VARCHAR},long_attr08=#{longAttr08,jdbcType=VARCHAR},long_attr09=#{longAttr09,jdbcType=VARCHAR},long_attr10=#{longAttr10,jdbcType=VARCHAR}   	
+        where model_id = #{modelId}
+    </update>
+    
+    <delete id="deleteById">
+    	delete from ast_hw_model where model_id = #{id}
+    </delete>    
+    
+    <select id="queryDeviceByModelId" resultType="HwLedgerDeviceBean">
+select l.hw_name as hwName,d.ip,d.status
+from ast_hw_l_device d
+inner join ast_hw_l l on l.hw_id=d.hw_id
+left join ast_hw_l_server s on d.hw_id=s.hw_id
+where 
+(case #{type}
+when 'serverModel' then s.SERVER_MODEL
+when 'cpuModel' then s.CPU_MODEL
+when 'memoryModel' then s.MEM_MODEL
+when 'harddiskModel' then s.HARDDISK_MODEL
+when 'hbaModel' then s.HBA_MODEL
+when 'networkcardModel' then s.NETCARD_MODEL
+when 'serverBrand' then s.SERVER_BRAND
+when 'arraycardModel' then s.RAID_MODEL
+when 'storageModel' then d.STORAGE_MODEL
+when 'storageType' then d.STORAGE_TYPE
+when 'raidType' then d.RAID_TYPE  
+else '0' 
+end
+)=#{id}
+order by NLSSORT(hwName,'NLS_SORT = SCHINESE_PINYIN_M')		
+    </select>
+</mapper>

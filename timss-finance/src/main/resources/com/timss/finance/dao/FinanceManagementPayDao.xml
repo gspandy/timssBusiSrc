@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.finance.dao.FinanceManagementPayDao">
+<!-- 行政报销基本信息的映射 -->
+    <resultMap type="com.timss.finance.vo.FinanceManagementPayDtlVo" id="financeManagementPayVoMap">
+		<id property="id" column="ID"/>
+		<result property="mainId" column="MAIN_ID"/>
+		<result property="attach" column="ATTACH"/>
+		<result property="type" column="TYPE"/>
+		<result property="name" column="NAME"/>
+		<result property="price" column="PRICE"/>
+		<result property="payeeCode" column="PAYEE_CODE"/>
+		<result property="payeeName" column="PAYEE_NAME"/>
+		<result property="applyId" column="APPLY_ID"/>
+		<result property="applyName" column="APPLY_NAME"/>
+		<result property="fmstatus" column="FMSTATUS"/>
+		<result property="status" column="STATUS"/>
+		<result property="createuser" column="CREATEUSER"/>
+		<result property="createdate" column="CREATEDATE"/>
+		<result property="modifyuser" column="MODIFYUSER"/>
+		<result property="modifydate" column="MODIFYDATE"/>
+		<result property="siteid" column="SITEID"/>
+		<result property="deptid" column="DEPTID"/>
+		<result property="delFlag" column="DEL_FLAG"/>
+		<result property="budget" column="BUDGET"/>
+		<result property="subject" column="SUBJECT"/>
+	</resultMap>
+<!-- 行政报销明细信息的映射 -->
+	<resultMap type="com.timss.finance.bean.FinanceMainDetail" id="financeMainDetailMap">
+		<id property="id" column="ID"/>
+		<result property="join_nbr" column="JOIN_NBR"/>
+		<result property="amount" column="AMOUNT"/>
+		<result property="description" column="DESCRIPTION"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+
+   
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		ID,MAIN_ID,ATTACH,TYPE,NAME,PRICE,PAYEE_CODE,PAYEE_NAME,
+		CREATEUSER,CREATEDATE,MODIFYUSER,MODIFYDATE,SITEID,DEPTID,DEL_FLAG,STATUS
+	</sql>
+
+	<insert id="insertFMP" parameterType="com.timss.finance.bean.FinanceManagementPay">
+    	<selectKey resultType="String" keyProperty="id" order="BEFORE">
+       		SELECT SEQ_FIN_FMP.NEXTVAL FROM DUAL
+    	</selectKey>
+	    INSERT INTO FIN_MANAGEMENT_PAY(<include refid="columnBasic"/> )
+	    VALUES (#{id,jdbcType=VARCHAR},#{mainId,jdbcType=VARCHAR}
+	    	,#{attach,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR}
+	    	,#{name,jdbcType=VARCHAR},#{price,jdbcType=NUMERIC}
+	    	,#{payeeCode,jdbcType=VARCHAR},#{payeeName,jdbcType=VARCHAR}
+	    	,#{createuser,jdbcType=VARCHAR},#{createdate,jdbcType=TIMESTAMP}
+	    	,#{modifyuser,jdbcType=VARCHAR},#{modifydate,jdbcType=TIMESTAMP}
+	    	,#{siteid,jdbcType=VARCHAR},#{deptid,jdbcType=VARCHAR}
+	    	,#{delFlag,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR}
+	    	)
+	</insert>
+
+	<select id="queryFMPById" resultMap="financeManagementPayVoMap">
+		SELECT A.ID,A.MAIN_ID,A.ATTACH,A.TYPE,A.NAME,A.PRICE,A.PAYEE_CODE,A.PAYEE_NAME,
+		B.STATUS AS FMSTATUS,A.STATUS,B.APPLY_ID,C.NAME AS APPLY_NAME,
+		A.CREATEUSER,A.CREATEDATE,A.MODIFYUSER,A.MODIFYDATE,A.SITEID,A.DEPTID,A.DEL_FLAG,
+		C.BUDGET,C.SUBJECT
+		FROM FIN_MANAGEMENT_PAY A LEFT JOIN FIN_MAIN B ON A.MAIN_ID = B.FID 
+		LEFT JOIN FIN_MANAGEMENT_APPLY C ON B.APPLY_ID = C.ID
+		WHERE A.ID = #{id} AND A.DEL_FLAG ='0'
+	</select>
+	<select id="queryFMPIdByFMPMainId" resultType="java.lang.Integer">
+		SELECT A.ID
+		FROM FIN_MANAGEMENT_PAY A LEFT JOIN FIN_MAIN B ON A.MAIN_ID = B.FID
+		LEFT JOIN FIN_MANAGEMENT_APPLY C ON B.APPLY_ID = C.ID
+		WHERE A.MAIN_ID = #{mainId} AND A.DEL_FLAG ='0'
+	</select>
+	<select id="queryFMDListByFMPId" resultMap="financeMainDetailMap">
+		SELECT C.JOIN_NBR,C.AMOUNT,C.DESCRIPTION,C.REMARK
+		FROM FIN_MANAGEMENT_PAY A LEFT JOIN FIN_MAIN B ON A.MAIN_ID = B.FID
+		LEFT JOIN FIN_MAIN_DETAILS C ON B.FID = C.FID
+		WHERE A.ID = #{id} AND A.DEL_FLAG ='0'
+	</select>
+	<update id="updateFMP">
+	     UPDATE FIN_MANAGEMENT_PAY 
+	     SET ATTACH = #{attach,jdbcType=VARCHAR},
+	         TYPE = #{type,jdbcType=VARCHAR}, 
+	         NAME = #{name,jdbcType=VARCHAR},
+	         PRICE = #{price,jdbcType=NUMERIC},
+	         PAYEE_CODE = #{payeeCode,jdbcType=VARCHAR},
+	         PAYEE_NAME = #{payeeName,jdbcType=VARCHAR},
+	         DEL_FLAG = #{delFlag,jdbcType=VARCHAR},
+	         STATUS = #{status,jdbcType=VARCHAR}
+	     WHERE ID = #{id}
+	</update>
+
+	<update id="deleteFMP">
+		UPDATE FIN_MANAGEMENT_PAY SET DEL_FLAG = '1'
+		WHERE ID =#{id}
+	</update>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>
+

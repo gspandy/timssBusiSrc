@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmCustomerConfDao">
+	<resultMap type="ItsmCustomerConf" id="ItsmCustomerConfMap">
+		<id column="ID" property="id" />
+		<result column="CUSTOMER_CODE" property="customerCode" />
+		<result column="FAULTTYPE_ID" property="faultTypeId" />
+		<result column="INIT_PRIORITY_ID" property="initPriorityId" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="YXBZ" property="yxbz" />
+		
+		<result column="CUSTOMER_NAME" property="customerName" />
+		<result column="FAULTTYPE_NAME" property="faultTypeName" />
+		<result column="PRIORITY_NAME" property="priorityName" />
+	</resultMap>	
+	
+		<insert id="insertCustomerConfInfo">
+			insert into ITSM_CUSTOMER_PRI(ID,CUSTOMER_CODE,FAULTTYPE_ID,INIT_PRIORITY_ID,
+										CREATEDATE,MODIFYDATE,CREATEUSER,MODIFYUSER,YXBZ) 
+			values( #{id},
+					#{customerCode,jdbcType=VARCHAR},
+					#{faultTypeId,jdbcType=VARCHAR},
+					#{initPriorityId,jdbcType=VARCHAR},
+					#{createdate,jdbcType=TIMESTAMP},
+					#{modifydate,jdbcType=TIMESTAMP},
+					#{createuser,jdbcType=VARCHAR},
+					#{modifyuser,jdbcType=VARCHAR},
+					#{yxbz,jdbcType=NUMERIC}) 
+	</insert>
+	<!-- 更新客户位置的基本信息 -->
+	<update id="updateCustomerConfInfo" parameterType="HashMap">
+		update ITSM_CUSTOMER_PRI 
+		set INIT_PRIORITY_ID=#{initPriorityId,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifydate},
+			MODIFYUSER=#{modifyuser}
+		where CUSTOMER_CODE=#{customerCode} 
+	</update>
+	
+	
+	<select id="queryCustomerConfById" parameterType="int" resultMap="ItsmCustomerConfMap" >
+		select  t.id, t.customer_code,u.name customer_name,
+        		t.faulttype_id,ft.name faulttype_name, t.init_priority_id,p.name priority_name
+   		from itsm_customer_pri t join sec_user u on t.customer_code=u.user_id
+          left join itsm_priority p on t.init_priority_id=p.id
+           left join itsm_faulttype ft on t.faulttype_id=ft.id
+		where t.YXBZ = 1 and t.id=#{id} 
+	</select>
+	
+	
+	<!-- 查询列表信息 -->
+	<select id="queryCustomerConfList" resultMap="ItsmCustomerConfMap">
+		select  t.id, t.customer_code,u.name customer_name,
+				t.faulttype_id,ft.name faulttype_name, t.init_priority_id,p.name priority_name
+		from itsm_customer_pri t join sec_user u on t.customer_code=u.user_id
+    			left join itsm_priority p on t.init_priority_id=p.id
+     			left join itsm_faulttype ft on t.faulttype_id=ft.id
+     	where t.YXBZ = 1 
+	</select>
+	
+	<select id="getInitPriority" parameterType="HashMap" resultMap="ItsmCustomerConfMap" >
+		select  t.id, t.customer_code,t.faulttype_id, t.init_priority_id
+   		from itsm_customer_pri t 
+		where t.YXBZ = 1 and t.customer_code=#{customerCode} 
+				<if test="faultTypeId !='NaN'.toString() ">
+					and t.faulttype_id = #{faultTypeId}
+				</if> 
+				<if test="faultTypeId =='NaN'.toString() ">
+					and t.faulttype_id IS NULL
+				</if> 
+	</select>
+	
+	<update id="deleteCustomerConf" parameterType="HashMap">
+		update ITSM_CUSTOMER_PRI 
+		set YXBZ=0,
+			MODIFYDATE=#{modifydate},
+			MODIFYUSER=#{modifyuser}
+		where ID=#{id} 
+	</update>
+	
+	
+	<select id="judgeRepeatCustomerConf" resultType="int">
+		select count(1)
+    	from ITSM_CUSTOMER_PRI t		
+     	where t.YXBZ = 1 and t.CUSTOMER_CODE=#{customerCode}
+	</select>
+	
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextParamsConfId" resultType="int">
+		select SEQ_ITSM_PARAMSCONF.nextval id from dual
+	</select>
+	
+</mapper>

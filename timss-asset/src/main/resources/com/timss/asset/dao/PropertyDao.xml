@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.asset.dao.PropertyDao">
+    <select id="queryPropertyRootIdBySite" resultType="String">
+		select p.house_id
+		from ast_house_property p
+		where p.isroot='Y' and p.site_id=#{siteId}
+    </select>
+    
+    <select id="queryList" resultType="PropertyBean">
+        select 
+        	p.house_id as houseId, 
+			p.house_type as houseType, 
+			p.house_name as houseName,
+			p.isroot as isRoot, 
+			p.owner_name as ownerName, 
+			p.area as area, 
+			p.unit as unit, 
+			p.right_owner as rightOwner
+		from ast_house_property p
+		where p.parentId=#{params.propertyId}			
+    </select>
+    
+    <select id="queryDetail" resultType="PropertyBean">
+        select 
+        	p.house_id as houseId, 
+			p.house_type as houseType, 
+			p.house_name as houseName,
+			p.parentId as parentId,
+			p.isroot as isRoot, 
+			p.owner_name as ownerName, 
+			p.area as area, 
+			p.unit as unit, 
+			p.right_owner as rightOwner, 
+			p.management_cost as managementCost, 
+			p.attr1 as decoration, 
+			p.attr2 as officeSupplies, 
+			p.attr3 as electricalAppliances, 
+			p.attr4 as airConditioner, 
+			p.attr5 as fireControl
+		from ast_house_property p
+		where p.house_id=#{id}	
+    </select>
+    
+    <insert id="insert" parameterType="PropertyBean" >
+    	insert into ast_house_property (
+    		house_id, house_type, house_name, parentid, isroot, 
+			owner_name, asset_type, area, unit, right_owner, management_cost, 
+			attr1, attr2, attr3, attr4, attr5, 
+			createdby, createtime, updatedby, updatetime, site_id
+		)
+    	values (
+    		#{houseId,jdbcType=VARCHAR},#{houseType,jdbcType=VARCHAR},#{houseName,jdbcType=VARCHAR},#{parentId,jdbcType=VARCHAR},'N',
+    		#{ownerName,jdbcType=VARCHAR},'house',#{area,jdbcType=NUMERIC},#{unit,jdbcType=VARCHAR},#{rightOwner,jdbcType=VARCHAR},#{managementCost,jdbcType=NUMERIC},
+    		#{decoration,jdbcType=VARCHAR},#{officeSupplies,jdbcType=VARCHAR},#{electricalAppliances,jdbcType=VARCHAR},#{airConditioner,jdbcType=VARCHAR},#{fireControl,jdbcType=VARCHAR},
+    		#{createuser,jdbcType=VARCHAR},#{createdate,jdbcType=TIMESTAMP},#{modifyuser,jdbcType=VARCHAR},#{modifydate,jdbcType=TIMESTAMP},#{siteid,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <update id="update" parameterType="PropertyBean">
+        update ast_house_property set 
+        	house_name = #{houseName,jdbcType=VARCHAR}, 
+        	owner_name = #{ownerName,jdbcType=VARCHAR}, 
+        	area = #{area,jdbcType=NUMERIC}, 
+        	unit = #{unit,jdbcType=VARCHAR}, 
+        	right_owner = #{rightOwner,jdbcType=VARCHAR}, 
+        	management_cost = #{managementCost,jdbcType=NUMERIC}, 
+        	attr1 = #{decoration,jdbcType=VARCHAR}, 
+        	attr2 = #{officeSupplies,jdbcType=VARCHAR}, 
+        	attr3 = #{electricalAppliances,jdbcType=VARCHAR}, 
+        	attr4 = #{airConditioner,jdbcType=VARCHAR}, 
+        	attr5 = #{fireControl,jdbcType=VARCHAR}, 
+        	updatedby = #{modifyuser,jdbcType=VARCHAR}, 
+        	updatetime = #{modifydate,jdbcType=TIMESTAMP}
+        where house_id = #{houseId}
+    </update>
+    
+    <delete id="deleteById">
+    	delete from ast_house_property where house_id = #{id}
+    </delete>
+    
+    <select id="queryChildren" resultType="PropertyBean">
+        select 
+        	p.house_id as houseId, 
+			p.house_type as houseType, 
+			p.house_name as houseName,
+			p.parentId as parentId,
+			p.isroot as isRoot
+		from ast_house_property p
+		where p.parentId=#{parentId}
+		order by NLSSORT(house_name,'NLS_SORT = SCHINESE_PINYIN_M')
+    </select>
+    
+    <select id="queryForHint" resultType="HashMap">
+        select 
+        	p.house_id as &quot;id&quot;, 
+			p.house_name as &quot;name&quot;
+		from ast_house_property p
+        where p.site_id=#{site} and p.house_name like '%${kw}%'
+        and rownum&lt;=11
+    </select>
+    
+    <select id="queryParents" resultType="String">
+        select 
+        	p.house_id as houseId
+		from ast_house_property p
+		start with p.house_id=#{id}
+		connect by p.house_id=prior PARENT_ID 
+    </select>
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmQuestionRdDao">
+	<resultMap type="ItsmQuestionRd" id="questionRdMap">
+		<id column="ID" property="id" />
+		<result column="KL_QUESTIONCODE" property="klQuestionCode" />
+		<result column="EVENT_QUESTIONCODE" property="eventQuestionCode" />
+		<result column="CODE" property="code" />
+		<result column="TITLE" property="title" />
+		<result column="RESOURCE_ID" property="resourceid" />
+		<result column="CATEGORY" property="category" />
+		<result column="PRIORITY_ID" property="priorityid" />
+		<result column="DESP" property="desp" />
+		<result column="NA" property="na" />
+		<result column="NS" property="ns" />
+		<result column="REASON" property="reason" />
+		<result column="OPINION" property="opinion" />
+		<result column="SOLVE" property="solve" />
+		<result column="STATUS" property="status" />
+		<result column="STEP" property="step" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPT_ID" property="deptid" />
+		<result column="DEL_FLAG" property="delFlag" />
+		<result column="DEPTNAME" property="deptName"/>
+		<result column="CREATEUSERNAME" property="createUserName"/>
+		<result column="CATEGORYNAME" property="categoryName"/>
+		<result column="WORKFLOWID" property="workflowId"/>
+	</resultMap>
+	<select id="queryQuestionRd" resultMap="questionRdMap">
+		SELECT T.ID,T.KL_QUESTIONCODE,T.EVENT_QUESTIONCODE,T.CODE,T.TITLE,T.RESOURCE_ID,F.NAME AS CATEGORY,
+		T.PRIORITY_ID,T.DESP,T.NA,T.NS,T.REASON,T.OPINION,T.SOLVE,T.STATUS,T.STEP,
+		T.CREATEDATE,T.MODIFYDATE,T.CREATEUSER,T.MODIFYUSER,T.SITEID,T.DEL_FLAG,T.DEPT_ID,
+		U.NAME AS CREATEUSERNAME
+	    FROM  ITSM_QUESTIONRD T LEFT JOIN SEC_USER U ON T.CREATEUSER = U.USER_ID
+	    LEFT JOIN ITSM_FAULTTYPE F ON T.CATEGORY = F.ID
+	    WHERE T.STATUS <![CDATA[<>]]> 'draft' AND T.STATUS <![CDATA[<>]]> 'zuofei'
+	    AND T.DEL_FLAG = '0'
+		<if test="params.siteid != null">
+			AND SITEID = #{params.siteid}
+		</if>
+		<if test="params.selectTreeId != null">
+			AND T.CATEGORY IN (
+			   SELECT FT.ID FROM ITSM_FAULTTYPE FT START WITH FT.ID = #{params.selectTreeId}
+			   CONNECT BY PRIOR ID = FT.PARENT_ID)
+		</if>
+	</select>
+	<select id="queryQuestionRdById" resultMap="questionRdMap">
+		SELECT T.ID,T.KL_QUESTIONCODE,T.EVENT_QUESTIONCODE,T.CODE,T.TITLE,T.RESOURCE_ID,T.CATEGORY,
+		T.PRIORITY_ID,T.DESP,T.NA,T.NS,T.REASON,T.OPINION,T.SOLVE,T.STATUS,T.STEP,
+		T.CREATEDATE,T.MODIFYDATE,T.CREATEUSER,T.MODIFYUSER,T.SITEID,T.DEL_FLAG,O.NAME AS DEPTNAME,U.NAME AS CREATEUSERNAME,F.NAME AS CATEGORYNAME,T.WORKFLOWID
+	    FROM  ITSM_QUESTIONRD T LEFT JOIN SEC_USER U ON T.CREATEUSER = U.USER_ID
+	    LEFT JOIN ITSM_FAULTTYPE F ON T.CATEGORY = F.ID
+	    LEFT JOIN SEC_ORGANIZATION O ON T.DEPT_ID = O.ORG_CODE
+	    WHERE T.ID = #{id}
+	</select>
+	<insert id="insertQuestionRd">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+       		SELECT SEQ_ITSM_QUESTION.NEXTVAL FROM DUAL
+    	</selectKey>
+		INSERT INTO ITSM_QUESTIONRD(ID,KL_QUESTIONCODE,EVENT_QUESTIONCODE,CODE,TITLE,RESOURCE_ID,CATEGORY,
+		PRIORITY_ID,DESP,NA,NS,REASON,OPINION,SOLVE,STATUS,STEP,
+		CREATEDATE,MODIFYDATE,CREATEUSER,MODIFYUSER,SITEID,DEPT_ID,DEL_FLAG) 
+		VALUES( #{id},
+				#{klQuestionCode,jdbcType=VARCHAR},
+				#{eventQuestionCode,jdbcType=VARCHAR},
+				#{code,jdbcType=VARCHAR},
+				#{title,jdbcType=VARCHAR},
+				#{resourceid,jdbcType=VARCHAR},
+				#{category,jdbcType=VARCHAR},
+				#{priorityid,jdbcType=VARCHAR},
+				#{desp,jdbcType=VARCHAR},
+				#{na,jdbcType=VARCHAR},
+				#{ns,jdbcType=VARCHAR},
+				#{reason,jdbcType=VARCHAR},
+				#{opinion,jdbcType=VARCHAR},
+				#{solve,jdbcType=VARCHAR},
+				#{status,jdbcType=VARCHAR},
+				#{step,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{modifydate,jdbcType=TIMESTAMP},
+				#{createuser,jdbcType=VARCHAR},
+				#{modifyuser,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				0
+				) 
+	</insert>
+			
+	<!-- 更新工单基本信息 -->
+	<update id="updateQuestionRd">
+		UPDATE ITSM_QUESTIONRD
+		<set>
+		<foreach item="item" index="index" collection="params" >
+		<if test="item=='klQuestionCode'"> KL_QUESTIONCODE = #{question.klQuestionCode,jdbcType=VARCHAR}, </if>
+		<if test="item=='eventQuestionCode'"> EVENT_QUESTIONCODE = #{question.eventQuestionCode,jdbcType=VARCHAR}, </if>
+		<if test="item=='code'"> CODE = #{question.code,jdbcType=VARCHAR}, </if>
+		<if test="item=='title'"> TITLE = #{question.title,jdbcType=VARCHAR}, </if>
+		<if test="item=='resourceid'"> RESOURCE_ID = #{question.resourceid,jdbcType=VARCHAR}, </if>
+		<if test="item=='category'"> CATEGORY = #{question.category,jdbcType=VARCHAR}, </if>
+		<if test="item=='priorityid'"> PRIORITY_ID = #{question.priorityid,jdbcType=VARCHAR}, </if>
+		<if test="item=='desp'"> DESP = #{question.desp,jdbcType=VARCHAR}, </if>
+		<if test="item=='na'"> NA = #{question.na,jdbcType=VARCHAR}, </if>
+		<if test="item=='ns'"> NS = #{question.ns,jdbcType=VARCHAR}, </if>
+		<if test="item=='reason'"> REASON = #{question.reason,jdbcType=VARCHAR}, </if>
+		<if test="item=='opinion'"> OPINION = #{question.opinion,jdbcType=VARCHAR}, </if>
+		<if test="item=='solve'"> SOLVE = #{question.solve,jdbcType=VARCHAR}, </if>
+		<if test="item=='status'"> STATUS = #{question.status,jdbcType=VARCHAR}, </if>
+		<if test="item=='step'"> STEP = #{question.step,jdbcType=VARCHAR}, </if>
+		<if test="item=='delFlag'"> DEL_FLAG = #{question.delFlag,jdbcType=VARCHAR},</if>
+		<if test="item=='workflowId'"> WORKFLOWID = #{question.workflowId,jdbcType=VARCHAR},</if>
+		</foreach>
+		<if test="question.modifydate != null">
+			MODIFYDATE=#{question.modifydate,jdbcType=TIMESTAMP},
+		</if>
+		MODIFYUSER=#{question.modifyuser,jdbcType=VARCHAR}
+		</set>
+		WHERE ID=#{question.id} 
+	</update>
+	
+	<update id="updateKlIdOfQuest" parameterType="HashMap">
+		update ITSM_QUESTIONRD 
+		set KL_QUESTIONCODE=#{klId}
+		where id=#{id} 
+	</update>
+</mapper>

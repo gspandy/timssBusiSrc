@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceMainDetailDao">
+	<!-- 在resultMap中设置为指定的ID，然后即可将数据库中的column名称转换为bean中的属性。名字一样的可以不写在result中。 -->
+	<!-- 返回明细实体 -->
+	<resultMap type="FinanceMainDetail" id="financeMainDetailMap">
+		<result column="allowance_type" property="allowanceType" />
+	</resultMap>
+	
+	<!-- 返回明细和类型实体 -->
+	<resultMap type="FinanceMainDetailCostVo" id="financeMainDetailCostMap">
+		<result column="allowance_type" property="allowanceType" />
+	</resultMap>
+	
+	<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,fid,amount,description,beneficiary,beneficiaryid,department,
+		departmentid,address,join_nbr,join_boss,join_bossid,doc_nbr,
+		allowance_type,allowance_days,stay_days,other_days,status,strdate,enddate,remark,siteid,deptid
+	</sql>
+	
+	<sql id="dtlAndCostGrpColumn">
+		fmd.id,fid,description,fmd.amount,beneficiary,beneficiaryid,department,
+		departmentid,address,join_nbr,join_boss,join_bossid,doc_nbr,allowance_type,allowance_days,
+		stay_days,other_days,status,strdate,enddate,remark
+	</sql>
+	
+	<sql id="dtlAndCostSumColumn">
+		nvl(sum(decode(fmdc.cost_id,'ticketcost',fmdc.amount)),0) as ticketcost, 
+		nvl(sum(decode(fmdc.cost_id,'staycost',fmdc.amount)),0) as staycost,
+		nvl(sum(decode(fmdc.cost_id,'citytrafficcost',fmdc.amount)),0) as citytrafficcost,
+		nvl(sum(decode(fmdc.cost_id,'fuelcost',fmdc.amount)),0) as fuelcost,
+		nvl(sum(decode(fmdc.cost_id,'longbuscost',fmdc.amount)),0) as longbuscost,
+		nvl(sum(decode(fmdc.cost_id,'bridgecost',fmdc.amount)),0) as bridgecost,
+		nvl(sum(decode(fmdc.cost_id,'huochecost',fmdc.amount)),0) as huochecost,
+		nvl(sum(decode(fmdc.cost_id,'incidentalcost',fmdc.amount)),0) as incidentalcost,
+		nvl(sum(decode(fmdc.cost_id,'othertrafficcost',fmdc.amount)),0) as othertrafficcost,
+		nvl(sum(decode(fmdc.cost_id,'meetingcost',fmdc.amount)),0) as meetingcost,
+		nvl(sum(decode(fmdc.cost_id,'businessentertainment',fmdc.amount)),0) as businessentertainment,
+		nvl(sum(decode(fmdc.cost_id,'officecost',fmdc.amount)),0) as officecost,
+		nvl(sum(decode(fmdc.cost_id,'welfarism',fmdc.amount)),0) as welfarism,
+		nvl(sum(decode(fmdc.cost_id,'carcost',fmdc.amount)),0) as carcost,
+		nvl(sum(decode(fmdc.cost_id,'familymedicinecost',fmdc.amount)),0) as familymedicinecost,
+		nvl(sum(decode(fmdc.cost_id,'medicalinsurance',fmdc.amount)),0) as medicalinsurance,
+		nvl(sum(decode(fmdc.cost_id,'traincost',fmdc.amount)),0) as traincost,
+		nvl(sum(decode(fmdc.cost_id,'pettycash',fmdc.amount)),0) as pettycash,
+		nvl(sum(decode(fmdc.cost_id,'allowancecost',fmdc.amount)),0) as allowancecost,
+		nvl(sum(decode(fmdc.cost_id,'citytrafficcost',fmdc.amount)),0)+nvl(sum(decode(fmdc.cost_id,'longbuscost',fmdc.amount)),0)+nvl(sum(decode(fmdc.cost_id,'huochecost',fmdc.amount)),0)+nvl(sum(decode(fmdc.cost_id,'ticketcost',fmdc.amount)),0)+nvl(sum(decode(fmdc.cost_id,'othertrafficcost',fmdc.amount)),0) as trafficcost,
+		nvl(sum(decode(fmdc.cost_id,'fuelcost',fmdc.amount))+sum(decode(fmdc.cost_id,'bridgecost',fmdc.amount)),0) as vehiclecost
+	</sql>
+	
+ 	<insert id="insertFinanceMainDetail" parameterType="FinanceMainDetail">
+		insert into 
+		FIN_MAIN_DETAILS
+		(id,fid,description,amount,beneficiary,beneficiaryid,department,departmentid,address,
+		join_nbr,join_boss,join_bossid,doc_nbr,allowance_type,allowance_days,stay_days,other_days,
+		status,strdate,enddate,remark,siteid,deptid) 
+		values
+		(
+		#{id}, 
+		#{fid,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},#{amount,jdbcType=NUMERIC},
+		#{beneficiary,jdbcType=VARCHAR},#{beneficiaryid,jdbcType=VARCHAR},
+		#{department,jdbcType=VARCHAR},#{departmentid,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},#{join_nbr,jdbcType=NUMERIC},#{join_boss,jdbcType=VARCHAR},
+		#{join_bossid,jdbcType=VARCHAR},#{doc_nbr,jdbcType=NUMERIC},
+		#{allowanceType,jdbcType=VARCHAR},#{allowance_days,jdbcType=NUMERIC},
+		#{stay_days,jdbcType=NUMERIC},#{other_days,jdbcType=NUMERIC},#{status,jdbcType=VARCHAR},
+		#{strdate,jdbcType=DATE},#{enddate,jdbcType=DATE},#{remark,jdbcType=VARCHAR},
+		#{siteid,jdbcType=VARCHAR},#{deptid,jdbcType=VARCHAR}
+		)
+	</insert>
+
+		<select id="queryFinanceMainDetailList"  resultMap="financeMainDetailCostMap">
+			select <include refid="dtlAndCostGrpColumn"/>,<include refid="dtlAndCostSumColumn"/>
+			from FIN_MAIN_DETAILS fmd 
+			left join FIN_MAIN_DETAILS_COST fmdc on  fmd.id=fmdc.id 
+			left join FIN_MAIN fm on fm.fid = fmd.fid  
+			where fmd.status  is null and (fm.finance_typeid = 'more' or fm.finance_typeid <![CDATA[<>]]> 'more' and fmdc.id is not null)
+			<if test="params.fid != null and params.fid != '' ">
+				and fid = #{params.fid}
+			</if>
+			group by <include refid="dtlAndCostGrpColumn"/> order by fmd.id
+		</select>
+		
+		<select id="queryFinanceMainDetailByFinId"  resultMap="financeMainDetailCostMap">
+			select <include refid="dtlAndCostGrpColumn"/>,<include refid="dtlAndCostSumColumn"/>
+			from FIN_MAIN_DETAILS fmd 
+			left join FIN_MAIN_DETAILS_COST fmdc on  fmd.id=fmdc.id 
+			left join FIN_MAIN fm on fm.fid = fmd.fid  
+			where fid = #{finId} and fmd.status  is null and (fm.finance_typeid = 'more' or fm.finance_typeid <![CDATA[<>]]> 'more' and fmdc.id is not null)
+			group by <include refid="dtlAndCostGrpColumn"/> order by fmd.id
+		</select>
+		
+		<select id="queryFinanceMainDetailCostListByFid" resultMap="financeMainDetailCostMap">
+			select <include refid="dtlAndCostGrpColumn"/>,<include refid="dtlAndCostSumColumn"/>
+			from FIN_MAIN_DETAILS fmd, FIN_MAIN_DETAILS_COST fmdc
+			where fmd.id=fmdc.id and fid = #{params.fid} and fmd.status  is null
+			group by <include refid="dtlAndCostGrpColumn"/> order by fmd.id
+		</select>
+		
+		<select id="queryFinanceMainDetailByFid"  resultMap="financeMainDetailMap">
+			select <include refid="columnBasic"/> 
+				from FIN_MAIN_DETAILS
+				where  fid = #{parmas.fid} and status is null
+		</select>
+		
+		<select id="queryFinanceMainDetailById" resultMap="financeMainDetailMap">
+			select <include refid="columnBasic"/> 
+				from FIN_MAIN_DETAILS
+				where  id = #{params.id} 
+		</select>
+		
+		<delete id = "deleteFinanceMainDetail" >
+             delete from FIN_MAIN_DETAILS where fid = #{fid}
+     	 </delete>
+     	 <update id = "historyFinanceMainDetail" >
+             update FIN_MAIN_DETAILS t
+             set t.status='history'
+             where fid = #{fid}
+     	 </update>
+     	 
+     	 <update id = "updateFinDetailAllowanceType"  parameterType="HashMap">
+             update FIN_MAIN_DETAILS t
+             set t.amount=#{amount} 
+             	<choose>
+		                <when test="allwoanceType != null  and allwoanceType != '' ">
+		                       , t.allowance_type=#{allwoanceType,jdbcType=VARCHAR}
+		                </when>
+		                <otherwise>
+		                       , t.allowance_type= null
+		                 </otherwise>
+		         </choose>
+             where id = #{id}
+     	 </update>
+</mapper> 

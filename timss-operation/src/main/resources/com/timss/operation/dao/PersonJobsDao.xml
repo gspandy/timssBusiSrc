@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.PersonJobsDao">
+	
+	<!--说明：#{}内的参数，需要与传入的PersonJobs中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertPersonJobs" parameterType="PersonJobs">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select seq_opr_person_jobs.nextval from dual
+		</selectKey> 
+		INSERT INTO opr_person_jobs(id,jobsId,userId,dutyId,stationId,userName)  
+		values(#{id}, #{jobsId}, #{userId}, #{dutyId}, #{ stationId },#{userName})
+	</insert>
+	
+	<update id="updatePersonJobs" parameterType="PersonJobs">
+	update opr_person_jobs set jobsId = #{jobsId}, userId = #{userId} , dutyId = #{dutyId} ,stationId=#{stationId}, userName = #{userName}	
+	where id = #{ id }
+	</update>
+		
+	<select id="queryPersonJobsById" parameterType="int" resultType="PersonJobs">
+		select * from opr_person_jobs where id= #{ id }
+	</select>
+	
+	<delete id="deletePersonJobs" parameterType="PersonDutyVo">
+		delete from opr_person_jobs where jobsId = #{ jobsId } and dutyId = #{dutyId}
+				and stationId = #{stationId}
+	</delete>
+	
+	<delete id="deletePersonJobsByUserId" parameterType="HashMap">
+		delete from opr_person_jobs where jobsId = #{ personJobs.jobsId } and dutyId = #{personJobs.dutyId}
+				and stationId = #{personJobs.stationId} and userId in 
+				<foreach item="item" index="index" collection="userDelArray" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+	</delete>
+	
+	<select id="queryAllPersonJobs" resultType="PersonJobs">
+		select * from opr_person_jobs
+	</select>
+	
+	<select id="queryPersonJobsByPage" resultType="PersonDutyVo">
+		select PJ.JOBSID JOBSID, J."NAME" JobsNAME, PJ.DUTYID DUTYID, D."NAME"
+		DutyName, PJ.STATIONID STATIONID, dept.name stationName from 
+		( SELECT JOBSID, STATIONID,DUTYID FROM OPR_PERSON_JOBS where SITEID ='${ params.siteId }' GROUP BY JOBSID,
+		STATIONID,DUTYID ) pj
+		LEFT JOIN OPR_JOBS j ON j."ID"=PJ.JOBSID
+		LEFT JOIN OPR_DUTY d ON d.id=pj.dutyID 
+		LEFT JOIN OPR_DEPT dept ON dept.deptId = pj.stationId
+	</select>
+	
+	<select id="queryPersonJobsBySearch" resultType="PersonDutyVo" >
+		select * from (
+			select PJ.JOBSID JOBSID, J."NAME" JobsNAME, PJ.DUTYID DUTYID, D."NAME"
+			DutyName, PJ.STATIONID STATIONID, dept.name stationName from 
+			( SELECT JOBSID, STATIONID,DUTYID FROM OPR_PERSON_JOBS where SITEID ='${ params.siteId }'  GROUP BY JOBSID,
+			STATIONID,DUTYID ) pj
+			LEFT JOIN OPR_JOBS j ON j."ID"=PJ.JOBSID
+			LEFT JOIN OPR_DUTY d ON d.id=pj.dutyID 
+			LEFT JOIN OPR_DEPT dept ON dept.deptId = pj.stationId
+		) personDuty where 1 = 1
+		<if test="params.jobsName != null">
+		 	and jobsName like '%${ params.jobsName }%'
+		</if>
+		<if test="params.dutyName != null">
+		 	and dutyName like '%${ params.dutyName }%'
+		</if>
+		<if test="params.dutyId != null">
+		 	and dutyId like '%${ params.dutyId }%'
+		</if>
+		<if test="params.stationName != null">
+		 	and stationName like '%${ params.stationName }%'
+		</if>
+	</select>
+	
+	<!-- 批量操作 -->
+	<insert id="batchInsertPersonJobs" parameterType="java.util.List">
+		INSERT INTO opr_person_jobs(id,jobsId,userId,dutyId,stationId,userName, siteId )   
+		select seq_opr_person_jobs.nextval, temp.* from(
+			<foreach collection="list" item="item" index="index" separator="union all">
+				select  #{item.jobsId} jobsId , #{item.userId} userId , #{item.dutyId} dutyId , #{item.stationId} stationId,
+				#{item.userName} userName, #{item.siteId} siteId
+				from dual
+			</foreach>
+		) temp
+	</insert>
+	
+	<select id="queryAllPersonJobsByPersonDutyVo" parameterType="PersonDutyVo" resultType="PersonJobs">
+		select * from opr_person_jobs where dutyId = #{ dutyId } and jobsId = #{ jobsId } and stationId = #{ stationId }
+	</select>
+	
+	<select id="queryPersonJobsByUserId" parameterType="String" resultType="PersonJobs">
+		select * from opr_person_jobs where userId = #{ userId }
+	</select>
+	
+	<select id="queryPersonJobsByDutyId" parameterType="int" resultType="PersonJobs">
+		select p.id,p.jobsId,p.dutyId,p.userId,p.stationId,su.name userName from 
+		(
+		select * from opr_person_jobs where dutyId = #{ dutyId }
+		) p left join sec_user su on su.user_id = p.userId
+	</select>
+	
+	<select id="queryPersonJobsByStationId" parameterType="String" resultType="PersonJobs">
+		select p.id,p.jobsId,p.dutyId,p.userId,p.stationId,su.name userName from 
+		(
+		select * from opr_person_jobs where stationId = #{ stationId }
+		) p left join sec_user su on su.user_id = p.userId
+	</select>
+	
+	<select id="queryPersonInfoHistory" parameterType="HashMap" resultType="PersonJobs">
+		select p.id,p.jobsId,p.dutyId,p.userId,p.stationId,su.name userName from 
+		(
+		select * from opr_person_jobs where 
+		stationId = #{ stationId }
+			<if test="jobsId != 0">
+			and jobsId = #{ jobsId }
+			</if>
+			<!-- <if test="shiftId != 0">
+			and dutyId in (
+				SELECT dutyId FROM OPR_SCHEDULE_DETAIL WHERE shiftid = #{ shiftId } AND 
+				stationId =  #{stationId} AND DATETIME = #{ dateYMD } GROUP BY dutyId 
+			)
+			</if> -->
+		) p 
+		left join sec_user su on su.user_id = p.userId
+	</select>
+	
+	
+	
+</mapper> 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoapplySafeInformDao">
+	<resultMap type="WoapplySafeInform" id="woapplySafeInformMap">
+		<id column="ID" property="id" />
+		<result column="WOAPPLY_ID" property="workapplyId" />
+		<result column="CONTENT" property="content" />
+		<result column="ORDER_NUM" property="showOrder" /> 
+	</resultMap>	
+	
+	<insert id="insertSafeInform" parameterType="WoapplySafeInform">  
+        insert into WO_APPLY_SAFEINFORM( ID,WOAPPLY_ID, CONTENT, ORDER_NUM) 
+        values( #{id,jdbcType=VARCHAR},
+				#{workapplyId,jdbcType=VARCHAR},
+				#{content,jdbcType=VARCHAR},
+				#{showOrder,jdbcType=NUMERIC}) 
+	</insert>
+  
+	<!-- 删除 -->
+	<delete id="deleteWoSafeInformByWoapplyId" parameterType="String">
+		delete from WO_APPLY_SAFEINFORM t 
+		where t.WOAPPLY_ID = #{woapplyId} 
+	</delete>
+	
+	<!-- 查询-->
+	<select id="queryWoSafeInform" parameterType="String" resultMap="woapplySafeInformMap" >
+		select ID,WOAPPLY_ID, CONTENT, ORDER_NUM
+		from WO_APPLY_SAFEINFORM t
+		where t.WOAPPLY_ID = #{woapplyId} 
+	</select>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoDelayConfigDao">
+	<resultMap type="WoDelayConfig" id="woDelayConfigMap">
+		<result column="SITEID" property="siteId" />
+		<result column="DELAYTYPE" property="delayType" />
+		<result column="PRIORITY" property="priority" />
+		<result column="MAXLENGTH" property="maxLength" />
+	</resultMap>	
+	
+	<select id="queryWoDelayConfig" parameterType="HashMap" resultMap="woDelayConfigMap">
+		select * 
+		from wo_delay_config t 
+		where t.siteid= #{ siteid } and t.delaytype= #{ delayType } and t.priority= #{ priority }
+	</select>
+</mapper>

@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwInfoDao">
+		
+	<insert id="insertPtwInfo">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_INFO.nextval from dual
+		</selectKey>
+		insert into PTW_INFO(
+			id,
+			wtNo,
+			wtStatus,
+			wtTypeId,
+			workOrderId,
+			workOrderNo,
+			woWorkTask,
+			keyBoxId,
+			keyBoxNo,
+			eqId,
+			eqName,
+			eqNo,
+			preWorkStartTime,
+			preWorkEndTime,
+			licWpic,
+			licWpicNo,
+			licWorkClass,
+			licWorkClassPeople,
+			licWorkClassNum,
+			workPlace,
+			workCondition,
+			workContent,
+			isStdWt,
+			createUser,
+			createUserName,
+			createDate,
+			modifyUser,
+			modifyUserName,
+			modifyDate,
+			deptId,
+			siteId,
+			woWindStation,
+			isOutSourcing
+		)
+		values (
+			#{id},
+			#{wtNo,jdbcType=VARCHAR},
+			#{wtStatus,jdbcType=NUMERIC},
+			#{wtTypeId,jdbcType=NUMERIC},
+			#{workOrderId,jdbcType=NUMERIC},
+			#{workOrderNo,jdbcType=VARCHAR},
+			#{woWorkTask,jdbcType=VARCHAR},
+			#{keyBoxId,jdbcType=NUMERIC},
+			#{keyBoxNo,jdbcType=VARCHAR},
+			#{eqId,jdbcType=VARCHAR},
+			#{eqName,jdbcType=VARCHAR},
+			#{eqNo,jdbcType=VARCHAR},
+			#{preWorkStartTime,jdbcType=TIMESTAMP},
+			#{preWorkEndTime,jdbcType=TIMESTAMP},
+			#{licWpic,jdbcType=VARCHAR},
+			#{licWpicNo,jdbcType=VARCHAR},
+			#{licWorkClass,jdbcType=VARCHAR},
+			#{licWorkClassPeople,jdbcType=VARCHAR},
+			#{licWorkClassNum,jdbcType=NUMERIC},
+			#{workPlace,jdbcType=VARCHAR},
+			#{workCondition,jdbcType=VARCHAR},
+			#{workContent,jdbcType=VARCHAR},
+			#{isStdWt,jdbcType=NUMERIC},
+			#{createUser,jdbcType=VARCHAR},
+			#{createUserName,jdbcType=VARCHAR},
+			#{createDate,jdbcType=TIMESTAMP},
+			#{modifyUser,jdbcType=VARCHAR},
+			#{modifyUserName,jdbcType=VARCHAR},
+			#{modifyDate,jdbcType=TIMESTAMP},
+			#{deptId,jdbcType=VARCHAR},
+			#{siteId,jdbcType=VARCHAR},
+			#{woWindStation,jdbcType=VARCHAR},
+			#{isOutSourcing,jdbcType=NUMERIC}
+			)
+	</insert>
+	
+	<update id="updatePtwBaseInfo">
+		update ptw_info
+		<set> 
+			<if test="wtNo != null">
+				wtNo = #{wtNo,jdbcType=VARCHAR},
+			</if>
+			<if test="wtTypeId != null">
+				wtTypeId = #{wtTypeId,jdbcType=VARCHAR},
+			</if>
+			<if test="workOrderId != null">
+				workOrderId = #{workOrderId,jdbcType=VARCHAR},
+				workOrderNo = #{workOrderNo,jdbcType=VARCHAR},
+				woWorkTask = #{woWorkTask,jdbcType=VARCHAR},
+			</if>
+			<if test="eqId != null">
+				eqId = #{eqId,jdbcType=VARCHAR},
+				eqName = #{eqName,jdbcType=VARCHAR},
+				eqNo = #{eqNo,jdbcType=VARCHAR},
+			</if>
+			<if test="preWorkStartTime != null">
+				preWorkStartTime = #{preWorkStartTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="preWorkEndTime != null">
+				preWorkEndTime = #{preWorkEndTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="licWpic != null">
+				licWpicNo = #{licWpicNo,jdbcType=VARCHAR},
+				licWpic = #{licWpic,jdbcType=VARCHAR},
+			</if>
+			<if test="licWorkClass != null">
+				licWorkClass = #{licWorkClass,jdbcType=VARCHAR},
+				licWorkClassPeople = #{licWorkClassPeople,jdbcType=VARCHAR},
+				licWorkClassNum = #{licWorkClassNum,jdbcType=NUMERIC},
+			</if>
+			<if test="workPlace != null">
+				workPlace = #{workPlace,jdbcType=VARCHAR},
+			</if>
+			<if test="workCondition != null">
+				 workCondition = #{workCondition,jdbcType=VARCHAR},
+			</if>
+			<if test="workContent != null">
+				 workContent = #{workContent,jdbcType=VARCHAR},
+			</if>
+			isOutSourcing = #{isOutSourcing,jdbcType=NUMERIC},
+			id = #{id}
+		</set>	 	 
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwStatusInfo" parameterType="PtwInfo">
+		update ptw_info
+		<set> 
+			<if test="approver != null">
+				approver = #{approver},
+			</if>
+			<if test="approverNo != null">
+				approverNo = #{approverNo},
+			</if>
+			<if test="approveTime != null">
+				approvedTime = #{approveTime},
+			</if>
+			 wtStatus = #{wtStatus},modifyUser=#{modifyUser},modifyUserName=#{modifyUserName},modifyDate=#{modifyDate}
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwIssueInfo" parameterType="PtwInfo">
+		update ptw_info
+		set issuer = #{issuer},issuerNo=#{issuerNo},issuedTime=#{issuedTime}
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwOutIssueInfo" parameterType="PtwInfo">
+		update ptw_info
+		set outIssuer = #{outIssuer,jdbcType=VARCHAR},outIssuerNo=#{outIssuerNo,jdbcType=VARCHAR},outIssuerTime=#{outIssuedTime,jdbcType=TIMESTAMP}
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwFinInfo" parameterType="PtwInfo">
+		update ptw_info
+		set finWl = #{finWl},finWlNo=#{finWlNo},finWlTime=#{finWlTime},finTime=#{finTime,jdbcType=TIMESTAMP},
+		finWpic=#{finWpic,jdbcType=VARCHAR},finWpicNo=#{finWpicNo,jdbcType=VARCHAR},finWpicTime=#{finWpicTime,jdbcType=TIMESTAMP}
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwEndInfo" parameterType="PtwInfo">
+		update ptw_info
+		set endWl = #{endWl},endWlNo=#{endWlNo},endTime=#{endTime},
+		endJdxNo=#{endJdxNo,jdbcType=VARCHAR},endJdxNum=#{endJdxNum,jdbcType=NUMERIC}
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwCancelInfo" parameterType="PtwInfo">
+		update ptw_info
+		set canceler = #{canceler},cancelerNo=#{cancelerNo},cancelTime=#{cancelTime}
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwNotInUse" parameterType="int">
+		update ptw_info
+		set inUse = 0
+		where id = #{id}
+	</update>
+	
+	<update id="updatePtwLicInfo" parameterType="PtwInfo">
+		update ptw_info
+		set licWl = #{licWl,jdbcType=VARCHAR},licWlNo=#{licWlNo,jdbcType=VARCHAR},licTime=#{licTime,jdbcType=TIMESTAMP},
+		lic1=#{lic1},lic2=#{lic2},lic3=#{lic3},lic4=#{lic4},lic5=#{lic5},lic6=#{lic6},
+		lic7=#{lic7},lic8=#{lic8},lic9=#{lic9},lic10=#{lic10},licOther=#{licOther,jdbcType=VARCHAR},
+		licPl=#{licPl,jdbcType=VARCHAR},licPlNo=#{licPlNo,jdbcType=VARCHAR},
+		licDpl=#{licDpl,jdbcType=VARCHAR},licDplNo=#{licDplNo,jdbcType=VARCHAR},
+		licStartTime=#{licStartTime,jdbcType=TIMESTAMP},licEndTime=#{licEndTime,jdbcType=TIMESTAMP},
+		keyBoxId=#{keyBoxId,jdbcType=NUMERIC},keyBoxNo=#{keyBoxNo,jdbcType=VARCHAR}
+		where id = #{id}
+	</update>
+	
+	<select id="queryPtwInfoVoListByWoId"  resultType="PtwInfo">
+		select 
+			id,wtTypeId,wtNo,wtStatus,isStdWt,createUserName,createUser,createDate,
+			modifyUserName,modifyUser,modifyDate,deptId,siteId,workOrderNo,keyBoxNo,eqId,eqNo,eqName,
+			workContent,workPlace,workCondition,preWorkStartTime,preWorkEndTime,approverNo,approver,approvedTime approveTime,
+			issuer,issuerNo,issuedTime,eleParts,addFile1,addFile2,addFile3,addFile4,addFile5,addFileOtherNo,addFileOtherName,
+			lic1,lic2,lic3,lic4,lic5,lic6,lic7,lic8,lic9,lic10,licOther,licWorkClass,licWorkClassPeople,licWorkClassNum,
+			licWpicTime,licWpic,licWpicNo,licPlNo,licPl,licStartTime,licEndTime,licDplNo,licDpl,licWl,licWlNo,licWlTime,licTime,
+			finTime,finWpicTime,finWpicNo,finWpic,finWlTime,finWl,finWlNo,endJdxNum,endJdxNo,endWl,endWlNo,endTime,
+			cancelTime,cancelerNo,canceler,remark,consignStatus,inUse,workOrderId,relateKeyBoxId,keyBoxId,woWorkTask,woWindStation,
+			isOutSourcing,outIssuer,outIssuerNo,outIssuerTime outIssuedTime   
+		from ptw_info
+		where  workorderid = #{woId} and siteid = #{siteId}
+	</select>
+	
+	<select id="queryPtwInfoById" parameterType="int" resultType="PtwInfo">
+		select 
+			id,wtTypeId,wtNo,wtStatus,isStdWt,createUserName,createUser,createDate,
+			modifyUserName,modifyUser,modifyDate,deptId,siteId,workOrderNo,keyBoxNo,eqId,eqNo,eqName,
+			workContent,workPlace,workCondition,preWorkStartTime,preWorkEndTime,approverNo,approver,approvedTime approveTime,
+			issuer,issuerNo,issuedTime,eleParts,addFile1,addFile2,addFile3,addFile4,addFile5,addFileOtherNo,addFileOtherName,
+			lic1,lic2,lic3,lic4,lic5,lic6,lic7,lic8,lic9,lic10,licOther,licWorkClass,licWorkClassPeople,licWorkClassNum,
+			licWpicTime,licWpic,licWpicNo,licPlNo,licPl,licStartTime,licEndTime,licDplNo,licDpl,licWl,licWlNo,licWlTime,licTime,
+			finTime,finWpicTime,finWpicNo,finWpic,finWlTime,finWl,finWlNo,endJdxNum,endJdxNo,endWl,endWlNo,endTime,
+			cancelTime,cancelerNo,canceler,remark,consignStatus,inUse,workOrderId,relateKeyBoxId,keyBoxId,woWorkTask,woWindStation,
+			isOutSourcing,outIssuer,outIssuerNo,outIssuerTime outIssuedTime   
+		from ptw_info
+		where id = #{id}
+	</select>
+	
+	<select id="queryMaxPtwNumOfYear" parameterType="PtwInfo" resultType="int">
+		SELECT count(1) as num from ptw_info t
+		where t.siteId =#{siteId} and t.isstdwt = #{isStdWt} 
+		and to_char(t.createDate,'yyyy') = to_char(#{createDate},'yyyy')
+	</select>
+	
+	<select id="queryPtwInfoVoList" resultType="PtwInfoVoList">
+		select 
+			id,wtTypeId,wtNo,wtStatus,isStdWt,createUserName,createUser,createDate,
+			modifyUserName,modifyUser,modifyDate,deptId,siteId,workOrderNo,eqId,eqNo,eqName,
+			workContent,workPlace,preWorkStartTime,preWorkEndTime,issuer,issuerNo,issuedTime,
+			licWpicTime,licWpic,licWpicNo,licStartTime,licEndTime,licWl,licWlNo,licWlTime,licTime,
+			finTime,finWlTime,finWl,finWlNo,endWl,endWlNo,endTime,consignStatus,inUse
+		from ptw_info t
+		where t.inUse = 1
+		and t.isStdWt = #{params.isStdWt}
+		and t.siteId = #{params.siteId}
+		<if test="params.searchDateFrom != null">
+			and ${params.searchDateType} &gt;= #{params.searchDateFrom}
+		</if>
+		<if test="params.searchDateEnd != null">
+			and ${params.searchDateType} &lt; #{params.searchDateEnd}
+		</if>
+		<if test="params.searchPersonId != null">
+			and ${params.searchPersonType} = #{params.searchPersonId}
+		</if>
+		<if test="params.wtType != null">
+			and wtTypeId = #{params.wtType}
+		</if>
+		<if test="params.wtStatus != null">
+			and wtStatus in (${params.wtStatus})
+		</if>
+		<if test="params.eqId != null">
+			and eqId in (select a.assetid from ast_asset a start with a.assetid = #{params.eqId}  connect by prior assetid = parentid)
+		</if>
+	</select>
+	
+	<select id="queryHisPtwList" resultType="PtwInfoVoList">
+		select t.id, t.wtNo, t.wtTypeId, p.typeName as wtTypeName, t.workContent, t.eqName, t.modifyDate
+		from ptw_info t left join ptw_type p on p.id = t.wtTypeId
+		where t.siteId = #{params.siteId}
+		and t.wtTypeId = #{params.ptwFilterType}
+		<if test="params.wtNo != null and params.wtNo != ''">
+			and t.wtNo like '%'||'${params.wtNo}'||'%' 
+		</if>
+		<if test="params.eqName != null and params.eqName != ''">
+			and t.eqName like '%'||'${params.eqName}'||'%'
+		</if>
+		<if test="params.wtTypeName != null and params.wtTypeName != ''">
+			and p.typeName like '%'||'${params.wtTypeName}'||'%'
+		</if>
+		<if test="params.workContent != null and params.workContent != ''">
+			and t.workContent like '%'||'${params.workContent}'||'%'
+		</if>
+	</select>
+	
+	<select id="queryPtwInfoByNo" resultType="PtwInfo" parameterType="PtwInfo">
+		select * from ptw_info t
+		where t.wtNo = #{wtNo} and t.siteId = #{siteId}
+	</select>
+	
+	<update id="updatePtwAttachFiles" parameterType="PtwInfo">
+		update ptw_info t 
+		<set>
+			<if test="addFile1 != null">
+				addFile1 = #{addFile1,jdbcType=VARCHAR},
+			</if>
+			<if test="addFile2 != null">
+				addFile2 = #{addFile2,jdbcType=VARCHAR},
+			</if>
+			<if test="addFile3 != null">
+				addFile3 = #{addFile3,jdbcType=VARCHAR},
+			</if>
+			<if test="addFile4 != null">
+				addFile4 = #{addFile4,jdbcType=VARCHAR},
+			</if>
+			<if test="addFile5 != null">
+				addFile5 = #{addFile5,jdbcType=VARCHAR},
+			</if>
+			<if test="addFileOtherNo != null">
+				addFileOtherNo = #{addFileOtherNo,jdbcType=VARCHAR},
+			</if>
+			<if test="addFileOtherName != null">
+				addFileOtherName = #{addFileOtherName,jdbcType=VARCHAR},
+			</if>
+			t.id = #{id}
+		</set> 
+		where t.id = #{id}
+	</update>
+	
+	<update id="updatePtwRemark" parameterType="PtwInfo">
+		update ptw_info t 
+		set remark = #{remark}
+		where t.id = #{id}
+	</update>
+	
+	<select id="queryIssuedNumber" parameterType="PtwInfo" resultType="int">
+		SELECT count(1) as num FROM ptw_info t where t.siteId =#{siteId} and t.isstdwt = #{isStdWt} 
+		and t.id != #{id}
+		and t.issuedTime is not null
+		and t.wtTypeId = #{wtTypeId}
+		and to_char(t.issuedTime,'yyyy-mm') = to_char(#{issuedTime},'yyyy-mm')
+		and t.inUse = 1
+	</select>
+	
+	<select id="queryCreatedNumber" parameterType="PtwInfo" resultType="int">
+		SELECT count(1) as num 
+		FROM ptw_info t 
+		where t.siteId =#{siteId} 
+		AND T.CREATEDATE > (select trunc(sysdate, 'mm') from dual)
+	</select>
+	
+	<update id="deletePtwInfoById" parameterType="int">
+		update ptw_info t 
+		set t.inUse = 0
+		where t.id = #{id}
+	</update>
+	
+	<update id="updatePtwNo" parameterType="PtwInfo">
+		update ptw_info t 
+		set t.wtNo = #{wtNo}
+		where t.id = #{id}
+	</update>
+	
+	<update id="updateRelateKeyBox">
+		update ptw_info t 
+		set t.relateKeyBoxId = #{relateKeyBoxId,jdbcType=VARCHAR}
+		where t.id = #{id}
+	</update>
+	
+	
+	<select id="queryByKeyBoxId" resultType="PtwInfo">
+		select * from ptw_info t
+		where t.keyBoxId = #{keyBoxId}
+		and t.wtStatus in (${status})
+		and inUse = 1
+	</select>
+	
+	<select id="queryPtwInfoByWpicAndStatus" resultType="PtwInfo">
+		select * from ptw_info t
+		where t.licWpicNo = #{userId}
+		and t.wtStatus in (${status})
+		and inUse = 1
+	</select>
+	
+	<select id="queryByRelateKeyBoxId" resultType="PtwInfo">
+		select * from ptw_info t
+		where t.relatekeyboxid is not null and instr(t.relatekeyboxid||',',#{keyBoxId}||',') > 0
+		and t.wtStatus in (${status})
+		and inUse = 1
+	</select>
+</mapper> 

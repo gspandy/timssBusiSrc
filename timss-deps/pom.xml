@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.timss.2.0</groupId>
+	<artifactId>timss-deps</artifactId>
+	<version>2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>timss-deps</name>
+	<description>TIMSS项目的依赖管理模块，定义所有的版本信息</description>
+	<prerequisites>
+		<maven>3.0.0</maven>
+	</prerequisites>
+	<properties>
+		<!--TIMSS模块属性 -->
+		<timss-config.version>2.1.0-SNAPSHOT</timss-config.version>
+		<timss-facade.version>2.1.0-SNAPSHOT</timss-facade.version>
+		<timss-framework.version>2.3.1-SNAPSHOT</timss-framework.version>
+		<!-- <timss-workflow.version>2.3.0-SNAPSHOT</timss-workflow.version> -->
+		<timss-ptw.version>2.0.1-SNAPSHOT</timss-ptw.version>
+		<timss-workorder.version>2.0.2-SNAPSHOT</timss-workorder.version>
+		<timss-operation.version>2.0.1-SNAPSHOT</timss-operation.version>
+		<timss-pms.version>2.0.3-SNAPSHOT</timss-pms.version>
+		<timss-asset.version>2.1.0-SNAPSHOT</timss-asset.version>
+		<timss-purchase.version>2.0.3-SNAPSHOT</timss-purchase.version>
+		<timss-inventory.version>2.0.6-SNAPSHOT</timss-inventory.version>
+		<timss-finance.version>2.0.2-SNAPSHOT</timss-finance.version>
+		<timss-homepage.version>2.0.6-SNAPSHOT</timss-homepage.version>
+		<timss-attendance.version>2.0.1-SNAPSHOT</timss-attendance.version>
+		<timss-itsm.version>2.0.1-SNAPSHOT</timss-itsm.version>
+		<timss-cmdb.version>2.0.1-SNAPSHOT</timss-cmdb.version>
+
+		<!--ITC Framework -->
+		<ITC.version>1.0.7-SNAPSHOT</ITC.version>
+		<core_config.version>2.1.0-SNAPSHOT</core_config.version>
+		
+		<!-- OTHER -->
+        <xstream.version>1.4.6</xstream.version>
+        <poi.version>3.10.1</poi.version>
+		
+		<!-- Plugin的属性 -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.6</java.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!--TIMSS 本身的项目合集 -->
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>core-config</artifactId>
+				<version>${timss-config.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-facade</artifactId>
+				<version>${timss-facade.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-itsm</artifactId>
+				<version>${timss-itsm.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-cmdb</artifactId>
+				<version>${timss-cmdb.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-asset</artifactId>
+				<version>${timss-asset.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-workflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-workorder</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-inventory</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-ptw</artifactId>
+				<version>${timss-ptw.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-workflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-asset</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-workorder</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-inventory</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-operation</artifactId>
+				<version>${timss-operation.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-workflow</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-pms</artifactId>
+				<version>${timss-pms.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-workflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-purchase</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-homepage</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-purchase</artifactId>
+				<version>${timss-purchase.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-inventory</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-homepage</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-finance</artifactId>
+				<version>${timss-finance.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-workflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-homepage</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-workorder</artifactId>
+				<version>${timss-workorder.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-workflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-asset</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-homepage</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-ptw</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-inventory</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-inventory</artifactId>
+				<version>${timss-inventory.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-workflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-asset</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-purchase</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-homepage</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-asset</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-workorder</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.timss.2.0</groupId>
+				<artifactId>timss-attendance</artifactId>
+				<version>${timss-attendance.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-homepage</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!--/ END TIMSS -->
+
+			<!--ITC Framework -->
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_mvc</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>com.yudean.itc</artifactId>
+						<groupId>itc_deps</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_sysconf</artifactId>
+				<version>${ITC.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_homepage</artifactId>
+				<version>${ITC.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_front</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>com.yudean.itc</artifactId>
+						<groupId>itc_mvc</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>com.yudean.itc</artifactId>
+						<groupId>itc_sysconf</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_interface</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>com.yudean.itc</artifactId>
+						<groupId>itc_homepage</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>com.yudean.itc</artifactId>
+						<groupId>itc_security</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>com.yudean.itc</artifactId>
+						<groupId>itc_config</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_webserviceclient</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>com.yudean.itc</artifactId>
+						<groupId>itc_config</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_batch</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.yudean.itc</groupId>
+						<artifactId>itc_config</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_core</artifactId>
+				<version>${ITC.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_support</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.yudean.itc</groupId>
+						<artifactId>itc_config</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_security</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.yudean.itc</groupId>
+						<artifactId>itc_config</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_utility</artifactId>
+				<version>${ITC.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_workflow</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>mybatis</artifactId>
+						<groupId>org.mybatis</groupId>
+					</exclusion>
+					<exclusion>
+						<groupId>jaxen</groupId>
+						<artifactId>jaxen</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>core-framework</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.timss.2.0</groupId>
+						<artifactId>timss-homepage</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_portal</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.yudean.itc</groupId>
+						<artifactId>itc_config</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_supplier</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.yudean.itc</groupId>
+						<artifactId>itc_config</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>com.yudean.itc</groupId>
+				<artifactId>itc_dynamicform</artifactId>
+				<version>${ITC.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.yudean.itc</groupId>
+						<artifactId>itc_config</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>${xstream.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>${poi.version}</version>
+			</dependency>	
+			
+		</dependencies>
+	</dependencyManagement>
+
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9.1</version>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- compiler插件, 设定JDK版本,使用ECLPIPSE编译器，方便在Eclipse查看函数参数 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<showWarnings>true</showWarnings>
+						<!--使用ECLIPSE的编译器 -->
+						<compilerId>eclipse</compilerId>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.codehaus.plexus</groupId>
+							<artifactId>plexus-compiler-eclipse</artifactId>
+							<version>2.3</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-compiler-plugin
+										</artifactId>
+										<versionRange>
+											[3.1,)
+										</versionRange>
+										<goals>
+											<goal>testCompile</goal>
+											<goal>test-compile</goal>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+
+				<!--在生命周期中添加一个动作，attach-sources -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.2.1</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- war打包插件, 设定war包名称不带版本号 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.4</version>
+					<configuration>
+						<warName>${project.artifactId}</warName>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.7</version>
+					<!--<executions> -->
+					<!--<execution> -->
+					<!--<phase>compile</phase> -->
+					<!--<goals> -->
+					<!--<goal>run</goal> -->
+					<!--</goals> -->
+					<!--<configuration> -->
+					<!--<target description="run the bat"> -->
+					<!--<echo>开始运行xxxx.bat命令行</echo> -->
+					<!--<exec dir="bat文件的目录" executable="cmd.exe"> -->
+					<!--<arg line=" /c xxxx.bat"></arg> -->
+					<!--</exec> -->
+					<!--</target> -->
+					<!--</configuration> -->
+					<!--</execution> -->
+					<!--</executions> -->
+				</plugin>
+				<!-- 根据系统时间生成唯一序列号 -->
+				<!--<plugin> -->
+				<!--<groupId>org.codehaus.mojo</groupId> -->
+				<!--<artifactId>buildnumber-maven-plugin</artifactId> -->
+				<!--<version>1.3</version> -->
+				<!--<executions> -->
+				<!--<execution> -->
+				<!--<phase>validate</phase> -->
+				<!--<goals> -->
+				<!--<goal>create</goal> -->
+				<!--</goals> -->
+				<!--</execution> -->
+				<!--</executions> -->
+				<!--<configuration> -->
+				<!--<doCheck>false</doCheck> -->
+				<!--<doUpdate>true</doUpdate> -->
+				<!--</configuration> -->
+				<!--</plugin> -->
+				<!-- tomcat插件 -->
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<tagBase>svn://10.0.250.50/eam/tags/${project.artifactId}/</tagBase>
+					<tagNameFormat>${project.artifactId}-${project.version}</tagNameFormat>
+					<branchBase>svn://10.0.250.50/branches/</branchBase>
+					<!--<username></username> -->
+					<!--<password></password> -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<scm>
+		<!--SVN -->
+		<url>http://timss.gdyd.com</url>
+		<connection>scm:svn:svn://10.0.250.50/eam/trunk/2.0/src/${project.artifactId}/</connection>
+		<developerConnection>scm:svn:svn://10.0.250.50/eam/trunk/2.0/src/${project.artifactId}/</developerConnection>
+		<!--Github -->
+		<!--<connection>scm:git:git://github.com/x4.git</connection> -->
+		<!--<developerConnection>scm:git:ssh://git@github.com:x4.git</developerConnection> -->
+	</scm>
+
+	<!-- 公司内部中央仓库地址 -->
+	<repositories>
+		<repository>
+			<id>itc</id>
+			<name>Team We Repository</name>
+			<url>http://repo.itc.gdyd.com/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>itc</id>
+			<name>Team We Repository</name>
+			<url>http://repo.itc.gdyd.com/content/groups/public</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>releases</id>
+			<url>http://repo.itc.gdyd.com/content/repositories/releases</url>
+			<layout>default</layout>
+		</repository>
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>snapshots</id>
+			<url>http://repo.itc.gdyd.com/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>

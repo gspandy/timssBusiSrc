@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmInfoWoDao">
+
+	<resultMap type="ItsmInfoWo" id="itsmInfoWoMap">
+		<id column="ID" property="id" />
+		<result column="CODE" property="infoWoCode" />
+		<result column="NAME" property="name" />
+		<result column="SER_CATA" property="serCata" />
+		<result column="SER_CATA_NAME" property="serCataName" />
+		<result column="SER_TYPE" property="serType" />
+		<result column="BUSINESS_TYPE" property="businessType" />
+		<result column="APPLY_USER" property="applyUser" />
+		<result column="APPLY_USERNAME" property="applyUserName" />
+		<result column="APPLY_USERPHONE" property="applyUserPhone" />
+		<result column="APPLY_DEPTNAME" property="applyDeptName" />
+		<result column="APPLY_TIME" property="applyTime" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="WORKFLOW_ID" property="workflowId" />
+		<result column="TASK_ID" property="taskId" />
+		
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="DEL_FLAG" property="delFlag" />
+		
+		<result column="STATUS" property="status" />
+		<result column="CURR_HANDLER" property="currHandler" />
+		<result column="CURR_HANDLERNAME" property="currHandlerName" />
+	</resultMap>	
+     
+
+	<insert id="insertItsmInfoWo" parameterType="ItsmInfoWo">
+			INSERT INTO ITSM_INFOWO(ID,CODE,NAME,SER_CATA,SER_TYPE,BUSINESS_TYPE,APPLY_USER,
+									APPLY_USERPHONE,APPLY_DEPTNAME,DESCRIPTION,STATUS,CURR_HANDLER,
+									CURR_HANDLERNAME,CREATEUSER,CREATEDATE,MODIFYUSER,MODIFYDATE,
+									SITEID,DEPTID,DEL_FLAG) 
+			values( #{id,jdbcType=VARCHAR},
+					#{infoWoCode,jdbcType=VARCHAR},
+					#{name,jdbcType=VARCHAR},
+					#{serCata,jdbcType=VARCHAR},
+					#{serType,jdbcType=TIMESTAMP},
+					#{businessType,jdbcType=TIMESTAMP},
+					#{applyUser,jdbcType=NUMERIC},
+					
+					#{applyUserPhone,jdbcType=VARCHAR},
+					#{applyDeptName,jdbcType=VARCHAR},
+					#{description,jdbcType=VARCHAR},
+					#{status,jdbcType=VARCHAR},
+					#{currHandler,jdbcType=VARCHAR},
+					
+					#{currHandlerName,jdbcType=VARCHAR},
+					#{createuser,jdbcType=VARCHAR},
+					#{createdate,jdbcType=TIMESTAMP},
+					#{modifyuser,jdbcType=VARCHAR},
+					#{modifydate,jdbcType=TIMESTAMP},
+					
+					#{siteid,jdbcType=VARCHAR},
+					#{deptid,jdbcType=VARCHAR},
+					#{delFlag,jdbcType=NUMERIC}) 
+	</insert>
+	<!-- 删除某条知识 -->
+	<update id="deleteItsmInfoWo" parameterType="String" >
+		UPDATE ITSM_INFOWO T
+		SET T.DEL_FLAG = 'Y'
+		where t.ID = #{id} 
+	</update>
+	<!-- 更新知识基本信息 -->
+	<update id="updateItsmInfoWo" parameterType="ItsmInfoWo">
+		update ITSM_INFOWO  
+			set MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+				MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP}
+				<if test="name != null">
+				 	,Name = #{name,jdbcType=TIMESTAMP}
+				</if>
+				<if test="description != null">
+				 	,DESCRIPTION = #{description,jdbcType=TIMESTAMP}
+				</if>				
+				<if test="applyTime != null">
+				 	,APPLY_TIME = #{applyTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="workflowId != null and workflowId != ''.toString()">
+				 	,WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR}
+				</if>	
+				<if test="status != null and status != ''.toString()">
+				 	,STATUS =#{status,jdbcType=VARCHAR}
+				</if>
+				<if test="applyUserPhone != null and applyUserPhone != ''.toString()">
+				 	,APPLY_USERPHONE =#{applyUserPhone,jdbcType=VARCHAR}
+				</if>
+		where id=#{id} 
+	</update>
+
+	<update id="updateItsmInfoWoStatus" parameterType="HashMap">
+		update ITSM_INFOWO  
+		set STATUS=#{status,jdbcType=VARCHAR}
+		where id=#{id} 
+	</update>
+
+	<update id="updateInfoWoCurrHandlerUser" parameterType="HashMap">
+		update ITSM_INFOWO  
+		set CURR_HANDLER=#{currHandler,jdbcType=VARCHAR},
+			CURR_HANDLERNAME=#{currHandlerName,jdbcType=VARCHAR}
+		where id=#{id} 
+	</update>
+
+
+	<update id="clearInfoWoCurrHandlerUser" parameterType="String">
+		update ITSM_INFOWO  
+		set CURR_HANDLER=null,
+			CURR_HANDLERNAME=null
+		where id=#{id} 
+	</update>
+	
+	
+	<!-- 查询某条知识 -->
+	<select id="queryItsmInfoWoById" parameterType="String" resultMap="itsmInfoWoMap" >
+	      SELECT   T.ID,
+			       T.CODE,
+			       T.WORKFLOW_ID,
+			       T.NAME,
+			       T.SER_CATA,
+			       ITF.NAME SER_CATA_NAME,
+			       T.SER_TYPE,
+			       T.BUSINESS_TYPE,
+			       T.APPLY_USER,
+			       SU.NAME APPLY_USERNAME,
+			       T.APPLY_USERPHONE,
+			       T.APPLY_TIME,
+			       T.APPLY_DEPTNAME,       
+			       T.DESCRIPTION,
+			       T.STATUS,
+			       T.CURR_HANDLER,
+			       T.CURR_HANDLERNAME,
+			       T.CREATEDATE,
+			       T.CREATEUSER,
+			       T.MODIFYUSER,
+			       T.MODIFYDATE
+			  FROM ITSM_INFOWO T
+			  LEFT JOIN SEC_USER SU ON T.APPLY_USER = SU.USER_ID, ITSM_FAULTTYPE ITF
+			 WHERE T.ID = #{id} 
+			   AND T.SER_CATA = ITF.ID
+	</select>
+	
+	
+	<select id="queryItsmInfoWoList" resultMap="itsmInfoWoMap" >
+		SELECT T.ID,
+		       T.CODE,
+		       T.NAME,
+		       T.SER_CATA,
+		       FT.NAME SER_CATA_NAME,
+		       T.SER_TYPE,
+		       T.BUSINESS_TYPE,
+		       T.APPLY_USER,
+		       SU.NAME APPLY_USERNAME,
+		       T.APPLY_USERPHONE,
+		       T.DESCRIPTION,
+		       T.WORKFLOW_ID,
+		       T.APPLY_DEPTNAME,
+		       T.APPLY_TIME,
+		       T.STATUS,
+		       T.CURR_HANDLER,
+		       T.CURR_HANDLERNAME,
+		       T.CREATEDATE,
+		       T.CREATEUSER
+		  FROM ITSM_INFOWO T LEFT JOIN SEC_USER SU ON T.APPLY_USER= SU.USER_ID,
+		       ITSM_FAULTTYPE FT
+		  WHERE t.siteid=#{params.siteid} AND FT.ID= T.SER_CATA AND T.DEL_FLAG = 'N'
+		  		AND T.STATUS <![CDATA[!=]]> 'draft'
+	</select>
+	  
+	  
+	 
+</mapper>

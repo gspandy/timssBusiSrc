@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.purchase.dao.PurProcessMappingDao">
+
+	<!-- PurProcessMapping插入操作 -->
+	<insert id="insertPurProcessMapping" parameterType="com.timss.purchase.bean.PurProcessMapping">
+		insert into pur_process_mapping 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="masterkey != null"> masterkey, </if>
+	      <if test="processid != null"> processid, </if>
+	      <if test="modeltype != null"> modeltype, </if>
+	      <if test="siteid != null"> siteid, </if>
+	      <if test="curHandler != null"> cur_handler, </if>
+	      <if test="curLink != null"> cur_link, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="masterkey != null"> #{masterkey,jdbcType=VARCHAR}, </if>
+	      <if test="processid != null"> #{processid,jdbcType=VARCHAR}, </if>
+	      <if test="modeltype != null"> #{modeltype,jdbcType=VARCHAR}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="curHandler != null"> #{curHandler,jdbcType=VARCHAR}, </if>
+	      <if test="curLink != null"> #{curLink,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- PurProcessMapping更新操作 -->
+	<update id="updatePurProcessMapping" parameterType="com.timss.purchase.bean.PurProcessMapping">
+		update pur_process_mapping t 
+		<set>
+	      <if test="curHandler != null"> t.cur_handler=#{curHandler}, </if>
+	      <if test="curLink != null"> t.cur_link=#{curLink}, </if>
+	    </set>
+		where t.masterkey=#{masterkey} and t.processid=#{processid} and t.modeltype=#{modeltype} and t.siteid=#{siteid} 
+	</update>
+	
+	<!--  通过sheetid、siteid和modelType找到所在流程id -->
+	<select id="queryProcessIdByParams" parameterType="java.util.Map" resultType="java.lang.String">
+		select a.processid from pur_process_mapping a where a.masterkey='${sheetId}' and a.modeltype='${modelType}' and a.siteid='${siteId}' 
+	</select>
+	<select id="queryProcessIdByEntity" parameterType="com.timss.purchase.bean.PurProcessMapping" resultType="java.lang.String">
+		select a.processid from pur_process_mapping a where a.masterkey='${masterkey}' and a.modeltype='${modeltype}' and a.siteid='${siteid}' 
+	</select>
+</mapper> 

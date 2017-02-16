@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.attendance.dao.MachineDao">
+   	<sql id="machineBeanField">
+am_id amId,am_code amCode,am_name amName,am_desc amDesc,create_by createuser,
+create_time createdate,update_by modifyuser,update_time modifydate,site_id siteid,communication_class communicationClass,
+am_ip amIp,am_port amPort,last_sync lastSync,last_import lastImport,type,LOGIN_NAME loginName,password,path
+	</sql>
+	
+    <select id="queryList" resultType="MachineBean">
+select <include refid="machineBeanField"/>
+from atd_machine
+where site_id=#{params.siteId} and del_ind!='Y'
+    </select>
+    
+    <select id="queryAll" resultType="MachineBean">
+select <include refid="machineBeanField"/>
+from atd_machine
+where del_ind!='Y'
+    </select>
+    
+    <select id="queryBySiteId" resultType="MachineBean">
+select <include refid="machineBeanField"/>
+from atd_machine
+where del_ind!='Y' and site_id=#{siteId,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="queryDetail" resultType="MachineBean">
+select <include refid="machineBeanField"/>
+from atd_machine
+where am_id=#{id}
+    </select>
+   
+    <insert id="insert" parameterType="MachineBean" >
+    	insert into atd_machine (
+am_id ,am_code ,am_name ,am_desc ,create_by ,
+create_time ,site_id ,communication_class ,
+am_ip ,am_port ,last_sync ,last_import,
+type,LOGIN_NAME,password,path 
+		)
+    	values (
+#{amId,jdbcType=VARCHAR},#{amCode,jdbcType=VARCHAR},#{amName,jdbcType=VARCHAR},#{amDesc,jdbcType=VARCHAR},#{createuser,jdbcType=VARCHAR},
+#{createdate,jdbcType=TIMESTAMP},#{siteid,jdbcType=VARCHAR},#{communicationClass,jdbcType=VARCHAR},
+#{amIp,jdbcType=VARCHAR},#{amPort,jdbcType=NUMERIC},#{lastSync,jdbcType=TIMESTAMP},#{lastImport,jdbcType=TIMESTAMP},
+#{type,jdbcType=VARCHAR},#{loginName,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{path,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <update id="update" parameterType="MachineBean">
+        update atd_machine set 
+am_code=#{amCode,jdbcType=VARCHAR},am_name=#{amName,jdbcType=VARCHAR},am_desc=#{amDesc,jdbcType=VARCHAR},
+update_by=#{modifyuser,jdbcType=VARCHAR},update_time=#{modifydate,jdbcType=TIMESTAMP},communication_class=#{communicationClass,jdbcType=VARCHAR},
+am_ip=#{amIp,jdbcType=VARCHAR},am_port=#{amPort,jdbcType=NUMERIC},last_import=#{lastImport,jdbcType=TIMESTAMP},
+type=#{type,jdbcType=VARCHAR},LOGIN_NAME=#{loginName,jdbcType=VARCHAR},password=#{password,jdbcType=VARCHAR},path=#{path,jdbcType=VARCHAR}
+		where am_id = #{amId}
+    </update>
+    
+    <update id="updateSync" parameterType="MachineBean">
+        update atd_machine set 
+update_by=#{modifyuser,jdbcType=VARCHAR},update_time=#{modifydate,jdbcType=TIMESTAMP},
+last_sync=#{lastSync,jdbcType=TIMESTAMP},last_import=#{lastImport,jdbcType=TIMESTAMP}
+		where am_id = #{amId}
+    </update>
+    
+    <delete id="deleteById">
+    	update atd_machine set 
+    	del_ind='Y'
+    	where am_id = #{id}
+    </delete>    
+
+</mapper>

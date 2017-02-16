@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.asset.dao.AssetInfoDao">
+	<resultMap type="com.timss.asset.bean.AssetBean" id="AssetBeanMap">
+		<result property="itemName" column="itemname"/>
+		<result property="itemCode" column="itemcode"/>
+		<result property="itemId" column="itemid"/>
+	</resultMap>
+    <resultMap type="com.timss.asset.vo.AssetVo" id="AssetVoMap">
+		<result property="imtId" column="IMTID"/>
+		<result property="sheetNo" column="SHEETNO"/>
+		<result property="poId" column="POID"/>
+		<result property="poNo" column="PONO"/>
+		<result property="sheetName" column="SHEETNAME"/>
+		<result property="itemId" column="ITEMID"/>
+		<result property="itemCode" column="ITEMCODE"/>
+		<result property="itemName" column="ITEMNAME"/>
+		<result property="cusmodel" column="CUSMODEL"/>
+		<result property="attr1" column="ATTR1"/>
+	</resultMap>
+	<select id="queryAssetInfoById" resultType="AssetBean">
+	select <include refid="selectColumns"/>
+    from ast_asset t
+    left join ast_asset l on t.parentid = l.assetid
+    where t.assetid = #{value}
+    </select>
+    
+    <select id="queryItemInfoById" resultMap="AssetBeanMap">
+    select ii.itemname as itemname,ii.itemcode as itemcode
+    from ast_asset t
+    left join inv_item ii on ii.itemid = t.itemid
+    where t.assetid = #{value}
+    </select>
+    
+	<sql id="selectColumns">
+		t.assetid, t.assetname, t.description, t.assettype,  
+       	t.status, t.site, t.spec, t.PARENTID, l.assetname locationname, t.serialnum,
+       	t.MODELDESC, t.producedate, t.installdate, t.companyno,
+       	t.manufacturer, t.poexcuteid, t.purchaseprice, t.lifetime,
+       	t.purchasedate, t.originalvalue, t.ytdcost, t.BUDGETS,t.assetcode,t.cumodel,t.isRoot,
+       	t.IS_ONLY_POINT as isOnlyPoint,t.POSITION as position,t.poid as poId,t.imadid as imadId,t.allowBorrow as allowBorrow,
+       	t.forbidDelete,t.forbidMove,t.forbidUpdate, t.imtdid, t.itemid
+	</sql>
+    
+    <!-- 插入资产信息 -->
+    <insert id="insertAssetInfo" parameterType="AssetBean" >
+    	insert into ast_asset (
+    		assetid, assetname, description, assettype, status, site, spec, PARENTID, serialnum, MODELDESC,
+			producedate,  installdate,companyno,  manufacturer, poexcuteid, purchaseprice, lifetime, 
+			purchasedate, originalvalue, ytdcost, BUDGETS,assetcode,cumodel,
+			IS_ONLY_POINT,POSITION,poid,imadid,CREATEDBY,CREATEDATE,allowBorrow,forbidDelete,forbidMove,forbidUpdate,imtdid,itemid,ast_apply_id
+    	)
+    	values (
+    		#{assetId,jdbcType=VARCHAR}, #{assetName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+    	 	#{assetType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{site,jdbcType=VARCHAR},
+    	 	#{spec,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{serialNum,jdbcType=VARCHAR},
+    	 	#{modelDesc,jdbcType=VARCHAR}, #{produceDate,jdbcType=TIMESTAMP}, #{installDate,jdbcType=TIMESTAMP},
+    	 	#{companyNo,jdbcType=VARCHAR}, #{manufacturer,jdbcType=VARCHAR}, #{poexcuteId,jdbcType=VARCHAR},
+    	 	#{purchasePrice,jdbcType=NUMERIC}, #{lifeTime,jdbcType=VARCHAR}, #{purchaseDate,jdbcType=TIMESTAMP},
+    	 	#{originalValue,jdbcType=VARCHAR},#{ytdCost,jdbcType=VARCHAR}, #{budgets,jdbcType=VARCHAR}, #{assetCode,jdbcType=VARCHAR},
+    	 	#{cuModel,jdbcType=VARCHAR},#{isOnlyPoint,jdbcType=VARCHAR},#{position,jdbcType=VARCHAR},
+    		#{poId,jdbcType=VARCHAR},#{imadId,jdbcType=VARCHAR},#{createuser,jdbcType=VARCHAR},sysdate,#{allowBorrow,jdbcType=VARCHAR},
+    		#{forbidDelete,jdbcType=VARCHAR},#{forbidMove,jdbcType=VARCHAR},#{forbidUpdate,jdbcType=VARCHAR},
+    		#{imtdId,jdbcType=VARCHAR},#{itemId,jdbcType=VARCHAR},#{astApplyId,jdbcType=VARCHAR}
+    	)
+    </insert>
+       
+    <!-- 更新资产主表信息 -->
+    <update id="updateAssetInfo" parameterType="AssetBean">
+    	update ast_asset set 
+    		UPDATEDBY = #{modifyuser,jdbcType=VARCHAR},
+    		UPDATEDATE=sysdate,
+    		assetname = #{assetName,jdbcType=VARCHAR}, 
+    		assetCode = #{assetCode,jdbcType=VARCHAR}, 
+    		assettype = #{assetType,jdbcType=VARCHAR}, 
+    		spec = #{spec,jdbcType=VARCHAR}, 
+    		description = #{description,jdbcType=VARCHAR},
+    		producedate = #{produceDate,jdbcType=TIMESTAMP}, 
+    		installdate = #{installDate,jdbcType=TIMESTAMP}, 
+    		companyNo = #{companyNo,jdbcType=VARCHAR}, 
+    		manufacturer = #{manufacturer,jdbcType=VARCHAR},
+    		purchaseprice = #{purchasePrice,jdbcType=NUMERIC},
+    		purchasedate = #{purchaseDate,jdbcType=TIMESTAMP},
+    		poexcuteid = #{poexcuteId,jdbcType=VARCHAR}, 
+    		lifeTime = #{lifeTime,jdbcType=VARCHAR}, 
+    		modelDesc = #{modelDesc,jdbcType=VARCHAR},
+    		cumodel=#{cuModel,jdbcType=VARCHAR},
+    		IS_ONLY_POINT=#{isOnlyPoint,jdbcType=VARCHAR},
+    		POSITION=#{position,jdbcType=VARCHAR}, 
+    		allowBorrow = #{allowBorrow,jdbcType=VARCHAR},
+    		itemid = #{itemId,jdbcType=VARCHAR}
+    	where assetId = #{assetId}
+    </update>
+    
+    <!-- 更新资产的位置 -->
+    <update id="updateAssetLocation">
+    	update ast_asset set parentId = #{parentId} where assetid = #{id}
+    </update>
+    
+    <!-- 更新资产申请表的状态 -->
+    <update id="updateAssetApply">
+		UPDATE AST_ASSET_APPLY T SET T.STATUS = 'Y' WHERE T.AST_APPLY_ID = #{astApplyId} 
+	</update>
+    
+    <delete id="deleteAssetById">
+    	<!-- delete from ast_asset where assetId = #{value} -->
+    	update ast_asset set del_ind='Y',updatedby=#{operator},updatedate=sysdate where assetId = #{assetId}
+    </delete>
+    
+    <select id='queryAssetByCodeAndSite' resultType="AssetBean">
+        select t.assetId,t.assetName 
+        from ast_asset t 
+        where t.site=#{siteId} and t.assetCode=#{code} and t.del_ind!='Y'     
+    </select>
+    
+    <resultMap id='assetHint' type="map">
+        <id property="id" column="assetId"/>
+        <result property="code" column="assetcode"/>
+	    <result property="name" column="assetName"/>
+    </resultMap>
+ 
+    <resultMap id='assetHintByCode' type="map">
+        <id property="id" column="assetid"/>
+	    <result property="code" column="assetcode"/>
+	    <result property="name" column="assetname"/>
+	    <result property="itemid" column="itemid"/>
+    </resultMap>
+       
+    <select id="queryAssetForHint" resultMap="assetHint">
+        select t.assetId,t.assetName,t.assetcode
+        from ast_asset t
+        where t.site=#{site} and (t.assetName like '%${kw}%' or t.assetcode like  '%${kw}%')
+        and rownum&lt;=11 and t.del_ind!='Y'
+        <if test="isShowAll != true ">
+		    and t.assetid not in (select a.assetid from ast_asset a where a.is_only_point='Y')
+		</if>
+    </select>
+ 
+    <select id="queryAssetForHintByCode" resultMap="assetHintByCode">
+        select t.assetid, t.assetcode, t.assetname, t.itemid
+        from ast_asset t
+        where t.site=#{site} and t.assetcode like '%${kw}%'
+        and rownum&lt;=11 and t.del_ind!='Y'
+        order by t.assetcode asc
+    </select>
+       
+    <select id="queryAssetParents" resultType="String">
+        select t.assetid
+		from ast_asset t 
+		start with t.assetid=#{id}
+		connect by t.assetid=prior parentid 
+    </select>
+    
+    <select id="queryAssetTreeRootBySiteId" resultType="AssetBean">
+		select  <include refid="selectColumns"/>
+		from ast_asset t 
+		left join ast_asset l on t.parentid = l.assetid
+		where t.isroot = 'Y' and t.site = #{siteId} and t.del_ind!='Y'
+	</select>
+	
+    <select id="queryChildrenNode" resultType="AssetBean">
+		select  <include refid="selectColumns"/>
+		from ast_asset t 
+		left join ast_asset l on t.parentid = l.assetid
+		where t.parentid = #{parentId} and t.del_ind!='Y'
+		<if test="isShowAll != true ">
+		    and t.assetid not in (select a.assetid from ast_asset a where a.is_only_point='Y')
+		</if>    
+		order by NLSSORT(t.assetname,'NLS_SORT = SCHINESE_PINYIN_M')
+	</select>
+	
+	<!-- 查询某个位置下的位置和资产，有用，查根节点的右边，有分页、排序 -->
+	<select id="queryAssetListByParentId" resultType="AssetBean">
+		select  <include refid="selectColumns"/> 
+		from ast_asset t 
+		left join ast_asset l on t.parentid = l.assetid
+		where t.parentid = #{params.location} and t.del_ind!='Y'
+		<if test="params.isShowAll != true ">
+		    and t.assetid not in (select a.assetid from ast_asset a where a.is_only_point='Y')
+		</if> 
+	</select>
+	
+	<select id="queryByName" resultType="AssetBean">
+		select  <include refid="selectColumns"/>
+		from ast_asset t 
+		left join ast_asset l on t.parentid = l.assetid
+		where t.SITE = #{siteId} and t.assetname=#{assetName} and t.del_ind!='Y'
+			<if test="parentId != null and parentId != '' ">
+			    and t.PARENTID=#{parentId}
+			</if> 
+	</select>
+	
+	<!-- 根据assetId获取采购合同编号，物资接收单编号 -->
+	<select id="getPurchaseList" resultMap="AssetVoMap">
+        SELECT MT.IMTID, MT.SHEETNO, T.POID, IWP.SHEETNO AS PONO, IWP.SHEETNAME FROM INV_MAT_TRAN MT
+        LEFT JOIN INV_MAT_TRAN_DETAIL TD ON MT.IMTID = TD.IMTID
+        LEFT JOIN AST_ASSET T ON T.IMTDID = TD.IMTDID
+        LEFT JOIN ITCEAM_WORKFLOW_PURCHORDER IWP ON IWP.SHEET_ID = T.POID
+        WHERE T.ASSETID = #{assetId} AND T.POID IS NOT NULL	
+	</select>
+	
+	<!-- 根据站点获取关联主项目列表 -->
+	<select id="getInvItemList" resultMap="AssetVoMap">
+        select t.itemid, t.itemcode, t.itemname, t.cusmodel, t.attr1
+        from inv_item t where t.site_id = #{params.siteId}
+	</select>
+</mapper> 

@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceManagementApplyDao">
+	<!-- 在resultMap中设置为指定的ID，然后即可将数据库中的column名称转换为bean中的属性。名字一样的可以不写在result中。 -->
+	<resultMap type="com.timss.finance.bean.FinanceManagementApply" id="financeManagementApplyMap">
+		<id property="id" column="id"/>
+		<result property="deptid" column="deptid"/>
+		<result property="siteid" column="siteid"/>
+		<result property="createuser" column="createuser"/>
+		<result property="createdate" column="createdate"/>
+		<result property="modifyser" column="modifyser"/>
+		<result property="modifydate" column="modifydate"/>
+		<result property="name" column="name"/>
+		<result property="subject" column="subject"/>
+		<result property="budget" column="budget"/>
+		<result property="description" column="description"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/>
+		<result property="proInstId" column="pro_inst_id"/>
+		<result property="attach" column="attach"/>
+		<result property="applyUser" column="apply_user"/>
+		<result property="applyUsername" column="apply_username"/>
+		<result property="flowStatus" column="flow_status"/>
+		<result property="flowStatusName" column="flow_status_name"/>
+		<result property="deptname" column="deptname"/>
+		<result property="applyType" column="apply_type"/>
+		<result property="type" column="type"/>
+		<result property="currHandUserName" column="currhandusername"/>
+		<result property="currHandUser" column="currhanduser"/>
+		<result property="participantIds" column="participant_Ids"/>
+		<result property="participantName" column="participant_Name"/>
+		<result property="participateDeptName" column="participate_Dept_Name"/>
+		<result property="outComName" column="outCom_Name"/>
+		<result property="outPersonNum" column="outPerson_Num"/>
+		<result property="strDate" column="str_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="ourPersonNum" column="ourPerson_Num"/>
+		<result property="occurDate" column="occur_Date"/>
+		<result property="occurAddress" column="occur_address"/>
+		<result property="isTravel" column="IS_TRAVEL"/>
+		<result property="vehicle" column="vehicle"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.finance.vo.FinanceManagementApplyVo" id="financeManagementApplyVo">
+		<id property="id" column="id"/>
+		<result property="deptid" column="deptid"/>
+		<result property="siteid" column="siteid"/>
+		<result property="createuser" column="createuser"/>
+		<result property="createdate" column="createdate"/>
+        <result property="modifyser" column="modifyser"/>
+		<result property="modifydate" column="modifydate"/>
+		<result property="name" column="name"/>
+		<result property="subject" column="subject"/>
+		<result property="budget" column="budget"/>
+		<result property="description" column="description"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/>
+		<result property="proInstId" column="pro_inst_id"/>
+		<result property="attach" column="attach"/>
+		<result property="applyUser" column="apply_user"/>
+		<result property="applyUsername" column="apply_username"/>
+		<result property="flowStatus" column="flow_status"/>
+		<result property="flowStatusName" column="flow_status_name"/>
+		
+		<result property="deptname" column="deptname"/>
+		<result property="applyType" column="apply_type"/>
+		<result property="type" column="type"/>
+		<result property="currHandUserName" column="currhandusername"/>
+		<result property="currHandUser" column="currhanduser"/>
+		<result property="participantIds" column="participant_Ids"/>
+		<result property="participantName" column="participant_Name"/>
+		<result property="participateDeptName" column="participate_Dept_Name"/>
+		<result property="outComName" column="outCom_Name"/>
+		<result property="outPersonNum" column="outPerson_Num"/>
+		<result property="strDate" column="str_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="ourPersonNum" column="ourPerson_Num"/>
+		<result property="occurDate" column="occur_Date"/>
+		<result property="occurAddress" column="occur_address"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.finance.vo.FinanceManagementApplyDtlVo" id="financeManagementApplyDtlVo">
+		<id property="id" column="id"/>
+		<result property="deptid" column="deptid"/>
+		<result property="siteid" column="siteid"/>
+		<result property="createuser" column="createuser"/>
+		<result property="createdate" column="createdate"/>
+		<result property="modifyser" column="modifyser"/>
+		<result property="modifydate" column="modifydate"/>
+		<result property="name" column="name"/>
+		<result property="subject" column="subject"/>
+		<result property="budget" column="budget"/>
+		<result property="description" column="description"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/>
+		<result property="proInstId" column="pro_inst_id"/>
+		<result property="attach" column="attach"/>
+		<result property="applyUser" column="apply_user"/>
+		<result property="applyUsername" column="apply_username"/>
+		<result property="flowStatus" column="flow_status"/>
+		<result property="flowStatusName" column="flow_status_name"/>
+		<result property="deptname" column="deptname"/>
+		<result property="applyType" column="apply_type"/>
+		<result property="type" column="type"/>
+		<result property="currHandUserName" column="currhandusername"/>
+		<result property="currHandUser" column="currhanduser"/>
+		<result property="participantIds" column="participant_Ids"/>
+		<result property="participantName" column="participant_Name"/>
+		<result property="participateDeptName" column="participate_Dept_Name"/>
+		<result property="outComName" column="outCom_Name"/>
+		<result property="outPersonNum" column="outPerson_Num"/>
+		<result property="strDate" column="str_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="ourPersonNum" column="ourPerson_Num"/>
+		<result property="occurDate" column="occur_Date"/>
+		<result property="occurAddress" column="occur_address"/>
+		<result property="isTravel" column="IS_TRAVEL"/>
+		<result property="vehicle" column="vehicle"/>
+	</resultMap>
+	
+	<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,name,subject,budget,description,del_flag,currhanduser,currhandusername,apply_type,type,
+		siteid,deptid,status,createuser,createdate,apply_user,apply_username,attach,pro_inst_id,
+		deptname,participant_Ids,participant_Name,participate_Dept_Name,outCom_Name,outPerson_Num,
+		str_date,end_date,ourPerson_Num,occur_Date,occur_Address,IS_TRAVEL,vehicle
+	</sql>
+	
+	<insert id="insertFinanceManagementApply" parameterType="com.timss.finance.bean.FinanceManagementApply">
+		insert into FIN_MANAGEMENT_APPLY
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		  <if test="id != null"> id, </if>
+	      <if test="name != null"> name, </if>
+	      <if test="subject != null"> subject, </if>
+	      <if test="budget != null"> budget, </if>
+	      <if test="description != null"> description, </if>
+	       del_flag,
+	      <if test="currHandUser != null"> currhanduser, </if>
+	      <if test="currHandUserName != null"> currhandusername, </if>
+	      <if test="applyType != null"> apply_type, </if>
+	      <if test="type != null"> type, </if>
+	      <if test="siteid != null"> siteid, </if>
+	      <if test="deptid != null">deptid,</if>
+	      <if test="status != null"> status, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null">createdate,</if>
+	      <if test="applyUser != null">apply_user,</if>
+	      <if test="applyUsername != null">apply_username,</if>
+	      <if test="attach != null">attach,</if>
+	      <if test="proInstId != null">pro_inst_id,</if>
+	      <if test="deptname != null">deptname,</if>
+	      <if test="participantIds != null">participant_Ids,</if>
+	      <if test="participantName != null">participant_Name,</if>
+	      <if test="participateDeptName != null">participate_Dept_Name,</if>
+	      <if test="outComName != null">outCom_Name,</if>
+	      <if test="outPersonNum != null">outPerson_Num,</if>
+	      <if test="strDate != null">str_date,</if>
+	      <if test="endDate != null">end_date,</if>	
+	      <if test="ourPersonNum != null">ourPerson_Num,</if>	
+	      <if test="occurDate != null">occur_Date,</if>
+	      <if test="occurAddress != null">occur_Address,</if>
+	      <if test="isTravel != null">is_travel,</if>
+	      <if test="vehicle != null">vehicle,</if>	      
+	     </trim>
+	     <trim prefix="values (" suffix=")" suffixOverrides=",">
+		  <if test="id != null">  #{id,jdbcType=VARCHAR}, </if>
+	      <if test="name != null">  #{name,jdbcType=VARCHAR}, </if>
+	      <if test="subject != null">  #{subject,jdbcType=VARCHAR}, </if>
+	      <if test="budget != null">  #{budget,jdbcType=NUMERIC}, </if>
+	      <if test="description != null">  #{description,jdbcType=VARCHAR}, </if>
+	         0, 
+	      <if test="currHandUser != null"> #{currHandUser,jdbcType=VARCHAR}, </if>
+	      <if test="currHandUserName != null">  #{currHandUserName,jdbcType=VARCHAR}, </if>
+	      <if test="applyType != null"> #{applyType,jdbcType=VARCHAR}, </if>
+	      <if test="type != null"> #{type,jdbcType=VARCHAR},  </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+	      <if test="status != null">#{status,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="applyUser != null"> #{applyUser,jdbcType=VARCHAR}, </if>
+	      <if test="applyUsername != null"> #{applyUsername,jdbcType=VARCHAR}, </if>
+	      <if test="attach != null"> #{attach,jdbcType=VARCHAR}, </if>
+	      <if test="proInstId != null"> #{proInstId,jdbcType=VARCHAR}, </if>
+	      <if test="deptname != null"> #{deptname,jdbcType=VARCHAR}, </if>
+	      <if test="participantIds != null"> #{participantIds,jdbcType=VARCHAR}, </if>
+	      <if test="participantName != null"> #{participantName,jdbcType=VARCHAR}, </if>
+	      <if test="participateDeptName != null"> #{participateDeptName,jdbcType=VARCHAR}, </if>
+	      <if test="outComName != null"> #{outComName,jdbcType=VARCHAR}, </if>
+	      <if test="outPersonNum != null"> #{outPersonNum,jdbcType=VARCHAR}, </if>
+	      <if test="strDate != null"> #{strDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="endDate != null"> #{endDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="ourPersonNum != null"> #{ourPersonNum,jdbcType=VARCHAR}, </if>
+	      <if test="occurDate != null">#{occurDate,jdbcType=TIMESTAMP},</if>
+	      <if test="occurAddress != null">#{occurAddress,jdbcType=VARCHAR},</if>
+	      <if test="isTravel != null">#{isTravel,jdbcType=VARCHAR},</if>
+	      <if test="vehicle != null">#{vehicle,jdbcType=VARCHAR},</if>
+	     </trim>
+	</insert>
+	
+	<update id="updateFinanceManagementApply">
+		UPDATE FIN_MANAGEMENT_APPLY 
+		<set>   
+		<if test="name != null and name != '' ">
+			 name = #{name},
+		</if>
+		<if test="type != null and type != '' ">
+			 type = #{type},
+		</if>
+		<if test="subject != null and subject != '' ">
+			 subject = #{subject},
+		</if>
+		<if test="budget != null and budget != '' ">
+			 budget = #{budget},
+		</if>
+
+		<if test="description != null and description != '' ">
+			 description = #{description},
+		</if>
+		<if test="modifyuser != null and modifyuser != '' ">
+			 modifyuser = #{modifyuser},
+		</if> 
+		  <if test="modifydate != null and modifydate != '' ">
+			 modifydate = #{modifydate},
+		</if> 
+		 <if test="status != null and status != '' ">
+			 status = #{status},
+		</if>
+		<if test="attach != null and attach != '' ">
+			 attach = #{attach},
+		</if> 
+		 <if test="applyUser != null and applyUser != '' ">
+			 apply_user = #{applyUser},
+		</if>
+		<if test="applyUsername != null and applyUsername != '' ">
+			 apply_username = #{applyUsername},
+		</if>
+		<if test="proInstId != null and proInstId != '' ">
+			 pro_inst_id = #{proInstId},
+		</if>
+		<if test="deptname != null and deptname != '' ">
+			 deptname = #{deptname},
+		</if>
+		<if test="currHandUser != null and currHandUser != '' ">
+			 currhanduser = #{currHandUser},
+		</if>
+		<if test="currHandUserName != null and currHandUserName != '' ">
+			 currhandusername = #{currHandUserName},
+		</if>
+		<if test="participantIds != null and participantIds != '' ">
+			  participant_Ids = #{participantIds},
+		</if>
+		<if test="participantName != null and participantName != '' ">
+			 participant_Name = #{participantName},
+		</if>
+		<if test="participateDeptName != null and  participateDeptName!= '' ">
+			 participate_Dept_Name = #{participateDeptName},
+		</if>
+		<if test="outComName != null and outComName != '' ">
+			 outCom_Name = #{outComName},
+		</if>
+		<if test=" outPersonNum != null and outPersonNum != '' ">
+			 outPerson_Num = #{outPersonNum},
+		</if>
+		<if test=" strDate != null and strDate != '' ">
+			 str_date = #{strDate},
+		</if>
+		<if test=" endDate != null and endDate != '' ">
+			 end_date = #{endDate},
+		</if>
+		<if test=" ourPersonNum != null and ourPersonNum != '' ">
+			 ourPerson_Num = #{ourPersonNum},
+		</if>
+		<if test="occurDate != null  and occurDate != '' ">
+			occur_Date = #{occurDate},
+		</if>
+		<if test="occurAddress != null  and occurDate != '' ">
+			occur_Address = #{occurAddress},
+		</if>
+		<if test="isTravel != null  and isTravel != '' ">
+			is_Travel = #{isTravel},
+		</if>
+		<if test="vehicle != null  and vehicle != '' ">
+			vehicle = #{vehicle},
+		</if>
+		siteid=#{siteid,jdbcType=VARCHAR},
+		deptid=#{deptid,jdbcType=VARCHAR}
+		</set>  
+		where id = #{id}
+	</update>
+	
+	<update id="updateFinManagementApplyAttach"  parameterType="HashMap">
+		UPDATE FIN_MANAGEMENT_APPLY 
+		set  attach = #{attach}
+		where id = #{id}
+	</update>
+	
+	<update id="updateCurrHandUserById" parameterType="HashMap">
+		UPDATE FIN_MANAGEMENT_APPLY t
+		set t.currhanduser = #{currHandlerUser},
+			t.currhandusername = #{currHandUserName}
+		where id = #{id}
+	</update>
+		 
+	<select id="queryFinanceManagementApplyById"  resultMap="financeManagementApplyDtlVo">
+		select <include refid="columnBasic"/>,flow_status
+		    from FIN_MANAGEMENT_APPLY 
+			where id=#{id}
+		
+	</select>
+	
+	<select id="queryFinanceManagementApplyByProcessId"  resultMap="financeManagementApplyDtlVo">
+		select <include refid="columnBasic"/>,flow_status
+		    from FIN_MANAGEMENT_APPLY 
+			where id=#{processId}
+	</select>
+	
+	
+	<select id="queryFinanceManagementList"  resultMap="financeManagementApplyVo">
+		select <include refid="columnBasic"/>,flow_status,flow_status_name
+		from FIN_MANAGEMENT_APPLY 
+		where del_flag=0 and  status <![CDATA[ <> ]]> 'D'
+	</select>
+	
+	<select id="queryApplyList"  parameterType="HashMap" resultMap="financeManagementApplyVo">
+		select <include refid="columnBasic"/>,flow_status,flow_status_name
+		from FIN_MANAGEMENT_APPLY T
+		where del_flag=0 and  status = 'AE' 
+			AND T.APPLY_TYPE=#{type}
+			AND T.STR_DATE <![CDATA[ >= ]]> #{beginDate}
+			AND T.END_DATE <![CDATA[ <= ]]> #{endDate}
+			AND T.SITEID =#{siteid} 
+	</select>
+	
+	<select id="queryFinanceManagementListByDiffDay"  parameterType="HashMap" resultMap="financeManagementApplyVo">
+		select <include refid="columnBasic"/>,flow_status,flow_status_name
+		from FIN_MANAGEMENT_APPLY T
+		where del_flag=0 and  status = 'AE' AND T.SITEID = #{siteid}  
+			<if test="userId!= null and userId != '' ">
+				AND PARTICIPANT_IDS like ('#{userId}') 
+			</if>
+			<if test=" type != null and type != '' ">
+				AND T.APPLY_TYPE=#{type} 
+			</if>
+			<if test=" beginDate != null and  beginDate!= '' ">
+				AND T.STR_DATE <![CDATA[ >= ]]> #{beginDate} 
+			</if>
+			<if test=" endDate!= null and  endDate!= '' ">
+				AND T.END_DATE <![CDATA[ <= ]]> #{endDate} 
+			</if>
+	</select>
+	
+	
+	<select id="queryFuzzyFinanceManagementList"  resultMap="financeManagementApplyVo">
+		select <include refid="columnBasic"/>,flow_status
+		from FIN_MANAGEMENT_APPLY 
+		where del_flag=0 and  status <![CDATA[ <> ]]> 'D' 
+			  and (status = 'AE' OR (status = 'AI' AND FLOW_STATUS = 'sqrbl'))
+	</select>
+	
+	<update id = "deleteFinanceManagementApplyById" >
+        update  FIN_MANAGEMENT_APPLY set del_flag=1 where id=#{id}
+    </update>
+    
+    <update id="updateFinanceManagementApplyFlowStatus">
+    	update FIN_MANAGEMENT_APPLY 
+    	set flow_status=#{flowStatus} 
+    		<if test="flowStatusName != null and flowStatusName != '' ">
+				 , flow_status_name = #{flowStatusName}
+			</if>
+    	where id=#{id}
+    </update>
+     	 
+</mapper> 

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvOrganizeDataDao">
+	<resultMap type="com.timss.inventory.bean.InvOrganizeData" id="InvOrganizeDataMap">
+		<result property="warehouseName" column="warehouse_name"/>
+		<result property="containerName" column="container_name"/>
+		<result property="categroyO" column="categroy_o"/>
+		<result property="categroyS" column="categroy_s"/>
+		<result property="itemName" column="item_name"/>
+		<result property="unitName" column="unit_name"/>
+		<result property="siteId" column="site_id"/>
+		<result property="createUser" column="create_user"/>
+	</resultMap>
+	
+	<select id="queryInvOrganizeData" resultMap="InvOrganizeDataMap">
+		select a.warehouse_name,a.container_name,a.categroy_o,a.categroy_s,a.item_name,
+       			a.cusmodel,a.qty,a.unit_name,a.price,a.status,a.remark,a.site_id,a.create_user 
+		from inv_organize_data a
+		where a.site_id = '${params.siteId}' 
+		<if test="params.warehouseName != null and params.warehouseName != ''">
+		  	and a.warehouse_name like '%'||'${params.warehouseName}'||'%' 
+		</if>
+		<if test="params.containerName != null and params.containerName != ''">
+		  	and a.container_name like '%'||'${params.containerName}'||'%' 
+		</if>
+		<if test="params.categroyO != null and params.categroyO != ''">
+		  	and a.categroy_o like '%'||'${params.categroyO}'||'%' 
+		</if>
+		<if test="params.categroyS != null and params.categroyS != ''">
+		  	and a.categroy_s like '%'||'${params.categroyS}'||'%' 
+		</if>
+		<if test="params.itemName != null and params.itemName != ''">
+		  	and a.item_name like '%'||'${params.itemName}'||'%' 
+		</if>
+		<if test="params.cusmodel != null and params.cusmodel != ''">
+		  	and a.cusmodel like '%'||'${params.cusmodel}'||'%' 
+		</if>
+		<if test="params.qty != null and params.qty != ''">
+		  	and a.qty like '%'||'${params.qty}'||'%' 
+		</if>
+		<if test="params.unitName != null and params.unitName != ''">
+		  	and a.unit_name like '%'||'${params.unitName}'||'%' 
+		</if>
+		<if test="params.price != null and params.price != ''">
+		  	and a.price like '%'||'${params.price}'||'%' 
+		</if>
+		<if test="params.status != null and params.status != ''">
+		  	and a.status like '%'||'${params.status}'||'%' 
+		</if>
+		<if test="params.remark != null and params.remark != ''">
+		  	and a.remark like '%'||'${params.remark}'||'%' 
+		</if>
+		<if test="params.createUser != null and params.createUser != ''">
+		  	and a.create_user like '%'||'${params.createUser}'||'%' 
+		</if>
+		order by a.status asc
+	</select>
+	
+	<delete id="deleteInvOrganizeData" parameterType="com.timss.inventory.bean.InvOrganizeData">
+		delete from inv_organize_data a where a.site_id = #{siteId} 
+		<if test="warehouseName != null and warehouseName != ''">
+		  	and a.warehouse_name = #{warehouseName} 
+		</if>
+		<if test="containerName != null and containerName != ''">
+		  	and a.container_name = #{containerName} 
+		</if>
+		<if test="categroyO != null and categroyO != ''">
+		  	and a.categroy_o = #{categroyO} 
+		</if>
+		<if test="categroyS != null and categroyS != ''">
+		  	and a.categroy_s = #{categroyS} 
+		</if>
+		<if test="itemName != null and itemName != ''">
+		  	and a.item_name = #{itemName} 
+		</if>
+		<if test="cusmodel != null and cusmodel != ''">
+		  	and a.cusmodel = #{cusmodel} 
+		</if>
+		<if test="qty != null and qty != ''">
+		  	and a.qty = #{qty} 
+		</if>
+		<if test="unitName != null and unitName != ''">
+		  	and a.unit_name = #{unitName} 
+		</if>
+		<if test="price != null and price != ''">
+		  	and a.price = #{price} 
+		</if>
+		<if test="status != null and status != ''">
+		  	and a.status = #{status} 
+		</if>
+		<if test="remark != null and remark != ''">
+		  	and a.remark = #{remark} 
+		</if>
+		<if test="createUser != null and createUser != ''">
+		  	and a.create_user = #{createUser} 
+		</if>
+	</delete>
+	
+	<insert id="insertInvOrganizeData" parameterType="com.timss.inventory.bean.InvOrganizeData">
+		insert into inv_organize_data 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="warehouseName != null"> warehouse_name, </if>
+	      <if test="containerName != null"> container_name, </if>
+	      <if test="categroyO != null"> categroy_o, </if>
+	      <if test="categroyS != null"> categroy_s, </if>
+	      <if test="itemName != null"> item_name, </if>
+	      <if test="cusmodel != null"> cusmodel, </if>
+	      <if test="qty != null"> qty, </if>
+	      <if test="unitName != null"> unit_name, </if>
+	      <if test="price != null"> price, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="createUser != null"> create_user, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="warehouseName != null"> #{warehouseName,jdbcType=VARCHAR}, </if>
+	      <if test="containerName != null"> #{containerName,jdbcType=VARCHAR}, </if>
+	      <if test="categroyO != null"> #{categroyO,jdbcType=VARCHAR}, </if>
+	      <if test="categroyS != null"> #{categroyS,jdbcType=VARCHAR}, </if>
+	      <if test="itemName != null"> #{itemName,jdbcType=VARCHAR}, </if>
+	      <if test="cusmodel != null"> #{cusmodel,jdbcType=VARCHAR}, </if>
+	      <if test="qty != null"> #{qty,jdbcType=VARCHAR}, </if>
+	      <if test="unitName != null"> #{unitName,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> #{price,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="createUser != null"> #{createUser,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<parameterMap type="map" id="CALLParamMap">  
+	   <parameter property="siteid" jdbcType="VARCHAR" mode="IN"/>  
+	   <parameter property="flag" jdbcType="VARCHAR" mode="OUT"/>  
+	</parameterMap> 
+	<update id="callOrganizeDataInit" parameterMap="CALLParamMap" statementType="CALLABLE">
+		{call SP_INV_ORGANIZE_DATA(?,?)} 
+	</update>
+</mapper>

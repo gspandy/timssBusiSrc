@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.DefinitionDao">
+	
+	<!--说明：#{}内的参数，需要与传入的Dept中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertDefinition" parameterType="DefinitionBean">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_ATD_DEFINITION.nextval from dual
+		</selectKey>
+			insert into ATD_DEFINITION( id, serviceYear, yearRatio,
+			compensateRatio, effectiveDays,
+			firstLevelDays, secondLevelDays, thirdLevelDays, siteId, startYear,endYear,
+			foreStartDate,foreEndDate,afterStartDate, afterEndDate,
+			createBy, createDate, updateBy, updateDate,validMin,toleranceMin,
+			isCheckWorkstatus,lastCheck,workHours,oprWorkHours )
+			values( #{id}, #{ serviceYear}, #{ yearRatio}, 
+				#{ compensateRatio}, #{effectiveDays},
+				#{firstLevelDays}, #{ secondLevelDays}, #{ thirdLevelDays}, #{ siteId}, #{ startYear },#{ endYear },
+				#{foreStartDate}, #{ foreEndDate}, #{afterStartDate}, #{ afterEndDate },
+				#{createBy}, #{createDate}, #{updateBy}, #{updateDate}, #{validMin}, #{toleranceMin},
+				#{isCheckWorkstatus,jdbcType=VARCHAR}, #{lastCheck,jdbcType=TIMESTAMP},
+				#{workHours,jdbcType=NUMERIC}, #{oprWorkHours,jdbcType=NUMERIC}
+			)
+	</insert>
+	
+	<select id="queryDefinitionBySite" parameterType="String" resultType="DefinitionBean">
+		select id, serviceYear, yearRatio,
+			compensateRatio, effectiveDays,
+			firstLevelDays, secondLevelDays, thirdLevelDays, siteId, startYear,endYear,
+			foreStartDate,foreEndDate,afterStartDate, afterEndDate,
+			createBy, createDate, updateBy, updateDate,nvl(validMin,0) as validMin,nvl(toleranceMin,0) as toleranceMin,
+			isCheckWorkstatus,lastCheck,workHours,oprWorkHours 
+		from atd_definition where siteId = #{ siteId }
+	</select>
+	
+	<update id="updateDefinition" parameterType="DefinitionBean">
+		update atd_definition set 
+		serviceYear = #{serviceYear}, yearRatio = #{yearRatio},  compensateRatio = #{compensateRatio},	
+		effectiveDays = #{effectiveDays}, firstLevelDays = #{firstLevelDays},  secondLevelDays = #{secondLevelDays},	
+		thirdLevelDays = #{thirdLevelDays}, foreStartDate = #{foreStartDate},  foreEndDate = #{foreEndDate},	
+		afterStartDate = #{afterStartDate}, afterEndDate = #{afterEndDate},	updateBy = #{updateBy},	
+		updateDate = #{updateDate}, validMin = #{validMin},	toleranceMin = #{toleranceMin}, 
+		isCheckWorkstatus = #{isCheckWorkstatus,jdbcType=VARCHAR},	lastCheck = #{lastCheck,jdbcType=TIMESTAMP},
+		workHours=#{workHours,jdbcType=NUMERIC}, oprWorkHours=#{oprWorkHours,jdbcType=NUMERIC}
+		where id = #{ id }
+	</update>
+	
+	<update id="updateDefinitionLastCheck" parameterType="DefinitionBean">
+		update atd_definition set 
+		updateBy = #{updateBy,jdbcType=VARCHAR},	
+		updateDate = #{updateDate,jdbcType=TIMESTAMP}, 
+		lastCheck = #{lastCheck,jdbcType=TIMESTAMP}
+		where id = #{ id }
+	</update>
+	
+	<select id="queryCheckWorkstatusDefinition" resultType="DefinitionBean">
+		select id, serviceYear, yearRatio,
+			compensateRatio, effectiveDays,
+			firstLevelDays, secondLevelDays, thirdLevelDays, siteId, startYear,endYear,
+			foreStartDate,foreEndDate,afterStartDate, afterEndDate,
+			createBy, createDate, updateBy, updateDate,nvl(validMin,0) as validMin,nvl(toleranceMin,0) as toleranceMin,
+			isCheckWorkstatus,lastCheck,workHours,oprWorkHours   
+		from atd_definition 
+		where ischeckworkstatus='Y' and sysdate&gt;=startyear and sysdate&lt;endyear
+		<if test="siteId != null  and siteId != '' ">
+			and siteId=#{siteId,jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper> 

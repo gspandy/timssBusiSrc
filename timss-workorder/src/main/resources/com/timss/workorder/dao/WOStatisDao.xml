@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WOStatisDao">
+	<resultMap type="WoStatisVO" id="woStatisVOMap">
+		<!-- 公用 -->
+		<id column="ID" property="id" />
+		<result column="WO_CODE" property="workOrderCode" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="REMARKS" property="remarks" /> 
+		<result column="EQUIPNAME_CODE" property="equipNameCode" />
+		<result column="EQUIP_ID" property="equipId" />
+		<result column="DISCOVER_TIME" property="discoverTime" />
+		<result column="APPROVESTOP_TIME" property="approveStopTime" />
+		<result column="FAULTCONFRIMUSER" property="faultConfrimUser" />
+		<result column="ACCEPTANCEUSER" property="acceptanceUser" />
+		<result column="END_TIME" property="endTime" />
+		<result column="ENDREPORTUSER" property="endReportUser" />
+		<result column="FAULTSTOPTIME" property="faultStopTime" />
+		<result column="PRINTNUM" property="printNum" />
+	</resultMap>	
+	
+	
+	<!-- 新建工单基本信息 -->
+	<insert id="insertWoStatisVO">
+		 insert into wo_wostatis_temp(ID,WO_CODE,DESCRIPTION,EQUIPNAME_CODE,EQUIP_ID,DISCOVER_TIME,APPROVESTOP_TIME,
+		 							FAULTCONFRIMUSER,ACCEPTANCEUSER,ENDREPORTUSER,END_TIME,FAULTSTOPTIME,PRINTNUM,REMARKS) 
+		values( #{id },
+				#{workOrderCode,jdbcType=VARCHAR},
+				#{description,jdbcType=VARCHAR},
+				#{equipNameCode,jdbcType=VARCHAR},
+				#{equipId,jdbcType=VARCHAR},
+				#{discoverTime,jdbcType=TIMESTAMP},
+				#{approveStopTime,jdbcType=NUMERIC},
+				#{faultConfrimUser,jdbcType=VARCHAR},
+				#{acceptanceUser,jdbcType=VARCHAR},
+				#{endReportUser,jdbcType=VARCHAR},
+				#{endTime,jdbcType=TIMESTAMP},
+				#{faultStopTime,jdbcType=NUMERIC},
+				#{printNum,jdbcType=NUMERIC},
+				#{remarks,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertBatchWoStatisData" parameterType="java.util.List">  
+        insert into wo_wostatis_temp
+        (ID,WO_CODE,DESCRIPTION,EQUIPNAME_CODE,EQUIP_ID,DISCOVER_TIME,APPROVESTOP_TIME,
+		FAULTCONFRIMUSER,ACCEPTANCEUSER,ENDREPORTUSER,END_TIME,FAULTSTOPTIME,PRINTNUM,REMARKS) 
+		<foreach collection="list" item="item" index="index" separator="union all">  
+            select #{item.id,jdbcType=NUMERIC},
+				#{item.workOrderCode,jdbcType=VARCHAR},
+				#{item.description,jdbcType=VARCHAR},
+				#{item.equipNameCode,jdbcType=VARCHAR},
+				#{item.equipId,jdbcType=VARCHAR},
+				#{item.discoverTime,jdbcType=TIMESTAMP},
+				#{item.approveStopTime,jdbcType=NUMERIC},
+				#{item.faultConfrimUser,jdbcType=VARCHAR},
+				#{item.acceptanceUser,jdbcType=VARCHAR},
+				#{item.endReportUser,jdbcType=VARCHAR},
+				#{item.endTime,jdbcType=TIMESTAMP},
+				#{item.faultStopTime,jdbcType=NUMERIC},
+				#{item.printNum,jdbcType=NUMERIC},
+				#{item.remarks,jdbcType=VARCHAR}
+			from dual	
+		</foreach>  
+	</insert>
+  
+    
+	 <!-- 根据打印的次数ID 查看某次打印所有工单列表信息 -->
+	<select id="queryWoStatisVOByNum" parameterType="int" resultMap="woStatisVOMap">
+		select  *
+		from   wo_wostatis_temp 
+		where  printNum = #{printNum} 
+	</select>
+	
+	<!-- 查找最早一张工单的年份 -->
+	<select id="queryYearOfFirstWO" resultType="int">
+		select NVL(to_char(min(t.createdate),'YYYY'),0) min_year 
+		from wo_workorder t 
+		where t.siteid= #{siteId} and t.isstop=0
+	</select>
+	
+	<!-- 查找某个班组负责的风机总数 -->
+	<select id="queryWorkTeamWindSum" resultType="int">
+		select count(FAN_ID) count
+		from  wo_workteam_fan t 
+		where t.siteid= #{siteId} and t.WORKTEAM =#{workTeamCode} 
+	</select>
+	
+	<!-- 统计查询 -->
+	<select id="queryStatisWO"  resultMap="woStatisVOMap">
+		select ID,WO_CODE,EQUIP_ID,wwf.fan_code EQUIPNAME_CODE,DESCRIPTION,DISCOVER_TIME,u1.name FAULTCONFRIMUSER,
+			   APPROVESTOP_TIME,END_TIME,u2.name ACCEPTANCEUSER,u3.name ENDREPORTUSER,remarks
+		from  wo_workorder t
+		      left join sec_user u1 on t.FAULTCONFRIMUSER = u1.user_id
+		      left join sec_user u2 on  t.ACCEPTANCEUSER = u2.user_id
+		      left join sec_user u3 on  t.ENDREPORTUSER = u3.user_id,wo_workteam_fan wwf
+		where YXBZ = 1 AND t.curr_status='woFiling' and t.maintainplan_id is null and 
+			  t.isstop=0 and t.wo_type_code='qxWoType' and 
+			  wwf.fan_id = t.equip_id  and 
+			  t.equip_id in (select f.fan_id
+			  					 from wo_workteam_fan f 
+			  					 where 1=1  
+			  					 	<if test="params.workteam != null">
+										and f.workteam = #{params.workteam}
+									</if>)
+			  <if test="params.siteId != null">
+				and t.siteId = #{params.siteId}
+			  </if>
+			  <if test="params.beginTime != null">
+				and t.end_time between #{params.beginTime} and #{params.endTime}
+			  </if>
+	</select>
+	
+	
+	<select id="queryWorkTeamFaultSum"  resultType="int">
+		select count(ID) count
+		from  wo_workorder t
+		      left join sec_user u1 on t.FAULTCONFRIMUSER = u1.user_id
+		      left join sec_user u2 on  t.ACCEPTANCEUSER = u2.user_id
+		      left join sec_user u3 on  t.ENDREPORTUSER = u3.user_id
+		where YXBZ = 1 AND t.curr_status='woFiling' and t.maintainplan_id is null and 
+			  t.isstop=0 and t.wo_type_code='qxWoType'  and 
+			  t.equip_id in (select f.fan_id
+			  					 from wo_workteam_fan f 
+			  					 where 1=1  
+			  					 	<if test="workteam != null">
+										and f.workteam = #{workteam}
+									</if>)
+			  <if test="siteId != null">
+				and t.siteId = #{siteId}
+			  </if>
+			  <if test="beginTime != null">
+				and t.end_time between #{beginTime} and #{endTime}
+			  </if>
+	</select>
+	
+	
+	<select id="queryWorkTeamFaultStopTime"  resultType="Float">
+		select sum(END_TIME-DISCOVER_TIME)*24 stopTime
+		from  wo_workorder t
+		      left join sec_user u1 on t.FAULTCONFRIMUSER = u1.user_id
+		      left join sec_user u2 on  t.ACCEPTANCEUSER = u2.user_id
+		      left join sec_user u3 on  t.ENDREPORTUSER = u3.user_id
+		where YXBZ = 1 AND t.curr_status='woFiling' and t.maintainplan_id is null and 
+			  t.isstop=0 and t.wo_type_code='qxWoType'  and 
+			  t.equip_id in (select f.fan_id
+			  					 from wo_workteam_fan f 
+			  					 where 1=1  
+			  					 	<if test="workteam != null">
+										and f.workteam = #{workteam}
+									</if>)
+			  <if test="siteId != null">
+				and t.siteId = #{siteId}
+			  </if>
+			  <if test="beginTime != null">
+				and t.end_time between #{beginTime} and #{endTime}
+			  </if>
+	</select>
+	
+	
+	<select id="printWOStatistic"  parameterType="HashMap" resultMap="woStatisVOMap">
+		select ID,WO_CODE,EQUIP_ID,EQUIPNAME_CODE,DESCRIPTION,DISCOVER_TIME,u1.name FAULTCONFRIMUSER,
+			   APPROVESTOP_TIME,END_TIME,u2.name ACCEPTANCEUSER,u3.name ENDREPORTUSER,remarks
+		from  wo_workorder t
+		      left join sec_user u1 on t.FAULTCONFRIMUSER = u1.user_id
+		      left join sec_user u2 on  t.ACCEPTANCEUSER = u2.user_id
+		      left join sec_user u3 on  t.ENDREPORTUSER = u3.user_id
+		where YXBZ = 1 AND t.curr_status='woFiling' and t.maintainplan_id=0 and 
+			  t.isstop=0 and t.wo_type_code='qxWoType'  and 
+			  t.end_time between #{beginTime} and #{endTime} and 
+			  t.equip_id in (select f.fan_id 
+			  					 from wo_workteam_fan f 
+			  					 where 1=1  
+			  					 	<if test="workteam != null">
+										and f.workteam = #{workteam}
+									</if>)
+			  <if test="siteId != null">
+				and t.siteId = #{siteId}
+			  </if>
+	</select>
+	
+	
+	<select id="getNextPrintNum" resultType="int">
+		SELECT SEQ_WO_PRINTNUM.NEXTVAL FROM DUAL
+	</select>
+</mapper>

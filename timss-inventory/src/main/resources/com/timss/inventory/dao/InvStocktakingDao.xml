@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvStocktakingDao">
+	<resultMap type="com.timss.inventory.bean.InvStocktaking" id="InvStocktakingMap">
+		<result property="siteId" column="site_id"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvStocktakingVO" id="InvStocktakingVOMap">
+		<result property="siteId" column="site_id"/>
+		<result property="enStatus" column="en_status"/>
+	</resultMap>
+
+	<!-- 查询列表功能 -->
+	<select id="queryStocktakingList" resultMap="InvStocktakingVOMap">
+		select t.*,
+		    su.name as createusername,
+		    iw.warehousename as warehousename , 
+		    a.name as checkusername,
+		    hm.status
+		from(
+		      select t.istid,
+				       t.sheetno,
+				       t.sheetname, 
+				       t.createuser,
+				       to_char(t.createdate,'yyyy-MM-dd') as createdate,
+				       t.createdate as modifydate,
+				       t.warehouseid,
+				       t.site_id,
+				       t.checkuser,
+				       t.remark,
+			           t.instanceid,
+			           t.status as en_status  
+		       from inv_stocktaking t
+		       where t.site_id = #{params.siteId} 
+		       		and <![CDATA[(t.status <> 'stop' or t.status is null)]]>
+		 ) t 
+		 left join sec_user su on su.user_id = t.createuser
+		 left join inv_warehouse iw on iw.warehouseid = t.warehouseid and iw.site_id = t.site_id
+		 left join sec_user a on a.user_id=t.checkuser
+		 left join (select case when hm.classtype = 'Complete' then (select distinct a.enum_val from b_enum a where a.ecat_code = 'INV_PROCESS_STATUS' and a.enum_code = 'approval_complete') 
+		                      else hm.statusname end as status,hm.name,hm.siteid,hm.url
+		            from hop_main_list hm, hop_user_list hl
+		            where hm.id = hl.id and hm.siteid = hl.siteid 
+		            group by hm.statusname,hm.classtype,hm.name,hm.siteid,hm.url) hm on hm.siteid = t.site_id and hm.name = t.sheetname and instr(hm.url,t.istid)>0
+		    
+		 where 1=1
+		<if test="params.istId != null and params.istId != ''">
+		  	and t.istid = #{params.istId} 
+		</if> 
+		<if test="params.sheetno != null and params.sheetno != ''">
+		  	and t.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.sheetname != null and params.sheetname != ''">
+		  	and t.sheetname like '%'||'${params.sheetname}'||'%' 
+		</if>
+		<if test="params.createusername != null and params.createusername != ''">
+		  	and su.name like '%'||'${params.createusername}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and t.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.warehousename != null and params.warehousename != ''">
+		  	and iw.warehousename like '%'||'${params.warehousename}'||'%' 
+		</if>
+		<if test="params.status != null and params.status != ''">
+		  	and hm.status like '%'||'${params.status}'||'%' 
+		</if>
+	</select>
+	
+	<!-- 直接查询表单数据 -->
+	<select id="queryStocktakingForm" parameterType="java.util.Map" resultMap="InvStocktakingMap">
+		select * from inv_stocktaking t where t.site_id = #{siteId} and t.istid = #{istId}
+	</select>
+	
+	<!-- 更新盘点数据 -->
+	<update id="updateInvStocktaking" parameterType="com.timss.inventory.bean.InvStocktaking">
+		update inv_stocktaking t 
+		<set>
+	      <if test="sheetno != null and sheetno != ''"> t.sheetno=#{sheetno,jdbcType=VARCHAR}, </if>
+	      <if test="sheetname != null and sheetname != ''"> t.sheetname=#{sheetname,jdbcType=VARCHAR}, </if>
+	      <if test="status != null and status != ''"> t.status=#{status,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null and warehouseid != ''"> t.warehouseid=#{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null and createuser != ''"> t.createuser=#{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null and createdate != ''"> t.createdate=#{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null and modifyuser != ''"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null and modifydate != ''"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null and siteId != ''"> t.site_id=#{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="instanceid != null and instanceid != ''"> t.instanceid=#{instanceid,jdbcType=VARCHAR}, </if>
+	      <if test="checkuser != null and checkuser != ''"> t.checkuser=#{checkuser,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null and remark != ''"> t.remark=#{remark,jdbcType=VARCHAR}, </if>
+	    </set>
+		where t.istid=#{istid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 插入盘点数据 -->
+	<insert id="insertInvStocktaking" parameterType="com.timss.inventory.bean.InvStocktaking">
+		insert into inv_stocktaking
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="istid != null"> istid, </if>
+	      <if test="sheetno != null"> sheetno, </if>
+	      <if test="sheetname != null"> sheetname, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="instanceid != null"> instanceid, </if>
+	      <if test="checkuser != null"> checkuser, </if>
+	      <if test="remark != null"> remark, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="istid != null"> #{istid,jdbcType=VARCHAR}, </if>
+	      <if test="sheetno != null"> #{sheetno,jdbcType=VARCHAR}, </if>
+	      <if test="sheetname != null"> #{sheetname,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="instanceid != null"> #{instanceid,jdbcType=VARCHAR}, </if>
+	      <if test="checkuser != null"> #{checkuser,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 通过申请表id和站点id找到sheetNo -->
+	<select id="queryFlowNoByIstid" parameterType="java.util.Map" resultType="java.lang.String">
+		select a.sheetno from inv_stocktaking a where a.istid = #{istId} and a.site_id = #{siteId}
+	</select>
+	
+	<!-- 通过sheetNo和站点id找到id -->
+	<select id="queryIstidByFlowNo" parameterType="java.util.Map" resultType="java.lang.String">
+		select a.istid from inv_stocktaking a where a.sheetno = #{sheetNo} and a.site_id = #{siteId}
+	</select>
+</mapper> 

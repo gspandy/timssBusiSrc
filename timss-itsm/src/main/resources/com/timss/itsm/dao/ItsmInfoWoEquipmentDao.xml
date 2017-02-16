@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmInfoWoEquipmentDao">
+
+	<resultMap type="ItsmInfoWoEquipment" id="itsmInfoWoEquipmentMap">
+		<id column="ID" property="id" />
+		<result column="NAME" property="name" />
+		<result column="NUM" property="num" />
+		<result column="LEND_STATUS" property="lendStatus" />
+		<result column="RETURN_STATUS" property="returnStatus" />
+		<result column="INFOWO_ID" property="infoWoId" />
+	</resultMap>	
+     
+	<insert id="insertItsmInfoWoEquipment" parameterType="ItsmInfoWoEquipment">
+			INSERT INTO ITSM_INFOWO_EQUIPMENT(ID,NAME,NUM,LEND_STATUS,INFOWO_ID) 
+			values( #{id,jdbcType=VARCHAR},
+					#{name,jdbcType=VARCHAR},
+					#{num,jdbcType=NUMERIC},
+					#{lendStatus,jdbcType=VARCHAR},
+					#{infoWoId,jdbcType=VARCHAR}) 
+	</insert>
+	
+	
+	<!-- 更新 -->
+	<delete id="updateItsmInfoWoEquipment" parameterType="ItsmInfoWoEquipment" >
+		update ITSM_INFOWO_EQUIPMENT T 
+		set t.NAME = #{name,jdbcType=VARCHAR},
+			t.RETURN_STATUS = #{returnStatus,jdbcType=VARCHAR},
+			t.NUM = #{num,jdbcType=NUMERIC},
+			t.LEND_STATUS = #{lendStatus,jdbcType=VARCHAR}
+		WHERE T.id=#{id} 
+	</delete>
+	<!-- 删除 -->
+	<delete id="deleteItsmInfoWoEquipment" parameterType="String" >
+		DELETE FROM ITSM_INFOWO_EQUIPMENT T WHERE T.INFOWO_ID = #{infoWoId}
+	</delete>
+	
+	
+	<select id="queryItsmInfoWoEquipmentList" resultMap="itsmInfoWoEquipmentMap" >
+		SELECT ID,NAME,NUM,LEND_STATUS,RETURN_STATUS,INFOWO_ID
+		  FROM ITSM_INFOWO_EQUIPMENT T
+		  WHERE T.INFOWO_ID = #{infoWoId}
+	</select>
+	  
+</mapper>

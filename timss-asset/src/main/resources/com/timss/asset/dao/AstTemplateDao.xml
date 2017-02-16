@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.asset.dao.AstTemplateDao">
+	<resultMap type="com.timss.asset.bean.AstTemplateBean" id="ast_template">
+		<result property="asset_template_id" column="asset_template_id"/>
+		<result property="asset_type" column="asset_type"/>
+		<result property="field_name" column="field_name"/>
+		<result property="create_user" column="create_user"/>
+		<result property="create_date" column="create_date"/>
+		<result property="modify_user" column="modify_user"/>
+		<result property="modify_date" column="modify_date"/>
+		<result property="site_id" column="site_id"/>
+	</resultMap>
+	<select id="getAllDataList" resultMap="ast_template">
+		select 
+		asset_template_id,asset_type,field_name,create_user,create_date,modify_user,
+		modify_date,site_id
+		from ast_template
+		where asset_type like '%COMPUTER%'
+	</select>
+	<!-- 通过typeName和siteId查找 -->
+	<select id="getDataList"  resultMap="ast_template" >
+		select 
+		asset_template_id,asset_type,field_name,create_user,create_date,modify_user,
+		modify_date,site_id
+		from ast_template
+		where asset_type like '%'|| #{typeName} ||'%' and site_id = #{siteId} 
+	</select>
+	<!-- 添加 -->
+	<!-- 左边与bean对应，右边与数据库相对应 -->
+	<insert id="insertAstTemplate" parameterType="com.timss.asset.bean.AstTemplateBean">
+		insert into ast_template
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		  <if test="asset_template_id != null"> asset_template_id, </if>
+	      <if test="asset_type != null"> asset_type, </if>
+	      <if test="field_name != null"> field_name, </if>
+	      <if test="create_user != null"> create_user, </if>
+	      <if test="create_date != null"> create_date, </if>
+	      <if test="modify_user != null"> modify_user, </if>
+	      <if test="modify_date != null"> modify_date, </if>
+	      <if test="site_id != null"> site_id, </if>
+	     </trim>
+	     <trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="asset_template_id != null"> #{asset_template_id,jdbcType=NUMERIC}, </if>
+	      <if test="asset_type != null"> #{asset_type,jdbcType=VARCHAR}, </if>
+	      <if test="field_name != null"> #{field_name,jdbcType=VARCHAR}, </if>
+	      <if test="create_user != null"> #{create_user,jdbcType=VARCHAR}, </if>
+	      <if test="create_date != null"> #{create_date,jdbcType=TIMESTAMP}, </if>
+	      <if test="modify_user != null"> #{modify_user,jdbcType=VARCHAR}, </if>
+	      <if test="modify_date != null"> #{modify_date,jdbcType=TIMESTAMP}, </if>
+	      <if test="site_id != null"> #{site_id,jdbcType=VARCHAR}, </if>
+	     </trim>
+	</insert>
+	<!-- 通过id删除 -->
+	<delete id="deleteAstTemplate" >
+		delete from ast_template where asset_template_id=#{ID}
+	</delete>
+	<!-- 通过id修改  -->
+	<update id="updateAstTemplate" parameterType="com.timss.asset.bean.AstTemplateBean">
+		update ast_template t
+		<set>
+		 <if test="asset_type != null">asset_type=#{asset_type,jdbcType=VARCHAR},</if>
+		 <if test="field_name != null">field_name=#{field_name,jdbcType=VARCHAR},</if>
+		 <if test="create_user != null">create_user=#{create_user,jdbcType=VARCHAR},</if>
+		 <if test="create_date != null">create_date=#{create_date,jdbcType=TIMESTAMP},</if>
+		 <if test="modify_user != null">modify_user=#{modify_user,jdbcType=VARCHAR},</if>
+		 <if test="modify_date != null">modify_date=#{modify_date,jdbcType=TIMESTAMP},</if>
+		 <if test="site_id != null">site_id=#{site_id,jdbcType=VARCHAR},</if>
+		</set> 
+		 where t.asset_template_id=#{asset_template_id,jdbcType=NUMERIC}
+	</update>
+</mapper>

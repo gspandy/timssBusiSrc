@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.JPItemsDao">
+
+
+	<resultMap type="JPItems" id="jpItemsMap">
+		<id column="ID" property="id" />
+		<result column="JOBPLAN_ID" property="jobPlanId" />
+		<result column="ITEMS_CODE" property="itemsCode" />
+		<result column="ITEMS_ID" property="itemsId" />
+		<result column="ITEMS_NAME" property="itemsName" />
+		<result column="ITEMS_MODEL" property="itemsModel" />
+		<result column="NUM" property="applyCount" />
+		<result column="ITEMS_UNIT" property="unit" />
+		<result column="ITEMS_BIN" property="bin" />
+		<result column="ITEMS_WAREHOUSE" property="warehouse" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		
+	</resultMap>	
+	
+	<insert id="insertJPItems">
+		insert into wo_jp_items(ID,JOBPLAN_ID,ITEMS_ID,ITEMS_CODE,ITEMS_NAME,ITEMS_MODEL,NUM,
+		ITEMS_UNIT,ITEMS_BIN,ITEMS_WAREHOUSE,SITEID,DEPTID) 
+		values( #{id},
+				#{jobPlanId,jdbcType=NUMERIC},
+				#{itemsId,jdbcType=VARCHAR},
+				#{itemsCode,jdbcType=VARCHAR},
+				#{itemsName,jdbcType=VARCHAR},
+				#{itemsModel,jdbcType=VARCHAR},
+				#{applyCount,jdbcType=NUMERIC},
+				#{unit,jdbcType=VARCHAR},
+				#{bin,jdbcType=VARCHAR},
+				#{warehouse,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR}) 
+	</insert>
+	
+	<update id="updateJPItems" parameterType="JPItems">
+		 UPDATE wo_jp_items 
+		 SET ITEMS_CODE=#{itemsCode} 
+		 WHERE ID = #{id} AND SITEID=#{siteid}
+		 <if test="deptid != null">
+		 	AND DEPTID=#{deptid}
+		 </if>
+	</update>
+	
+	
+	<select id="queryJPItemsByJPId" parameterType="int" resultMap="jpItemsMap">
+		select * from wo_jp_items t 
+		where t.JOBPLAN_ID = #{jpId} 
+	</select>
+	 
+	 <delete id="deleteJPItemsByJPId" parameterType="int">
+		delete from wo_jp_items t 
+		where t.JOBPLAN_ID = #{jpId} 
+	</delete>
+	
+	<select id="queryJPItemsById" parameterType="int" resultMap="jpItemsMap">
+		select * from wo_jp_items 
+		where id= #{ id }
+	</select>
+	
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextJPItemsId" resultType="int">
+		select SEQ_WO_JPOTHERS.nextval from dual
+	</select>
+	
+</mapper>

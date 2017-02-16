@@ -1,0 +1,2958 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[var userlist = [];
+var deptstr = "";
+var deptlist = [];]]></method>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="month" id="2059">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="siteId" id="2060">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="year" id="2061">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="userId" id="2063">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="deptName" id="2099">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="dutyName" id="2207">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="1885">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledMetadataBidiFormatStr</name>
+                </ex-property>
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledContentBidiFormatStr</name>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@10.0.17.154:1521:itceam</property>
+            <property name="odaUser">timss2test</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">YWJj</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/timss2dev</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set" id="2098">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="columnHints"/>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_76</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">1</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_75</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">2</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">3</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_6</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">4</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">5</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_3</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">6</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_4</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">7</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_5</property>
+                    <property name="paramName">deptName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">8</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_10</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">9</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_7</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">10</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_8</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">11</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_9</property>
+                    <property name="paramName">deptName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">12</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_13</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">13</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_11</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">14</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_12</property>
+                    <property name="paramName">deptName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">15</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_14</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">16</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_15</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">17</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_18</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">18</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_16</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">19</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_71</property>
+                    <property name="paramName">deptName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">20</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_73</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">21</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_74</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">22</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_23</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">23</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_21</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">24</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_17</property>
+                    <property name="paramName">deptName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">25</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_19</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">26</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_20</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">27</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_28</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">28</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_24</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">29</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_25</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">30</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_33</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">31</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_29</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">32</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_30</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">33</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_38</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">34</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_34</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">35</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_35</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">36</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_43</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">37</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_39</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">38</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_40</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">39</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_26</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">40</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_27</property>
+                    <property name="paramName">deptName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">41</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_48</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">42</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_44</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">43</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_45</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">44</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_53</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">45</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_49</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">46</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_50</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">47</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_58</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">48</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_54</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">49</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_55</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">50</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_56</property>
+                    <property name="paramName">siteId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">51</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_59</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">52</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_60</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">53</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_31</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">54</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_22</property>
+                    <property name="paramName">deptName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">55</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_61</property>
+                    <property name="paramName">userId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">56</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_62</property>
+                    <property name="paramName">userId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">57</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_63</property>
+                    <property name="paramName">userId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">58</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_68</property>
+                    <property name="paramName">dutyName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">59</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_67</property>
+                    <property name="paramName">dutyName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">60</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_69</property>
+                    <property name="paramName">dutyName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">61</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">USERNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">TOTALWORKDAY</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ANNUALLEVEL</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ENVENTLEAVE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">COMPENSATELEAVE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">SICKLEAVE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">OTHERLEAVE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">INVALIDTIMES</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">OVERTIME</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">REALOVERHOURS</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">TRANSFERCOMPENSATE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">TRANSFERCOMPENSATE_11</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">LASTSURPLUSCOMPENSATE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">SURPLUSCOMPENSATE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">LATE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">EARLY</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">DEPTNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ID</property>
+                    <property name="nativeName">ID</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">USERNAME</property>
+                    <property name="nativeName">USERNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">TOTALWORKDAY</property>
+                    <property name="nativeName">TOTALWORKDAY</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ANNUALLEVEL</property>
+                    <property name="nativeName">ANNUALLEVEL</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ENVENTLEAVE</property>
+                    <property name="nativeName">ENVENTLEAVE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">COMPENSATELEAVE</property>
+                    <property name="nativeName">COMPENSATELEAVE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">SICKLEAVE</property>
+                    <property name="nativeName">SICKLEAVE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">OTHERLEAVE</property>
+                    <property name="nativeName">OTHERLEAVE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">INVALIDTIMES</property>
+                    <property name="nativeName">INVALIDTIMES</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">OVERTIME</property>
+                    <property name="nativeName">OVERTIME</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">REALOVERHOURS</property>
+                    <property name="nativeName">REALOVERHOURS</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">TRANSFERCOMPENSATE</property>
+                    <property name="nativeName">TRANSFERCOMPENSATE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">TRANSFERCOMPENSATE_11</property>
+                    <property name="nativeName">TRANSFERCOMPENSATE_11</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">LASTSURPLUSCOMPENSATE</property>
+                    <property name="nativeName">LASTSURPLUSCOMPENSATE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">SURPLUSCOMPENSATE</property>
+                    <property name="nativeName">SURPLUSCOMPENSATE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">LATE</property>
+                    <property name="nativeName">LATE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">EARLY</property>
+                    <property name="nativeName">EARLY</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">DEPTNAME</property>
+                    <property name="nativeName">DEPTNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select d.id , a.userName,wd.totalWorkDay,
+nvl(a.annualLevel,0) as annualLevel,
+nvl(a.enventLeave,0) as enventLeave,
+nvl(a.compensateLeave,0) as compensateLeave,
+nvl(a.sickLeave,0) as sickLeave,
+nvl((a.countDays-a.annualLevel-a.enventLeave-a.compensateLeave-a.sickLeave),0) as otherLeave,
+nvl(w.invalidTimes,0) as invalidTimes,
+nvl(a.overTime,0) as overTime,
+nvl(o.realoverhours,0) as realoverhours,
+nvl(o.transferCompensate,0) as transferCompensate,
+nvl(a.transferCompensate,0) as transferCompensate_11,
+(
+       select 0 from dual where 1=? 
+       union
+       select (nvl(a.surplusCompensate,0)-nvl(a.transferCompensate,0)+nvl(a.compensateLeave,0)) from dual where 1!=?
+) as lastSurplusCompensate, 
+nvl(a.surplusCompensate,0) as surplusCompensate,
+nvl(l.late,0) as late,
+nvl(e.early,0) as early ,
+a.deptName
+from(
+SELECT s.id, s.userId, s.userName, s.yearLeave, s.deptId, s.deptName, s.userStatus,
+		s.createDate, s.updateDate, s.siteId, 
+		i.annualLevel, s.annualRemain, s.annual, s.subAnualLeave, s.remark1, s.remark2,
+		(s.annualRemain+s.annual-s.subAnualLeave-nvl(u.annualLevel,0)) surplusAnnual,
+		i.enventLeave, i.sickLeave, i.marryLeave, i.birthLeave, i.otherLeave, 
+		i.overTime, s.compensateRemain,i.compensateLeave, i.transferCompensate,
+		(s.compensateRemain+nvl(u.transferCompensate,0)-nvl(u.compensateLeave,0)) surplusCompensate,
+		i.countDays, 
+		i.category_8,i.category_9,i.category_10,i.category_11,i.category_12,
+		i.category_13,i.category_14,i.category_15,i.category_16,i.category_17
+		FROM ATD_STAT s
+		left join atd_stat_item i on i.statid=s.id and i.monthleave = ?
+		left join (
+			select i.statid,
+			sum(i.annualLevel) annualLevel,
+			sum(i.overTime) overTime,sum(i.transferCompensate) transferCompensate, sum(i.compensateLeave) compensateLeave
+			from atd_stat_item i 
+			left join ATD_STAT s on s.id=i.statid
+			where s.siteId = ? and not exists (
+            select 1 from atd_exempt e 
+            where ((e.type='user_id' and e.relationid=userid) or (e.type='org_code' and e.relationid=deptid))
+        ) 
+        and i.monthleave <= ?
+        and s.yearleave = ?
+        and s.deptid in (
+          select distinct so.org_code from sec_organization so
+          where so.org_code like (select distinct sso.org_code from sec_site_organization sso where sso.site_id = ?)||'%'
+          start with instr(so.name, nvl(?,'部')) > 0
+          connect by prior so.org_code = so.parent_code 
+    	)
+			group by i.statid
+		)u on u.statid=s.id
+		where s.siteId = ? and not exists (
+	        select 1 from atd_exempt e 
+	        where ((e.type='user_id' and e.relationid=userid) or (e.type='org_code' and e.relationid=deptid))
+	    ) 
+      and s.yearleave = ?
+      and s.deptid in (
+      	select distinct so.org_code from sec_organization so
+        where so.org_code like (select distinct sso.org_code from sec_site_organization sso where sso.site_id = ?)||'%'
+        start with instr(so.name, nvl(?,'部')) > 0
+        connect by prior so.org_code = so.parent_code
+      )
+)a 
+left join opr_duty_person dp on dp.userId=a.userId
+left join opr_duty d on d.id=dp.dutyId
+left join (
+   select i.userid,sum(i.transfercompensate) transfercompensate,sum(i.realoverhours) realoverhours
+   from Atd_Overtime_Item i 
+   left join atd_overtime o on o.id=i.overtimeid
+   where o.siteid= ? 
+       and i.deptid in (
+		  select distinct so.org_code from sec_organization so
+          where so.org_code like (select distinct sso.org_code from sec_site_organization sso where sso.site_id = ?)||'%'
+          start with instr(so.name, nvl(?,'部')) > 0
+          connect by prior so.org_code = so.parent_code
+	   )
+       and to_char(i.startdate,'YYYY-MM-DD') like ?||'-'||to_char(?,'FM00')||'%'
+       and o.status='已归档'
+   group by i.userid
+)o on o.userid=a.userid
+left join (
+     select w.userid,count(1) totalWorkDay
+     from atd_workstatus w
+     where 
+          w.siteid=?
+          and w.deptid in (
+			select distinct so.org_code from sec_organization so
+            where so.org_code like (select distinct sso.org_code from sec_site_organization sso where sso.site_id = ?)||'%'
+            start with instr(so.name, nvl(?,'部')) > 0
+            connect by prior so.org_code = so.parent_code 
+		  )
+          and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.status=1
+     group by w.userid
+)wd on wd.userid=a.userid
+left join (
+   select w.userid,count(1) invalidTimes
+   from atd_workstatus w 
+   where 
+        w.siteid= ?
+        and w.deptid in (
+		  select distinct so.org_code from sec_organization so
+          where so.org_code like (select distinct sso.org_code from sec_site_organization sso where sso.site_id = ?)||'%'
+          start with instr(so.name, nvl(?,'部')) > 0
+          connect by prior so.org_code = so.parent_code 
+		)
+        and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and (
+            (w.mornstartchecktype='late' or w.mornendchecktype='late' or 
+            w.noonstartchecktype='late' or w.noonendchecktype='late')
+            or
+            (w.mornstartchecktype='early' or w.mornendchecktype='early' or 
+            w.noonstartchecktype='early' or w.noonendchecktype='early')
+             or
+            (w.mornstartchecktype='invalid' or w.mornendchecktype='invalid' or 
+            w.noonstartchecktype='invalid' or w.noonendchecktype='invalid')
+        )
+    group by w.userid
+)w on w.userid=a.userid
+left join (
+     select w.userid,count(1)late from (
+        (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ?
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.mornstartchecktype='late'
+        )
+        union
+        (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ?
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.mornendchecktype='late'      
+         )
+         union
+         (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ? 
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.noonstartchecktype='late'     
+         )
+         union
+         (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ?
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.noonendchecktype='late'
+         )
+     )w
+      where w.deptid in (
+	 	  select distinct so.org_code from sec_organization so
+          where so.org_code like (select distinct sso.org_code from sec_site_organization sso where sso.site_id = ?)||'%'
+          start with instr(so.name, nvl(?,'部')) > 0
+          connect by prior so.org_code = so.parent_code 
+	  )
+     group by w.userid
+)l on l.userid=a.userid
+left join (
+     select w.userid,count(1)early from (
+        (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ?
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.mornstartchecktype='early'
+         )
+        union
+        (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ?
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.mornendchecktype='early'      
+         )
+         union
+         (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ?
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.noonstartchecktype='early'     
+         )
+         union
+         (
+            select *
+            from atd_workstatus w 
+            where w.siteid= ?
+            and w.workdate like ?||'-'||to_char(?,'FM00')||'%' and w.noonendchecktype='early'
+         )
+     )w
+      where w.deptid in (
+      	  select distinct so.org_code from sec_organization so
+          where so.org_code like (select distinct sso.org_code from sec_site_organization sso where sso.site_id = ?)||'%'
+          start with instr(so.name, nvl(?,'部')) > 0
+          connect by prior so.org_code = so.parent_code 
+	  )
+     group by w.userid
+)e on e.userid=a.userid
+where
+nvl(d.del_ind,'N') <>'Y' and (nvl(?,'-')='-' or nvl(?,'-')<>'-' and a.userId like '%'||?||'%')
+and (nvl(?,'-')='-' or nvl(?,'-')<>'-' and d.name like '%'||?||'%')]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Ds_HolidayCal" id="2198">
+            <list-property name="columnHints"/>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">1</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">2</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">DATESTR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">SUM(HOLIDAYLENGTH)</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DATESTR</property>
+                    <property name="nativeName">DATESTR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">SUM(HOLIDAYLENGTH)</property>
+                    <property name="nativeName">SUM(HOLIDAYLENGTH)</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select datestr,sum(holidaylength) from (
+select
+to_char(t.configbegtime,'yyyy-MM') as datestr,
+case when to_char(t.configbegtime,'yyyy-MM') = to_char(t.configendtime,'yyyy-MM') then
+t.configendtime-t.configbegtime 
+when to_char(t.configbegtime,'yyyy-MM') <> to_char(t.configendtime,'yyyy-MM') then
+to_date(to_char(t.configbegtime,'yyyy-MM')||'-'||to_char(last_day(to_date(to_char(t.configbegtime,'yyyy-MM'),'yyyy-MM')),'dd'),'yyyy-MM-dd')-t.configbegtime
+end as holidaylength
+from b_date_conf t
+where 
+t.cat_code_key = 'Festival' 
+union
+select
+to_char(add_months(t.configbegtime,1),'yyyy-MM') as datestr,
+case when to_char(t.configbegtime,'yyyy-MM') = to_char(t.configendtime,'yyyy-MM') then
+0 
+when to_char(t.configbegtime,'yyyy-MM') <> to_char(t.configendtime,'yyyy-MM') then
+t.configendtime-to_date(to_char(t.configendtime,'yyyy-MM')||'-01','yyyy-MM-dd')
+end as holidaylength
+from b_date_conf t
+where 
+t.cat_code_key = 'Festival'
+)
+where datestr = ?||'-'||?
+group by datestr]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Ds_WeekendCal" id="2202">
+            <list-property name="columnHints"/>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">year</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">1</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">month</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">2</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">SUM(1)</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">SUM(1)</property>
+                    <property name="nativeName">SUM(1)</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select sum(1)
+from
+(
+select '01' as day from dual 
+union select '02' as day from dual 
+union select '03' as day from dual 
+union select '04' as day from dual 
+union select '05' as day from dual 
+union select '06' as day from dual 
+union select '07' as day from dual 
+union select '08' as day from dual 
+union select '09' as day from dual 
+union select '10' as day from dual 
+union select '11' as day from dual 
+union select '12' as day from dual 
+union select '13' as day from dual 
+union select '14' as day from dual 
+union select '15' as day from dual 
+union select '16' as day from dual 
+union select '17' as day from dual 
+union select '18' as day from dual 
+union select '19' as day from dual 
+union select '20' as day from dual 
+union select '21' as day from dual 
+union select '22' as day from dual 
+union select '23' as day from dual 
+union select '24' as day from dual 
+union select '25' as day from dual 
+union select '26' as day from dual 
+union select '27' as day from dual 
+union select '28' as day from dual 
+union select '29' as day from dual 
+union select '30' as day from dual 
+union select '31' as day from dual 
+)parta 
+,
+(
+select '01' as month from dual 
+union select '02' as month from dual 
+union select '03' as month from dual 
+union select '04' as month from dual 
+union select '05' as month from dual 
+union select '06' as month from dual 
+union select '07' as month from dual 
+union select '08' as month from dual 
+union select '09' as month from dual 
+union select '10' as month from dual 
+union select '11' as month from dual 
+union select '12' as month from dual 
+)partb
+,
+(
+select 
+'2000' as year from dual 
+union select '2001' as year from dual
+union select '2002' as year from dual 
+union select '2003' as year from dual 
+union select '2004' as year from dual 
+union select '2005' as year from dual
+union select '2006' as year from dual 
+union select '2007' as year from dual
+union select '2008' as year from dual 
+union select '2009' as year from dual
+union select '2010' as year from dual
+union select '2011' as year from dual
+union select '2012' as year from dual 
+union select '2013' as year from dual 
+union select '2014' as year from dual 
+union select '2015' as year from dual
+union select '2016' as year from dual 
+union select '2017' as year from dual
+union select '2018' as year from dual 
+union select '2019' as year from dual
+union select '2020' as year from dual
+union select '2021' as year from dual
+union select '2022' as year from dual 
+union select '2023' as year from dual 
+union select '2024' as year from dual 
+union select '2025' as year from dual
+union select '2026' as year from dual 
+union select '2027' as year from dual
+union select '2028' as year from dual 
+union select '2029' as year from dual
+union select '2030' as year from dual
+)partc
+where parta.day<=to_char(last_day(to_date(partc.year||'-'||partb.month,'yyyy-MM')),'dd') 
+and partc.year = ?
+and partb.month = ?
+and 
+(
+to_char(to_date(partc.year||'-'||partb.month||'-'||parta.day ,'yyyy-MM-dd'),'D')=1 
+or
+to_char(to_date(partc.year||'-'||partb.month||'-'||parta.day ,'yyyy-MM-dd'),'D')=7
+)]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Ds_Site" id="2216">
+            <list-property name="columnHints"/>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">siteId</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">SHORT_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">SHORT_NAME</property>
+                    <property name="nativeName">SHORT_NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select a.name,a.short_name from sec_organization a, sec_site_organization b
+where a.org_code = b.org_code
+and b.site_id=?]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="1889">
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">params["year"].value </expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_1</property>
+                    <expression name="expression" type="javascript">params["month"].value</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_2</property>
+                    <expression name="expression" type="javascript">params["deptName"].value</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_3</property>
+                    <expression name="expression" type="javascript">params["month"].value</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="1890">
+                <property name="width">20px</property>
+            </column>
+            <column id="1891"/>
+            <row id="1892">
+                <property name="height">0.719in</property>
+                <cell id="1893"/>
+                <cell id="1894">
+                    <grid id="1898">
+                        <column id="1899">
+                            <property name="width">90px</property>
+                        </column>
+                        <column id="1900">
+                            <property name="width">9.948in</property>
+                        </column>
+                        <row id="1901">
+                            <cell id="1902">
+                                <image id="1209">
+                                    <property name="height">0.4266666666666667in</property>
+                                    <property name="width">0.8533333333333334in</property>
+                                    <property name="source">file</property>
+                                    <expression name="uri" type="constant">logo2.jpg</expression>
+                                </image>
+                            </cell>
+                            <cell id="1903">
+                                <data id="2218">
+                                    <property name="backgroundAttachment">scroll</property>
+                                    <property name="backgroundPositionX">0%</property>
+                                    <property name="backgroundPositionY">0%</property>
+                                    <property name="backgroundRepeat">repeat</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">14pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="fontVariant">normal</property>
+                                    <property name="color">black</property>
+                                    <property name="textLineThrough">none</property>
+                                    <property name="textOverline">none</property>
+                                    <property name="textUnderline">none</property>
+                                    <property name="borderBottomColor">black</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">black</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">black</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">black</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <property name="marginTop">0pt</property>
+                                    <property name="marginLeft">0pt</property>
+                                    <property name="marginBottom">0pt</property>
+                                    <property name="marginRight">0pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="paddingBottom">1pt</property>
+                                    <property name="paddingRight">1pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="letterSpacing">normal</property>
+                                    <property name="lineHeight">normal</property>
+                                    <property name="orphans">2</property>
+                                    <property name="textTransform">none</property>
+                                    <property name="whiteSpace">normal</property>
+                                    <property name="widows">2</property>
+                                    <property name="wordSpacing">normal</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakAfter">auto</property>
+                                    <property name="pageBreakBefore">auto</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="overflow">hidden</property>
+                                    <property name="dataSet">Ds_Site</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">NAME</property>
+                                            <text-property name="displayName">NAME</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["NAME"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">SHORT_NAME</property>
+                                            <text-property name="displayName">SHORT_NAME</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["SHORT_NAME"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">Column Binding</property>
+                                            <expression name="expression" type="javascript">row["NAME"]+"员工考勤表（统计）"</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Column Binding</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="2219">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+                <cell id="2220"/>
+                <cell id="2221">
+                    <table id="2248">
+                        <property name="dataSet">Data Set</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">USERNAME</property>
+                                <text-property name="displayName">USERNAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["USERNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">DEPTNAME</property>
+                                <text-property name="displayName">DEPTNAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["DEPTNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="2255"/>
+                        <detail>
+                            <row id="2251">
+                                <cell id="2252">
+                                    <data id="2259">
+                                        <method name="onCreate"><![CDATA[var username = row["USERNAME"];
+var deptname = row["DEPTNAME"];
+if(userlist.indexOf(username)<0){
+	userlist.push(username);
+}
+if(deptlist.indexOf(deptname)<0){
+	deptlist.push(deptname);
+	deptstr = deptstr+deptname+",";
+}
+]]></method>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+            <row id="1895">
+                <cell id="1896">
+                    <property name="colSpan">2</property>
+                    <property name="rowSpan">1</property>
+                    <grid id="1905">
+                        <property name="width">11.104166666666666in</property>
+                        <column id="1906">
+                            <property name="width">100px</property>
+                        </column>
+                        <column id="1907">
+                            <property name="width">3.15625in</property>
+                        </column>
+                        <column id="1908">
+                            <property name="width">20px</property>
+                        </column>
+                        <column id="1909">
+                            <property name="width">0.375in</property>
+                        </column>
+                        <column id="1910">
+                            <property name="width">0.562in</property>
+                        </column>
+                        <column id="1911">
+                            <property name="width">0.3854166666666667in</property>
+                        </column>
+                        <column id="1912">
+                            <property name="width">0.6770833333333334in</property>
+                        </column>
+                        <column id="1913">
+                            <property name="width">0.4479166666666667in</property>
+                        </column>
+                        <column id="1914">
+                            <property name="width">2.28125in</property>
+                        </column>
+                        <column id="1915">
+                            <property name="width">1.0729166666666667in</property>
+                        </column>
+                        <column id="1916">
+                            <property name="width">0.28125in</property>
+                        </column>
+                        <column id="1917">
+                            <property name="width">60px</property>
+                        </column>
+                        <row id="1918">
+                            <cell id="1919">
+                                <property name="paddingTop">2pt</property>
+                                <label id="1944">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">部门名称：</text-property>
+                                </label>
+                            </cell>
+                            <cell id="1920">
+                                <data id="2257">
+                                    <property name="backgroundAttachment">scroll</property>
+                                    <property name="backgroundPositionX">0%</property>
+                                    <property name="backgroundPositionY">0%</property>
+                                    <property name="backgroundRepeat">repeat</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="fontVariant">normal</property>
+                                    <property name="color">black</property>
+                                    <property name="textLineThrough">none</property>
+                                    <property name="textOverline">none</property>
+                                    <property name="textUnderline">none</property>
+                                    <property name="borderBottomColor">black</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">black</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">black</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">black</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <property name="marginTop">0pt</property>
+                                    <property name="marginLeft">0pt</property>
+                                    <property name="marginBottom">0pt</property>
+                                    <property name="marginRight">0pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="paddingBottom">1pt</property>
+                                    <property name="paddingRight">1pt</property>
+                                    <property name="textAlign">left</property>
+                                    <property name="letterSpacing">normal</property>
+                                    <property name="lineHeight">normal</property>
+                                    <property name="orphans">2</property>
+                                    <property name="textTransform">none</property>
+                                    <property name="whiteSpace">normal</property>
+                                    <property name="widows">2</property>
+                                    <property name="wordSpacing">normal</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakAfter">auto</property>
+                                    <property name="pageBreakBefore">auto</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="overflow">hidden</property>
+                                    <method name="onCreate"><![CDATA[if(deptstr.length>0){
+deptstr=deptstr.substring(0,deptstr.length-1);
+}
+this.setDisplayValue(deptstr);]]></method>
+                                </data>
+                            </cell>
+                            <cell id="1921">
+                                <property name="paddingTop">2pt</property>
+                                <label id="1945">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">（</text-property>
+                                </label>
+                            </cell>
+                            <cell id="1922">
+                                <property name="backgroundAttachment">scroll</property>
+                                <property name="backgroundImageType">url</property>
+                                <property name="backgroundPositionX">0%</property>
+                                <property name="backgroundPositionY">0%</property>
+                                <property name="backgroundRepeat">repeat</property>
+                                <property name="backgroundSizeHeight">auto</property>
+                                <property name="backgroundSizeWidth">auto</property>
+                                <property name="fontFamily">serif</property>
+                                <property name="fontSize">10pt</property>
+                                <property name="fontWeight">normal</property>
+                                <property name="fontStyle">normal</property>
+                                <property name="fontVariant">normal</property>
+                                <property name="color">black</property>
+                                <property name="textLineThrough">none</property>
+                                <property name="textOverline">none</property>
+                                <property name="textUnderline">none</property>
+                                <property name="borderBottomColor">black</property>
+                                <property name="borderBottomStyle">none</property>
+                                <property name="borderBottomWidth">medium</property>
+                                <property name="borderLeftColor">black</property>
+                                <property name="borderLeftStyle">none</property>
+                                <property name="borderLeftWidth">medium</property>
+                                <property name="borderRightColor">black</property>
+                                <property name="borderRightStyle">none</property>
+                                <property name="borderRightWidth">medium</property>
+                                <property name="borderTopColor">black</property>
+                                <property name="borderTopStyle">none</property>
+                                <property name="borderTopWidth">medium</property>
+                                <property name="marginTop">0pt</property>
+                                <property name="marginLeft">0pt</property>
+                                <property name="marginBottom">0pt</property>
+                                <property name="marginRight">0pt</property>
+                                <property name="paddingTop">1pt</property>
+                                <property name="paddingLeft">1pt</property>
+                                <property name="paddingBottom">1pt</property>
+                                <property name="paddingRight">1pt</property>
+                                <property name="textIndent">0em</property>
+                                <property name="letterSpacing">normal</property>
+                                <property name="lineHeight">normal</property>
+                                <property name="orphans">2</property>
+                                <property name="textTransform">none</property>
+                                <property name="whiteSpace">normal</property>
+                                <property name="widows">2</property>
+                                <property name="wordSpacing">normal</property>
+                                <property name="display">block</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <property name="pageBreakBefore">auto</property>
+                                <property name="pageBreakInside">auto</property>
+                                <property name="showIfBlank">false</property>
+                                <property name="canShrink">false</property>
+                                <property name="overflow">hidden</property>
+                                <property name="width">0.28125in</property>
+                                <data id="2083">
+                                    <property name="backgroundAttachment">scroll</property>
+                                    <property name="backgroundPositionX">0%</property>
+                                    <property name="backgroundPositionY">0%</property>
+                                    <property name="backgroundRepeat">repeat</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="fontVariant">normal</property>
+                                    <property name="color">black</property>
+                                    <property name="textLineThrough">none</property>
+                                    <property name="textOverline">none</property>
+                                    <property name="textUnderline">none</property>
+                                    <property name="borderBottomColor">black</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">black</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">black</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">black</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <property name="marginTop">0pt</property>
+                                    <property name="marginLeft">0pt</property>
+                                    <property name="marginBottom">0pt</property>
+                                    <property name="marginRight">0pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="paddingBottom">1pt</property>
+                                    <property name="paddingRight">1pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="letterSpacing">normal</property>
+                                    <property name="lineHeight">normal</property>
+                                    <property name="orphans">2</property>
+                                    <property name="textTransform">none</property>
+                                    <property name="whiteSpace">normal</property>
+                                    <property name="widows">2</property>
+                                    <property name="wordSpacing">normal</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakAfter">auto</property>
+                                    <property name="pageBreakBefore">auto</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="overflow">hidden</property>
+                                    <property name="resultSetColumn">Column Binding</property>
+                                </data>
+                            </cell>
+                            <cell id="1923">
+                                <property name="paddingTop">2pt</property>
+                                <label id="1946">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <text-property name="text">）年（</text-property>
+                                </label>
+                            </cell>
+                            <cell id="1924">
+                                <property name="backgroundAttachment">scroll</property>
+                                <property name="backgroundImageType">url</property>
+                                <property name="backgroundPositionX">0%</property>
+                                <property name="backgroundPositionY">0%</property>
+                                <property name="backgroundRepeat">repeat</property>
+                                <property name="backgroundSizeHeight">auto</property>
+                                <property name="backgroundSizeWidth">auto</property>
+                                <property name="fontFamily">serif</property>
+                                <property name="fontSize">10pt</property>
+                                <property name="fontWeight">normal</property>
+                                <property name="fontStyle">normal</property>
+                                <property name="fontVariant">normal</property>
+                                <property name="color">black</property>
+                                <property name="textLineThrough">none</property>
+                                <property name="textOverline">none</property>
+                                <property name="textUnderline">none</property>
+                                <property name="borderBottomColor">black</property>
+                                <property name="borderBottomStyle">none</property>
+                                <property name="borderBottomWidth">medium</property>
+                                <property name="borderLeftColor">black</property>
+                                <property name="borderLeftStyle">none</property>
+                                <property name="borderLeftWidth">medium</property>
+                                <property name="borderRightColor">black</property>
+                                <property name="borderRightStyle">none</property>
+                                <property name="borderRightWidth">medium</property>
+                                <property name="borderTopColor">black</property>
+                                <property name="borderTopStyle">none</property>
+                                <property name="borderTopWidth">medium</property>
+                                <property name="marginTop">0pt</property>
+                                <property name="marginLeft">0pt</property>
+                                <property name="marginBottom">0pt</property>
+                                <property name="marginRight">0pt</property>
+                                <property name="paddingTop">1pt</property>
+                                <property name="paddingLeft">1pt</property>
+                                <property name="paddingBottom">1pt</property>
+                                <property name="paddingRight">1pt</property>
+                                <property name="textIndent">0em</property>
+                                <property name="letterSpacing">normal</property>
+                                <property name="lineHeight">normal</property>
+                                <property name="orphans">2</property>
+                                <property name="textTransform">none</property>
+                                <property name="whiteSpace">normal</property>
+                                <property name="widows">2</property>
+                                <property name="wordSpacing">normal</property>
+                                <property name="display">block</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <property name="pageBreakBefore">auto</property>
+                                <property name="pageBreakInside">auto</property>
+                                <property name="showIfBlank">false</property>
+                                <property name="canShrink">false</property>
+                                <property name="overflow">hidden</property>
+                                <property name="width">0.28125in</property>
+                                <data id="2201">
+                                    <property name="backgroundAttachment">scroll</property>
+                                    <property name="backgroundPositionX">0%</property>
+                                    <property name="backgroundPositionY">0%</property>
+                                    <property name="backgroundRepeat">repeat</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="fontVariant">normal</property>
+                                    <property name="color">black</property>
+                                    <property name="textLineThrough">none</property>
+                                    <property name="textOverline">none</property>
+                                    <property name="textUnderline">none</property>
+                                    <property name="borderBottomColor">black</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">black</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">black</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">black</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <property name="marginTop">0pt</property>
+                                    <property name="marginLeft">0pt</property>
+                                    <property name="marginBottom">0pt</property>
+                                    <property name="marginRight">0pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="paddingBottom">1pt</property>
+                                    <property name="paddingRight">2pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="letterSpacing">normal</property>
+                                    <property name="lineHeight">normal</property>
+                                    <property name="orphans">2</property>
+                                    <property name="textTransform">none</property>
+                                    <property name="whiteSpace">normal</property>
+                                    <property name="widows">2</property>
+                                    <property name="wordSpacing">normal</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakAfter">auto</property>
+                                    <property name="pageBreakBefore">auto</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="overflow">hidden</property>
+                                    <property name="resultSetColumn">Column Binding_3</property>
+                                </data>
+                            </cell>
+                            <cell id="1925">
+                                <property name="paddingTop">2pt</property>
+                                <label id="1947">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">）月份</text-property>
+                                </label>
+                            </cell>
+                            <cell id="1926">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                            </cell>
+                            <cell id="1928">
+                                <property name="paddingTop">2pt</property>
+                                <label id="1949">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">本考勤共（</text-property>
+                                </label>
+                            </cell>
+                            <cell id="1929">
+                                <data id="2258">
+                                    <property name="backgroundAttachment">scroll</property>
+                                    <property name="backgroundPositionX">0%</property>
+                                    <property name="backgroundPositionY">0%</property>
+                                    <property name="backgroundRepeat">repeat</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="fontVariant">normal</property>
+                                    <property name="color">black</property>
+                                    <property name="textLineThrough">none</property>
+                                    <property name="textOverline">none</property>
+                                    <property name="textUnderline">none</property>
+                                    <property name="borderBottomColor">black</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">black</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">black</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">black</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <property name="marginTop">0pt</property>
+                                    <property name="marginLeft">0pt</property>
+                                    <property name="marginBottom">0pt</property>
+                                    <property name="marginRight">0pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="paddingBottom">1pt</property>
+                                    <property name="paddingRight">1pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="letterSpacing">normal</property>
+                                    <property name="lineHeight">normal</property>
+                                    <property name="orphans">2</property>
+                                    <property name="textTransform">none</property>
+                                    <property name="whiteSpace">normal</property>
+                                    <property name="widows">2</property>
+                                    <property name="wordSpacing">normal</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakAfter">auto</property>
+                                    <property name="pageBreakBefore">auto</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="overflow">hidden</property>
+                                    <method name="onCreate"><![CDATA[this.setDisplayValue(userlist.length);]]></method>
+                                </data>
+                            </cell>
+                            <cell id="1930">
+                                <property name="paddingTop">2pt</property>
+                                <label id="1950">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">）人</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <table id="1951">
+            <property name="width">11.114583333333334in</property>
+            <property name="dataSet">Data Set</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">USERNAME</property>
+                    <text-property name="displayName">USERNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ANNUALLEVEL</property>
+                    <text-property name="displayName">ANNUALLEVEL</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["ANNUALLEVEL"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">ENVENTLEAVE</property>
+                    <text-property name="displayName">ENVENTLEAVE</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["ENVENTLEAVE"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPENSATELEAVE</property>
+                    <text-property name="displayName">COMPENSATELEAVE</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["COMPENSATELEAVE"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">SICKLEAVE</property>
+                    <text-property name="displayName">SICKLEAVE</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["SICKLEAVE"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">OTHERLEAVE</property>
+                    <text-property name="displayName">OTHERLEAVE</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["OTHERLEAVE"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">INVALIDTIMES</property>
+                    <text-property name="displayName">INVALIDTIMES</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["INVALIDTIMES"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">OVERTIME</property>
+                    <text-property name="displayName">OVERTIME</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["OVERTIME"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">REALOVERHOURS</property>
+                    <text-property name="displayName">REALOVERHOURS</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["REALOVERHOURS"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">TRANSFERCOMPENSATE</property>
+                    <text-property name="displayName">TRANSFERCOMPENSATE</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["TRANSFERCOMPENSATE"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">TRANSFERCOMPENSATE_11</property>
+                    <text-property name="displayName">TRANSFERCOMPENSATE_11</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["TRANSFERCOMPENSATE_11"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">LASTSURPLUSCOMPENSATE</property>
+                    <text-property name="displayName">LASTSURPLUSCOMPENSATE</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["LASTSURPLUSCOMPENSATE"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">SURPLUSCOMPENSATE</property>
+                    <text-property name="displayName">SURPLUSCOMPENSATE</text-property>
+                    <expression name="expression" type="javascript">Number(dataSetRow["SURPLUSCOMPENSATE"].toFixed(3))</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">LATE</property>
+                    <text-property name="displayName">LATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LATE"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">EARLY</property>
+                    <text-property name="displayName">EARLY</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["EARLY"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">ID</property>
+                    <text-property name="displayName">ID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ID"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">TOTALWORKDAY</property>
+                    <text-property name="displayName">TOTALWORKDAY</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TOTALWORKDAY"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <column id="2024">
+                <property name="width">0.5in</property>
+            </column>
+            <column id="2213">
+                <property name="width">0.5in</property>
+            </column>
+            <column id="2025">
+                <property name="width">0.45in</property>
+            </column>
+            <column id="2026">
+                <property name="fontFamily">"宋体"</property>
+                <property name="width">0.45in</property>
+            </column>
+            <column id="2027">
+                <property name="width">0.45in</property>
+            </column>
+            <column id="2028">
+                <property name="width">0.45in</property>
+            </column>
+            <column id="2029">
+                <property name="width">0.45in</property>
+            </column>
+            <column id="2030">
+                <property name="width">0.45in</property>
+            </column>
+            <column id="2031">
+                <property name="width">0.45in</property>
+            </column>
+            <column id="2032">
+                <property name="width">0.65625in</property>
+            </column>
+            <column id="2034">
+                <property name="width">0.6041666666666666in</property>
+            </column>
+            <column id="2096">
+                <property name="width">0.71875in</property>
+            </column>
+            <column id="2035">
+                <property name="width">0.8541666666666666in</property>
+            </column>
+            <column id="2036">
+                <property name="width">0.81in</property>
+            </column>
+            <column id="2037">
+                <property name="width">0.9166666666666666in</property>
+            </column>
+            <column id="2040">
+                <property name="width">2.4270833333333335in</property>
+            </column>
+            <header>
+                <row id="1952">
+                    <cell id="1953">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2041">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontWeight">normal</property>
+                            <text-property name="text">姓名</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2210">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2214">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">应出勤</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1954">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2042">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">出勤天数</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1955">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2043">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text"> 公休（天）</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1956">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2044">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">节日（天）</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1957">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2045">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">年假（天）</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1958">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2046">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">事假（天）</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1959">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2047">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">补休（天）</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1960">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2048">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">病假（天）</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1961">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2049">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">其余请假（天）</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1963">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2051">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">本月加班工时</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2094">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2097">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">本月转补休时长</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1964">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2052">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">本月加班转补休(天)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1965">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2053">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">上月底结余补休天数</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1966">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2054">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">至本月累计结余补休天数</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1969">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="2057">
+                            <property name="fontFamily">"宋体"</property>
+                            <text-property name="text">签名</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="1970">
+                    <cell id="1971">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2100">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="resultSetColumn">USERNAME</property>
+                        </data>
+                    </cell>
+                    <cell id="2211">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2215">
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">TOTALWORKDAY</property>
+                        </data>
+                    </cell>
+                    <cell id="1972">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                    </cell>
+                    <cell id="1973">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2203">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">1pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <property name="overflow">hidden</property>
+                            <property name="dataSet">Ds_WeekendCal</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">SUM(1)</property>
+                                    <text-property name="displayName">SUM(1)</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["SUM(1)"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">Column Binding</property>
+                                    <expression name="expression" type="javascript">row["SUM(1)"]</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">Column Binding</property>
+                        </data>
+                    </cell>
+                    <cell id="1974">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2199">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"宋体"</property>
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">1pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <property name="overflow">hidden</property>
+                            <property name="dataSet">Ds_HolidayCal</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">SUM(HOLIDAYLENGTH)</property>
+                                    <text-property name="displayName">SUM(HOLIDAYLENGTH)</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["SUM(HOLIDAYLENGTH)"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">HOLIDAYLENGTH</property>
+                                    <text-property name="displayName">HOLIDAYLENGTH</text-property>
+                                    <expression name="expression" type="javascript">Number(row["SUM(HOLIDAYLENGTH)"].toFixed(3))</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">HOLIDAYLENGTH</property>
+                        </data>
+                    </cell>
+                    <cell id="1975">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2101">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">ANNUALLEVEL</property>
+                        </data>
+                    </cell>
+                    <cell id="1976">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2102">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">ENVENTLEAVE</property>
+                        </data>
+                    </cell>
+                    <cell id="1977">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2103">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">COMPENSATELEAVE</property>
+                        </data>
+                    </cell>
+                    <cell id="1978">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2104">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">SICKLEAVE</property>
+                        </data>
+                    </cell>
+                    <cell id="1979">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2111">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">OTHERLEAVE</property>
+                        </data>
+                    </cell>
+                    <cell id="1981">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2108">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">REALOVERHOURS</property>
+                        </data>
+                    </cell>
+                    <cell id="2095">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2113">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">TRANSFERCOMPENSATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1982">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2114">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">TRANSFERCOMPENSATE_11</property>
+                        </data>
+                    </cell>
+                    <cell id="1983">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2107">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">LASTSURPLUSCOMPENSATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1984">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="2106">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">SURPLUSCOMPENSATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1987">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <grid id="2262">
+            <column id="2263">
+                <property name="width">60px</property>
+            </column>
+            <column id="2264">
+                <property name="width">180px</property>
+            </column>
+            <column id="2265"/>
+            <column id="2266">
+                <property name="width">60px</property>
+            </column>
+            <column id="2267">
+                <property name="width">180px</property>
+            </column>
+            <column id="2268"/>
+            <row id="2269">
+                <cell id="2270">
+                    <label id="2196">
+                        <property name="backgroundAttachment">scroll</property>
+                        <property name="backgroundPositionX">0%</property>
+                        <property name="backgroundPositionY">0%</property>
+                        <property name="backgroundRepeat">repeat</property>
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="fontSize">10pt</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="fontVariant">normal</property>
+                        <property name="color">black</property>
+                        <property name="textLineThrough">none</property>
+                        <property name="textOverline">none</property>
+                        <property name="textUnderline">none</property>
+                        <property name="borderBottomColor">black</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <property name="borderLeftColor">black</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderLeftWidth">medium</property>
+                        <property name="borderRightColor">black</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderRightWidth">medium</property>
+                        <property name="borderTopColor">black</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="borderTopWidth">medium</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">0pt</property>
+                        <property name="marginBottom">0pt</property>
+                        <property name="marginRight">0pt</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <property name="textAlign">center</property>
+                        <property name="letterSpacing">normal</property>
+                        <property name="lineHeight">normal</property>
+                        <property name="orphans">2</property>
+                        <property name="textTransform">none</property>
+                        <property name="whiteSpace">normal</property>
+                        <property name="widows">2</property>
+                        <property name="wordSpacing">normal</property>
+                        <property name="display">block</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="pageBreakBefore">auto</property>
+                        <property name="pageBreakInside">auto</property>
+                        <property name="showIfBlank">false</property>
+                        <property name="canShrink">false</property>
+                        <property name="overflow">hidden</property>
+                        <text-property name="text">负责人:</text-property>
+                    </label>
+                </cell>
+                <cell id="2271">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                </cell>
+                <cell id="2272"/>
+                <cell id="2273">
+                    <label id="2197">
+                        <property name="backgroundAttachment">scroll</property>
+                        <property name="backgroundPositionX">0%</property>
+                        <property name="backgroundPositionY">0%</property>
+                        <property name="backgroundRepeat">repeat</property>
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="fontSize">10pt</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="fontVariant">normal</property>
+                        <property name="color">black</property>
+                        <property name="textLineThrough">none</property>
+                        <property name="textOverline">none</property>
+                        <property name="textUnderline">none</property>
+                        <property name="borderBottomColor">black</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <property name="borderLeftColor">black</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderLeftWidth">medium</property>
+                        <property name="borderRightColor">black</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderRightWidth">medium</property>
+                        <property name="borderTopColor">black</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="borderTopWidth">medium</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">0pt</property>
+                        <property name="marginBottom">0pt</property>
+                        <property name="marginRight">0pt</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <property name="textAlign">center</property>
+                        <property name="letterSpacing">normal</property>
+                        <property name="lineHeight">normal</property>
+                        <property name="orphans">2</property>
+                        <property name="textTransform">none</property>
+                        <property name="whiteSpace">normal</property>
+                        <property name="widows">2</property>
+                        <property name="wordSpacing">normal</property>
+                        <property name="display">block</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="pageBreakBefore">auto</property>
+                        <property name="pageBreakInside">auto</property>
+                        <property name="showIfBlank">false</property>
+                        <property name="canShrink">false</property>
+                        <property name="overflow">hidden</property>
+                        <text-property name="text">考勤员:</text-property>
+                    </label>
+                </cell>
+                <cell id="2274">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                </cell>
+                <cell id="2275"/>
+            </row>
+        </grid>
+    </body>
+</report>

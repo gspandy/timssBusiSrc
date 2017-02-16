@@ -1,0 +1,1815 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="siteid" id="9">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">SJW</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="sheetid" id="180">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">7694</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="7">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledMetadataBidiFormatStr</name>
+                </ex-property>
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledContentBidiFormatStr</name>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.driver.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@10.0.17.154:1521:itceam</property>
+            <property name="odaUser">timss2dev</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">YWJj</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/timss2dev</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set_1" id="181">
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">sheetid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">siteid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">SHEETNO</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">REMARK</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">TOTAL_PRICE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">DHDATE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">SHEETNO</property>
+                    <property name="nativeName">SHEETNO</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">REMARK</property>
+                    <property name="nativeName">REMARK</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">TOTAL_PRICE</property>
+                    <property name="nativeName">TOTAL_PRICE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">DHDATE</property>
+                    <property name="nativeName">DHDATE</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select iwp.sheetno,
+iwp.remark,
+iwp.total_price,
+to_char(iwp.dhdate,'yyyy-mm-dd') as dhdate  
+from itceam_workflow_purchorder iwp 
+where iwp.sheet_id = ?
+and iwp.siteid=?
+]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set_2" id="182">
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">sheetid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">siteid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ADDRESS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">CONTACT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ZIP</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">TEL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">FAX</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ADDRESS</property>
+                    <property name="nativeName">ADDRESS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">CONTACT</property>
+                    <property name="nativeName">CONTACT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ZIP</property>
+                    <property name="nativeName">ZIP</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">TEL</property>
+                    <property name="nativeName">TEL</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">FAX</property>
+                    <property name="nativeName">FAX</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select ivci.name,
+ivci.address,
+ivci.contact,
+ivci.post_code as zip,
+ivci.tel,
+ivci.fax 
+from itceam_vendor_company_infor ivci,
+itceam_workflow_purchorder iwp 
+where ivci.company_no = iwp.company_no 
+and iwp.siteid = ivci.siteid 
+and iwp.sheet_id = ?
+and iwp.siteid=?
+]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set_3" id="183">
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">sheetid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">siteid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NUM</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">SHEETNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ITEMCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ITEMNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">CUSMODEL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ITEMNUM</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">UNITNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">PRICE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">COST</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NUM</property>
+                    <property name="nativeName">NUM</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">SHEETNAME</property>
+                    <property name="nativeName">SHEETNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ITEMCODE</property>
+                    <property name="nativeName">ITEMCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ITEMNAME</property>
+                    <property name="nativeName">ITEMNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">CUSMODEL</property>
+                    <property name="nativeName">CUSMODEL</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ITEMNUM</property>
+                    <property name="nativeName">ITEMNUM</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">UNITNAME</property>
+                    <property name="nativeName">UNITNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">PRICE</property>
+                    <property name="nativeName">PRICE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">COST</property>
+                    <property name="nativeName">COST</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select rownum as num,
+     (select iwp.sheetname from itceam_workflow_purchorder iwp where iwp.sheet_id = a.sheet_id) as sheetname,
+       a.itemid as itemcode,
+       ii.itemname as itemname,
+       ii.cusmodel as cusmodel,
+       a.itemnum as itemnum,
+       (select iu.unitname from inv_unit iu where iu.unitid = ii.unit1 and ii.site_id = iu.site_id) as unitname,
+       a.price as price,
+       a.cost as cost
+from itceam_workflow_orderitem_exc a ,inv_item ii
+where a.itemid = ii.itemcode 
+      and a.sheet_id =?
+      and ii.site_id = ?
+
+]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set_4" id="184">
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">sheetid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param_2</property>
+                    <property name="paramName">siteid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">DRAFT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DRAFTTIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DRAFTMSG</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">FIN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">FINTIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">FINMSG</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">GM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">GMTIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">GMMSG</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DRAFT</property>
+                    <property name="nativeName">DRAFT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DRAFTTIME</property>
+                    <property name="nativeName">DRAFTTIME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DRAFTMSG</property>
+                    <property name="nativeName">DRAFTMSG</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">FIN</property>
+                    <property name="nativeName">FIN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">FINTIME</property>
+                    <property name="nativeName">FINTIME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">FINMSG</property>
+                    <property name="nativeName">FINMSG</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">GM</property>
+                    <property name="nativeName">GM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">GMTIME</property>
+                    <property name="nativeName">GMTIME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">GMMSG</property>
+                    <property name="nativeName">GMMSG</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select MAX(decode(t.key, 'draft', t.name, NULL)) as draft,
+       MAX(decode(t.key, 'draft', t.datetime, NULL)) as drafttime,
+       MAX(decode(t.key, 'draft', t.message, NULL)) as draftmsg,
+       MAX(decode(t.key, 'fin_manager', t.name, NULL)) as fin,
+       MAX(decode(t.key, 'fin_manager', t.datetime, NULL)) as fintime,
+       MAX(decode(t.key, 'fin_manager', t.message, NULL)) as finmsg,
+       MAX(decode(t.key, 'general_manager', t.name, NULL)) as gm,
+       MAX(decode(t.key, 'general_manager', t.datetime, NULL)) as gmtime,
+       MAX(decode(t.key, 'general_manager', t.message, NULL)) as gmmsg     
+from (
+select task_def_key_ as key,  
+       (select su.name from sec_user su where su.user_id = aht.assignee_) as name,
+       to_char(aht.end_time_+0,'yyyy"年"mm"月"dd"日"') as datetime,
+       hc.message_ as message 
+  from act_hi_comment hc,act_hi_taskinst aht
+ where hc.task_id_ = aht.id_ 
+       and aht.proc_inst_id_ = (select a.processid from pur_process_mapping a where a.masterkey =? and a.siteid = ?)
+) t
+]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="titleStyle" id="82">
+            <property name="fontFamily">"微软雅黑"</property>
+            <property name="fontSize">12pt</property>
+            <property name="textAlign">left</property>
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="dynamicTxtStyle" id="83">
+            <property name="fontFamily">"宋体"</property>
+            <property name="fontSize">11pt</property>
+            <property name="textAlign">left</property>
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="fontStyle1" id="443">
+            <property name="fontFamily">"宋体"</property>
+            <property name="fontSize">10.5pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">a4</property>
+            <property name="orientation">auto</property>
+            <property name="leftMargin">0.75in</property>
+            <property name="rightMargin">0.75in</property>
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of></value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="185">
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">pno</property>
+                    <text-property name="displayName">pno</text-property>
+                    <expression name="expression" type="javascript">"采购单单号(PO N0.)："</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="186"/>
+            <row id="187">
+                <cell id="188">
+                    <grid id="199">
+                        <column id="200"/>
+                        <row id="201">
+                            <cell id="202">
+                                <property name="paddingTop">6pt</property>
+                                <property name="paddingBottom">6pt</property>
+                                <label id="269">
+                                    <property name="style">fontStyle1</property>
+                                    <property name="fontSize">16pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingBottom">1pt</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">东莞市沃华实业投资有限公司</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="203">
+                            <cell id="204">
+                                <property name="paddingTop">6pt</property>
+                                <property name="paddingBottom">6pt</property>
+                                <label id="270">
+                                    <property name="style">fontStyle1</property>
+                                    <property name="fontSize">16pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingBottom">1pt</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">订货单</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="205">
+                            <cell id="206">
+                                <property name="paddingLeft">10pt</property>
+                                <data id="271">
+                                    <property name="style">fontStyle1</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="dataSet">Data Set_1</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">SHEETNO</property>
+                                            <text-property name="displayName">SHEETNO</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["SHEETNO"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">pno</property>
+                                            <text-property name="displayName">pno</text-property>
+                                            <expression name="expression" type="javascript">"采购单单号(PO N0.)："+row["SHEETNO"]</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">pno</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="189">
+                <cell id="190">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="paddingTop">0pt</property>
+                    <property name="paddingLeft">0pt</property>
+                    <property name="paddingBottom">0pt</property>
+                    <property name="paddingRight">0pt</property>
+                    <grid id="207">
+                        <column id="208"/>
+                        <column id="209"/>
+                        <row id="210">
+                            <cell id="211">
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">1px</property>
+                                <property name="paddingTop">5pt</property>
+                                <property name="paddingLeft">5pt</property>
+                                <property name="paddingBottom">5pt</property>
+                                <grid id="288">
+                                    <column id="289"/>
+                                    <row id="290">
+                                        <cell id="291">
+                                            <label id="334">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">供应商信息：</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="292">
+                                        <cell id="293">
+                                            <data id="328">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">NAME</property>
+                                                        <text-property name="displayName">NAME</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["NAME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["NAME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="294">
+                                        <cell id="295">
+                                            <data id="329">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">ADDRESS</property>
+                                                        <text-property name="displayName">ADDRESS</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["ADDRESS"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["ADDRESS"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="296">
+                                        <cell id="297">
+                                            <data id="330">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">CONTACT</property>
+                                                        <text-property name="displayName">CONTACT</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["CONTACT"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["CONTACT"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="298">
+                                        <cell id="299">
+                                            <data id="331">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">ZIP</property>
+                                                        <text-property name="displayName">ZIP</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["ZIP"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">"邮编："+row["ZIP"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="300">
+                                        <cell id="301">
+                                            <data id="332">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">TEL</property>
+                                                        <text-property name="displayName">TEL</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["TEL"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">"电话："+row["TEL"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="302">
+                                        <cell id="303">
+                                            <data id="333">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_2</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">FAX</property>
+                                                        <text-property name="displayName">FAX</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["FAX"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">"传真："+row["FAX"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                            <cell id="212">
+                                <property name="paddingTop">5pt</property>
+                                <property name="paddingLeft">5pt</property>
+                                <property name="paddingBottom">5pt</property>
+                                <grid id="304">
+                                    <column id="305"/>
+                                    <row id="306">
+                                        <cell id="307">
+                                            <label id="320">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">采购方信息：</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="308">
+                                        <cell id="309">
+                                            <label id="321">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">东莞市沃华实业投资有限公司</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="310">
+                                        <cell id="311">
+                                            <label id="322">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">广东省东莞市虎门镇沙角管理区</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="312">
+                                        <cell id="313">
+                                            <label id="323">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">（采购员）</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="314">
+                                        <cell id="315">
+                                            <label id="324">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">邮编： 523908</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="316">
+                                        <cell id="317">
+                                            <label id="325">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">电话：</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="318">
+                                        <cell id="319">
+                                            <label id="326">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">传真：</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="191">
+                <cell id="192">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="paddingTop">10pt</property>
+                    <property name="paddingLeft">6pt</property>
+                    <property name="paddingBottom">10pt</property>
+                    <label id="335">
+                        <property name="style">fontStyle1</property>
+                        <text-property name="text">根据贵方相关报价及各交货条款，现以如下价格向贵方订购如下货物：</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="193">
+                <cell id="194">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="paddingTop">0pt</property>
+                    <property name="paddingLeft">0pt</property>
+                    <property name="paddingBottom">0pt</property>
+                    <property name="paddingRight">0pt</property>
+                    <table id="213">
+                        <property name="dataSet">Data Set_3</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">NUM</property>
+                                <text-property name="displayName">NUM</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["NUM"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SHEETNAME</property>
+                                <text-property name="displayName">SHEETNAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["SHEETNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ITEMCODE</property>
+                                <text-property name="displayName">ITEMCODE</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ITEMCODE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ITEMNAME</property>
+                                <text-property name="displayName">ITEMNAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ITEMNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CUSMODEL</property>
+                                <text-property name="displayName">CUSMODEL</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["CUSMODEL"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ITEMNUM</property>
+                                <text-property name="displayName">ITEMNUM</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ITEMNUM"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">UNITNAME</property>
+                                <text-property name="displayName">UNITNAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["UNITNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PRICE</property>
+                                <text-property name="displayName">PRICE</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["PRICE"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">COST</property>
+                                <text-property name="displayName">COST</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["COST"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                        </list-property>
+                        <column id="244">
+                            <property name="width">50px</property>
+                        </column>
+                        <column id="245">
+                            <property name="width">90px</property>
+                        </column>
+                        <column id="246">
+                            <property name="width">75px</property>
+                        </column>
+                        <column id="247"/>
+                        <column id="248">
+                            <property name="width">85px</property>
+                        </column>
+                        <column id="249">
+                            <property name="width">50px</property>
+                        </column>
+                        <column id="250">
+                            <property name="width">50px</property>
+                        </column>
+                        <column id="251">
+                            <property name="width">50px</property>
+                        </column>
+                        <column id="252"/>
+                        <header>
+                            <row id="214">
+                                <cell id="215">
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="336">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">序号</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="216">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="338">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">采购申请</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="217">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="340">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">物资编码</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="218">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="342">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">物资描述</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="219">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="344">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">规格型号</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="220">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="346">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">数量</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="348">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">单位</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="222">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="350">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">单价</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="223">
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="352">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">规格（含税）</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="224">
+                                <cell id="225">
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="337">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">NUM</property>
+                                    </data>
+                                </cell>
+                                <cell id="226">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="339">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">SHEETNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="227">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="341">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">ITEMCODE</property>
+                                    </data>
+                                </cell>
+                                <cell id="228">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="343">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">ITEMNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="229">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="345">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">CUSMODEL</property>
+                                    </data>
+                                </cell>
+                                <cell id="230">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="347">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">ITEMNUM</property>
+                                    </data>
+                                </cell>
+                                <cell id="231">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="349">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">UNITNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="232">
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="351">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">PRICE</property>
+                                    </data>
+                                </cell>
+                                <cell id="233">
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">6pt</property>
+                                    <property name="paddingBottom">6pt</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="353">
+                                        <property name="style">fontStyle1</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">COST</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+            <row id="195">
+                <cell id="196">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="paddingTop">1pt</property>
+                    <property name="paddingLeft">5pt</property>
+                    <property name="paddingBottom">5pt</property>
+                    <grid id="253">
+                        <column id="254"/>
+                        <row id="441">
+                            <cell id="442">
+                                <property name="paddingLeft">250pt</property>
+                                <data id="355">
+                                    <property name="style">fontStyle1</property>
+                                    <property name="dataSet">Data Set_1</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">TOTAL_PRICE</property>
+                                            <text-property name="displayName">TOTAL_PRICE</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["TOTAL_PRICE"]</expression>
+                                            <property name="dataType">decimal</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">Column Binding</property>
+                                            <expression name="expression" type="javascript">" 合计（人民币）："+row["TOTAL_PRICE"]</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Column Binding</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="255">
+                            <cell id="256">
+                                <data id="356">
+                                    <property name="style">fontStyle1</property>
+                                    <property name="dataSet">Data Set_1</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">DHDATE</property>
+                                            <text-property name="displayName">DHDATE</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["DHDATE"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">Column Binding</property>
+                                            <expression name="expression" type="javascript">"交 货 期：  "+row["DHDATE"]</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Column Binding</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="257">
+                            <cell id="258">
+                                <label id="373">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">交货地点：广东省粤电集团有限公司沙角C电厂内</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="357">
+                            <cell id="358">
+                                <label id="374">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">运    费：由  方支付</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="359">
+                            <cell id="360">
+                                <label id="375">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">付款条件：</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="361">
+                            <cell id="362">
+                                <label id="376">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">买方要求：1.交货时必须将一份标明序号、PA号、产品名称、型号、数量、使用班组的说明标识贴</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="369">
+                            <cell id="370">
+                                <label id="377">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">于每件货物上(送货单亦需标注完整)，以便查找。如果有技术参数和图纸，安装、操作和维修手册则</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="367">
+                            <cell id="368">
+                                <label id="378">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">放入包装箱里面。</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="363">
+                            <cell id="364">
+                                <label id="379">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">2.卖方(包括卖方委托的运输单位)车辆入沙角C电厂后必须服从本厂安健环管理的规定，送货驾驶员</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="365">
+                            <cell id="366">
+                                <label id="380">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">必须带齐有效的驾驶证和行驶证，要按我方规定的行车速度和规定的路线行走。产品在运输过程中所</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="371">
+                            <cell id="372">
+                                <label id="381">
+                                    <property name="style">fontStyle1</property>
+                                    <text-property name="text">致的安全责任由卖方承担。</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="197">
+                <cell id="198">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="paddingTop">0pt</property>
+                    <property name="paddingLeft">0pt</property>
+                    <property name="paddingBottom">0pt</property>
+                    <property name="paddingRight">0pt</property>
+                    <grid id="259">
+                        <column id="260"/>
+                        <column id="261"/>
+                        <column id="262"/>
+                        <column id="263"/>
+                        <row id="264">
+                            <cell id="265">
+                                <property name="paddingTop">5pt</property>
+                                <property name="paddingLeft">5pt</property>
+                                <property name="paddingBottom">5pt</property>
+                                <grid id="382">
+                                    <column id="383"/>
+                                    <row id="384">
+                                        <cell id="385">
+                                            <label id="440">
+                                                <property name="style">fontStyle1</property>
+                                                <text-property name="text">备注：</text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="386">
+                                        <cell id="387">
+                                            <data id="430">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_1</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">REMARK</property>
+                                                        <text-property name="displayName">REMARK</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["REMARK"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["REMARK"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="388">
+                                        <cell id="389">
+                                            <label id="444">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="390">
+                                        <cell id="391">
+                                            <label id="445">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="392">
+                                        <cell id="393">
+                                            <label id="446">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                            <cell id="266">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">1px</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">1px</property>
+                                <property name="paddingTop">5pt</property>
+                                <property name="paddingLeft">5pt</property>
+                                <property name="paddingBottom">5pt</property>
+                                <grid id="394">
+                                    <column id="395"/>
+                                    <row id="396">
+                                        <cell id="397">
+                                            <data id="431">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">DRAFT</property>
+                                                        <text-property name="displayName">DRAFT</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["DRAFT"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">"采购员："+row["DRAFT"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="398">
+                                        <cell id="399">
+                                            <data id="432">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">DRAFTMSG</property>
+                                                        <text-property name="displayName">DRAFTMSG</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["DRAFTMSG"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["DRAFTMSG"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="400">
+                                        <cell id="401">
+                                            <label id="447">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="402">
+                                        <cell id="403">
+                                            <label id="448">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="404">
+                                        <cell id="405">
+                                            <data id="433">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">DRAFTTIME</property>
+                                                        <text-property name="displayName">DRAFTTIME</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["DRAFTTIME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["DRAFTTIME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                            <cell id="267">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">1px</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">1px</property>
+                                <property name="paddingTop">5pt</property>
+                                <property name="paddingLeft">5pt</property>
+                                <property name="paddingBottom">5pt</property>
+                                <grid id="406">
+                                    <column id="407"/>
+                                    <row id="408">
+                                        <cell id="409">
+                                            <data id="436">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">FIN</property>
+                                                        <text-property name="displayName">FIN</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["FIN"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">"财务部经理："+row["FIN"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="410">
+                                        <cell id="411">
+                                            <data id="435">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">FINMSG</property>
+                                                        <text-property name="displayName">FINMSG</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["FINMSG"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["FINMSG"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="412">
+                                        <cell id="413">
+                                            <label id="449">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="414">
+                                        <cell id="415">
+                                            <label id="450">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="416">
+                                        <cell id="417">
+                                            <data id="434">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">FINTIME</property>
+                                                        <text-property name="displayName">FINTIME</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["FINTIME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["FINTIME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                            <cell id="268">
+                                <property name="paddingTop">5pt</property>
+                                <property name="paddingLeft">5pt</property>
+                                <property name="paddingBottom">5pt</property>
+                                <grid id="418">
+                                    <column id="419"/>
+                                    <row id="420">
+                                        <cell id="421">
+                                            <data id="437">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">GM</property>
+                                                        <text-property name="displayName">GM</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["GM"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">"总经理："+row["GM"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="422">
+                                        <cell id="423">
+                                            <data id="438">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">GMMSG</property>
+                                                        <text-property name="displayName">GMMSG</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["GMMSG"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["GMMSG"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                    <row id="424">
+                                        <cell id="425">
+                                            <label id="451">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="426">
+                                        <cell id="427">
+                                            <label id="452">
+                                                <property name="style">fontStyle1</property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="428">
+                                        <cell id="429">
+                                            <data id="439">
+                                                <property name="style">fontStyle1</property>
+                                                <property name="dataSet">Data Set_4</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">GMTIME</property>
+                                                        <text-property name="displayName">GMTIME</text-property>
+                                                        <expression name="expression" type="javascript">dataSetRow["GMTIME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">Column Binding</property>
+                                                        <expression name="expression" type="javascript">row["GMTIME"]</expression>
+                                                        <property name="dataType">string</property>
+                                                        <property name="allowExport">true</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="resultSetColumn">Column Binding</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

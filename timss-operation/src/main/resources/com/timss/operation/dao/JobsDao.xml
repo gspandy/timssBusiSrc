@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.JobsDao">
+	
+	<!--说明：#{}内的参数，需要与传入的Jobs中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertJobs" parameterType="Jobs">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select seq_opr_jobs.nextval from dual
+		</selectKey> 
+		INSERT INTO OPR_JOBS(id,name,stationId,sortType,siteId,isactive )  
+		values(#{id,jdbcType=NUMERIC}, #{name,jdbcType=VARCHAR}, #{stationId,jdbcType=VARCHAR}, 
+			#{sortType,jdbcType=NUMERIC}, #{siteId,jdbcType=VARCHAR},#{isActive,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 批量插入 -->
+	<insert id="batchInsertJobsPerson" parameterType="java.util.List">
+		INSERT INTO opr_jobs_person(JOBSID, USERID )  
+			<foreach collection="list" item="item" index="index" separator="union all">
+				select  #{item.jobsId} jobsId , #{item.userId} userId 
+				from dual
+			</foreach>
+	</insert>
+	
+	<!-- 批量删除 -->
+	<delete id="batchDeleteJobsPerson" parameterType="java.util.List">
+		DELETE FROM opr_jobs_person where  
+		<foreach item="item" collection="list" open="(" separator=" or " close=")">
+			(USERID=#{item.userId} and jobsid=#{item.jobsId})
+		</foreach>
+	</delete>
+	
+	<select id="queryOrgsRelatedToUsers" parameterType="int" resultType="String">
+		select userId from opr_jobs_person where jobsId= #{ id }
+	</select>
+	
+	<update id="updateJobs" parameterType="Jobs">
+	update opr_jobs set name = #{name,jdbcType=VARCHAR}, stationId = #{stationId,jdbcType=VARCHAR,jdbcType=VARCHAR} , 
+			sortType = #{sortType,jdbcType=NUMERIC} ,isactive=#{isActive,jdbcType=VARCHAR}	
+	where id = #{ id }
+	</update>
+		
+	<select id="queryJobsById" parameterType="int" resultType="Jobs">
+		select * from opr_jobs where id= #{ id }
+	</select>
+	
+	<delete id="deleteJobsById" parameterType="int">
+		update opr_jobs set del_ind='Y' where id = #{ id }
+	</delete>
+	
+	<select id="queryAllJobs" resultType="Jobs">
+		select * from opr_jobs and del_ind!='Y'
+	</select>
+	
+	<select id="queryJobsByPage" resultType="Jobs">
+		select j.id id, j.name name, d.name stationId, j.sortType sortType, j.isactive isActive 
+		from opr_jobs j 
+		left join opr_dept d on j.stationId = d.deptId 
+		where j.siteId like '%${ params.siteId }%' and j.del_ind!='Y'
+	</select>
+	
+	<select id="queryJobsBySearch" resultType="Jobs" >
+		select j.id id, j.name name, d.name stationId, j.sortType sortType, j.isactive isActive
+		from opr_jobs j 
+		left join opr_dept d on j.stationId = d.deptId 
+		where j.del_ind!='Y' 
+		<if test="params.name != null">
+		 	and j.name like '%${ params.name }%'
+		</if>
+		<if test="params.stationId != null">
+		 	and d.name like '%${ params.stationId }%'
+		</if>
+		<if test="params.sortType != null">
+		 	and j.sortType like '%${ params.sortType }%'
+		</if>
+		<if test="params.siteId != null">
+		 	and j.siteId like '%${ params.siteId }%'
+		</if>
+	</select>
+	
+	<select id="queryJobsByStationId" parameterType="String" resultType="Jobs">
+		select * from OPR_JOBS 
+		where stationId= #{ stationId }  and del_ind!='Y' and isactive!='N'
+		ORDER BY SORTTYPE
+	</select>
+	
+	<select id="queryJobDeptByJobId" parameterType="Integer" resultType="ModeListVo">
+		select j.id jobId,
+	       j.name jobName,
+	       j.stationid deptId,
+	       d.name deptName,
+	       j.siteId siteId,
+	       j.isactive isActive
+		  from (select * from opr_jobs where id = #{ jobId, jdbcType=NUMERIC } ) J
+		  left join opr_dept d
+		    on j.stationid = d.deptid
+	</select>
+	
+	<select id="queryJobsByUserId" parameterType="String" resultType="Jobs">
+select j.id,j.name,j.stationid,j.isactive
+from opr_jobs_person p
+left join opr_jobs j on j.id=p.jobsid
+where p.userid=#{userId} 
+and j.del_ind!='Y'
+and j.isactive!='N'
+	</select>
+	
+	<select id="queryJobsPersons" parameterType="int" resultType="PersonJobs">
+select distinct p.userId,su.name userName 
+from opr_jobs_person p
+left join sec_user su on su.user_id = p.userId
+where p.jobsId = #{ jobsId } and su.active!='N'
+	</select>
+</mapper> 

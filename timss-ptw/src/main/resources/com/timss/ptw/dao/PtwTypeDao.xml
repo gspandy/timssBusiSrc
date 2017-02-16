@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwTypeDao">
+	<select id="queryTypesBySiteId" resultType="PtwType">
+		select *
+		from ptw_type t,ptw_type_define d
+		where t.siteId = #{siteId} and d.id = t.wttypedefineid
+		<if test="isFireWt != null">
+			and d.isfirewt = #{isFireWt}
+		</if>
+		order by t.id
+	</select>
+	<select id="queryPtwTypeById" resultType="PtwType">
+		select *
+		from ptw_type t
+		where t.id=#{id}
+	</select>
+	
+	<select id="queryTypesByTypeCode" resultType="PtwType">
+		select *
+		from ptw_type t,ptw_type_define d
+		where t.siteId = #{siteId} and d.id = t.wttypedefineid
+		<if test="isFireWt != null">
+			and d.isfirewt = #{isFireWt}
+		</if>
+		<if test="typeCodes != null">
+			 and t.typeCode in 
+			 <foreach collection="typeCodes" index="index" item="item" open="(" separator="," close=")">  
+		            #{item}   
+		    </foreach>
+		</if>
+		order by t.id
+	</select>
+</mapper> 

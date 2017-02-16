@@ -1,0 +1,874 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurOrderDao">
+	<resultMap type="com.timss.purchase.vo.PurOrderVO" id="PurOrderVOMap">
+		<result property="sheetIType" column="sheet_i_type"/>
+		<result property="sheetId" column="sheet_id"/>
+		<result property="companyName" column="company_name"/>
+		<result property="qualityOkLen" column="quality_oklen"/>
+		<result property="totalPrice" column="total_price"/>
+		<result property="statusName" column="status_name"/>
+		<result property="companyNo" column="company_no"/>
+		<result property="curHandler" column="cur_handler"/>
+		<result property="supComName" column="sup_com_name"/>
+		<result property="taxRate" column="tax_rate"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.purchase.vo.PurOrderItemVO" id="PurOrderItemVOMap">
+		<result property="sheetId" column="sheet_id"/>
+		<result property="applySheetId" column="apply_sheet_id"/>
+		<result property="priceTotal" column="price_total"/>
+		<result property="sheetName" column="sheet_name"/>
+		<result property="createUserName" column="create_user_name"/>
+		<result property="taxRate" column="tax_rate"/>
+		<result property="tempCost" column="temp_cost"/>
+		<result property="sheetno" column="sheetno"/>
+	</resultMap>
+
+	<resultMap type="com.timss.purchase.bean.PurOrder" id="PurOrderMap">
+		<id property="sheetId" column="sheet_id"/>
+		<result property="sheetIType" column="sheet_i_type"/>
+		<result property="companyNo" column="company_no"/>
+		<result property="qualityOkLen" column="quality_oklen"/>
+		<result property="sheetClass" column="sheet_class"/>
+		<result property="totalPrice" column="total_price"/>
+		<result property="companyRemark" column="company_remark"/>
+		<result property="taxRate" column="tax_rate"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.purchase.bean.PurOrderItem" id="PurOrderItemMap">
+		<id property="sheetId" column="sheet_id"/>
+		<id property="applySheetId" column="apply_sheet_id"/>
+		<id property="itemid" column="itemid"/>
+		<result property="taxRate" column="tax_rate"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.purchase.bean.PurPolicyTemp" id="PurPolicyTempMap">
+		<id property="policyId" column="POLICY_ID"/>
+		<result property="policyContent" column="POLICY_CONTENT"/>
+		<result property="sort" column="SORT"/>
+		
+		<result property="createdate" column="CREATETIME"/>
+		<result property="createuser" column="CREATEID"/>
+		<result property="modifydate" column="UPDATETIME"/>
+		<result property="modifyuser" column="UPDATEID"/>
+		<result property="siteid" column="SITEID"/>
+	</resultMap>
+	<resultMap type="com.timss.purchase.bean.PurPolicy" id="PurPolicyMap">
+		<id property="sheetId" column="SHEET_ID"/>
+		<result property="policyContent" column="POLICY_CONTENT"/>
+		<result property="sort" column="SORT"/>
+		<result property="createdate" column="CREATETIME"/>
+		<result property="createuser" column="CREATEID"/>
+		<result property="siteid" column="SITEID"/>
+	</resultMap>
+		
+	<!-- 查询采购单列表 -->
+	<select id="queryPurOrder" resultMap="PurOrderVOMap">
+		select t.* 
+		from(
+		select  mm.sheet_id,
+                          mm.sheetno, 
+                          mm.sheet_i_type,
+                          mm.dhdate,
+                          mm.total_price,
+                          mm.status, 
+                          mm.status_name, 
+                          mm.username,
+                          mm.createaccount,
+                          mm.department, 
+                          mm.createdate, 
+                          mm.createdatesec, 
+                          mm.sheetname,
+                          mm.sup_com_name,
+                          mm.siteid,
+                          max(mm.applysheetno) as applysheetno, 
+                          mm.cur_handler as cur_handler,
+                          mm.spno 
+
+			from (
+		          select m.sheet_id,
+		                      m.sheetno, 
+		                      b1.enum_val as sheet_i_type,
+		                      m.dhdate,
+		                      m.total_price,
+		                      m.status, 
+		                      m.status_name, 
+		                      m.username,
+		                      m.createaccount,
+		                      m.department, 
+		                      m.createdate, 
+		                      m.createdatesec, 
+		                      m.sheetname,
+		                      m.sup_com_name,
+		                      m.siteid,
+		                      wm_concat(m.applysheetno) over( 
+	                          partition by m.sheet_id,m.sheetno, b1.enum_val, m.dhdate,m.total_price,m.status,
+			                           m.status_name, m.username,m.createaccount, m.department ,
+			                           m.createdate, m.createdatesec, m.sheetname,m.siteid,m.cur_handler,m.sup_com_name,m.spno
+	                          order by m.applysheetno asc ) as applysheetno, 
+		                      m.cur_handler as cur_handler,
+		                      m.spno 
+		          from(
+		                      select t.sheet_id,
+		                                  t.sheetno,
+		                                  t.sheet_i_type,
+		                                  formatdate(t.dhdate) dhdate,
+		                                  formatmoney(t.total_price) total_price,
+		                                  trim(t.status) as status,
+		                                  b2.enum_val as status_name,
+		                                  su.name  as username, 
+		                                  t.createaccount,
+		                                  so.name as department,
+		                                  formatdate(t.createdate) createdate, 
+		                                  formatdatetime(t.createdate) createdatesec,
+		                                  t.sheetname,
+		                                  t.company_no,
+                                      	  sbi.name  sup_com_name,
+		                                  t.siteid,
+		                                  iwp.sheetno as applysheetno,
+		                                  t.transactor as cur_handler,
+		                                  t.spno
+		                      from itceam_workflow_purchorder t,
+		                                itceam_workflow_orderitem_exc iwoe,
+		                                inv_item invi,
+		                                itceam_workflow_purchapply iwp,
+		                                sup_base_info sbi,
+		                                b_enum b2,
+		                                sec_user su,
+		                                (
+		                                select b.user_id,b.site_id, max(b.name) name
+                                              from
+                                              (select
+                                                  sr.user_id,sso.site_id,
+                                                  wm_concat(s.name) over (partition by sr.user_id,sso.site_id  order by s.name) name 
+                                               from sec_organization s,
+		                                           sec_organization_user sr,
+		                                           sec_site_organization sso 
+                                               where s.type = '2' 
+                                               and s.org_code = sr.org_code 
+                                               and instr(s.parent_code,sso.org_code)<![CDATA[>]]>0 
+                                              ) b 
+                                          group by b.user_id,b.site_id
+		                                 ) so
+		                    where iwoe.sheet_id = t.sheet_id 
+		                    	  and iwoe.itemid = invi.itemCode
+		                    	<if test="params.itemCode != null and params.itemCode != ''">
+			                       and (iwoe.itemId like '%'||'${params.itemCode}'||'%'
+			                       or invi.itemname like '%'||'${params.itemName}'||'%')
+			                     </if>
+			                     <if test="params.item != null and params.item != ''">
+			                       and (iwoe.itemId like '%'||'${params.item}'||'%'
+			                       or invi.itemname like '%'||'${params.item}'||'%')
+			                     </if>
+		                          and iwp.sheet_id = iwoe.apply_sheet_id 
+		                          and b2.ecat_code = 'PURCHORDER_FLOWSTATUS'
+		                          AND sbi.code=t.company_no 
+		                          AND SBI.SITEID = T.SITEID
+		                          and b2.enum_code = trim(t.status)
+		                          and t.createaccount = su.user_id
+		                          and so.user_id = t.createaccount 
+		                          and so.site_id = t.siteid
+		                    group by t.sheet_id, t.sheetno, t.sheet_i_type, t.dhdate, t.total_price,
+		                                      t.status, b2.enum_val, su.name,  t.createaccount, so.name, 
+		                                      t.createdate,  t.sheetname, t.siteid, iwp.sheetno,t.transactor,
+		                                      t.company_no,sbi.name,t.spno
+		         ) m 
+		         left join b_enum b1 on b1.ecat_code = 'PUR_ORDER_HTTYPE'  and b1.enum_code = m.sheet_i_type
+		         where 1=1 
+		         <if test="params.applysheetno != null and params.applysheetno != ''">
+						and m.applysheetno like '%'||'${params.applysheetno}'||'%' 
+				 </if>
+		         )mm
+	             group by mm.sheet_id,mm.sheetno, mm.sheet_i_type, mm.dhdate,mm.total_price,mm.status,
+		         mm.status_name, mm.username,mm.createaccount, mm.department ,
+		         mm.createdate, mm.createdatesec, mm.sheetname,mm.siteid,mm.cur_handler,mm.sup_com_name,mm.spno 
+		) t
+		where 1=1 and t.siteid =#{params.siteId} and <![CDATA[(t.status<>-1 and t.status < 4 or t.status=10 or t.status = 5)]]>
+		<if test="params.sheetno != null and params.sheetno != ''">
+			and t.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.sheetname != null and params.sheetname != ''">
+			and t.sheetname like '%'||'${params.sheetname}'||'%' 
+		</if>
+		<if test="params.username != null and params.username != ''">
+			and t.username like '%'||'${params.username}'||'%' 
+		</if>
+		<if test="params.department != null and params.department != ''">
+			and t.department like '%'||'${params.department}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+			and t.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.dhdate != null and params.dhdate != ''">
+			and t.dhdate like '%'||'${params.dhdate}'||'%' 
+		</if>
+		<if test="params.supComName != null and params.supComName != ''">
+			and t.sup_com_name like '%'||'${params.supComName}'||'%' 
+		</if>
+		<if test="params.totalPrice != null and params.totalPrice != ''">
+			and t.total_price like '%'||'${params.totalPrice}'||'%' 
+		</if>
+		<if test="params.statusName != null and params.statusName != ''">
+			and t.status_name like '%'||'${params.statusName}'||'%' 
+		</if>
+		<if test="params.curHandler != null and params.curHandler != ''">
+			and t.cur_handler like '%'||'${params.curHandler}'||'%' 
+		</if>
+	</select>
+	
+	<!-- 查询详细信息页面的时候表单信息获取 -->
+	<select id="queryPurOrderInfoBySheetId" resultMap="PurOrderVOMap">
+		 SELECT	V.SHEETNAME, 
+               	V.REMARK,
+            	V.SHEET_I_TYPE,
+            	V.DHDATE,
+            	V.COMPANY_NO,
+            	V.QUALITY_OKLEN, 
+            	V.USERNAME,
+            	V.CREATEDATE, 
+            	V.MODIFYDATE, 
+            	V.TOTAL_PRICE,
+            	V.STATUS, 
+            	V.SHEET_ID,
+            	V.SHEETNO,
+            	V.TAX_RATE,
+           		V.BUSINESSNO,
+            	V.CREATEACCOUNT,
+       			Y.NAME AS COMPANY_NAME,
+       			V.BIDTYPE,
+       			V.SPNO
+		 FROM (
+			SELECT I.SHEETNAME, 
+            	NVL(I.REMARK, '') REMARK,
+            	I.SHEET_I_TYPE,
+            	FORMATDATE(I.DHDATE) DHDATE,
+            	I.COMPANY_NO, 
+            	I.QUALITY_OKLEN,
+            	T.NAME AS USERNAME,
+            	FORMATDATE(I.CREATEDATE) CREATEDATE, 
+            	FORMATDATE(I.MODIFYDATE) MODIFYDATE, 
+            	ROUND(I.TOTAL_PRICE,2) AS TOTAL_PRICE,
+            	I.STATUS, 
+            	I.SHEET_ID,
+            	I.SHEETNO,
+            	I.TAX_RATE,
+            	I.BUSINESSNO,
+            	I.CREATEACCOUNT,
+            	I.SITEID,
+            	I.BIDTYPE,
+            	I.SPNO   
+    		FROM ITCEAM_WORKFLOW_PURCHORDER I,SEC_USER T 
+    		WHERE I.SHEET_ID = #{params.sheetId} 
+    			AND I.CREATEACCOUNT = T.USER_ID
+          ) V 
+          LEFT JOIN SUP_BASE_INFO Y ON Y.CODE = V.COMPANY_NO AND Y.SITEID = V.SITEID
+    	  ORDER BY V.SHEET_ID DESC
+	</select>
+	
+	<!-- 表单页面中列表 -->
+	<select id="queryPurOrderItemList" resultMap="PurOrderItemVOMap">
+		SELECT 
+		T.LISTID,
+		T.APPLY_SHEET_ID,
+	             T.SHEETNO,
+	             T.ITEMID,
+	             T.ITEMNAME,
+	             T.ITEMCUS,
+	             T.ORDERUNITNAME,
+	             T.ORDERUNITID,
+	             T.ITEMNUM,
+	             T.AVERPRICE,
+	             T.TAX,
+	             T.COST,
+	             T.TEMP_COST,
+	             T.PRICE_TOTAL,
+	             T.COMBO,
+	             T.REMARK,
+	             T.TAX_RATE,
+	             CASE WHEN T.ITEMNUM - NVL(SUM(IMTD.IN_QTY),0)  = T.ITEMNUM THEN 'NOREV'
+	                  WHEN T.ITEMNUM - NVL(SUM(IMTD.IN_QTY),0)  > 0 THEN 'PASTREV'
+	                  ELSE 'ALLREV' END AS RECEIVESTATUS,
+	             T.CREATE_USER_NAME,
+	             T.APPLYDEPT,
+	             T.PROJECTASCRIPTION,
+	             T.WAREHOUSEID,
+	             T.WAREHOUSE,
+	             t.invcateid
+	    FROM (
+	      SELECT 
+	      II.SITE_ID||'_'||II.ITEMID||'_'||I.WAREHOUSEID||'_'||I.invcateid AS LISTID,
+	      I.APPLY_SHEET_ID,
+	          (
+	            SELECT IP.SHEETNO 
+	            FROM ITCEAM_WORKFLOW_PURCHAPPLY IP 
+	            WHERE IP.SHEET_ID = I.APPLY_SHEET_ID
+	            ) AS SHEETNO,
+	          II.ITEMCODE AS ITEMID,
+	          II.ITEMNAME,
+	          II.CUSMODEL AS ITEMCUS,
+	          (SELECT IU.UNITNAME FROM INV_UNIT IU WHERE IU.UNITID = II.UNIT1 AND IU.SITE_ID = II.SITE_ID) AS ORDERUNITNAME,
+	          (SELECT IU.UNITNAME FROM INV_UNIT IU WHERE IU.UNITID = II.UNIT1 AND IU.SITE_ID = II.SITE_ID) AS ORDERUNITID,
+	          FORMATNUM(I.ITEMNUM) AS ITEMNUM,
+	          FORMATMONEY(I.PRICE) AS AVERPRICE,
+	          FORMATMONEY(I.TAX) AS TAX,
+	          FORMATMONEY(I.COST) AS COST,
+	          FORMATMONEY(I.COST) AS TEMP_COST,
+	          FORMATMONEY(I.COST * I.ITEMNUM) AS PRICE_TOTAL,
+	          (I.APPLY_SHEET_ID || II.ITEMCODE) AS COMBO,
+	          CASE WHEN I.REMARK IS NULL THEN '' ELSE I.REMARK END AS REMARK,
+	          I.TAX_RATE,
+	          I.SHEET_ID,
+	          IWP.NAME AS CREATE_USER_NAME,
+	           (SELECT SO.NAME FROM SEC_ORGANIZATION_USER SOU, SEC_ORGANIZATION SO WHERE IWP.USER_ID = SOU.USER_ID AND SOU.ORG_CODE = SO.ORG_CODE AND ROWNUM =1) AS APPLYDEPT,
+	          IWP.PROJECTASCRIPTION,
+	          I.WAREHOUSEID,
+	          IW.WAREHOUSENAME AS WAREHOUSE,
+	          I.invcateid
+	        FROM ITCEAM_WORKFLOW_ORDERITEM_EXC I, 
+	           INV_ITEM II,
+	             (SELECT U.NAME,
+                       IP.SHEET_ID,
+                       IP.SHEETNO,
+                       U.USER_ID,
+                       DECODE(IP.SITEID,'ZJW',W.WAREHOUSENAME,IP.PROJECT_ASCRIPTION) AS PROJECTASCRIPTION
+                  FROM ITCEAM_WORKFLOW_PURCHAPPLY IP
+                  LEFT JOIN INV_WAREHOUSE W ON IP.PROJECT_ASCRIPTION = W.WAREHOUSEID AND W.SITE_ID = IP.SITEID,
+                 SEC_USER U
+                 WHERE U.USER_ID = IP.CREATEACCOUNT
+                    ) IWP,
+                 INV_WAREHOUSE IW
+	        WHERE I.SHEET_ID =#{params.sheetId}
+	          AND I.ITEMID = II.ITEMCODE  
+	          AND II.SITE_ID = #{params.siteid}
+	          AND IWP.SHEET_ID = I.APPLY_SHEET_ID 
+	          AND I.WAREHOUSEID = IW.WAREHOUSEID
+	    ) T
+	    LEFT JOIN INV_MAT_MAP IMM ON T.SHEET_ID = IMM.OUTTERID AND T.ITEMID = IMM.ITEMCODE AND IMM.TRAN_TYPE = 'receivingmaterial'
+	    LEFT JOIN INV_MAT_TRAN_REC IMTD ON IMM.IMTDID = IMTD.IMTDID <!--  AND IMTD.INVCATEID = T.INVCATEID --> AND IMTD.WAREHOUSEID = T.WAREHOUSEID AND IMTD.PURA_ID  = T.APPLY_SHEET_ID
+	    GROUP BY T.LISTID,T.APPLY_SHEET_ID, T.SHEETNO, T.ITEMID, T.ITEMNAME, T.ITEMCUS, T.ORDERUNITNAME,
+	             T.ORDERUNITID, T.ITEMNUM, T.AVERPRICE, T.TAX, T.COST, T.TEMP_COST, T.PRICE_TOTAL,
+	             T.COMBO, T.REMARK, T.TAX_RATE,T.CREATE_USER_NAME,T.APPLYDEPT,T.PROJECTASCRIPTION,
+	             T.WAREHOUSEID,T.WAREHOUSE,T.invcateid
+	    ORDER BY T.ITEMID ASC
+	</select>
+	
+	<!-- 物资合并查询 -->
+	<select id="queryPurOrderItemListExce" resultMap="PurOrderItemVOMap">
+	    SELECT 
+		T.LISTID,
+		T.APPLY_SHEET_ID,
+	             T.SHEETNO,
+	             T.ITEMID,
+	             T.ITEMNAME,
+	             T.ITEMCUS,
+	             T.ORDERUNITNAME,
+	             T.ORDERUNITID,
+	             T.ITEMNUM,
+	             T.AVERPRICE,
+	             T.TAX,
+	             T.COST,
+	             T.TEMP_COST,
+	             T.PRICE_TOTAL,
+	             T.COMBO,
+	             T.REMARK,
+	             T.TAX_RATE,
+	             CASE WHEN T.ITEMNUM - NVL(SUM(IMTD.IN_QTY),0)  = T.ITEMNUM THEN 'NOREV'
+	                  WHEN T.ITEMNUM - NVL(SUM(IMTD.IN_QTY),0)  > 0 THEN 'PASTREV'
+	                  ELSE 'ALLREV' END AS RECEIVESTATUS,
+	             T.CREATE_USER_NAME,
+	             T.APPLYDEPT,
+	             T.PROJECTASCRIPTION,
+	             T.WAREHOUSEID,
+	             T.WAREHOUSE,
+	             t.invcateid
+	    FROM (
+	      SELECT 
+	      II.SITE_ID||'_'||II.ITEMID||'_'||I.WAREHOUSEID||'_'||I.invcateid AS LISTID,
+	      I.APPLY_SHEET_ID,
+	          (
+	            SELECT IP.SHEETNO 
+	            FROM ITCEAM_WORKFLOW_PURCHAPPLY IP 
+	            WHERE IP.SHEET_ID = I.APPLY_SHEET_ID
+	            ) AS SHEETNO,
+	          II.ITEMCODE AS ITEMID,
+	          II.ITEMNAME,
+	          II.CUSMODEL AS ITEMCUS,
+	          (SELECT IU.UNITNAME FROM INV_UNIT IU WHERE IU.UNITID = II.UNIT1 AND IU.SITE_ID = II.SITE_ID) AS ORDERUNITNAME,
+	          (SELECT IU.UNITNAME FROM INV_UNIT IU WHERE IU.UNITID = II.UNIT1 AND IU.SITE_ID = II.SITE_ID) AS ORDERUNITID,
+	          FORMATNUM(I.ITEMNUM) AS ITEMNUM,
+	          FORMATMONEY(I.PRICE) AS AVERPRICE,
+	          FORMATMONEY(I.TAX) AS TAX,
+	          FORMATMONEY(I.COST) AS COST,
+	          FORMATMONEY(I.COST) AS TEMP_COST,
+	          FORMATMONEY(I.COST * I.ITEMNUM) AS PRICE_TOTAL,
+	          (I.APPLY_SHEET_ID || II.ITEMCODE) AS COMBO,
+	          CASE WHEN I.REMARK IS NULL THEN '' ELSE I.REMARK END AS REMARK,
+	          I.TAX_RATE,
+	          I.SHEET_ID,
+	          IWP.NAME AS CREATE_USER_NAME,
+	           (SELECT SO.NAME FROM SEC_ORGANIZATION_USER SOU, SEC_ORGANIZATION SO WHERE IWP.USER_ID = SOU.USER_ID AND SOU.ORG_CODE = SO.ORG_CODE AND ROWNUM =1) AS APPLYDEPT,
+	          IWP.PROJECTASCRIPTION,
+	          I.WAREHOUSEID,
+	          IW.WAREHOUSENAME AS WAREHOUSE,
+	          I.invcateid
+	        FROM ITCEAM_WORKFLOW_ORDERITEM_EXC I, 
+	           INV_ITEM II,
+	             (SELECT U.NAME,
+                       IP.SHEET_ID,
+                       IP.SHEETNO,
+                       U.USER_ID,
+                       DECODE(IP.SITEID,'ZJW',W.WAREHOUSENAME,IP.PROJECT_ASCRIPTION) AS PROJECTASCRIPTION
+                  FROM ITCEAM_WORKFLOW_PURCHAPPLY IP
+                  LEFT JOIN INV_WAREHOUSE W ON IP.PROJECT_ASCRIPTION = W.WAREHOUSEID AND W.SITE_ID = IP.SITEID,
+                 SEC_USER U
+                 WHERE U.USER_ID = IP.CREATEACCOUNT
+                    ) IWP,
+                 INV_WAREHOUSE IW
+	        WHERE I.SHEET_ID =#{params.sheetId}
+	          AND I.ITEMID = II.ITEMCODE  
+	          AND II.SITE_ID = #{params.siteid}
+	          AND IWP.SHEET_ID = I.APPLY_SHEET_ID 
+	          AND I.WAREHOUSEID = IW.WAREHOUSEID
+	    ) T
+	    LEFT JOIN INV_MAT_MAP IMM ON T.SHEET_ID = IMM.OUTTERID AND T.ITEMID = IMM.ITEMCODE AND IMM.TRAN_TYPE = 'receivingmaterial'
+	    LEFT JOIN INV_MAT_TRAN_REC IMTD ON IMM.IMTDID = IMTD.IMTDID <!--  AND IMTD.INVCATEID = T.INVCATEID --> AND IMTD.WAREHOUSEID = T.WAREHOUSEID AND IMTD.PURA_ID  = T.APPLY_SHEET_ID
+	    GROUP BY T.LISTID,T.APPLY_SHEET_ID, T.SHEETNO, T.ITEMID, T.ITEMNAME, T.ITEMCUS, T.ORDERUNITNAME,
+	             T.ORDERUNITID, T.ITEMNUM, T.AVERPRICE, T.TAX, T.COST, T.TEMP_COST, T.PRICE_TOTAL,
+	             T.COMBO, T.REMARK, T.TAX_RATE,T.CREATE_USER_NAME,T.APPLYDEPT,T.PROJECTASCRIPTION,
+	             T.WAREHOUSEID,T.WAREHOUSE,T.invcateid
+	    ORDER BY T.ITEMID ASC
+	</select>
+	
+	<!-- 根据sheetid查询PurOrder -->
+	<select id="queryPurOrderBySheetId" resultMap="PurOrderMap">
+		select * from itceam_workflow_purchorder i where i.sheet_id = #{sheetId}
+	</select>
+	<select id="queryPurOrderBySheetIds" parameterType="java.util.Map" resultMap="PurOrderMap">
+		select * from itceam_workflow_purchorder i where i.sheet_id in (${sheetId})
+	</select>
+	
+	<!-- 更新PurOrder信息 -->
+	<update id="updatePurOrderInfo" parameterType="com.timss.purchase.bean.PurOrder">
+		update itceam_workflow_purchorder i 
+		<set>
+	      <if test="sheetIType != null"> i.sheet_i_type=#{sheetIType}, </if>
+	      <if test="dhdate != null"> i.dhdate=#{dhdate}, </if>
+	      <if test="status != null"> i.status=#{status}, </if>
+	      <if test="companyNo != null"> i.company_no=#{companyNo}, </if>
+	      <if test="totalPrice != null"> i.total_price=#{totalPrice}, </if>
+	      <if test="remark != null"> i.remark=#{remark}, </if>
+	      <if test="modifydate != null"> i.modifydate=#{modifydate}, </if>
+	      <if test="modifyaccount != null"> i.modifyaccount=#{modifyaccount}, </if>
+	      <if test="sheetname != null"> i.sheetname=#{sheetname}, </if>
+	      <if test="taxRate != null"> i.tax_rate=#{taxRate}, </if>
+	      <if test="transactor != null"> i.transactor=#{transactor}, </if>
+	      <if test="qualityOkLen != null"> i.quality_oklen=#{qualityOkLen}, </if>
+	      <if test="bidType != null"> i.bidType=#{bidType}, </if>
+	      <if test="spNo != null"> i.spNo=#{spNo}, </if>
+		</set>
+		 where i.sheet_id=#{sheetId}
+	</update>
+	
+	
+	<insert id="insertPurOrderInfo" parameterType="com.timss.purchase.bean.PurOrder">
+		insert into itceam_workflow_purchorder(sheet_id,sheet_i_type,dhdate,status,company_no,quality_oklen,
+												sheetno,sheet_class,total_price,remark,company_remark,
+												sheetname,siteid,createdate,createaccount,tax_rate,businessno,bidType,spNo)
+		select #{sheetId,jdbcType=NUMERIC}, 
+				#{sheetIType,jdbcType=VARCHAR},
+				#{dhdate,jdbcType=TIMESTAMP},
+				#{status,jdbcType=VARCHAR},
+				#{companyNo,jdbcType=VARCHAR},
+				#{qualityOkLen,jdbcType=NUMERIC},
+				#{sheetno,jdbcType=VARCHAR},
+				#{sheetClass,jdbcType=VARCHAR},
+				#{totalPrice,jdbcType=NUMERIC},
+				#{remark,jdbcType=VARCHAR},
+				#{companyRemark,jdbcType=VARCHAR},
+				#{sheetname,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{createaccount,jdbcType=VARCHAR},
+				#{taxRate,jdbcType=NUMERIC},
+				#{businessno,jdbcType=VARCHAR},
+				#{bidType,jdbcType=VARCHAR},
+				#{spNo,jdbcType=VARCHAR}    
+	     from dual
+	</insert>
+	
+	<!-- 调用插入PurOrderItem的存储过程 -->
+	<parameterMap type="map" id="POIParamMap">  
+	   <parameter property="sheetId" jdbcType="VARCHAR" mode="IN"/>  
+	   <parameter property="applySheetId" jdbcType="VARCHAR" mode="IN"/>  
+	   <parameter property="itemid" jdbcType="VARCHAR" mode="IN"/>
+	   <parameter property="price" jdbcType="NUMERIC" mode="IN"/>  
+	   <parameter property="tax" jdbcType="NUMERIC" mode="IN"/>  
+	   <parameter property="taxrate" jdbcType="NUMERIC" mode="IN"/>  
+	   <parameter property="cost" jdbcType="NUMERIC" mode="IN"/>
+	   <parameter property="itemnum" jdbcType="INTEGER" mode="IN"/>  
+	   <parameter property="remark" jdbcType="VARCHAR" mode="IN"/>  
+	</parameterMap> 
+	<update id="callProcPurOrderItemInsert" parameterMap="POIParamMap" statementType="CALLABLE">
+		{call itceam_purch_p_order(?,?,?,?,?,?,?,?,?)} 
+	</update>
+	
+	<!-- 查询是否存在PurOrderItem -->
+	<select id="queryPurOrderItemExists" resultType="java.lang.String">
+		select i.itemid||'_'||i.apply_sheet_id||'_'||i.warehouseid||'_'||i.invcateid as newstr from itceam_workflow_orderitem_exc i where i.sheet_id = #{sheetId}
+	</select>
+	
+	<!-- 调用删除PurOrderItem的存储过程 -->
+	<parameterMap type="map" id="DelPOIParamMap">
+		<parameter property="itemid" jdbcType="VARCHAR" mode="IN"/>
+		<parameter property="applySheetId" jdbcType="VARCHAR" mode="IN"/>  
+	   	<parameter property="sheetId" jdbcType="VARCHAR" mode="IN"/>  
+	    <parameter property="siteId" jdbcType="VARCHAR" mode="IN"/>
+	</parameterMap> 
+	<update id="callProcPurOrderItemDelete" parameterMap="DelPOIParamMap" statementType="CALLABLE">
+		{call itceam_purch_p_order_delete(?,?,?,?)} 
+	</update>
+	
+	<!-- 查询采购类型数据(以后若可以在页面使用枚举，这个方法将弃用)
+	<select id="queryItemOrderType" resultType="HashMap">
+		select a.param_name key,a.param_value value from itccontext_param a where a.param_item='ITEMORDER_TYPE' and a.siteid=#{params.siteId} order by a.PARAM_SN desc
+	</select> -->
+	
+	<!-- 查询采购申请的表单基本信息 -->
+	<select id="querySheetIdByFlowNo" resultType="java.lang.String" parameterType="java.util.Map">
+		select a.sheet_id from itceam_workflow_purchorder a where a.sheetno=#{sheetNo} and a.siteid=#{siteId}
+	</select>
+	
+	<!-- 查询采购申请的表单基本信息 -->
+	<select id="queryFlowNoBySheetId" resultType="java.lang.String" parameterType="java.util.Map">
+		select a.sheetno from itceam_workflow_purchorder a where a.sheet_id=#{sheetId} and a.siteid=#{siteId}
+	</select>
+	
+	<!-- 通过时间段查询采购总额 -->
+	<select id="queryPurPriceTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		select round((sum(b.total_price)/10000),4) as totalprice 
+		from itceam_workflow_purchorder b
+		where b.siteid = '${siteId}'
+		   and (b.status = '1' or b.status = '2' or b.status = '3')
+		   and b.createdate between to_date('${beginDate}','yyyy-mm-dd') 
+		   and to_date('${endDate}','yyyy-mm-dd')
+	</select>
+	
+	<select id="queryPurOrderItem" parameterType="com.timss.purchase.bean.PurOrderItem" resultMap="PurOrderItemVOMap">
+		SELECT *
+    	FROM ITCEAM_WORKFLOW_ORDERITEM_EXC I
+   		WHERE I.SHEET_ID = #{sheetId}
+     		AND I.APPLY_SHEET_ID = #{applySheetId}
+     		AND I.ITEMID = #{itemid}
+     		AND I.WAREHOUSEID = #{warehouseid}
+     		<!-- AND I.invcateid = #{invcateid}  -->
+	</select>
+	
+	<insert id="insertPurOrderItem" parameterType="com.timss.purchase.bean.PurOrderItem">
+		  INSERT INTO ITCEAM_WORKFLOW_ORDERITEM_EXC
+	      (SHEET_ID, APPLY_SHEET_ID, ITEMID, ITEMNUM, PRICE, TAX, TAX_RATE, COST,  REMARK, STATUS,WAREHOUSEID,INVCATEID,SITEID)
+	      SELECT 
+			#{sheetId,jdbcType=VARCHAR}, 
+	    	#{applySheetId,jdbcType=VARCHAR}, 
+	    	#{itemid,jdbcType=VARCHAR},
+	    	#{itemnum,jdbcType=NUMERIC},
+		    #{price,jdbcType=NUMERIC}, 
+		    #{tax,jdbcType=NUMERIC},
+		    #{taxRate,jdbcType=NUMERIC},
+		    #{cost,jdbcType=NUMERIC}, 
+	    	#{remark,jdbcType=VARCHAR},
+	    	#{status,jdbcType=VARCHAR},
+	    	#{warehouseid,jdbcType=VARCHAR},
+	    	#{invcateid,jdbcType=VARCHAR},
+	    	#{siteid,jdbcType=VARCHAR}
+		  FROM DUAL
+	</insert>
+	
+	<update id="updatePurOrderItem" parameterType="com.timss.purchase.bean.PurOrderItem">
+		 UPDATE ITCEAM_WORKFLOW_ORDERITEM_EXC I
+         SET I.ITEMNUM = #{itemnum,jdbcType=NUMERIC}, 
+           I.PRICE = #{price,jdbcType=NUMERIC}, 
+           I.TAX = #{tax,jdbcType=NUMERIC}, 
+           I.TAX_RATE = #{taxRate,jdbcType=NUMERIC},
+           I.COST = #{cost,jdbcType=NUMERIC},
+           I.REMARK = #{remark,jdbcType=VARCHAR}
+	     WHERE I.SHEET_ID = #{sheetId,jdbcType=VARCHAR}
+	       AND I.APPLY_SHEET_ID = #{applySheetId,jdbcType=VARCHAR}
+	       AND I.ITEMID = #{itemid,jdbcType=VARCHAR}
+	       AND I.WAREHOUSEID = #{warehouseid,jdbcType=VARCHAR}
+	       AND I.invcateid = #{invcateid,jdbcType=VARCHAR}
+	       AND I.siteid = #{siteid,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="queryPurReceiptDtlVOBySheetno" parameterType="com.timss.purchase.bean.PurOrderItem" resultMap="PurOrderItemVOMap">
+		SELECT *
+    	FROM ITCEAM_WORKFLOW_ORDERITEM_EXC I
+   		WHERE I.SHEET_ID = #{sheetId}
+     		AND I.APPLY_SHEET_ID = #{applySheetId}
+     		AND I.ITEMID = #{itemid}
+	</select>
+	<!-- 查询标准条款 -->
+	<select id="queryPurPolicyTempListPage" resultMap="PurPolicyTempMap">
+		SELECT * FROM ITCEAM_WORKFLOW_POLICY_TEMP
+	</select>
+	<!-- 查询标准条款 -->
+	<select id="queryPurPolicyTempList" resultMap="PurPolicyTempMap">
+		SELECT * FROM ITCEAM_WORKFLOW_POLICY_TEMP
+		WHERE 1=1 
+		<if test="null != siteid">
+			AND SITEID = #{siteid}
+		</if>
+		ORDER BY SORT ASC
+	</select>
+	<!-- 查询合同条款 -->
+	<select id="queryPurPolicyList" resultMap="PurPolicyMap">
+		SELECT * FROM ITCEAM_WORKFLOW_POLICY
+		WHERE 1=1 
+		<if test="null != sheetId">
+			AND SHEET_ID = #{sheetId}
+		</if>
+		ORDER BY SORT ASC
+	</select>
+	<!-- 根据id查询标准条款 -->
+	<select id="queryPurPolicyTempById" resultMap="PurPolicyTempMap">
+		SELECT * 
+		FROM ITCEAM_WORKFLOW_POLICY_TEMP
+		WHERE POLICY_ID = #{id}
+	</select>
+	<!-- 新增标准条款 -->
+	<insert id="insertPurPolicyTemp" parameterType="com.timss.purchase.bean.PurPolicyTemp">
+		  INSERT INTO ITCEAM_WORKFLOW_POLICY_TEMP
+	      (POLICY_ID,POLICY_CONTENT,SORT,CREATETIME,CREATEID,SITEID)
+	      SELECT 
+			#{policyId,jdbcType=VARCHAR}, 
+	    	#{policyContent,jdbcType=VARCHAR}, 
+	    	#{sort,jdbcType=NUMERIC},
+	    	#{createdate,jdbcType=TIMESTAMP},
+	    	#{createuser,jdbcType=VARCHAR},
+	    	#{siteid,jdbcType=VARCHAR}
+		   FROM DUAL
+	</insert>
+	<!-- 更新标准条款 -->
+	<update id="updatePurPolicyTemp" parameterType="com.timss.purchase.bean.PurPolicyTemp">
+		 UPDATE ITCEAM_WORKFLOW_POLICY_TEMP I
+         SET I.POLICY_CONTENT=#{policyContent,jdbcType=VARCHAR},
+			I.SORT=#{sort,jdbcType=NUMERIC},
+			I.UPDATETIME=#{modifydate,jdbcType=TIMESTAMP},
+			I.UPDATEID=#{modifyuser,jdbcType=VARCHAR}
+	     WHERE I.POLICY_ID=#{policyId}
+	       AND I.SITEID=#{siteid}
+	</update>
+	<!-- 删除标准条款 -->
+	<delete id="deletePurPolicyTemp">
+		DELETE FROM ITCEAM_WORKFLOW_POLICY_TEMP I 
+		WHERE I.POLICY_ID=#{policyId}
+	       AND I.SITEID=#{siteid}
+	</delete>
+	<!-- 删除合同条款 -->
+	<delete id="deletePurOrderPolicyBySheetId">
+		DELETE FROM ITCEAM_WORKFLOW_POLICY T WHERE T.SHEET_ID=#{sheetId}
+	</delete>
+	<!-- 新增合同条款 -->
+	<insert id="insertPurOrderPolicy">
+		INSERT INTO ITCEAM_WORKFLOW_POLICY T (
+			SHEET_ID,POLICY_CONTENT,SORT,CREATETIME,CREATEID
+		)VALUES(
+			#{sheetId,jdbcType=VARCHAR},#{policyContent,jdbcType=VARCHAR},
+			#{sort,jdbcType=NUMERIC},#{createdate,jdbcType=TIMESTAMP},
+			#{createuser,jdbcType=VARCHAR}
+		)
+	</insert>
+	<select id = "queryPurOrderItemListExceAsList" resultMap="PurOrderItemVOMap">
+	    SELECT MAX(I.APPLY_SHEET_ID) AS APPLY_SHEET_ID,
+		            MAX(CC.SHEETNO) AS SHEETNO, 
+		            II.ITEMCODE AS ITEMID, 
+		            MAX(II.ITEMNAME) AS ITEMNAME, 
+		            MAX(II.CUSMODEL) AS ITEMCUS, 
+		            IU.UNITNAME AS ORDERUNITNAME, 
+		            IU.UNITNAME AS ORDERUNITID, 
+		            FORMATNUM(SUM(I.ITEMNUM)) AS ITEMNUM, 
+		            FORMATMONEY(AVG(I.PRICE)) AS AVERPRICE, 
+		            FORMATMONEY(AVG(I.TAX)) AS TAX, 
+		            FORMATMONEY(AVG(I.COST)) AS COST, 
+		            FORMATMONEY(AVG(I.COST * I.ITEMNUM)) AS PRICE_TOTAL, 
+		            '' AS COMBO, 
+		            CASE WHEN I.REMARK IS NULL THEN '' ELSE I.REMARK END AS REMARK,
+		            I.TAX_RATE,
+		            CC.NAME AS CREATE_USER_NAME,
+		            I.WAREHOUSEID,
+		            I.invcateid
+		FROM ITCEAM_WORKFLOW_ORDERITEM_EXC I, 
+		          INV_ITEM II, 
+		          INV_UNIT IU,
+		          (SELECT U.NAME,
+		                       IP.SHEET_ID,
+		                       IP.SHEETNO 
+		           FROM ITCEAM_WORKFLOW_PURCHAPPLY IP ,
+		                    SEC_USER U
+		           WHERE  U.USER_ID = IP.CREATEACCOUNT) CC
+		WHERE I.SHEET_ID = #{sheetId} 
+		      AND I.ITEMID = II.ITEMCODE 
+		      AND II.SITE_ID = #{siteId} 
+		      AND IU.UNITID = II.UNIT1 
+		      AND IU.SITE_ID = II.SITE_ID
+		      AND CC.SHEET_ID = I.APPLY_SHEET_ID 
+		GROUP BY I.ITEMID, II.ITEMCODE, I.REMARK,II.UNIT1,II.SITE_ID,
+		                  II.CREATEDATE,I.TAX_RATE,I.APPLY_SHEET_ID,IU.UNITNAME,CC.NAME,I.WAREHOUSEID,I.invcateid
+		ORDER BY II.CREATEDATE DESC
+	</select>
+		
+	<!-- 更新待办人 -->
+	<update id="updatePurOrderTransactor" parameterType="com.timss.purchase.bean.PurOrder">
+		UPDATE ITCEAM_WORKFLOW_PURCHORDER T  
+		<set>
+	      T.TRANSACTOR=#{transactor,jdbcType=VARCHAR},
+	    </set>
+	    WHERE T.SHEET_ID=#{sheetId}
+	</update>
+	<select id="queryPurOrderItemListByCondition" parameterType="java.util.Map" resultMap="PurOrderItemVOMap">
+		SELECT I.SHEET_ID,I.APPLY_SHEET_ID,I.ITEMID,I.ITEMNUM,I.PRICE,I.TAX,I.STATUS,I.COST,I.RECEIVENUM,I.REMARK,I.TAX_RATE,I.WAREHOUSEID,I.invcateid
+	      FROM ITCEAM_WORKFLOW_ORDERITEM_EXC I
+	     WHERE 1=1
+	     <if test="null != itemid and '' != itemid ">
+	       AND I.ITEMID = #{itemid}
+	     </if>
+	     <if test="null != sheetId and '' != sheetId ">
+	       AND I.SHEET_ID = #{sheetId}
+	     </if>
+	     <if test="null != applySheetId and '' != applySheetId ">
+	       AND I.APPLY_SHEET_ID = #{applySheetId}
+	     </if>
+	     <if test="null != warehouseid and '' != warehouseid ">
+	       AND I.WAREHOUSEID = #{warehouseid}
+	     </if>
+	     
+	         <!-- AND I.invcateid = #{invcateid}  -->
+	     
+    </select>
+    <delete id="deletePurOrderItemListByCondition" parameterType="java.util.Map">
+		DELETE FROM ITCEAM_WORKFLOW_ORDERITEM_EXC I 
+        WHERE I.ITEMID = #{itemid,jdbcType=VARCHAR}
+        AND I.SHEET_ID = #{sheetId,jdbcType=VARCHAR}
+        AND I.APPLY_SHEET_ID = #{applySheetId,jdbcType=VARCHAR}
+        AND I.WAREHOUSEID = #{warehouseid,jdbcType=VARCHAR}
+        AND I.invcateid = #{invcateid,jdbcType=VARCHAR}
+    </delete>
+    <delete id="updatePurOrderItemByCondition" parameterType="java.util.Map">
+		UPDATE ITCEAM_WORKFLOW_PURCHAPPLYITEM I
+        SET I.STATUS = #{status,jdbcType=VARCHAR}
+        WHERE I.SHEET_ID = #{applySheetId,jdbcType=VARCHAR}
+        AND I.ITEMID = #{itemid,jdbcType=VARCHAR}
+        AND I.WAREHOUSEID = #{warehouseid,jdbcType=VARCHAR}
+        AND I.invcateid = #{invcateid,jdbcType=VARCHAR}
+    </delete>
+    
+    <!-- 已执行采购物资列表 -->
+    <select id="queryPurApplyOrderItemList" resultType="com.timss.purchase.vo.PurApplyOrderItemVO">
+    	SELECT IWOE.ITEMID,
+		            II.ITEMNAME,
+		            II.CUSMODEL AS ITEMCUS,
+		            IWPO.SHEETNO AS ORDERSHEETNO,
+		            IWPO.BUSINESSNO,
+		            IWOE.ITEMNUM,
+		            IWOE.COST,
+		            (IWOE.ITEMNUM * IWOE.COST) AS PRICETOTAL,
+		            IWOE.REMARK,
+		            IWOE.WAREHOUSEID,
+		            IWOE.invcateid
+		FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE,
+		          ITCEAM_WORKFLOW_PURCHORDER IWPO,
+		          INV_ITEM II
+		WHERE IWOE.SHEET_ID = IWPO.SHEET_ID 
+		      AND IWOE.ITEMID = II.ITEMCODE 
+		      AND II.SITE_ID = IWPO.SITEID
+		      AND IWPO.SITEID = '${params.siteId}'
+		      AND IWOE.APPLY_SHEET_ID ='${params.sheetId}'
+		ORDER BY IWPO.CREATEDATE DESC,II.ITEMID ASC
+    </select>
+    
+    <!-- 查询本年度合同（审批通过）下各专业物资采购金额总和 -->
+    <select id="queryMajorPurchase" parameterType="HashMap" resultType="HashMap">
+	SELECT E.ENUM_VAL AS MAJOR_NAME, SUM(PI.ITEMNUM * PI.PRICE) AS MAJOR_TOTAL
+	  	FROM ITCEAM_WORKFLOW_PURCHORDER PO
+	  	LEFT JOIN ITCEAM_WORKFLOW_ORDERITEM_EXC PI ON PO.SHEET_ID = PI.SHEET_ID
+	  	LEFT JOIN INV_ITEM I ON PI.ITEMID = I.ITEMCODE AND I.SITE_ID = #{siteId,jdbcType=VARCHAR}
+	  	LEFT JOIN B_ENUM E ON I.ATTR2 = E.ENUM_CODE AND E.ECAT_CODE = 'ITEMMAJOR_TYPE' AND E.SITEID = #{siteId,jdbcType=VARCHAR}
+	 	WHERE PO.SITEID = #{siteId,jdbcType=VARCHAR} AND PO.STATUS IN ('1','2','3')
+	   	AND TO_CHAR(SYSDATE, 'YYYY') = TO_CHAR(PO.CREATEDATE, 'YYYY')
+	GROUP BY E.ENUM_VAL
+	</select>
+	
+	<select id="queryInvcateIdByCondition" parameterType="HashMap" resultType="java.lang.String" >
+	SELECT A.INVCATEID 
+	FROM INV_WAREHOUSE_ITEM A, INV_ITEM B
+	WHERE A.ITEMID = B.ITEMID
+	AND A.SITE_ID = #{siteId}
+	AND B.ITEMCODE = #{itemCode}
+	AND A.WAREHOUSEID = #{warehouseId}
+	</select>
+	
+	<select id="queryStatusBySheetId" resultType="java.lang.String" >
+	select trim(status) from itceam_workflow_purchorder where sheet_id = #{sheetId}
+	</select>
+	<select id="selectBySpNoAndSiteid"  resultType="int">
+	    select count(t.sheet_id)
+	    from itceam_workflow_purchorder t
+	    where t.status <![CDATA[<>]]> '5' and t.status <![CDATA[<>]]> '10' and t.status <![CDATA[<>]]> '-1'  and t.siteid=#{siteid} and t.spno=#{spNo}
+	</select>
+
+	<!-- 查询审批完成的合同总金额 -->
+	<select id="queryPurOrderTotalMoney" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+	    select
+	   	<if test="priceType == 'noTaxPrice'">
+	          nvl(sum(imtd.can_out_qty * imtd.no_tax_price),0)
+	    </if>
+	   	<if test="priceType != 'noTaxPrice'">
+	          nvl(sum(imtd.can_out_qty * imtd.price),0)
+	    </if>	    
+		from inv_mat_tran_rec imtd
+		left join inv_warehouse iw on iw.warehouseid = imtd.warehouseid
+		inner join inv_mat_map imm on imtd.imtdid = imm.imtdid
+		where iw.active = 'Y' and imm.outterid in
+		        (select distinct(iwp.sheet_id)
+		          	from itceam_workflow_purchorder iwp
+		         	where iwp.status in ('1', '2', '3') and iwp.siteid = '${siteId}')
+				and imtd.site_id = '${siteId}' 
+		     	<if test="null != wareHouseId and '' != wareHouseId ">
+		          	and imtd.warehouseid = '${wareHouseId}'
+		    	</if>		
+	</select>
+	
+	<!-- 审批完成的合同相关已报账金额-->
+	<select id="queryPurOrderReimbursedTotalMoney" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		select
+	   	<if test="priceType == 'noTaxPrice'">
+	           nvl(sum(imtr.can_out_qty * imtr.no_tax_price),0)
+	    </if>
+	   	<if test="priceType != 'noTaxPrice'">
+	           nvl(sum(imtr.can_out_qty * imtr.price),0)
+	    </if> 
+		from inv_mat_tran_rec imtr
+		left join inv_warehouse iw on iw.warehouseid = imtr.warehouseid
+  		where iw.active = 'Y' and imtr.imtdid in ( 
+	      	select distinct(imtd.imtdid)
+	        from inv_mat_tran_rec imtd
+	        inner join inv_mat_map imm on imtd.imtdid = imm.imtdid
+	        inner join itceam_workflow_paydtl pd on pd.imtd_id = imtd.imtdid
+	        inner join itceam_workflow_pay p on p.pay_id = pd.pay_id
+	        where imm.outterid in
+	        (
+	        select distinct(iwp.sheet_id)
+	        	from itceam_workflow_purchorder iwp
+	         	where iwp.status in ('1', '2', '3') and iwp.siteid = '${siteId}'
+	         )
+	        and p.status = 'processed' 
+	        and imtd.site_id = '${siteId}'
+	     	<if test="null != wareHouseId and '' != wareHouseId ">
+	          	and imtd.warehouseid = '${wareHouseId}'
+	    	</if>
+  		)
+	</select>
+
+</mapper>

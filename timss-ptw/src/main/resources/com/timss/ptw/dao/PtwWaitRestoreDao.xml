@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwWaitRestoreDao">
+	<select id="queryPtwWaitRestoreByPtwId" resultType="PtwWaitRestore">
+		select *
+		from ptw_waitres
+		where wtId = #{wtId}
+		order by id asc
+	</select>
+	<insert id="insertPtwWait">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_MORE.nextval from dual
+		</selectKey>
+		insert into ptw_waitres
+		  (id,wtId,witTime,witWpic,witWpicNo,witWl,witWlNo)
+		values
+		  (#{id},#{wtId},#{witTime},#{witWpic},#{witWpicNo},#{witWl},#{witWlNo})
+	</insert>
+	<update id="updatePtwRestore">
+		update ptw_waitres
+		set 
+			resTime = #{resTime},
+			resWpic = #{resWpic},
+			resWpicNo = #{resWpicNo},
+			resWl = #{resWl},
+			resWlNo = #{resWlNo}
+		where id = #{id}
+	</update>
+</mapper> 

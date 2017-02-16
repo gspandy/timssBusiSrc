@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.purchase.dao.PurVendorDao">
+	<resultMap type="com.timss.purchase.bean.PurVendor" id="PurVendorMap">
+		<id property="companyNo" column="company_no"/>
+		<id property="siteid" column="siteid"/>
+		<result property="bankName" column="bank_name"/>
+		<result property="bankAccount" column="bank_account"/>
+		<result property="parentCompanycode" column="parent_companycode"/>
+		<result property="postCode" column="post_code"/>
+	</resultMap>
+
+	<!-- 查询供应商列表 -->
+	<select id="queryPurVendor" resultMap="PurVendorMap">
+		select t.company_no, t.name, 
+	       case when 
+	       		(select a.enum_val from b_enum a where a.ecat_code = 'PUR_COMPANYTYPE' and a.enum_code = t.type) is null 
+	       then t.type 
+	       else  
+	       		(select a.enum_val from b_enum a where a.ecat_code = 'PUR_COMPANYTYPE' and a.enum_code = t.type) 
+	       end as type, 
+	       t.address, t.bank_name, t.bank_account, t.contact, t.tel, t.fax, t.parent_companycode, t.createdate,t.deptid, t.siteid 
+	    from itceam_vendor_company_infor t 
+		where t.activeflag = 'ACTIVE' and t.siteid = #{params.siteid}  
+		<if test="params.name != null and params.name != ''">
+		  	and t.name like '%'||'${params.name}'||'%' 
+		</if>
+		<if test="params.type != null and params.type != ''">
+		  	and t.type like '%'||'${params.type}'||'%' 
+		</if>
+		<if test="params.contact != null and params.contact != ''">
+		  	and t.contact like '%'||'${params.contact}'||'%' 
+		</if>
+		<if test="params.tel != null and params.tel != ''">
+		  	and t.tel like '%'||'${params.tel}'||'%' 
+		</if>
+		<if test="params.fax != null and params.fax != ''">
+		  	and t.fax like '%'||'${params.fax}'||'%' 
+		</if>
+	</select>
+	
+	<!-- 通过companyno查询供应商详细信息 -->
+	<select id="queryPurVendorDetailByCompanyNo" resultMap="PurVendorMap" resultType="java.util.Map">
+		select iv.company_no, iv.name, iv.type, iv.tel, iv.address, iv.city, iv.province, iv.post_code, 
+				iv.bank_name, iv.bank_account, iv.contact, iv.fax, iv.parent_companycode, iv.siteid, 
+				iv.deptid, iv.createdate, iv.createuser, iv.modifydate, iv.modifyuser 
+		from itceam_vendor_company_infor iv 
+		where iv.company_no = #{companyNo} and iv.siteid = #{siteId} 
+		order by iv.company_no asc
+	</select>
+	
+	<!-- 公司类型数据字典查询
+	<select id="queryCompanyType" resultType="HashMap">
+		select t.param_name as key, t.param_value as value 
+		from itccontext_param t 
+		where t.param_item='COMPANYTYPE' and t.siteid = #{params.siteId}
+	</select> -->
+	
+	<!-- 供应商插入操作 -->
+	<insert id="insertPurVendor" parameterType="com.timss.purchase.bean.PurVendor">
+		insert into itceam_vendor_company_infor
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		  <if test="companyNo != null"> company_no, </if>
+	      <if test="name != null"> name, </if>
+	      <if test="type != null"> type, </if>
+	      <if test="address != null"> address, </if>
+	      <if test="bankName != null"> bank_name, </if>
+	      <if test="bankAccount != null"> bank_account, </if>
+	      <if test="contact != null"> contact, </if>
+	      <if test="tel != null"> tel, </if>
+	      <if test="fax != null"> fax, </if>
+	      <if test="parentCompanycode != null"> parent_companycode, </if>
+	      <if test="siteid != null"> siteid, </if>
+	      <if test="deptid != null"> deptid, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		  <if test="companyNo != null"> #{companyNo,jdbcType=VARCHAR}, </if>
+	      <if test="name != null"> #{name,jdbcType=VARCHAR}, </if>
+	      <if test="type != null"> #{type,jdbcType=VARCHAR}, </if>
+	      <if test="address != null"> #{address,jdbcType=VARCHAR}, </if>
+	      <if test="bankName != null"> #{bankName,jdbcType=VARCHAR}, </if>
+	      <if test="bankAccount != null"> #{bankAccount,jdbcType=VARCHAR}, </if>
+	      <if test="contact != null"> #{contact,jdbcType=VARCHAR}, </if>
+	      <if test="tel != null"> #{tel,jdbcType=VARCHAR}, </if>
+	      <if test="fax != null"> #{fax,jdbcType=VARCHAR}, </if>
+	      <if test="parentCompanycode != null"> #{parentCompanycode,jdbcType=VARCHAR}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 供应商更新操作 -->
+	<update id="updatePurVendor" parameterType="com.timss.purchase.bean.PurVendor">
+		update itceam_vendor_company_infor t 
+		<set>
+	      <if test="name != null"> t.name=#{name,jdbcType=VARCHAR}, </if>
+	      <if test="type != null"> t.type=#{type,jdbcType=VARCHAR}, </if>
+	      <if test="address != null"> t.address=#{address,jdbcType=VARCHAR}, </if>
+	      <if test="bankName != null"> t.bank_name=#{bankName,jdbcType=VARCHAR}, </if>
+	      <if test="bankAccount != null"> t.bank_account=#{bankAccount,jdbcType=VARCHAR}, </if>
+	      <if test="contact != null"> t.contact=#{contact,jdbcType=VARCHAR}, </if>
+	      <if test="tel != null"> t.tel=#{tel,jdbcType=VARCHAR}, </if>
+	      <if test="fax != null"> t.fax=#{fax,jdbcType=VARCHAR}, </if>
+	      <if test="parentCompanycode != null"> t.parent_companycode=#{parentCompanycode,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> t.deptid=#{deptid,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	    </set>
+		where t.company_no=#{companyNo} and t.siteid=#{siteid}
+	</update>
+	
+	<!-- 提供过个companyNo查询返回多个供应商 -->
+	<select id="queryPurVendorBycompanyNos" parameterType="java.util.Map" resultMap="PurVendorMap">
+		select a.* from itceam_vendor_company_infor a where a.company_no in (${ids}) and a.siteid='${siteId}'
+	</select>
+	
+	<!-- 查询供应商信息 -->
+	<select id="queryCompanyList" resultMap="PurVendorMap">
+		select * from(
+		select company_no, nvl(i.name, ' ') name, nvl(i.address, ' ') address, 
+				nvl(i.city, ' ') city, nvl(i.province, ' ') province, nvl(i.tel, ' ') tel, 
+				nvl(i.fax, ' ') fax, nvl(i.contact, ' ') connects, nvl(i.bank_name, ' ') bank_name, 
+				nvl(i.bank_account, ' ') bank_account, nvl(i.type, ' ') type, 
+				nvl(i.post_code, ' ') post_code, 
+				(select b.enum_val from b_enum b where b.ecat_code = 'PUR_COMPANYTYPE' and b.enum_code = i.type) type_name, 
+				i.deptid, i.siteid 
+		from itceam_vendor_company_infor i 
+		where i.activeflag = 'ACTIVE' and i.siteid=#{params.siteId}
+		) t where 1=1 
+		<if test="params.name != null and params.name != ''">
+			and t.name like '%'||'${params.name}'||'%' 
+		</if>
+		<if test="params.tel != null and params.tel != ''">
+			and t.tel like '%'||'${params.tel}'||'%' 
+		</if>
+		<if test="params.contact != null and params.contact != ''">
+			and t.connects like '%'||'${params.contact}'||'%' 
+		</if>
+		<if test="params.type != null and params.type != ''">
+			and t.type like '%'||'${params.type}'||'%' 
+		</if>
+		order by t.company_no asc
+	</select>
+</mapper> 

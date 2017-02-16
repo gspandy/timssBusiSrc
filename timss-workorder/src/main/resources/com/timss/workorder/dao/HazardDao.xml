@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.HazardDao">
+
+	<resultMap type="Hazard" id="hazardMap">
+		<id column="ID" property="id" />
+		<result column="NAME" property="name" />
+		<result column="DESCRIPTION" property="hazardDescription" />
+		<result column="HAZARDTYPE" property="hazardType " />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+	</resultMap>	
+	
+	<insert id="insertHazard" >
+		insert into wo_hazard(ID,DESCRIPTION,SITEID,YXBZ) 
+		values( #{id},
+				#{hazardDescription,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC}) 
+	</insert>
+	
+	
+	
+	<update id="updateHazard" parameterType="Hazard">
+		update wo_hazard 
+		set NAME=#{name}
+		where ID=#{id} 
+	</update>
+	
+	 
+	<select id="queryHazardById" parameterType="int" resultMap="hazardMap">
+		select * from wo_hazard where id= #{ id }
+	</select>
+	
+	<delete id="deleteHazardById" parameterType="int">
+		delete from wo_hazard where id= #{ id }
+	</delete>
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextHazardId" resultType="int">
+		select SEQ_WO_JPOTHERS.nextval from dual
+	</select>
+	
+	
+	<insert id="insertPreHazard">
+		insert into wo_jp_prehazard(ID,JP_ID,PRECAUTION_ID,HAZARD_ID,SITEID,DEPTID) 
+		values(#{id},#{jpId},#{precautionId},#{hazardId},#{siteid},#{deptid,jdbcType=VARCHAR}) 
+	</insert>
+</mapper>

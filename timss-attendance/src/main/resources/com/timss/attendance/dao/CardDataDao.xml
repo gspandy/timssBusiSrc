@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.CardDataDao">
+	
+	<sql id="cardDataBeanField">
+		c.id, c.checkDate, c.userId, c.userName, c.createBy, c.createDate, c.updateBy, c.updateDate, c.siteId, 
+		c.deptName, c.deptId,c.workStatus,c.oprDutyDate,c.am_id as amId
+	</sql>
+	
+	<!-- 批量操作 -->
+	<insert id="insertBatchCardData" parameterType="java.util.List">
+		insert into  ATD_CARDDATA( id, checkDate, userId, userName, createBy, createDate, siteId, deptName, deptId,workStatus,am_id,oprDutyDate,oprScheduleId ) 
+		select  temp.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			 select
+		 		#{item.id, jdbcType=VARCHAR } ,#{item.checkDate, jdbcType=VARCHAR},
+		 		#{item.userId, jdbcType=VARCHAR } ,#{item.userName, jdbcType=VARCHAR }, #{item.createBy, jdbcType=VARCHAR },
+		 		#{item.createDate,jdbcType=TIMESTAMP } ,#{item.siteId, jdbcType=VARCHAR }, #{item.deptName, jdbcType=VARCHAR}, 
+		 		#{item.deptId, jdbcType=VARCHAR }, 
+		 		#{item.workStatus, jdbcType=VARCHAR }, 
+		 		#{item.amId, jdbcType=VARCHAR },#{item.oprDutyDate, jdbcType=VARCHAR },#{item.oprScheduleId, jdbcType=NUMERIC }
+			from dual
+		</foreach>
+		) temp
+	</insert>
+	
+	<insert id="insertCardData" parameterType="CardDataBean">
+		insert into  ATD_CARDDATA( id, checkDate, userId, userName, createBy, createDate, siteId, deptName, deptId,workStatus,am_id,oprDutyDate,oprScheduleId ) 
+		values(
+			#{id, jdbcType=VARCHAR } ,#{checkDate, jdbcType=VARCHAR},
+	 		#{userId, jdbcType=VARCHAR } ,#{userName, jdbcType=VARCHAR }, #{createBy, jdbcType=VARCHAR },
+	 		#{createDate,jdbcType=TIMESTAMP } ,#{siteId, jdbcType=VARCHAR }, #{deptName, jdbcType=VARCHAR}, 
+	 		#{deptId, jdbcType=VARCHAR }, #{workStatus, jdbcType=VARCHAR}, 
+		 	#{amId, jdbcType=VARCHAR },#{oprDutyDate, jdbcType=VARCHAR },#{oprScheduleId, jdbcType=NUMERIC }
+		)
+	</insert>
+	
+	
+	<select id="queryCardDataBySite" parameterType="String" resultType="CardDataBean">
+		SELECT <include refid="cardDataBeanField"/> FROM ATD_CARDDATA c
+		WHERE c.SITEID = #{ siteId }
+		ORDER BY c.checkDate desc
+	</select>
+	
+	<select id="queryCardDataListBySearch" resultType="CardDataBean">
+		SELECT <include refid="cardDataBeanField"/>,
+d.id dutyId,d.name dutyName,
+s.id shiftId,s.name shiftName,s.starttime,s.longtime,s.type shiftType 
+		FROM ATD_CARDDATA c
+		left join opr_schedule_detail sd on sd.id=c.oprscheduleid 
+		left join opr_duty d on sd.dutyid=d.id
+		left join opr_shift s on s.id=sd.shiftid
+		WHERE c.siteId = #{ params.siteId } 
+		<if test="params.searchDateFrom != null  and params.searchDateFrom != '' ">
+		 	and c.checkDate &gt;=  #{ params.searchDateFrom, jdbcType=VARCHAR }
+		</if>
+		<if test="params.searchDateEnd != null  and params.searchDateEnd != '' ">
+		 	and c.checkDate &lt;=  #{ params.searchDateEnd, jdbcType=VARCHAR }
+		</if>
+		<if test="params.onStatus != null  and params.onStatus != '0' ">
+		 	and c.workStatus not like '%\_valid' ESCAPE '\'
+		</if>
+		<if test="params.deptId!=null and params.deptId!=''">
+			and c.deptId = #{ params.deptId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.userId!=null and params.userId!=''">
+			and c.userId = #{ params.userId,jdbcType=VARCHAR }
+		</if>
+	</select>
+	
+	<select id="queryCardDataListByDiffDate" resultType="CardDataBean">
+		SELECT <include refid="cardDataBeanField"/> 
+		FROM ATD_CARDDATA c
+		WHERE 1=1
+		<if test="startDate != null  and startDate != '' ">
+		 	and c.checkDate &gt;=  #{ startDate, jdbcType=VARCHAR }
+		</if>
+		<if test="endDate != null  and endDate != '' ">
+		 	and c.checkDate &lt;=  #{ endDate, jdbcType=VARCHAR }
+		</if>
+		<if test="siteId != null  and siteId != '' ">
+		 	and c.siteId =  #{ siteId, jdbcType=VARCHAR }
+		</if>
+		<if test="onlyValid != null  and onlyValid == true ">
+		 	and c.workstatus is not null and workstatus != 'invalid'
+		</if>
+		<if test="userId != null  and userId != '' ">
+		 	and c.userId =  #{ userId, jdbcType=VARCHAR }
+		</if>
+	</select>
+	
+	<select id="queryAll" resultType="CardDataBean">
+		SELECT <include refid="cardDataBeanField"/> 
+		FROM ATD_CARDDATA c
+		WHERE 1=1
+		<if test="startTimeStr != null  and startTimeStr != '' ">
+		 	and c.checkDate &gt;=  #{startTimeStr}
+		</if>
+		<if test="endTimeStr != null  and endTimeStr != '' ">
+		 	and c.checkDate &lt;=  #{endTimeStr}
+		</if>
+		<if test="siteId != null  and siteId != '' ">
+		 	and c.siteId =  #{ siteId }
+		</if>
+		<if test="userIds != null and userIds.length>0 ">
+		 	and c.USERID in 
+			<foreach item="item" collection="userIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	
+	<delete id="deleteCardDataByEndTime">
+		delete from atd_carddata
+		where checkdate &lt;= #{ endTimeStr, jdbcType=VARCHAR }
+		<if test="siteId != null  and siteId != '' ">
+		 	and siteid=#{siteId,jdbcType=VARCHAR} 
+		</if>
+	</delete>
+	
+	<delete id="deleteCardDataByMachine" parameterType="MachineBean" >
+		delete from atd_carddata
+		where am_id=#{ bean.amId, jdbcType=VARCHAR }
+		<if test="bean.startTime != null  and bean.startTime != '' ">
+		 	and checkDate &gt;=  #{ bean.startTime, jdbcType=VARCHAR }
+		</if>
+		<if test="bean.endTime != null  and bean.endTime != '' ">
+		 	and checkDate &lt;=  #{ bean.endTime, jdbcType=VARCHAR }
+		</if>
+	</delete>
+	
+	<delete id="deleteCardDataByDateAndUserId">
+		delete from atd_carddata
+		where 
+		<choose>
+		<when test="date != null and date != ''">
+			checkDate like '${date}%'
+			<if test="userId != null and userId != ''">
+				and userid=#{userId,jdbcType=VARCHAR}
+			</if>
+		</when>
+		<otherwise>
+			<choose>
+			<when test="userId != null and userId != ''">
+				userid=#{userId,jdbcType=VARCHAR}
+			</when>
+			<otherwise>
+				1=0
+			</otherwise>
+			</choose>
+		</otherwise>	
+		</choose>
+	</delete>
+	
+	<update id="updateCardData" parameterType="CardDataBean" >
+		update ATD_CARDDATA set 
+			CHECKDATE=#{bean.checkDate,jdbcType=VARCHAR},
+			UPDATEBY=#{bean.updateBy,jdbcType=VARCHAR},
+			UPDATEDATE=#{bean.updateDate,jdbcType=TIMESTAMP},
+			WORKSTATUS=#{bean.workStatus,jdbcType=VARCHAR},
+			OPRDUTYDATE=#{bean.oprDutyDate,jdbcType=VARCHAR},
+			oprScheduleId=#{bean.oprScheduleId, jdbcType=NUMERIC }
+		where id=#{bean.id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="batchUpdateCardDataList" parameterType="java.util.List">
+		<foreach collection="list" item="bean" index="index" open="begin" close=";end;" separator=";">
+			update ATD_CARDDATA set
+				CHECKDATE=#{bean.checkDate,jdbcType=VARCHAR},
+				UPDATEBY=#{bean.updateBy,jdbcType=VARCHAR},
+				UPDATEDATE=#{bean.updateDate,jdbcType=TIMESTAMP},
+				WORKSTATUS=#{bean.workStatus,jdbcType=VARCHAR},
+				OPRDUTYDATE=#{bean.oprDutyDate,jdbcType=VARCHAR},
+				oprScheduleId=#{bean.oprScheduleId, jdbcType=NUMERIC }
+			where id=#{bean.id,jdbcType=VARCHAR}
+		</foreach>
+	</update>
+</mapper> 

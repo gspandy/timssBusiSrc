@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.attendance.dao.TrainingDao">
+   	<sql id="trainingBeanField">
+t.training_id trainingId,t.training_no trainingNo,
+t.create_user createuser,t.create_date createdate,t.modify_user modifyuser,t.modify_date modifydate,t.site_id siteid,
+t.dept_id deptid,t.instance_id instanceId,t.status,t.start_date startDate,t.end_date endDate,t.hour,t.content,
+t.cost,t.training_type trainingType,t.reason,t.evaluate_type evaluateType,t.sponsor,t.address,t.grades,t.certificate,
+t.isfile isFile,t.filelist fileList
+	</sql>
+	
+    <select id="queryList" resultType="TrainingBean">
+select t.*,o.name deptName,u.name userName
+from(
+	select <include refid="trainingBeanField"/>
+	from atd_training t
+	where t.site_id=#{params.siteId,jdbcType=VARCHAR} and t.del_ind!='Y' and t.status not in ('草稿')
+)t
+left join sec_user u on u.user_id=t.createuser 	
+left join sec_organization o on o.org_code=t.deptid	
+    </select>
+    
+    <select id="queryDetail" resultType="TrainingBean">
+select t.*,o.name deptName,u.name userName
+from(
+	select <include refid="trainingBeanField"/>
+	from atd_training t
+	where t.training_id=#{trainingId,jdbcType=VARCHAR}
+)t
+left join sec_user u on u.user_id=t.createuser 	
+left join sec_organization o on o.org_code=t.deptid
+    </select>
+   
+    <insert id="insert" parameterType="TrainingBean" >
+    	insert into atd_training (
+training_id,training_no,
+create_user,create_date,site_id,
+dept_id,status,start_date,end_date,hour,content,
+cost,training_type,reason,evaluate_type,sponsor,address,grades,certificate,isfile,filelist
+		)
+    	values (
+#{trainingId,jdbcType=VARCHAR},#{trainingNo,jdbcType=VARCHAR},
+#{createuser,jdbcType=VARCHAR},sysdate,#{siteid,jdbcType=VARCHAR},
+#{deptid,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{startDate,jdbcType=TIMESTAMP},#{endDate,jdbcType=TIMESTAMP},
+#{hour,jdbcType=NUMERIC},#{content,jdbcType=VARCHAR},
+#{cost,jdbcType=NUMERIC},#{trainingType,jdbcType=VARCHAR},#{reason,jdbcType=VARCHAR},#{evaluateType,jdbcType=VARCHAR},
+#{sponsor,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},
+#{grades,jdbcType=VARCHAR},#{certificate,jdbcType=VARCHAR},#{isFile,jdbcType=VARCHAR},#{fileList,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <update id="update" parameterType="TrainingBean">
+        update atd_training set 
+modify_user=#{modifyuser,jdbcType=VARCHAR},modify_date=sysdate,
+start_date=#{startDate,jdbcType=TIMESTAMP},end_date=#{endDate,jdbcType=TIMESTAMP},hour=#{hour,jdbcType=NUMERIC},content=#{content,jdbcType=VARCHAR},
+cost=#{cost,jdbcType=NUMERIC},training_type=#{trainingType,jdbcType=VARCHAR},reason=#{reason,jdbcType=VARCHAR},
+evaluate_type=#{evaluateType,jdbcType=VARCHAR},sponsor=#{sponsor,jdbcType=VARCHAR},address=#{address,jdbcType=VARCHAR}
+	<if test="grades != null and grades != '' ">
+		,grades=#{grades,jdbcType=VARCHAR}
+	</if>
+	<if test="certificate != null and certificate != '' ">
+		,certificate=#{certificate,jdbcType=VARCHAR}
+	</if>
+	<if test="isFile != null and isFile != '' ">
+		,isfile=#{isFile,jdbcType=VARCHAR}
+	</if>
+	<if test="fileList != null and fileList != '' ">
+		,filelist=#{fileList,jdbcType=VARCHAR}
+	</if>
+	where training_id=#{trainingId,jdbcType=VARCHAR}
+    </update>
+    
+    <delete id="delete" parameterType="TrainingBean">
+    	update atd_training set 
+    	modify_user=#{modifyuser,jdbcType=VARCHAR},modify_date=sysdate,del_ind='Y'
+    	where training_id=#{trainingId,jdbcType=VARCHAR}
+    </delete>  
+    
+    <update id="updateAuditStatus">
+        update atd_training set 
+modify_user=#{modifyuser,jdbcType=VARCHAR},modify_date=sysdate,
+<if test="instanceId != null and instanceId != '' ">
+instance_id=#{instanceId,jdbcType=VARCHAR},
+</if>
+status=#{status,jdbcType=VARCHAR}
+		where training_id=#{trainingId,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="updateCreateDate">
+        update atd_training set 
+modify_user=#{modifyuser,jdbcType=VARCHAR},modify_date=sysdate,
+create_date=#{createDate,jdbcType=TIMESTAMP}
+		where training_id=#{trainingId,jdbcType=VARCHAR}
+    </update>  
+    
+    <insert id="batchInsertItem">
+		insert into ATD_training_ITEM(
+			ITEM_ID, USER_NAME, EDUCATION,
+			JOB, TRAINING_ID,USER_ID
+		) 
+		select temp.* from (
+		<foreach collection="itemList" item="item" index="index" separator="union all">
+			select 
+				#{ item.trainingItemId, jdbcType=VARCHAR }, #{ item.userName, jdbcType=VARCHAR }, #{ item.education, jdbcType=VARCHAR }, 
+				#{ item.job, jdbcType=VARCHAR },
+				#{ trainingId, jdbcType=VARCHAR },
+				#{ item.userId, jdbcType=VARCHAR }
+			from dual
+		</foreach>
+		) temp
+	</insert>
+	<update id="batchUpdateItem">
+		<foreach collection="itemList" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_training_ITEM
+			<set> 
+				USER_NAME=#{ item.userName, jdbcType=VARCHAR },
+				EDUCATION=#{ item.education, jdbcType=VARCHAR },
+				JOB=#{ item.job, jdbcType=VARCHAR }
+			</set>	
+			where ITEM_ID=#{item.trainingItemId, jdbcType=VARCHAR }
+		</foreach>
+	</update>
+	<delete id="batchDeleteItem">
+		delete from ATD_training_ITEM where ITEM_ID in 
+		<foreach collection="itemList" item="item" index="index" open="(" close=")" separator=",">
+			#{item.trainingItemId,jdbcType=VARCHAR }
+		</foreach>
+	</delete>
+	
+	<select id="queryItemList" resultType="TrainingItemBean">
+		select ITEM_ID trainingItemId, USER_NAME userName, EDUCATION education, JOB job, TRAINING_ID trainingId
+		from ATD_training_ITEM
+		where TRAINING_ID=#{ trainingId }
+    </select>
+    
+    <select id="queryUserItemByUserId" parameterType="String" resultType="TrainingItemBean">
+    	SELECT T.USER_ID as userId, T.NAME as userName, T.JOB as job FROM SEC_USER T WHERE T.USER_ID = #{userId}
+    </select>
+</mapper>

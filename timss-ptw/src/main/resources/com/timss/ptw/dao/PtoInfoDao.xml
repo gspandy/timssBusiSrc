@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtoInfoDao">
+	<resultMap type="PtoInfoVo" id="ptoInfoMap">
+		<id column="ID" property="id" />
+		<result column="STANDARDPTO_ID" property="sptoId" />
+		<result column="TYPE" property="type" />
+		<result column="CODE" property="code" />
+		<result column="WIND_STATION" property="windStation" />
+		<result column="TASK" property="task" />
+		<result column="ASSETID" property="assetId" />
+		<result column="ASSETNAME" property="assetName" />
+		
+		<result column="OPERITEM_REMARKS" property="operItemRemarks" />
+		<result column="IS_PROPER" property="isProper" />
+		<result column="PROBLEM" property="problem" />
+		<result column="PREBEGIN_OPERTIME" property="preBeginOperTime" />
+		<result column="PREEND_OPERTIME" property="preEndOperTime" />
+		<result column="BEGIN_OPERTIME" property="beginOperTime" />
+		<result column="END_OPERTIME" property="endOperTime" />
+		<result column="COMMANDER" property="commander" />
+		<result column="COMMANDERNAME" property="commanderName" />
+		<result column="OPERATOR" property="operator" />
+		<result column="OPERATORNAME" property="operatorName" />
+		<result column="GUARDIAN" property="guardian" />
+		<result column="GUARDIANNAME" property="guardianName" />
+		
+		<result column="ONDUTY_PRINCIPAL" property="ondutyPrincipal" />
+		<result column="ONDUTY_PRINCIPALNAME" property="ondutyPrincipalName" />
+		<result column="ONDUTY_MONITOR" property="ondutyMonitor" />
+		<result column="ONDUTY_MONITORNAME" property="ondutyMonitorName" />
+		<result column="WORKFLOW_ID" property="workflowId" />
+		<result column="CURR_HANDLERUSER" property="currHandlerUser" />
+		<result column="CURR_HANDUSERNAME" property="currHandlerUserName" />
+		<result column="CURR_STATUS" property="currStatus" />
+		
+		<result column="CREATEDATE" property="createdate" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEL_FLAG" property="delFlag" />
+	</resultMap>
+	
+	
+	<insert id="insertPtoInfo" parameterType="com.timss.ptw.vo.PtoInfoVo">
+		INSERT INTO pto_info (ID, STANDARDPTO_ID, TYPE, CODE, WIND_STATION, TASK, ASSETID, ASSETNAME,
+				OPERITEM_REMARKS,PREBEGIN_OPERTIME, PREEND_OPERTIME, GUARDIAN, GUARDIANNAME, COMMANDER, COMMANDERNAME,
+				WORKFLOW_ID, CURR_STATUS, CREATEDATE,CREATEUSER, MODIFYDATE,MODIFYUSER,SITEID,DEL_FLAG )
+		VALUES( #{id},
+				#{sptoId,jdbcType=VARCHAR},
+				#{type,jdbcType=VARCHAR},
+				#{code,jdbcType=VARCHAR},
+				#{windStation,jdbcType=VARCHAR},
+				#{task,jdbcType=VARCHAR},
+				#{assetId,jdbcType=VARCHAR},
+				#{assetName,jdbcType=VARCHAR},
+				
+				#{operItemRemarks,jdbcType=VARCHAR},
+				#{preBeginOperTime,jdbcType=TIMESTAMP},
+				#{preEndOperTime,jdbcType=TIMESTAMP},
+				#{guardian,jdbcType=VARCHAR},
+				#{guardianName,jdbcType=VARCHAR},
+				#{commander,jdbcType=VARCHAR},
+				#{commanderName,jdbcType=VARCHAR},
+				
+				#{workflowId,jdbcType=VARCHAR},
+				#{currStatus,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{createuser,jdbcType=VARCHAR},
+				#{modifydate,jdbcType=TIMESTAMP},
+				#{modifyuser,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{delFlag,jdbcType=VARCHAR}
+			)
+	</insert>
+	<update id="updatePtoInfo">	
+		UPDATE pto_info
+		<set>
+			<foreach item="item" index="index" collection="params">
+				<if test="item=='windStation'"> WIND_STATION = #{ptoInfo.windStation,jdbcType=VARCHAR}, </if>
+				<if test="item=='task'"> Task = #{ptoInfo.task,jdbcType=VARCHAR}, </if>
+				<if test="item=='assetId'"> ASSETID = #{ptoInfo.assetId,jdbcType=VARCHAR},</if>
+				<if test="item=='assetName'"> ASSETNAME = #{ptoInfo.assetName,jdbcType=VARCHAR},</if>
+				<if test="item=='type'"> TYPE = #{ptoInfo.type,jdbcType=VARCHAR}, </if>
+				<if test="item=='preBeginOperTime'"> PREBEGIN_OPERTIME = #{ptoInfo.preBeginOperTime,jdbcType=TIMESTAMP},</if>
+				<if test="item=='preEndOperTime'"> PREEND_OPERTIME = #{ptoInfo.preEndOperTime,jdbcType=TIMESTAMP}, </if>
+				<if test="item=='beginOperTime'"> BEGIN_OPERTIME = #{ptoInfo.beginOperTime,jdbcType=TIMESTAMP},</if>
+				<if test="item=='endOperTime'"> END_OPERTIME = #{ptoInfo.endOperTime,jdbcType=TIMESTAMP},</if>
+				<if test="item=='isProper'"> IS_PROPER = #{ptoInfo.isProper,jdbcType=VARCHAR},</if>
+				<if test="item=='problem'"> PROBLEM = #{ptoInfo.problem,jdbcType=VARCHAR},</if>
+				<if test="item=='workflowId'"> WORKFLOW_ID = #{ptoInfo.workflowId,jdbcType=VARCHAR},</if>
+				<if test="item=='currStatus'"> CURR_STATUS = #{ptoInfo.currStatus,jdbcType=VARCHAR}, </if>
+				<if test="item=='delFlag'"> DEL_FLAG = #{ptoInfo.delFlag,jdbcType=VARCHAR}, </if>
+				<if test="item=='operItemRemarks'"> OPERITEM_REMARKS = #{ptoInfo.operItemRemarks,jdbcType=VARCHAR}, </if>
+				
+				<if test="item=='guardian'">  GUARDIAN= #{ptoInfo.guardian,jdbcType=VARCHAR}, </if>
+				<if test="item=='guardianName'">  GUARDIANNAME= #{ptoInfo.guardianName,jdbcType=VARCHAR}, </if>
+				<if test="item=='commander'">  COMMANDER= #{ptoInfo.commander,jdbcType=VARCHAR}, </if>
+				<if test="item=='commanderName'">  COMMANDERNAME= #{ptoInfo.commanderName,jdbcType=VARCHAR}, </if>
+				<if test="item=='operator'">  OPERATOR= #{ptoInfo.operator,jdbcType=VARCHAR}, </if>
+				<if test="item=='operatorName'">  OPERATORNAME= #{ptoInfo.operatorName,jdbcType=VARCHAR}, </if>
+				<if test="item=='ondutyPrincipal'">  ONDUTY_PRINCIPAL= #{ptoInfo.ondutyPrincipal,jdbcType=VARCHAR}, </if>
+				<if test="item=='ondutyPrincipalName'">  ONDUTY_PRINCIPALNAME= #{ptoInfo.ondutyPrincipalName,jdbcType=VARCHAR}, </if>
+				<if test="item=='ondutyMonitor'">  ONDUTY_MONITOR= #{ptoInfo.ondutyMonitor,jdbcType=VARCHAR}, </if>
+				<if test="item=='ondutyMonitorName'">  ONDUTY_MONITORNAME= #{ptoInfo.ondutyMonitorName,jdbcType=VARCHAR}, </if>
+				<if test="item=='currHandlerUser'">  CURR_HANDLERUSER= #{ptoInfo.currHandlerUser,jdbcType=VARCHAR}, </if>
+				<if test="item=='currHandlerUserName'">  CURR_HANDUSERNAME= #{ptoInfo.currHandlerUserName,jdbcType=VARCHAR}, </if>
+			</foreach>
+			<if test="ptoInfo.modifydate != null">
+				MODIFYDATE=#{ptoInfo.modifydate,jdbcType=TIMESTAMP},
+			</if>
+			MODIFYUSER=#{ptoInfo.modifyuser,jdbcType=VARCHAR}
+		</set>
+		WHERE ID=#{ptoInfo.id}
+	</update>
+	
+	<select id="queryPtoListInfo" resultMap="ptoInfoMap">
+		SELECT T.ID,T.STANDARDPTO_ID,T.CODE,T.TYPE, T.WIND_STATION,T.TASK,T.OPERATORNAME,T.OPERITEM_REMARKS,
+				T.GUARDIANNAME, T.CURR_STATUS, T.ASSETID,T.MODIFYDATE,SU.NAME CREATEUSER,T.CREATEDATE,T.BEGIN_OPERTIME,T.END_OPERTIME
+		FROM pto_info t left join sec_user su
+    		on t.createuser = su.user_id
+		WHERE T.SITEID = #{params.siteid} and T.CURR_STATUS != 'draft' and t.DEL_FLAG !='Y'
+		<if test="params.selectTreeId != null">
+			AND T.ASSETID IN (
+				SELECT A.ASSETID FROM AST_ASSET A
+				START WITH A.ASSETID =#{params.selectTreeId} CONNECT BY PRIOR ASSETID = A.PARENTID)
+		</if>
+	</select>
+	
+	
+	<select id="queryPtoInfoById" resultMap="ptoInfoMap">
+		SELECT t.id,t.standardpto_id,t.code,t.type,t.wind_station,t.task,t.assetid,t.assetname,t.is_proper,t.problem,
+				t.begin_opertime,t.end_opertime,t.prebegin_opertime,t.preend_opertime,t.operator,t.guardian,
+				t.onduty_principal,t.onduty_monitor,t.curr_status,t.curr_handleruser,t.curr_handusername,
+				t.workflow_id,t.guardian,t.commander,t.begin_opertime,t.end_opertime,t.operator,
+				t.onduty_principal,t.onduty_monitor,T.OPERITEM_REMARKS
+		FROM pto_info t 
+		WHERE t.id=#{ptoId}
+	</select>
+
+	<update id="updatePtoStatusById">
+		UPDATE pto_info t
+		set t.curr_status = #{status}, t.modifydate =#{modifydate} , t.modifyuser=#{modifyuserId}
+		WHERE ID=#{ptoId}
+	</update>
+
+	<update id="deletePtoInfoById">
+		UPDATE pto_info t
+		set t.DEL_FLAG = 'Y'
+		WHERE ID=#{ptoId}
+	</update>
+
+	<!-- 在流程的环节中当前处理人信息 -->
+	<update id="updateCurrHandUserById" parameterType="HashMap">
+		update pto_info
+		set CURR_HANDLERUSER=#{currHandlerUser},
+		    CURR_HANDUSERNAME = #{currHandUserName}
+		where ID=#{ptoId} 
+	</update>
+	
+	
+	<update id="updatePtoInfoOnCheck" parameterType="HashMap">
+		update pto_info
+		set IS_PROPER=#{isProper},
+			PROBLEM=#{problem},
+			MODIFYUSER=#{modifyUser},
+		    MODIFYDATE = #{modifyDate}
+		where ID=#{ptoId} 
+	</update>
+</mapper>

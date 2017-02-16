@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwIsolationAreaDao">
+
+
+	<select id="queryPtwIsolationAreaList" resultType="PtwIsolationArea">
+		select t.id,t.keyboxid,pkb.keyboxno,t.no,t.name,t.createdate,t.modifydate,t.createuser
+		from ptw_isolation_area t,ptw_keybox pkb
+		where t.keyboxid = pkb.id and t.yxbz = 1
+		order by id asc
+	</select>
+
+	<select id="queryPtwIsolationAreaById" resultType="PtwIsolationArea">
+		select t.id,t.keyboxid,pkb.keyboxno,t.no,t.name 
+		from ptw_isolation_area t,ptw_keybox pkb
+		where t.keyboxid = pkb.id and t.id = #{id}
+	</select>
+	
+	<insert id="insertPtwIsolationArea">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_MORE.nextval from dual
+		</selectKey>
+		insert into ptw_isolation_area
+		  (id,no,keyBoxId,name,siteid,deptid,createuser,modifyuser,
+		  createdate,modifydate,yxbz)
+		values
+		  (#{id},
+		  #{no,jdbcType=VARCHAR},
+		  #{keyBoxId,jdbcType=NUMERIC},
+		  #{name,jdbcType=VARCHAR},
+		  #{siteid,jdbcType=VARCHAR},
+		  #{deptid,jdbcType=VARCHAR},
+		  #{createuser,jdbcType=VARCHAR},
+		  #{modifyuser,jdbcType=VARCHAR},
+		  #{createdate,jdbcType=TIMESTAMP},
+		  #{modifydate,jdbcType=TIMESTAMP},
+		  #{yxbz,jdbcType=NUMERIC})
+	</insert>
+	
+	<update id="updatePtwIsolationArea">
+		update ptw_isolation_area t
+		set no = #{no,jdbcType=VARCHAR},
+			keyBoxId = #{keyBoxId,jdbcType=VARCHAR},
+			name = #{name,jdbcType=VARCHAR},
+			modifyuser = #{modifyuser},
+			modifydate = #{modifydate}
+		where id = #{id}
+	</update>
+	
+	<update id="deletePtwIsolationAreaById">
+		update ptw_isolation_area t
+		set yxbz = 0
+		where id = #{id}
+	</update>
+	
+	
+	<select id="queryPtwIsolationAreaByNo" parameterType="HashMap" resultType="int">
+		select count(*)
+		from ptw_isolation_area t
+		where yxbz = 1 and siteId = #{siteId} and no = #{no}
+	</select>
+	
+	
+</mapper> 

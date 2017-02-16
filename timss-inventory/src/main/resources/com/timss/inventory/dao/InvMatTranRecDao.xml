@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatTranRecDao">
+	<resultMap type="com.timss.inventory.bean.InvMatTranRec" id="InvMatTranRecMap">
+		<result property="siteId" column="site_id"/>
+		<result property="inQty" column="in_qty"/>
+		<result property="inUnitid" column="in_unitid"/>
+		<result property="outQty" column="out_qty"/>
+		<result property="outUnitid" column="out_unitid"/>
+		<result property="stockQty" column="stock_qty"/>
+		<result property="outterSheetno" column="outter_sheetno"/>
+		<result property="totalPrice" column="total_price"/>
+		<result property="sheetname" column="outter_sheetname"/>
+		<result property="trantype" column="tran_type"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="canOutQty" column="can_out_qty"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvMatTranRecVO" id="InvMatTranRecVOMap">
+		<result property="tranQty" column="tran_qty"/>
+		<result property="outterId" column="outterid"/>
+	</resultMap>
+	
+	<!-- 插入主交易记录 -->
+	<insert id="insertInvMatTranRec" parameterType="com.timss.inventory.bean.InvMatTranRec">
+		insert into inv_mat_tran_rec 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> imtdid, </if>
+	      <if test="imtid != null"> imtid, </if>
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="binid != null"> binid, </if>
+	      <if test="lotno != null"> lotno, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="inQty != null"> in_qty, </if>
+	      <if test="inUnitid != null"> in_unitid, </if>
+	      <if test="outQty != null"> out_qty, </if>
+	      <if test="outUnitid != null"> out_unitid, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="price != null"> price, </if>
+	      <if test="itemcode != null"> itemcode, </if>
+	      <if test="puraId != null">pura_id,</if>
+	      <if test="invcateid != null">invcateid,</if>
+	      <if test="noTaxPrice != null">no_tax_price,</if>
+	      <if test="tax != null">tax,</if>
+	      <if test="canOutQty != null">can_out_qty,</if>
+	      <if test="priceFlag != null">price_flag,</if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> #{imtdid,jdbcType=VARCHAR}, </if>
+	      <if test="imtid != null"> #{imtid,jdbcType=VARCHAR}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="binid != null"> #{binid,jdbcType=VARCHAR}, </if>
+	      <if test="lotno != null"> #{lotno,jdbcType=NUMERIC}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="inQty != null"> #{inQty,jdbcType=NUMERIC}, </if>
+	      <if test="inUnitid != null"> #{inUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="outQty != null"> #{outQty,jdbcType=NUMERIC}, </if>
+	      <if test="outUnitid != null"> #{outUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> #{price,jdbcType=NUMERIC}, </if>
+	      <if test="itemcode != null"> #{itemcode,jdbcType=VARCHAR}, </if>
+	      <if test="puraId != null"> #{puraId,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	      <if test="noTaxPrice != null"> #{noTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="tax != null"> #{tax,jdbcType=NUMERIC}, </if>
+	      <if test="canOutQty != null"> #{canOutQty,jdbcType=NUMERIC}, </if>
+	      <if test="priceFlag != null"> #{priceFlag,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 将数据更新交易信息表 -->
+	<update id="updateInvMatTranRec" parameterType="com.timss.inventory.bean.InvMatTranRec">
+		update inv_mat_tran_rec t
+		<set>
+	      <if test="itemid != null"> t.itemid=#{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> t.warehouseid=#{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="binid != null"> t.binid=#{binid,jdbcType=VARCHAR}, </if>
+	      <if test="lotno != null"> t.lotno=#{lotno,jdbcType=NUMERIC}, </if>
+	      <if test="remark != null"> t.remark=#{remark,jdbcType=VARCHAR}, </if>
+	      <if test="inQty != null"> t.in_qty=#{inQty,jdbcType=NUMERIC}, </if>
+	      <if test="inUnitid != null"> t.in_unitid=#{inUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="outQty != null"> t.out_qty=#{outQty,jdbcType=NUMERIC}, </if>
+	      <if test="outUnitid != null"> t.out_unitid=#{outUnitid,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> t.createuser=#{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> t.createdate=#{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> t.site_id=#{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> t.price=#{price,jdbcType=NUMERIC}, </if>
+	      <if test="itemcode != null"> t.itemcode=#{itemcode,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> t.invcateid=#{invcateid,jdbcType=VARCHAR}, </if>
+	      <if test="noTaxPrice != null"> t.no_tax_price=#{noTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="tax != null"> t.tax=#{tax,jdbcType=NUMERIC}, </if>
+	      <if test="canOutQty != null"> t.can_out_qty=#{canOutQty,jdbcType=NUMERIC}, </if>
+	    </set>
+		where t.imtdid=#{imtdid}
+	</update>
+	
+	<!-- 逻辑是按照itemid、invcateid和siteid三个字段来查询可以出库的批次 -->
+	<select id="queryTranRecByBatch" resultMap="InvMatTranRecMap">
+		 	SELECT T.IMTDID,
+		       T.IMTID,
+		       T.ITEMID,
+		       T.WAREHOUSEID,
+		       T.BINID,
+		       T.LOTNO,
+		       T.REMARK,
+		       T.IN_QTY,
+		       T.IN_UNITID,
+		       T.OUT_QTY,
+		       T.OUT_UNITID,
+		       T.CREATEUSER,
+		       T.CREATEDATE,
+		       T.MODIFYUSER,
+		       T.MODIFYDATE,
+		       T.SITE_ID,
+		       NVL(T.PRICE, 0) AS PRICE,
+		       T.ITEMCODE,
+		       T.ISRMBRS,
+		       T.PURA_ID,
+		       NVL(T.NO_TAX_PRICE, 0) AS NO_TAX_PRICE,
+		       NVL(T.TAX, 0) AS TAX,
+		       T.CAN_OUT_QTY,
+		       T.INVCATEID,
+		       T.PRICE_FLAG
+		  	FROM INV_MAT_TRAN_REC T
+		  	LEFT JOIN INV_MAT_MAP M ON T.IMTDID = M.IMTDID
+		 	WHERE T.ITEMID = #{itemId,jdbcType=VARCHAR} 
+		   		AND T.INVCATEID = #{invcateid,jdbcType=VARCHAR} 
+		   		AND T.SITE_ID = #{siteId,jdbcType=VARCHAR} 
+		   		AND T.OUT_QTY = 0
+		   		AND T.IN_QTY > 0
+		   		AND T.CAN_OUT_QTY>0
+			ORDER BY T.CREATEDATE ASC,T.PURA_ID ASC
+	</select>
+	<select id="queryTranRecByimtdid" resultMap="InvMatTranRecMap">
+		SELECT T.IMTDID,
+		       T.IMTID,
+		       T.ITEMID,
+		       T.WAREHOUSEID,
+		       T.BINID,
+		       T.LOTNO,
+		       T.REMARK,
+		       T.IN_QTY,
+		       T.IN_UNITID,
+		       T.OUT_QTY,
+		       T.OUT_UNITID,
+		       T.CREATEUSER,
+		       T.CREATEDATE,
+		       T.MODIFYUSER,
+		       T.MODIFYDATE,
+		       T.SITE_ID,
+		       NVL(T.PRICE, 0) AS PRICE,
+		       T.ITEMCODE,
+		       T.ISRMBRS,
+		       T.PURA_ID,
+		       NVL(T.NO_TAX_PRICE, 0)  AS NO_TAX_PRICE,
+		       NVL(T.TAX, 0) AS TAX,
+		       T.CAN_OUT_QTY,
+		       T.INVCATEID,
+		       T.PRICE_FLAG
+		FROM INV_MAT_TRAN_REC T
+		WHERE T.IMTDID = #{imtdid,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 删除交易明细表 -->
+	<delete id="deleteMatTranRecByImtid">
+		delete from inv_mat_tran_rec imtd where imtd.imtid=#{params.imtid}
+	</delete>
+	<delete id="deleteMatTranRecById">
+		delete from inv_mat_tran_rec imtd where imtd.imtdid=#{params.id}
+	</delete>
+	
+	
+	<!-- 查询领料单详情某个物资相关联的交易流水信息 -->
+	<select id="queryRelateTranRecByImadId" resultMap="InvMatTranRecVOMap">
+		select imm2.outterid, imtl.tran_qty from inv_mat_tran_log imtl 
+		left join inv_mat_map imm2 on imtl.from_imtdid = imm2.imtdid
+		left join itceam_workflow_purchorder iwp on imm2.outterid = iwp.sheet_id
+		where imtl.imtdid in (
+		select imm1.imtdid from inv_mat_map imm1 
+		where imm1.outterid = #{params.imadId}
+		) order by imtl.createdate asc
+	</select>	
+</mapper>

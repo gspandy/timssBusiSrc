@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.MilestoneDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+ 
+	
+	<resultMap type="com.timss.pms.vo.MilestoneVo" id="milestoneVoMap">
+		<id property="milestoneId" column="milestone_id"/>
+		<result property="projectId" column="project_id"/>
+		<result property="milestoneName" column="milestone_name"/>
+		<result property="expectedTime" column="expected_time"/>
+		<result property="actualTime" column="actual_time"/>
+		<result property="originTime" column="origin_time"/>
+		
+		<result property="siteid" column="siteid"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="command" column="command"/>
+		
+		<result property="updateTime" column="update_time"/>
+		<result property="updateUser" column="update_user"/>
+		
+	
+	</resultMap>
+	
+	
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		milestone_id,project_id,milestone_name,expected_time,actual_time,origin_time,siteid,create_time,
+    	create_user,del_flag,command
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertMilestone" parameterType="com.timss.pms.bean.Milestone">
+
+    insert into Tim_Pms_Milestone (<include refid="columnBasic"/>)
+    values (#{milestoneId,jdbcType=NUMERIC},#{projectId,jdbcType=NUMERIC},#{milestoneName,jdbcType=VARCHAR},
+    	#{expectedTime,jdbcType=TIMESTAMP},#{actualTime,jdbcType=TIMESTAMP},#{originTime,jdbcType=TIMESTAMP},
+    	#{siteid,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR},
+    	0,#{command,jdbcType=VARCHAR})
+</insert>
+
+<update id="updateMilestone">
+	update Tim_Pms_Milestone
+	set project_id=#{projectId,jdbcType=NUMERIC},milestone_name=#{milestoneName,jdbcType=VARCHAR},
+    	expected_time=#{expectedTime,jdbcType=TIMESTAMP},actual_time=#{actualTime,jdbcType=TIMESTAMP},
+    	origin_time=#{originTime,jdbcType=TIMESTAMP},
+    	siteid=#{siteid,jdbcType=VARCHAR},create_time=#{createTime,jdbcType=TIMESTAMP},create_user=#{createUser,jdbcType=VARCHAR},
+    	command=#{command,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=TIMESTAMP},update_user=#{updateUser,jdbcType=VARCHAR}
+    	
+    where milestone_id=#{milestoneId}
+</update>
+
+
+<select id="queryMilestoneListByProjectId" resultMap="milestoneVoMap">
+	select <include refid="columnBasic"/>
+	from Tim_Pms_Milestone t
+	where project_id=#{projectId} and del_flag='0'
+</select>
+
+
+<delete id="deleteMilestoneByProjectId">
+	delete from Tim_Pms_Milestone t
+	where project_id=#{projectId}
+</delete>
+</mapper>

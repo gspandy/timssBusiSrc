@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.SFCBidResultDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<resultMap type="com.timss.pms.vo.BidResultVo" id="sfcBidResultVoMap">
+		<id property="bidResultId" column="bid_result_id"/>
+		<result property="bidId" column="bid_id"/>
+		
+		<result property="name" column="name"/>
+		<result property="projectId" column="project_id"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="code" column="code"/>
+		<result property="budget" column="budget"/>
+		<result property="type" column="type"/>
+		<result property="attach" column="attach"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+		<result property="supplier" column="supplier"/>
+		<result property="supplierId" column="supplier_id"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		
+		<result property="projectName" column="project_name"/>
+		
+		
+		<result property="supplier2Name" column="supplier2_name"/>
+		<result property="supplie2Id" column="supplie2_id"/>
+		<result property="flowId" column="flow_id"/>
+		<result property="processInstId" column="process_inst_id"/>
+		<result property="flowStatus" column="flow_status"/>
+	</resultMap>
+	
+	
+<select id="queryBidResultList" resultMap="sfcBidResultVoMap">
+	select t.bid_id,t.name,t.project_id,t.del_flag,t.code,t.budget,t.type,t.attach,t.status,
+	t.command,t.supplier,t.bid_result_id,t.siteid,t.supplier_id,t.project_name,t.flow_id as flowId,
+	t.supplier2_name,t.supplier2_id,t.flow_status
+	from Tim_Pms_Bid_Result t
+	where t.del_flag=0 and t.status!='voided'
+</select>
+<select id="queryBidResultListAndFilter" resultMap="sfcBidResultVoMap">
+	select t.bid_id,t.name,t.project_id,t.del_flag,t.code,t.budget,t.type,t.attach,t.status,
+	t.command,t.supplier,t.bid_result_id,t.siteid,t.supplier_id,t.project_name,t.flow_id as flowId,
+	t.supplier2_name,t.supplier2_id,t.flow_status
+	from Tim_Pms_Bid_Result t
+	where t.del_flag=0 
+</select>
+
+
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>

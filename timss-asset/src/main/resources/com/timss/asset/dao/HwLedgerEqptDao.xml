@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.asset.dao.HwLedgerEqptDao">
+    <select id="queryNetworkDetailById" resultType="HwLedgerNetworkBean">
+	select 
+h.hw_id as hwId, h.hw_name as hwName, h.hw_type as hwType, 
+e.location as location, e.remarks as remarks, e.asset_code as assetCode, e.own_org as ownOrg, e.to_use_time as toUseTime, 
+e.elapsed_time as elapsedTime, e.status as status, e.repair_recard as repairRecard, e.principal as principal, e.supplier as supplier, 
+e.related_eqpt as relatedEqpt, e.related_business as relatedBusiness, 
+e.attr01 as eqptAttr01, e.attr02 as eqptAttr02, e.attr03 as eqptAttr03, e.attr04 as eqptAttr04, e.attr05 as eqptAttr05, 
+e.attr06 as eqptAttr06, e.attr07 as eqptAttr07, e.attr08 as eqptAttr08, e.attr09 as eqptAttr09, e.attr10 as eqptAttr10, 
+e.attr11 as eqptAttr11, e.attr12 as eqptAttr12, e.attr13 as eqptAttr13, e.attr14 as eqptAttr14, e.attr15 as eqptAttr15, 
+e.attr16 as eqptAttr16, e.attr17 as eqptAttr17, e.attr18 as eqptAttr18, e.attr19 as eqptAttr19, e.attr20 as eqptAttr20, 
+e.long_attr01 as eqptLongAttr01, e.long_attr02 as eqptLongAttr02, e.long_attr03 as eqptLongAttr03, e.long_attr04 as eqptLongAttr04, e.long_attr05 as eqptLongAttr05, 
+e.long_attr06 as eqptLongAttr06, e.long_attr07 as eqptLongAttr07, e.long_attr08 as eqptLongAttr08, e.long_attr09 as eqptLongAttr09, e.long_attr10 as eqptLongAttr10,
+n.network_brand as networkBrand,F_AST_GET_HWMODEL_BY_ID(n.network_brand) as networkBrandName, n.network_model as networkModel,F_AST_GET_HWMODEL_BY_ID(n.network_model) as networkModelName, n.sn_code as snCode, n.network_type as networkType,F_AST_GET_HWMODEL_BY_ID(n.network_type) as networkTypeName, n.network_location as networkLocation, 
+n.ip as ip, n.network_manage_type as networkManageType,F_AST_GET_HWMODEL_BY_ID(n.network_manage_type) as networkManageTypeName, n.os_version as osVersion, n.software_license as softwareLicense, n.rj_num as rjNum, 
+n.fc_num as fcNum, n.power as power, 
+n.attr01 as netAttr01, n.attr02 as netAttr02, n.attr03 as netAttr03, n.attr04 as netAttr04, n.attr05 as netAttr05, 
+n.attr06 as netAttr06, n.attr07 as netAttr07, n.attr08 as netAttr08, n.attr09 as netAttr09, n.attr10 as netAttr10, 
+n.attr11 as netAttr11, n.attr12 as netAttr12, n.attr13 as netAttr13, n.attr14 as netAttr14, n.attr15 as netAttr15, 
+n.attr16 as netAttr16, n.attr17 as netAttr17, n.attr18 as netAttr18, n.attr19 as netAttr19, n.attr20 as netAttr20, 
+n.long_attr01 as netLongAttr01, n.long_attr02 as netLongAttr02, n.long_attr03 as netLongAttr03, n.long_attr04 as netLongAttr04, n.long_attr05 as netLongAttr05, 
+n.long_attr06 as netLongAttr06, n.long_attr07 as netLongAttr07, n.long_attr08 as netLongAttr08, n.long_attr09 as netLongAttr09, n.long_attr10 as netLongAttr10
+	from ast_hw_l h
+	left join ast_hw_l_eqpt e on h.hw_id=e.hw_id
+	left join ast_hw_l_network n on n.hw_id=e.hw_id
+	where h.hw_id=#{id}	
+	</select>
+	
+   <select id="queryStorageDetailById" resultType="HwLedgerStorageBean">
+	select 
+h.hw_id as hwId, h.hw_name as hwName, h.hw_type as hwType, 
+e.location as location, e.remarks as remarks, e.asset_code as assetCode, e.own_org as ownOrg, e.to_use_time as toUseTime, 
+e.elapsed_time as elapsedTime, e.status as status, e.repair_recard as repairRecard, e.principal as principal, e.supplier as supplier, 
+e.related_eqpt as relatedEqpt, e.related_business as relatedBusiness, 
+e.attr01 as eqptAttr01, e.attr02 as eqptAttr02, e.attr03 as eqptAttr03, e.attr04 as eqptAttr04, e.attr05 as eqptAttr05, 
+e.attr06 as eqptAttr06, e.attr07 as eqptAttr07, e.attr08 as eqptAttr08, e.attr09 as eqptAttr09, e.attr10 as eqptAttr10, 
+e.attr11 as eqptAttr11, e.attr12 as eqptAttr12, e.attr13 as eqptAttr13, e.attr14 as eqptAttr14, e.attr15 as eqptAttr15, 
+e.attr16 as eqptAttr16, e.attr17 as eqptAttr17, e.attr18 as eqptAttr18, e.attr19 as eqptAttr19, e.attr20 as eqptAttr20, 
+e.long_attr01 as eqptLongAttr01, e.long_attr02 as eqptLongAttr02, e.long_attr03 as eqptLongAttr03, e.long_attr04 as eqptLongAttr04, e.long_attr05 as eqptLongAttr05, 
+e.long_attr06 as eqptLongAttr06, e.long_attr07 as eqptLongAttr07, e.long_attr08 as eqptLongAttr08, e.long_attr09 as eqptLongAttr09, e.long_attr10 as eqptLongAttr10,
+s.storage_model as storageModel,F_AST_GET_HWMODEL_BY_ID(s.storage_model) as storageModelName, s.sn_code as snCode, s.storage_brand as storageBrand,F_AST_GET_HWMODEL_BY_ID(s.storage_brand) as storageBrandName, s.controller as controller, s.cache as cache, 
+s.harddisk as harddisk, s.front_interface as frontInterface, s.back_interface as backInterface, s.power as power, s.virtual_situation as virtualSituation, 
+s.ip as ip, s.mac as mac, s.vlan as vlan, s.net_area as netArea, s.virtual_deploy_location as virtualDeployLocation, 
+s.storage_type as storageType,F_AST_GET_HWMODEL_BY_ID(s.storage_type) as storageTypeName, s.raid_type as raidType,F_AST_GET_HWMODEL_BY_ID(s.raid_type) as raidTypeName, s.effective_capacity as effectiveCapacity, s.spare_drives_num as spareDrivesNum, s.lun_name as lunName, 
+s.lun_num as lunNum, s.lun_host as lunHost,
+s.attr01 as storageAttr01, s.attr02 as storageAttr02, s.attr03 as storageAttr03, s.attr04 as storageAttr04, s.attr05 as storageAttr05, 
+s.attr06 as storageAttr06, s.attr07 as storageAttr07, s.attr08 as storageAttr08, s.attr09 as storageAttr09, s.attr10 as storageAttr10, 
+s.attr11 as storageAttr11, s.attr12 as storageAttr12, s.attr13 as storageAttr13, s.attr14 as storageAttr14, s.attr15 as storageAttr15, 
+s.attr16 as storageAttr16, s.attr17 as storageAttr17, s.attr18 as storageAttr18, s.attr19 as storageAttr19, s.attr20 as storageAttr20, 
+s.long_attr01 as storageLongAttr01, s.long_attr02 as storageLongAttr02, s.long_attr03 as storageLongAttr03, s.long_attr04 as storageLongAttr04, s.long_attr05 as storageLongAttr05, 
+s.long_attr06 as storageLongAttr06, s.long_attr07 as storageLongAttr07, s.long_attr08 as storageLongAttr08, s.long_attr09 as storageLongAttr09, s.long_attr10 as storageLongAttr10
+	from ast_hw_l h
+	left join ast_hw_l_eqpt e on h.hw_id=e.hw_id
+	left join ast_hw_l_storage s on s.hw_id=e.hw_id
+	where h.hw_id=#{id}	
+	</select>
+	
+    <select id="queryRoomEqptDetailById" resultType="HwLedgerRoomEqptBean">
+	select 
+h.hw_id as hwId, h.hw_name as hwName, h.hw_type as hwType, 
+e.location as location, e.remarks as remarks, e.asset_code as assetCode, e.own_org as ownOrg, e.to_use_time as toUseTime, 
+e.elapsed_time as elapsedTime, e.status as status, e.repair_recard as repairRecard, e.principal as principal, e.supplier as supplier, 
+e.related_eqpt as relatedEqpt, e.related_business as relatedBusiness, 
+e.attr01 as eqptAttr01, e.attr02 as eqptAttr02, e.attr03 as eqptAttr03, e.attr04 as eqptAttr04, e.attr05 as eqptAttr05, 
+e.attr06 as eqptAttr06, e.attr07 as eqptAttr07, e.attr08 as eqptAttr08, e.attr09 as eqptAttr09, e.attr10 as eqptAttr10, 
+e.attr11 as eqptAttr11, e.attr12 as eqptAttr12, e.attr13 as eqptAttr13, e.attr14 as eqptAttr14, e.attr15 as eqptAttr15, 
+e.attr16 as eqptAttr16, e.attr17 as eqptAttr17, e.attr18 as eqptAttr18, e.attr19 as eqptAttr19, e.attr20 as eqptAttr20, 
+e.long_attr01 as eqptLongAttr01, e.long_attr02 as eqptLongAttr02, e.long_attr03 as eqptLongAttr03, e.long_attr04 as eqptLongAttr04, e.long_attr05 as eqptLongAttr05, 
+e.long_attr06 as eqptLongAttr06, e.long_attr07 as eqptLongAttr07, e.long_attr08 as eqptLongAttr08, e.long_attr09 as eqptLongAttr09, e.long_attr10 as eqptLongAttr10,
+r.eqpt_model as eqptModel,F_AST_GET_HWMODEL_BY_ID(r.eqpt_model) as eqptModelName, r.eqpt_brand as eqptBrand,F_AST_GET_HWMODEL_BY_ID(r.eqpt_brand) as eqptBrandName, r.power_supply_no as powerSupplyNo, r.power as power, 
+r.attr01 as roomEqptAttr01, r.attr02 as roomEqptAttr02, r.attr03 as roomEqptAttr03, r.attr04 as roomEqptAttr04, r.attr05 as roomEqptAttr05, 
+r.attr06 as roomEqptAttr06, r.attr07 as roomEqptAttr07, r.attr08 as roomEqptAttr08, r.attr09 as roomEqptAttr09, r.attr10 as roomEqptAttr10, 
+r.attr11 as roomEqptAttr11, r.attr12 as roomEqptAttr12, r.attr13 as roomEqptAttr13, r.attr14 as roomEqptAttr14, r.attr15 as roomEqptAttr15, 
+r.attr16 as roomEqptAttr16, r.attr17 as roomEqptAttr17, r.attr18 as roomEqptAttr18, r.attr19 as roomEqptAttr19, r.attr20 as roomEqptAttr20, 
+r.long_attr01 as roomEqptLongAttr01, r.long_attr02 as roomEqptLongAttr02, r.long_attr03 as roomEqptLongAttr03, r.long_attr04 as roomEqptLongAttr04, r.long_attr05 as roomEqptLongAttr05, 
+r.long_attr06 as roomEqptLongAttr06, r.long_attr07 as roomEqptLongAttr07, r.long_attr08 as roomEqptLongAttr08, r.long_attr09 as roomEqptLongAttr09, r.long_attr10 as roomEqptLongAttr10 
+	from ast_hw_l h
+	left join ast_hw_l_eqpt e on h.hw_id=e.hw_id
+	left join ast_hw_l_room_eqpt r on r.hw_id=e.hw_id
+	where h.hw_id=#{id}	
+	</select>
+	
+    <insert id="insertEqpt" parameterType="HwLedgerEqptBean" >
+    	insert into ast_hw_l_eqpt (
+hw_id, location, remarks, asset_code, own_org, 
+to_use_time, elapsed_time, status, repair_recard, principal, 
+supplier, related_eqpt, related_business, 
+attr01, attr02, attr03, attr04, attr05, 
+attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, 
+attr16, attr17, attr18, attr19, attr20, 
+long_attr01, long_attr02, long_attr03, long_attr04, long_attr05, 
+long_attr06, long_attr07, long_attr08, long_attr09, long_attr10
+		)
+    	values (
+#{hwId,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{assetCode,jdbcType=VARCHAR}, #{ownOrg,jdbcType=VARCHAR}, 
+#{toUseTime,jdbcType=TIMESTAMP}, #{elapsedTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{repairRecard,jdbcType=VARCHAR}, #{principal,jdbcType=VARCHAR}, 
+#{supplier,jdbcType=VARCHAR}, #{relatedEqpt,jdbcType=VARCHAR}, #{relatedBusiness,jdbcType=VARCHAR}, 
+#{eqptAttr01,jdbcType=VARCHAR}, #{eqptAttr02,jdbcType=VARCHAR}, #{eqptAttr03,jdbcType=VARCHAR}, #{eqptAttr04,jdbcType=VARCHAR}, #{eqptAttr05,jdbcType=VARCHAR}, 
+#{eqptAttr06,jdbcType=VARCHAR}, #{eqptAttr07,jdbcType=VARCHAR}, #{eqptAttr08,jdbcType=VARCHAR}, #{eqptAttr09,jdbcType=VARCHAR}, #{eqptAttr10,jdbcType=VARCHAR}, 
+#{eqptAttr11,jdbcType=VARCHAR}, #{eqptAttr12,jdbcType=VARCHAR}, #{eqptAttr13,jdbcType=VARCHAR}, #{eqptAttr14,jdbcType=VARCHAR}, #{eqptAttr15,jdbcType=VARCHAR}, 
+#{eqptAttr16,jdbcType=VARCHAR}, #{eqptAttr17,jdbcType=VARCHAR}, #{eqptAttr18,jdbcType=VARCHAR}, #{eqptAttr19,jdbcType=VARCHAR}, #{eqptAttr20,jdbcType=VARCHAR}, 
+#{eqptLongAttr01,jdbcType=VARCHAR}, #{eqptLongAttr02,jdbcType=VARCHAR}, #{eqptLongAttr03,jdbcType=VARCHAR}, #{eqptLongAttr04,jdbcType=VARCHAR}, #{eqptLongAttr05,jdbcType=VARCHAR}, 
+#{eqptLongAttr06,jdbcType=VARCHAR}, #{eqptLongAttr07,jdbcType=VARCHAR}, #{eqptLongAttr08,jdbcType=VARCHAR}, #{eqptLongAttr09,jdbcType=VARCHAR}, #{eqptLongAttr10,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <update id="updateEqpt" parameterType="HwLedgerEqptBean">
+        update ast_hw_l_eqpt set 
+location=#{location,jdbcType=VARCHAR}, remarks=#{remarks,jdbcType=VARCHAR}, asset_code=#{assetCode,jdbcType=VARCHAR}, own_org=#{ownOrg,jdbcType=VARCHAR}, to_use_time=#{toUseTime,jdbcType=TIMESTAMP}, 
+elapsed_time=#{elapsedTime,jdbcType=TIMESTAMP}, status=#{status,jdbcType=VARCHAR}, repair_recard=#{repairRecard,jdbcType=VARCHAR}, principal=#{principal,jdbcType=VARCHAR}, supplier=#{supplier,jdbcType=VARCHAR}, 
+related_eqpt=#{relatedEqpt,jdbcType=VARCHAR}, related_business=#{relatedBusiness,jdbcType=VARCHAR}, 
+attr01=#{eqptAttr01,jdbcType=VARCHAR}, attr02=#{eqptAttr02,jdbcType=VARCHAR}, attr03=#{eqptAttr03,jdbcType=VARCHAR}, attr04=#{eqptAttr04,jdbcType=VARCHAR}, attr05=#{eqptAttr05,jdbcType=VARCHAR}, 
+attr06=#{eqptAttr06,jdbcType=VARCHAR}, attr07=#{eqptAttr07,jdbcType=VARCHAR}, attr08=#{eqptAttr08,jdbcType=VARCHAR}, attr09=#{eqptAttr09,jdbcType=VARCHAR}, attr10=#{eqptAttr10,jdbcType=VARCHAR}, 
+attr11=#{eqptAttr11,jdbcType=VARCHAR}, attr12=#{eqptAttr12,jdbcType=VARCHAR}, attr13=#{eqptAttr13,jdbcType=VARCHAR}, attr14=#{eqptAttr14,jdbcType=VARCHAR}, attr15=#{eqptAttr15,jdbcType=VARCHAR}, 
+attr16=#{eqptAttr16,jdbcType=VARCHAR}, attr17=#{eqptAttr17,jdbcType=VARCHAR}, attr18=#{eqptAttr18,jdbcType=VARCHAR}, attr19=#{eqptAttr19,jdbcType=VARCHAR}, attr20=#{eqptAttr20,jdbcType=VARCHAR}, 
+long_attr01=#{eqptLongAttr01,jdbcType=VARCHAR}, long_attr02=#{eqptLongAttr02,jdbcType=VARCHAR}, long_attr03=#{eqptLongAttr03,jdbcType=VARCHAR}, long_attr04=#{eqptLongAttr04,jdbcType=VARCHAR}, long_attr05=#{eqptLongAttr05,jdbcType=VARCHAR}, 
+long_attr06=#{eqptLongAttr06,jdbcType=VARCHAR}, long_attr07=#{eqptLongAttr07,jdbcType=VARCHAR}, long_attr08=#{eqptLongAttr08,jdbcType=VARCHAR}, long_attr09=#{eqptLongAttr09,jdbcType=VARCHAR}, long_attr10=#{eqptLongAttr10,jdbcType=VARCHAR}
+        where hw_id = #{hwId}
+    </update>
+    
+    <insert id="insertRoomEqpt" parameterType="HwLedgerRoomEqptBean" >
+        insert into ast_hw_l_room_eqpt (
+hw_id, eqpt_model, eqpt_brand, power_supply_no, power, 
+attr01, attr02, attr03, attr04, attr05, 
+attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, 
+attr16, attr17, attr18, attr19, attr20, 
+long_attr01, long_attr02, long_attr03, long_attr04, long_attr05, 
+long_attr06, long_attr07, long_attr08, long_attr09, long_attr10
+        )
+    	values (
+#{hwId,jdbcType=VARCHAR}, #{eqptModel,jdbcType=VARCHAR}, #{eqptBrand,jdbcType=VARCHAR}, #{powerSupplyNo,jdbcType=VARCHAR}, #{power,jdbcType=VARCHAR}, 
+#{roomEqptAttr01,jdbcType=VARCHAR}, #{roomEqptAttr02,jdbcType=VARCHAR}, #{roomEqptAttr03,jdbcType=VARCHAR}, #{roomEqptAttr04,jdbcType=VARCHAR}, #{roomEqptAttr05,jdbcType=VARCHAR}, 
+#{roomEqptAttr06,jdbcType=VARCHAR}, #{roomEqptAttr07,jdbcType=VARCHAR}, #{roomEqptAttr08,jdbcType=VARCHAR}, #{roomEqptAttr09,jdbcType=VARCHAR}, #{roomEqptAttr10,jdbcType=VARCHAR}, 
+#{roomEqptAttr11,jdbcType=VARCHAR}, #{roomEqptAttr12,jdbcType=VARCHAR}, #{roomEqptAttr13,jdbcType=VARCHAR}, #{roomEqptAttr14,jdbcType=VARCHAR}, #{roomEqptAttr15,jdbcType=VARCHAR}, 
+#{roomEqptAttr16,jdbcType=VARCHAR}, #{roomEqptAttr17,jdbcType=VARCHAR}, #{roomEqptAttr18,jdbcType=VARCHAR}, #{roomEqptAttr19,jdbcType=VARCHAR}, #{roomEqptAttr20,jdbcType=VARCHAR}, 
+#{roomEqptLongAttr01,jdbcType=VARCHAR}, #{roomEqptLongAttr02,jdbcType=VARCHAR}, #{roomEqptLongAttr03,jdbcType=VARCHAR}, #{roomEqptLongAttr04,jdbcType=VARCHAR}, #{roomEqptLongAttr05,jdbcType=VARCHAR}, 
+#{roomEqptLongAttr06,jdbcType=VARCHAR}, #{roomEqptLongAttr07,jdbcType=VARCHAR}, #{roomEqptLongAttr08,jdbcType=VARCHAR}, #{roomEqptLongAttr09,jdbcType=VARCHAR}, #{roomEqptLongAttr10,jdbcType=VARCHAR}    	
+    	)
+    </insert>
+    
+    <update id="updateRoomEqpt" parameterType="HwLedgerRoomEqptBean">
+        update ast_hw_l_room_eqpt set 
+eqpt_model=#{eqptModel,jdbcType=VARCHAR}, eqpt_brand=#{eqptBrand,jdbcType=VARCHAR}, power_supply_no=#{powerSupplyNo,jdbcType=VARCHAR}, power=#{power,jdbcType=VARCHAR}, 
+attr01=#{roomEqptAttr01,jdbcType=VARCHAR}, attr02=#{roomEqptAttr02,jdbcType=VARCHAR}, attr03=#{roomEqptAttr03,jdbcType=VARCHAR}, attr04=#{roomEqptAttr04,jdbcType=VARCHAR}, attr05=#{roomEqptAttr05,jdbcType=VARCHAR}, 
+attr06=#{roomEqptAttr06,jdbcType=VARCHAR}, attr07=#{roomEqptAttr07,jdbcType=VARCHAR}, attr08=#{roomEqptAttr08,jdbcType=VARCHAR}, attr09=#{roomEqptAttr09,jdbcType=VARCHAR}, attr10=#{roomEqptAttr10,jdbcType=VARCHAR}, 
+attr11=#{roomEqptAttr11,jdbcType=VARCHAR}, attr12=#{roomEqptAttr12,jdbcType=VARCHAR}, attr13=#{roomEqptAttr13,jdbcType=VARCHAR}, attr14=#{roomEqptAttr14,jdbcType=VARCHAR}, attr15=#{roomEqptAttr15,jdbcType=VARCHAR}, 
+attr16=#{roomEqptAttr16,jdbcType=VARCHAR}, attr17=#{roomEqptAttr17,jdbcType=VARCHAR}, attr18=#{roomEqptAttr18,jdbcType=VARCHAR}, attr19=#{roomEqptAttr19,jdbcType=VARCHAR}, attr20=#{roomEqptAttr20,jdbcType=VARCHAR}, 
+long_attr01=#{roomEqptLongAttr01,jdbcType=VARCHAR}, long_attr02=#{roomEqptLongAttr02,jdbcType=VARCHAR}, long_attr03=#{roomEqptLongAttr03,jdbcType=VARCHAR}, long_attr04=#{roomEqptLongAttr04,jdbcType=VARCHAR}, long_attr05=#{roomEqptLongAttr05,jdbcType=VARCHAR}, 
+long_attr06=#{roomEqptLongAttr06,jdbcType=VARCHAR}, long_attr07=#{roomEqptLongAttr07,jdbcType=VARCHAR}, long_attr08=#{roomEqptLongAttr08,jdbcType=VARCHAR}, long_attr09=#{roomEqptLongAttr09,jdbcType=VARCHAR}, long_attr10=#{roomEqptLongAttr10,jdbcType=VARCHAR}        
+        where hw_id = #{hwId}
+    </update>
+    
+    <insert id="insertStorage" parameterType="HwLedgerStorageBean" >
+        insert into ast_hw_l_storage (
+hw_id, storage_model, sn_code, storage_brand, controller, 
+cache, harddisk, front_interface, back_interface, power, 
+virtual_situation, ip, mac, vlan, net_area, 
+virtual_deploy_location, storage_type, raid_type, effective_capacity, spare_drives_num, 
+lun_name, lun_num, lun_host, 
+attr01, attr02, attr03, attr04, attr05, 
+attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, 
+attr16, attr17, attr18, attr19, attr20, 
+long_attr01, long_attr02, long_attr03, long_attr04, long_attr05, 
+long_attr06, long_attr07, long_attr08, long_attr09, long_attr10        
+        )
+    	values (
+#{hwId,jdbcType=VARCHAR}, #{storageModel,jdbcType=VARCHAR}, #{snCode,jdbcType=VARCHAR}, #{storageBrand,jdbcType=VARCHAR}, #{controller,jdbcType=VARCHAR}, 
+#{cache,jdbcType=VARCHAR}, #{harddisk,jdbcType=VARCHAR}, #{frontInterface,jdbcType=VARCHAR}, #{backInterface,jdbcType=VARCHAR}, #{power,jdbcType=VARCHAR}, 
+#{virtualSituation,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{mac,jdbcType=VARCHAR}, #{vlan,jdbcType=VARCHAR}, #{netArea,jdbcType=VARCHAR}, 
+#{virtualDeployLocation,jdbcType=VARCHAR}, #{storageType,jdbcType=VARCHAR}, #{raidType,jdbcType=VARCHAR}, #{effectiveCapacity,jdbcType=VARCHAR}, #{spareDrivesNum,jdbcType=NUMERIC}, 
+#{lunName,jdbcType=VARCHAR}, #{lunNum,jdbcType=VARCHAR}, #{lunHost,jdbcType=VARCHAR}, 
+#{storageAttr01,jdbcType=VARCHAR}, #{storageAttr02,jdbcType=VARCHAR}, #{storageAttr03,jdbcType=VARCHAR}, #{storageAttr04,jdbcType=VARCHAR}, #{storageAttr05,jdbcType=VARCHAR}, 
+#{storageAttr06,jdbcType=VARCHAR}, #{storageAttr07,jdbcType=VARCHAR}, #{storageAttr08,jdbcType=VARCHAR}, #{storageAttr09,jdbcType=VARCHAR}, #{storageAttr10,jdbcType=VARCHAR}, 
+#{storageAttr11,jdbcType=VARCHAR}, #{storageAttr12,jdbcType=VARCHAR}, #{storageAttr13,jdbcType=VARCHAR}, #{storageAttr14,jdbcType=VARCHAR}, #{storageAttr15,jdbcType=VARCHAR}, 
+#{storageAttr16,jdbcType=VARCHAR}, #{storageAttr17,jdbcType=VARCHAR}, #{storageAttr18,jdbcType=VARCHAR}, #{storageAttr19,jdbcType=VARCHAR}, #{storageAttr20,jdbcType=VARCHAR}, 
+#{storageLongAttr01,jdbcType=VARCHAR}, #{storageLongAttr02,jdbcType=VARCHAR}, #{storageLongAttr03,jdbcType=VARCHAR}, #{storageLongAttr04,jdbcType=VARCHAR}, #{storageLongAttr05,jdbcType=VARCHAR}, 
+#{storageLongAttr06,jdbcType=VARCHAR}, #{storageLongAttr07,jdbcType=VARCHAR}, #{storageLongAttr08,jdbcType=VARCHAR}, #{storageLongAttr09,jdbcType=VARCHAR}, #{storageLongAttr10,jdbcType=VARCHAR}    	
+    	)
+    </insert>
+    
+    <update id="updateStorage" parameterType="HwLedgerStorageBean">
+        update ast_hw_l_storage set 
+storage_model=#{storageModel,jdbcType=VARCHAR}, sn_code=#{snCode,jdbcType=VARCHAR}, storage_brand=#{storageBrand,jdbcType=VARCHAR}, controller=#{controller,jdbcType=VARCHAR}, cache=#{cache,jdbcType=VARCHAR}, 
+harddisk=#{harddisk,jdbcType=VARCHAR}, front_interface=#{frontInterface,jdbcType=VARCHAR}, back_interface=#{backInterface,jdbcType=VARCHAR}, power=#{power,jdbcType=VARCHAR}, virtual_situation=#{virtualSituation,jdbcType=VARCHAR}, 
+ip=#{ip,jdbcType=VARCHAR}, mac=#{mac,jdbcType=VARCHAR}, vlan=#{vlan,jdbcType=VARCHAR}, net_area=#{netArea,jdbcType=VARCHAR}, virtual_deploy_location=#{virtualDeployLocation,jdbcType=VARCHAR}, 
+storage_type=#{storageType,jdbcType=VARCHAR}, raid_type=#{raidType,jdbcType=VARCHAR}, effective_capacity=#{effectiveCapacity,jdbcType=VARCHAR}, spare_drives_num=#{spareDrivesNum,jdbcType=NUMERIC}, lun_name=#{lunName,jdbcType=VARCHAR}, 
+lun_num=#{lunNum,jdbcType=VARCHAR}, lun_host=#{lunHost,jdbcType=VARCHAR}, 
+attr01=#{storageAttr01,jdbcType=VARCHAR}, attr02=#{storageAttr02,jdbcType=VARCHAR}, attr03=#{storageAttr03,jdbcType=VARCHAR}, attr04=#{storageAttr04,jdbcType=VARCHAR}, attr05=#{storageAttr05,jdbcType=VARCHAR}, 
+attr06=#{storageAttr06,jdbcType=VARCHAR}, attr07=#{storageAttr07,jdbcType=VARCHAR}, attr08=#{storageAttr08,jdbcType=VARCHAR}, attr09=#{storageAttr09,jdbcType=VARCHAR}, attr10=#{storageAttr10,jdbcType=VARCHAR}, 
+attr11=#{storageAttr11,jdbcType=VARCHAR}, attr12=#{storageAttr12,jdbcType=VARCHAR}, attr13=#{storageAttr13,jdbcType=VARCHAR}, attr14=#{storageAttr14,jdbcType=VARCHAR}, attr15=#{storageAttr15,jdbcType=VARCHAR}, 
+attr16=#{storageAttr16,jdbcType=VARCHAR}, attr17=#{storageAttr17,jdbcType=VARCHAR}, attr18=#{storageAttr18,jdbcType=VARCHAR}, attr19=#{storageAttr19,jdbcType=VARCHAR}, attr20=#{storageAttr20,jdbcType=VARCHAR}, 
+long_attr01=#{storageLongAttr01,jdbcType=VARCHAR}, long_attr02=#{storageLongAttr02,jdbcType=VARCHAR}, long_attr03=#{storageLongAttr03,jdbcType=VARCHAR}, long_attr04=#{storageLongAttr04,jdbcType=VARCHAR}, long_attr05=#{storageLongAttr05,jdbcType=VARCHAR}, 
+long_attr06=#{storageLongAttr06,jdbcType=VARCHAR}, long_attr07=#{storageLongAttr07,jdbcType=VARCHAR}, long_attr08=#{storageLongAttr08,jdbcType=VARCHAR}, long_attr09=#{storageLongAttr09,jdbcType=VARCHAR}, long_attr10=#{storageLongAttr10,jdbcType=VARCHAR}        
+        where hw_id = #{hwId}
+    </update>
+    
+    <insert id="insertNetwork" parameterType="HwLedgerNetworkBean" >
+        insert into ast_hw_l_network (
+hw_id, network_brand, network_model, sn_code, network_type, 
+network_location, ip, network_manage_type, os_version, software_license, 
+rj_num, fc_num, power, 
+attr01, attr02, attr03, attr04, attr05, 
+attr06, attr07, attr08, attr09, attr10, 
+attr11, attr12, attr13, attr14, attr15, 
+attr16, attr17, attr18, attr19, attr20, 
+long_attr01, long_attr02, long_attr03, long_attr04, long_attr05, 
+long_attr06, long_attr07, long_attr08, long_attr09, long_attr10        
+        )
+    	values (
+#{hwId,jdbcType=VARCHAR}, #{networkBrand,jdbcType=VARCHAR}, #{networkModel,jdbcType=VARCHAR}, #{snCode,jdbcType=VARCHAR}, #{networkType,jdbcType=VARCHAR}, 
+#{networkLocation,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{networkManageType,jdbcType=VARCHAR}, #{osVersion,jdbcType=VARCHAR}, #{softwareLicense,jdbcType=VARCHAR}, 
+#{rjNum,jdbcType=NUMERIC}, #{fcNum,jdbcType=NUMERIC}, #{power,jdbcType=VARCHAR}, 
+#{netAttr01,jdbcType=VARCHAR}, #{netAttr02,jdbcType=VARCHAR}, #{netAttr03,jdbcType=VARCHAR}, #{netAttr04,jdbcType=VARCHAR}, #{netAttr05,jdbcType=VARCHAR}, 
+#{netAttr06,jdbcType=VARCHAR}, #{netAttr07,jdbcType=VARCHAR}, #{netAttr08,jdbcType=VARCHAR}, #{netAttr09,jdbcType=VARCHAR}, #{netAttr10,jdbcType=VARCHAR}, 
+#{netAttr11,jdbcType=VARCHAR}, #{netAttr12,jdbcType=VARCHAR}, #{netAttr13,jdbcType=VARCHAR}, #{netAttr14,jdbcType=VARCHAR}, #{netAttr15,jdbcType=VARCHAR}, 
+#{netAttr16,jdbcType=VARCHAR}, #{netAttr17,jdbcType=VARCHAR}, #{netAttr18,jdbcType=VARCHAR}, #{netAttr19,jdbcType=VARCHAR}, #{netAttr20,jdbcType=VARCHAR}, 
+#{netLongAttr01,jdbcType=VARCHAR}, #{netLongAttr02,jdbcType=VARCHAR}, #{netLongAttr03,jdbcType=VARCHAR}, #{netLongAttr04,jdbcType=VARCHAR}, #{netLongAttr05,jdbcType=VARCHAR}, 
+#{netLongAttr06,jdbcType=VARCHAR}, #{netLongAttr07,jdbcType=VARCHAR}, #{netLongAttr08,jdbcType=VARCHAR}, #{netLongAttr09,jdbcType=VARCHAR}, #{netLongAttr10,jdbcType=VARCHAR}    	
+    	)
+    </insert>
+    
+    <update id="updateNetwork" parameterType="HwLedgerNetworkBean">
+        update ast_hw_l_network set 
+network_brand=#{networkBrand,jdbcType=VARCHAR}, network_model=#{networkModel,jdbcType=VARCHAR}, sn_code=#{snCode,jdbcType=VARCHAR}, network_type=#{networkType,jdbcType=VARCHAR}, network_location=#{networkLocation,jdbcType=VARCHAR}, 
+ip=#{ip,jdbcType=VARCHAR}, network_manage_type=#{networkManageType,jdbcType=VARCHAR}, os_version=#{osVersion,jdbcType=VARCHAR}, software_license=#{softwareLicense,jdbcType=VARCHAR}, rj_num=#{rjNum,jdbcType=NUMERIC}, 
+fc_num=#{fcNum,jdbcType=NUMERIC}, power=#{power,jdbcType=VARCHAR}, 
+attr01=#{netAttr01,jdbcType=VARCHAR}, attr02=#{netAttr02,jdbcType=VARCHAR}, attr03=#{netAttr03,jdbcType=VARCHAR}, attr04=#{netAttr04,jdbcType=VARCHAR}, attr05=#{netAttr05,jdbcType=VARCHAR}, 
+attr06=#{netAttr06,jdbcType=VARCHAR}, attr07=#{netAttr07,jdbcType=VARCHAR}, attr08=#{netAttr08,jdbcType=VARCHAR}, attr09=#{netAttr09,jdbcType=VARCHAR}, attr10=#{netAttr10,jdbcType=VARCHAR}, 
+attr11=#{netAttr11,jdbcType=VARCHAR}, attr12=#{netAttr12,jdbcType=VARCHAR}, attr13=#{netAttr13,jdbcType=VARCHAR}, attr14=#{netAttr14,jdbcType=VARCHAR}, attr15=#{netAttr15,jdbcType=VARCHAR}, 
+attr16=#{netAttr16,jdbcType=VARCHAR}, attr17=#{netAttr17,jdbcType=VARCHAR}, attr18=#{netAttr18,jdbcType=VARCHAR}, attr19=#{netAttr19,jdbcType=VARCHAR}, attr20=#{netAttr20,jdbcType=VARCHAR}, 
+long_attr01=#{netLongAttr01,jdbcType=VARCHAR}, long_attr02=#{netLongAttr02,jdbcType=VARCHAR}, long_attr03=#{netLongAttr03,jdbcType=VARCHAR}, long_attr04=#{netLongAttr04,jdbcType=VARCHAR}, long_attr05=#{netLongAttr05,jdbcType=VARCHAR}, 
+long_attr06=#{netLongAttr06,jdbcType=VARCHAR}, long_attr07=#{netLongAttr07,jdbcType=VARCHAR}, long_attr08=#{netLongAttr08,jdbcType=VARCHAR}, long_attr09=#{netLongAttr09,jdbcType=VARCHAR}, long_attr10=#{netLongAttr10,jdbcType=VARCHAR}       
+        where hw_id = #{hwId}
+    </update>
+    
+    
+     <select id="queryHwLedgerEqptById" resultType="HwLedgerEqptBean">
+	select 
+e.hw_id as hwId, 
+e.location as location, e.remarks as remarks, e.asset_code as assetCode, e.own_org as ownOrg, e.to_use_time as toUseTime, 
+e.elapsed_time as elapsedTime, e.status as status, e.repair_recard as repairRecard, e.principal as principal, e.supplier as supplier, 
+e.related_eqpt as relatedEqpt, e.related_business as relatedBusiness, 
+e.attr01 as eqptAttr01, e.attr02 as eqptAttr02, e.attr03 as eqptAttr03, e.attr04 as eqptAttr04, e.attr05 as eqptAttr05, 
+e.attr06 as eqptAttr06, e.attr07 as eqptAttr07, e.attr08 as eqptAttr08, e.attr09 as eqptAttr09, e.attr10 as eqptAttr10, 
+e.attr11 as eqptAttr11, e.attr12 as eqptAttr12, e.attr13 as eqptAttr13, e.attr14 as eqptAttr14, e.attr15 as eqptAttr15, 
+e.attr16 as eqptAttr16, e.attr17 as eqptAttr17, e.attr18 as eqptAttr18, e.attr19 as eqptAttr19, e.attr20 as eqptAttr20, 
+e.long_attr01 as eqptLongAttr01, e.long_attr02 as eqptLongAttr02, e.long_attr03 as eqptLongAttr03, e.long_attr04 as eqptLongAttr04, e.long_attr05 as eqptLongAttr05, 
+e.long_attr06 as eqptLongAttr06, e.long_attr07 as eqptLongAttr07, e.long_attr08 as eqptLongAttr08, e.long_attr09 as eqptLongAttr09, e.long_attr10 as eqptLongAttr10
+	from ast_hw_l_eqpt e 
+	where e.hw_id=#{id}	
+	</select>
+    
+    <select id="queryHwLedgerByAssetCode" resultType="HwLedgerBean">
+	select 
+h.hw_id as hwId,h.hw_name as hwName
+	from ast_hw_l h
+	left join ast_hw_l_eqpt e on e.hw_id=h.hw_id 
+	where h.site_id=#{siteId} and e.asset_code=#{code}	
+	</select>
+</mapper> 

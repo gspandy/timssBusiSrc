@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.operation.dao.ScheduleTaskPlanDao">
+
+	<resultMap type="ScheduleTaskPlan" id="scheduleTaskPlanMap">
+		<id column="ID" property="id" />
+		<result column="COMPONENT_ID" property="componentId" />
+		<result column="CODE" property="code" />
+		<result column="TYPE" property="type" />
+		<result column="ASSET_ID" property="assetId" />
+		<result column="ASSET_NAME" property="assetName" />
+		<result column="CONTENT" property="content" />
+		<result column="NEXT_SHIFT" property="nextShift" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="SHIFT_IDS" property="shiftIds" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEL_FLAG" property="delFlag" />
+		
+		<!--组件字段  -->
+		<result column="BEGIN_TIME" property="beginTime" />
+		<result column="NEXT_TIME" property="nextTime" />
+		<result column="INVALIDE_TIME" property="invalideTime" />
+		<result column="CYCLE_TYPE" property="cycleType" />
+		<result column="CYCLE_LEN" property="cycleLen" />
+		<result column="ACTIVITY_FLAG" property="activityFlag" />
+		<result column="SPECIFIED_DATE" property="specifiedDate" />
+		
+	</resultMap>	
+	
+	<insert id="insertScheduleTaskPlan" >
+		insert into opr_schedule_task_plan(ID,CODE,COMPONENT_ID,TYPE,ASSET_ID,ASSET_NAME,CONTENT,NEXT_SHIFT,DEPT_ID,
+									SHIFT_IDS,CREATEUSER,CREATEDATE,MODIFYUSER,MODIFYDATE,SITEID,DEL_FLAG) 
+		values( #{id},
+				#{code,jdbcType=VARCHAR},
+				#{componentId,jdbcType=VARCHAR},
+				#{type,jdbcType=VARCHAR},
+				#{assetId,jdbcType=VARCHAR},
+				#{assetName,jdbcType=VARCHAR},
+				#{content,jdbcType=VARCHAR},
+				#{nextShift,jdbcType=VARCHAR},
+				#{deptId,jdbcType=VARCHAR},
+				
+				#{shiftIds,jdbcType=VARCHAR},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{modifyuser,jdbcType=VARCHAR},
+				#{modifydate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{delFlag,jdbcType=VARCHAR}
+				) 
+	</insert>
+	
+	<select id="queryScheduleTaskPlanList" parameterType="HashMap" resultMap="scheduleTaskPlanMap">
+		select t.ID,t.CODE,t.TYPE,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,t.NEXT_SHIFT,t.DEPT_ID,t.COMPONENT_ID,
+			   t.SHIFT_IDS,t.CREATEUSER,t.CREATEDATE,t.MODIFYUSER,t.MODIFYDATE,t.SITEID,t.DEL_FLAG,t_rule.SPECIFIED_DATE,
+			   t_rule.BEGIN_TIME, t_rule.INVALIDE_TIME,t_rule.CYCLE_TYPE,t_rule.CYCLE_LEN,t_rule.ACTIVITY_FLAG
+		from opr_schedule_task_plan t ,b_scheduled_task_rule t_rule
+		where t.siteid=#{params.siteid} and t.component_id = t_rule.id AND T.DEL_FLAG = 'N'
+		order by t.createdate desc
+	</select>
+	
+	<select id="queryTaskPlanById" parameterType="HashMap" resultMap="scheduleTaskPlanMap">
+		select t.ID,t.CODE,t.TYPE,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,t.NEXT_SHIFT,t.DEPT_ID,t.COMPONENT_ID,
+			   t.SHIFT_IDS,t.CREATEUSER,t.CREATEDATE,t.MODIFYUSER,t.MODIFYDATE,t.SITEID,t.DEL_FLAG,t_rule.SPECIFIED_DATE,
+			   t_rule.begin_time,t_rule.INVALIDE_TIME,t_rule.cycle_type,t_rule.cycle_len,t_rule.activity_flag
+		from opr_schedule_task_plan t, b_scheduled_task_rule t_rule
+		where t.id = #{id} AND t.component_id = t_rule.id 
+	</select>
+	
+	<select id="queryTaskPlanByRuleId" parameterType="HashMap" resultMap="scheduleTaskPlanMap">
+		select t.ID,t.CODE,t.TYPE,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,t.NEXT_SHIFT,t.DEPT_ID,t.COMPONENT_ID,
+			   t.SHIFT_IDS,t.CREATEUSER,t.CREATEDATE,t.MODIFYUSER,t.MODIFYDATE,t.SITEID,t.DEL_FLAG,t_rule.SPECIFIED_DATE,
+			   t_rule.begin_time,t_rule.INVALIDE_TIME,t_rule.cycle_type,t_rule.cycle_len,t_rule.activity_flag
+		from opr_schedule_task_plan t, b_scheduled_task_rule t_rule
+		where t.COMPONENT_ID = #{taskRuleId} AND t.component_id = t_rule.id 
+	</select>
+	
+	
+	<!-- 删除 -->
+	<update id="deleteScheduleTaskPlan" parameterType="HashMap">
+		update opr_schedule_task_plan t
+		set   t.del_flag = 'Y'
+		where ID=#{id} 
+	</update>
+	
+	<!-- 修改-->
+	<update id="updateScheduleTaskPlan" parameterType="ScheduleTaskPlan">
+		update opr_schedule_task_plan t
+		set  MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+			 MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP}
+			 <if test=" type != null and type !='' ">
+			 	,TYPE = #{type,jdbcType=VARCHAR}
+			</if>
+			<if test="assetId != null and assetId  !='' ">
+			 	,ASSET_ID = #{assetId,jdbcType=VARCHAR}
+			</if>
+			<if test="assetName != null and assetName !='' ">
+			 	,ASSET_NAME = #{assetName,jdbcType=VARCHAR}
+			</if>
+			<if test="content != null and content !='' ">
+			 	,CONTENT = #{content,jdbcType=VARCHAR}
+			</if>
+			<if test="nextShift != null and nextShift !='' ">
+			 	,NEXT_SHIFT = #{nextShift,jdbcType=VARCHAR}
+			</if>
+			<if test=" deptId!= null and  deptId!='' ">
+			 	,DEPT_ID = #{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test=" shiftIds!= null and shiftIds !='' ">
+			 	,SHIFT_IDS = #{shiftIds,jdbcType=VARCHAR}
+			</if>
+		where ID=#{id} 
+	</update>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.PrifixSequenceDao">
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+     <resultMap type="com.timss.pms.bean.PrifixSequence" id="prifixSequenceMap">
+		<id property="type" column="type"/>
+		<result property="prifix" column="prifix"/>
+		<result property="nextVal" column="next_val"/>
+		<result property="step" column="step"/>
+		<result property="siteid" column="siteid"/>
+		<result property="pattern" column="pattern"/>
+		
+	</resultMap>
+	<sql id="columnBasic">
+		type,prifix,next_val,step,siteid,pattern
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+	<sql id="columnDtlVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertSequence" parameterType="com.timss.pms.bean.PrifixSequence">
+
+    insert into B_Prifix_Sequence(<include refid="columnBasic"/>) 
+    values (#{type,jdbcType=VARCHAR},#{prifix,jdbcType=VARCHAR},#{nextVal,jdbcType=NUMERIC}
+           ,#{step,jdbcType=NUMERIC},#{siteid,jdbcType=VARCHAR},
+    	    #{pattern,jdbcType=VARCHAR}
+    	)
+</insert>
+
+
+
+
+<select id="getNextSequenceVal" resultMap="prifixSequenceMap">
+    select prifix,next_val,step,siteid,pattern,type
+    from B_Prifix_Sequence t
+    where t.type=#{type} and t.prifix=#{prifix}
+</select>
+
+<update id="increaseSequence" >
+	update b_prifix_sequence t 
+	set next_val=next_val+step 
+	where t.type=#{type} and t.prifix=#{prifix}
+</update>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>
+

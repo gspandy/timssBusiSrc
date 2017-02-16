@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.operation.dao.QualityTestDao">
+   	<sql id="qualityTestBeanField">
+q.qt_id qtId,q.qt_date qtDate,q.content,
+q.create_by createuser,q.create_date createdate,q.update_by modifyuser,q.update_date modifydate,q.site_id siteid
+	</sql>
+	
+    <select id="queryList" resultType="QualityTestBean">
+select q.*,o.name deptName,u.name userName
+from(
+	select <include refid="qualityTestBeanField"/>,
+		(select ou.org_code from sec_organization_user ou where ou.user_id=q.create_by and rownum=1)deptid
+	from opr_qualityTest q
+	where q.site_id=#{params.siteId,jdbcType=VARCHAR} and q.del_ind!='Y'
+)q
+left join sec_user u on u.user_id=q.createuser 	
+left join sec_organization o on o.org_code=q.deptid	
+    </select>
+    
+    <select id="queryDetail" resultType="QualityTestBean">
+select q.*,o.name deptName,u.name userName
+from(
+	select <include refid="qualityTestBeanField"/>,
+		(select ou.org_code from sec_organization_user ou where ou.user_id=q.create_by and rownum=1)deptid
+	from opr_qualityTest q
+	where q.qt_id=#{qtId,jdbcType=VARCHAR}
+)q
+left join sec_user u on u.user_id=q.createuser 	
+left join sec_organization o on o.org_code=q.deptid
+    </select>
+   
+    <insert id="insert" parameterType="QualityTestBean" >
+    	insert into opr_qualityTest (
+qt_id,qt_date,content,
+create_by,create_date,site_id
+		)
+    	values (
+#{qtId,jdbcType=VARCHAR},#{qtDate,jdbcType=TIMESTAMP},#{content,jdbcType=VARCHAR},
+#{createuser,jdbcType=VARCHAR},sysdate,#{siteid,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <update id="update" parameterType="QualityTestBean">
+        update opr_qualityTest set 
+qt_date=#{qtDate,jdbcType=TIMESTAMP},content=#{content,jdbcType=VARCHAR},
+update_by=#{modifyuser,jdbcType=VARCHAR},update_date=sysdate
+		where qt_id=#{qtId,jdbcType=VARCHAR}
+    </update>
+    
+    <delete id="deleteById">
+    	update opr_qualityTest set 
+    	del_ind='Y'
+    	where qt_id=#{qtId,jdbcType=VARCHAR}
+    </delete>    
+</mapper>

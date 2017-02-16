@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoPriorityDao">
+
+	<resultMap type="WoPriority" id="priorityMap">
+		<id column="ID" property="id" />
+		<result column="NAME" property="name" />
+		<result column="REMARKS" property="remarks" />
+		<result column="PRIORITYCODE" property="priorityCode" />
+		<result column="RESPOND_LEN" property="respondLength" />
+		<result column="RELEASE_LEN" property="releaseLength" />
+		<result column="SOLVE_LEN" property="solveLength" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+		<result column="SORT_NUM" property="sortNum" />
+	</resultMap>	
+	
+	  
+	<insert id="insertWoPriority"  parameterType="WoPriority" >
+		insert into wo_priority(ID,PRIORITYCODE,NAME,REMARKS,RESPOND_LEN,RELEASE_LEN,SOLVE_LEN,
+							CREATEUSER,CREATEDATE,SITEID,DEPTID,YXBZ,SORT_NUM) 
+		values( #{id},
+				#{priorityCode,jdbcType=VARCHAR},
+				#{name,jdbcType=VARCHAR},
+				#{remarks,jdbcType=VARCHAR},
+				#{respondLength,jdbcType=NUMERIC},
+				#{releaseLength,jdbcType=NUMERIC},
+				#{solveLength,jdbcType=NUMERIC},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC},
+				#{sortNum,jdbcType=NUMERIC})
+	</insert>
+	
+	<update id="updateWoPriority" parameterType="WoPriority">
+		update wo_priority 
+		set NAME=#{name,jdbcType=VARCHAR},
+			REMARKS = #{remarks,jdbcType=VARCHAR},
+			RESPOND_LEN=#{respondLength,jdbcType=NUMERIC},
+			RELEASE_LEN=#{releaseLength,jdbcType=NUMERIC},
+			SOLVE_LEN=#{solveLength,jdbcType=NUMERIC},
+			SORT_NUM=#{sortNum,jdbcType=NUMERIC},
+			MODIFYUSER=#{modifyuser,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifydate,jdbcType=TIMESTAMP}
+		where ID=#{id} 
+	</update>
+	
+	 
+	<select id="queryWoPriorityById" parameterType="int" resultMap="priorityMap">
+		select * from wo_priority where id= #{ id }
+	</select>
+	
+	<delete id="deleteWoPriority" parameterType="HashMap">
+		update wo_priority 
+		set YXBZ = 0
+		where ID=#{id} and siteid=#{siteid}
+	</delete>
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextParamsConfId" resultType="int">
+		select SEQ_WO_PARAMSCONF.nextval id from dual
+	</select>
+		
+	<!-- 查询列表信息 -->
+	<select id="queryWoPriorityList" resultMap="priorityMap">
+		select *
+		from wo_priority t
+		where t.yxbz=1
+		<if test="params.siteid != null">
+			and siteid = #{params.siteid}
+		</if>
+	</select>
+	
+	<select id="queryWoPriorityListBySiteId" resultMap="priorityMap">
+		select *
+		from wo_priority t
+		where t.yxbz=1 and siteid = #{siteid}
+		order by t.sort_num ASC
+	</select>
+	
+</mapper>

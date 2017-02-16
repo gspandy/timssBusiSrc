@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwIsolationDao">
+
+	<sql id="ptwIsolationBeanField">
+		 	id, wtId, no,
+			workContent, workPlace,keyBoxId,
+			siteId, deptId, createUser, createDate, modifyUser,modifyDate,
+			yxbz, eqId, eqNo, eqName, issuerNo,
+			issuer, issuedTime, issueSuper, issueSuperNo, executer,
+			executerNo, executerTime, withDraw, withDrawNo, withDrawTime,
+			remover, removerNo, removerTime, remark, status,
+			IsStdWt, wtTypeId, createUserName,cancelerNo, canceler, cancelerTime,relateKeyboxId
+	</sql>
+	
+	<sql id="ptwIsolationMethodBeanField">
+		id, wtId, islId, pointMethodId,
+	</sql>
+	
+	<!--说明：#{}内的参数，需要与传入的Dept中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertPtwIsolation" parameterType="PtwIsolationBean">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_ISOLATION.nextval as id from dual
+		</selectKey>
+			insert into PTW_ISOLATION( id, no,
+			workContent, createUserName,
+			siteId, deptId, createUser, createDate, modifyUser,modifyDate,
+			yxbz,  eqNo, eqName, 
+			status, 
+			IsStdWt, wtTypeId,keyBoxId )
+			values( 
+				#{ id }, #{  no ,jdbcType=VARCHAR}, 
+				#{ workContent,jdbcType=VARCHAR }, #{ createUserName,jdbcType=VARCHAR },
+				#{ siteid ,jdbcType=VARCHAR }, #{  deptid,jdbcType=VARCHAR  }, #{  createuser ,jdbcType=VARCHAR }, #{  createdate ,jdbcType=TIMESTAMP }, #{  modifyuser,jdbcType=VARCHAR  }, #{ modifydate,jdbcType=TIMESTAMP  },
+				#{ yxbz,jdbcType=INTEGER  }, #{  eqNo,jdbcType=INTEGER }, #{  eqName ,jdbcType=VARCHAR},
+				#{  status ,jdbcType=INTEGER}, 
+				#{ isStdWt,jdbcType=INTEGER  }, #{ wtTypeId,jdbcType=VARCHAR  }, #{ keyBoxId,jdbcType=INTEGER  }
+			)
+	</insert>
+	
+	<select id="queryPtwIsolationList"  resultType="PtwIsolationBean">
+		select <include refid="ptwIsolationBeanField"/> from PTW_ISOLATION t
+		where t.yxbz = 1
+		and t.isStdWt = #{params.isStdWt}
+		and t.siteId = #{params.siteId}
+		<if test="params.searchDateFrom != null">
+			and ${params.searchDateType} &gt;= #{params.searchDateFrom}
+		</if>
+		<if test="params.searchDateEnd != null">
+			and ${params.searchDateType} &lt; #{params.searchDateEnd}
+		</if>
+		<if test="params.searchPersonId != null">
+			and ${params.searchPersonType} = #{params.searchPersonId}
+		</if>
+		<if test="params.wtType != null">
+			and wtTypeId = #{params.wtType}
+		</if>
+		<if test="params.wtStatus != null">
+			and status = #{params.wtStatus}
+		</if>
+		<if test="params.eqId != null">
+			and eqId = #{params.eqId}
+		</if>
+	</select>
+	
+	<select id="queryPtwIsolationById" parameterType="int" resultType="PtwIsolationBean">
+		select <include refid="ptwIsolationBeanField"/> from PTW_ISOLATION where  id = #{ id }
+	</select>
+	
+	<select id="queryMaxNumPtwIsolationItemBySiteId" parameterType="String" resultType="String">
+		select MAX( SUBSTR( no, -5, 5 ) ) num from PTW_ISOLATION where  siteId = #{ siteId }
+	</select>
+	
+	<delete id="deletePtwIsolationItem" parameterType="map">
+		delete from PTW_ISOLATION_METHOD where 1 = 1
+		<if test="islId > 0">
+			and  islId = #{islId}
+		</if>
+		<if test="wtId > 0">
+			and  wtId = #{wtId}
+		</if>
+		<if test=" islId == 0 and wtId == 0">
+			and 1 != 1
+		</if>		
+	</delete>
+	
+	<update id="updatePtwIsolation" parameterType="PtwIsolationBean">
+		update PTW_ISOLATION set 
+			wtTypeId = #{wtTypeId},  eqName = #{eqName},	
+			eqNo = #{eqNo,jdbcType=INTEGER}, workContent = #{workContent},  modifyuser = #{modifyuser},	
+			modifydate = #{modifydate,jdbcType=TIMESTAMP },keyBoxId = #{keyBoxId,jdbcType=NUMERIC }
+		where id = #{ id }
+	</update>
+	
+	<update id="updatePtwIsolationStatusById" parameterType="java.util.Map">
+		update PTW_ISOLATION set 
+			status = #{status ,jdbcType=INTEGER}
+			<if test=" issueSuper != null and issueSuper != '' "> ,issueSuper = #{ issueSuper,jdbcType=VARCHAR }  </if>
+			<if test=" issueSuperNo != null and issueSuperNo != '' "> ,issueSuperNo = #{ issueSuperNo,jdbcType=VARCHAR }  </if>
+			<if test=" issuerNo != null and issuerNo != '' "> ,issuerNo = #{ issuerNo,jdbcType=VARCHAR }  </if>
+			<if test=" issuer != null and issuer != '' "> ,issuer = #{ issuer,jdbcType=VARCHAR }  </if>
+			<if test=" issuedTime != null and issuedTime != '' "> ,issuedTime = #{ issuedTime ,jdbcType=TIMESTAMP}  </if>
+			<if test=" executerNo != null and executerNo != '' "> ,executerNo = #{ executerNo,jdbcType=VARCHAR }  </if>
+			<if test=" executer != null and executer != '' "> ,executer = #{ executer,jdbcType=VARCHAR }  </if>
+			<if test=" executerTime != null and executerTime != '' "> ,executerTime = #{ executerTime ,jdbcType=TIMESTAMP}  </if>
+			<if test=" withDrawNo != null and withDrawNo != '' "> ,withDrawNo = #{ withDrawNo,jdbcType=VARCHAR }  </if>
+			<if test=" withDraw != null and withDraw != '' "> ,withDraw = #{ withDraw,jdbcType=VARCHAR }  </if>
+			<if test=" withDrawTime != null and withDrawTime != '' "> ,withDrawTime = #{ withDrawTime ,jdbcType=TIMESTAMP}  </if>
+			<if test=" removerNo != null and removerNo != '' "> ,removerNo = #{ removerNo,jdbcType=VARCHAR }  </if>
+			<if test=" remover != null and remover != '' "> ,remover = #{ remover,jdbcType=VARCHAR }  </if>
+			<if test=" removerTime != null and removerTime != '' "> ,removerTime = #{ removerTime ,jdbcType=TIMESTAMP}  </if>
+			<if test=" cancelerNo != null and cancelerNo != '' "> ,cancelerNo = #{ cancelerNo,jdbcType=VARCHAR }  </if>
+			<if test=" canceler != null and canceler != '' "> ,canceler = #{ canceler,jdbcType=VARCHAR }  </if>
+			<if test=" cancelerTime != null and cancelerTime != '' "> ,cancelerTime = #{ cancelerTime ,jdbcType=TIMESTAMP}  </if>
+			<if test=" finElecInfo != null and finElecInfo != '' "> ,finElecInfo = #{ finElecInfo,jdbcType=VARCHAR }  </if>
+		where id = #{ id }
+	</update>
+	
+	<update id="updatePtwIsolationRemarkById" parameterType="java.util.Map">
+		update PTW_ISOLATION set 
+			remark = #{remark ,jdbcType=VARCHAR}
+		where id = #{ id }
+	</update>
+	
+	<!-- 批量操作 -->
+	<insert id="insertBatchPtwIsolationItem" parameterType="java.util.List">
+		insert into  PTW_ISOLATION_METHOD( id, islId,wtId, pointMethodId, elecFloorNo,  safeType, safeOrder,executerNo, executer,remover, removerNo ) 
+		select SEQ_PTW_ISOLATION_METHOD.nextval, temp.* from (
+			<foreach collection="list" item="item" index="index" separator="union all">
+				 select 
+				 #{item.islId,jdbcType=NUMERIC } islId
+				 ,#{item.wtId,jdbcType=NUMERIC } wtId
+				 , #{item.pointMethodId} pointMethodId 
+				 , #{item.elecFloorNo,jdbcType=VARCHAR} elecFloorNo 
+				 , #{item.safeType} safeType, 
+				 #{item.safeOrder} safeOrder
+				 ,#{item.executerNo,jdbcType=VARCHAR} executerNo 
+				 ,#{item.executer,jdbcType=VARCHAR} executer 
+				 ,#{item.remover,jdbcType=VARCHAR} remover 
+				  ,#{item.removerNo,jdbcType=VARCHAR} removerNo 
+				from dual
+			</foreach>
+		) temp
+	</insert>
+	
+	<select id="querySafeDatagridByWtOrIslId" parameterType="java.util.Map" resultType="IsolationVo">
+		select pim.safeOrder safeOrder, pim.executerNo executerNo, pim.executer executer, 
+			pim.remover remover, pim.removerNo removerNo,
+			pim.elecFloorNo elecFloorNo, pim.safeType safeType,
+			t.id id, t.STDMETHODID STDMETHODID, t.POINTNO POINTNO, t.METHODNAME METHODNAME, t.pointName pointName
+		from ( 
+			select pt.* from PTW_ISOLATION_Method pt 
+			where  pt.safeType = #{ safeType } 
+			<if test="islId != 0">
+				and pt.islId =  #{ islId } 
+			</if>
+			<if test="wtId != 0">
+				and pt.wtId =  #{ wtId } 
+			</if>		
+		) pim LEFT JOIN
+		( select temp.*, a.assetName POINTNAME from ( SELECT p.id id, p.METHODID STDMETHODID, p.POINTNO POINTNO, m.METHOD METHODNAME 
+		FROM PTW_ISOLATION_POINT_METHOD p 
+		LEFT JOIN PTW_ISOLATION_METHOD_DEFINE m ON p.METHODID = m.id ) temp LEFT JOIN AST_ASSET a on temp.POINTNO = a.assetid ) t 
+		on t.id = pim.pointMethodid order by pim.safeOrder ASC
+	</select>
+		
+	<update id="updateRelateKeyBox">
+		update PTW_ISOLATION t 
+		set t.relateKeyBoxId = #{relateKeyBoxId}
+		where t.id = #{id}
+	</update>
+	
+	<select id="queryByKeyBoxId" resultType="PtwIsolationBean">
+		select <include refid="ptwIsolationBeanField"/> from PTW_ISOLATION where keyBoxId = #{ keyBoxId }
+		and status in (${status})
+	</select>
+	
+	<select id="queryByRelateKeyBoxId" resultType="PtwIsolationBean">
+		select <include refid="ptwIsolationBeanField"/> from PTW_ISOLATION t
+		where t.relatekeyboxid is not null and instr(t.relatekeyboxid||',',#{keyBoxId}||',') > 0
+		and status in (${status})
+	</select>
+</mapper> 

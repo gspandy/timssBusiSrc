@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatSnapshotDao">
+	<resultMap type="com.timss.inventory.vo.InvMatSnapshotDetailVO" id="InvMatSnapshotDetailVOMap">
+		<result property="stockQty" column="stock_qty"/>
+		<result property="stockQtyNow" column="stock_qty_now"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="priceNow" column="price_now"/>
+		<result property="quickSearch" column="quick_search"/>
+	</resultMap>
+
+    <!-- 库存快照保存(子表) -->
+   <insert id="insertInvMatSnapshotDetail" parameterType="java.util.Map">
+   		insert into inv_mat_snapshot_detail(IMSDID,IMSID,ITEMID,ITEMCODE,ITEMNAME,INVCATEID,INVCATENAME,CUSMODEL,WAREHOUSEID,WAREHOUSENAME,
+                             BINID,BINNAME,UNITID,UNITNAME,STOCK_QTY,PRICE,NO_TAX_PRICE,TAX,CREATEUSER,CREATEDATE,SITE_ID)
+		select lower(sys_guid()),'${imsid}',ii.itemid,ii.itemcode,ii.itemname,iwi.invcateid,
+		       (select ic.invcatename from inv_category ic where iwi.invcateid = ic.invcateid and iwi.site_id = ic.site_id) as invcatename,
+		       ii.cusmodel,iwi.warehouseid,
+		       (select iw.warehousename from inv_warehouse iw where iw.warehouseid = iwi.warehouseid and iw.site_id = iwi.site_id) as warehousename,
+		       iwi.def_binid as binid,
+		       (select ib.binname from inv_bin ib where ib.binid = iwi.def_binid and ib.site_id = iwi.site_id) as binname,
+		       ii.unit1 as unitid,
+		       (select iu.unitname from inv_unit iu where iu.unitid = ii.unit1 and iu.site_id = ii.site_id) as unitname,
+		       ird.actual_qty as stockqty,
+		       ird.with_tax_price as price,
+		       ird.no_tax_price as no_tax_price,
+		       ird.tax as tax,
+		       '${userId}' as createuser ,sysdate as createdate,'${siteId}' as site_id
+		from inv_item ii,inv_warehouse_item iwi
+		left join inv_realtime_data ird on iwi.itemid = ird.itemid and iwi.invcateid = ird.invcateid and iwi.site_id = ird.site_id
+		where ii.itemid = iwi.itemid and ii.site_id = iwi.site_id and ii.site_id = '${siteId}'
+   </insert>
+   
+   <!-- 库存快照保存(主表) -->
+   <insert id="insertInvMatSnapshot" parameterType="com.timss.inventory.bean.InvMatSnapshot">
+   		insert into inv_mat_snapshot
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imsid != null"> imsid, </if>
+	      <if test="opertype != null"> opertype, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="siteid != null"> site_id, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imsid != null"> #{imsid,jdbcType=VARCHAR}, </if>
+	      <if test="opertype != null"> #{opertype,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR},</if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	    </trim>
+   </insert>
+   
+   <!-- 查询主表数据 -->
+   <select id="queryMatSnapshotList" resultType="com.timss.inventory.vo.InvMatSnapshotVO">
+   		select t.imsid,t.createdate,t.opertypeName,t.createuserName,t.remark 
+   		from (
+   			  select ims.imsid,to_char(ims.createdate,'yyyy-mm-dd HH24:mi') as createdate,
+		             be.enum_val as  opertypename,
+		             su.name as createusername,
+		             ims.remark
+		      from inv_mat_snapshot ims
+		           left join b_enum be on  be.ecat_code = 'INV_SNAPSHOT_TYPE' and be.enum_code = ims.opertype
+		           left join sec_user su on su.user_id = ims.createuser
+		      where ims.site_id = #{params.siteId}
+   		) t where 1=1 
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and t.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.opertypeName != null and params.opertypeName != ''">
+		  	and t.opertypeName like '%'||'${params.opertypeName}'||'%' 
+		</if>
+		<if test="params.createuserName != null and params.createuserName != ''">
+		  	and t.createuserName like '%'||'${params.createuserName}'||'%' 
+		</if>
+		<if test="params.remark != null and params.remark != ''">
+		  	and t.remark like '%'||'${params.remark}'||'%' 
+		</if>
+   </select>
+   
+   <!-- 快速查询 -->
+   <select id="quickMatSnapshotSearch" resultMap="InvMatSnapshotDetailVOMap">
+   		select * from(
+	   		select m.itemcode,m.itemname,m.invcatename,m.cusmodel,m.warehousename,m.unitname,
+	           m.stock_qty,
+	           m.price, 
+	           m.no_tax_price,
+	           m.binname,
+	           ii.ishis 
+			from(
+		   		select t.imsdid,t.itemcode,t.itemname,t.invcatename,t.cusmodel,t.warehousename,
+				       t.unitname,
+				       nvl(t.stock_qty,0) as stock_qty,
+				       nvl(t.price,0.00) as price, 
+				       nvl(t.no_tax_price,0.00) as no_tax_price,
+				       t.binname 
+				from (
+					select imsd.imsdid,imsd.itemcode,imsd.itemname,imsd.invcatename,imsd.cusmodel,
+							imsd.warehousename,imsd.unitname,
+							imsd.stock_qty,
+				        	imsd.price,
+				        	imsd.no_tax_price,
+				        	imsd.binname
+				    from inv_mat_snapshot_detail imsd
+				    where imsd.imsid = '${params.imsid}' and imsd.site_id = '${params.siteId}' 
+					
+					<if test="params.quickSearch != null and params.quickSearch != ''">
+						and (imsd.itemcode like '%'||'${params.quickSearch}'||'%' or imsd.itemname like '%'||'${params.quickSearch}'||'%' or imsd.cusmodel like '%'||'${params.quickSearch}'||'%')
+					</if>
+					<if test="params.invcatename != null and params.invcatename != ''">
+						and imsd.invcatename like '%'||'${params.invcatename}'||'%' 
+					</if>
+					<if test="params.itemcode != null and params.itemcode != ''">
+						and imsd.itemcode like '%'||'${params.itemcode}'||'%' 
+					</if>
+					<if test="params.itemname != null and params.itemname != ''">
+						and imsd.itemname like '%'||'${params.itemname}'||'%' 
+					</if>
+					<if test="params.cusmodel != null and params.cusmodel != ''">
+						and imsd.cusmodel like '%'||'${params.cusmodel}'||'%' 
+					</if>
+					<if test="params.warehousename != null and params.warehousename != ''">
+						and imsd.warehousename like '%'||'${params.warehousename}'||'%' 
+					</if>
+					<if test="params.unitname != null and params.unitname != ''">
+						and imsd.unitname like '%'||'${params.unitname}'||'%' 
+					</if>
+				) t 
+				group by t.imsdid,t.itemcode,t.itemname,t.invcatename,t.cusmodel,
+					t.warehousename, t.unitname,t.stock_qty, t.price, t.no_tax_price, t.binname 
+			) m,inv_item ii 
+			where m.itemcode = ii.itemcode and ii.site_id = '${params.siteId}'
+			
+			<if test="params.stockQty != null and params.stockQty != ''">
+			  	and m.stock_qty like '%'||'${params.stockQty}'||'%' 
+			</if>
+	   		<if test="params.stockQtyNow != null and params.stockQtyNow != ''">
+			  	and m.stock_qty_now like '%'||'${params.stockQtyNow}'||'%' 
+			</if>
+			<if test="params.price != null and params.price != ''">
+			  	and m.price like '%'||'${params.price}'||'%' 
+			</if>
+			<if test="params.priceNow != null and params.priceNow != ''">
+			  	and m.price_now like '%'||'${params.priceNow}'||'%' 
+			</if>
+			<if test="params.ishis != null and params.ishis != ''">
+			  	and ii.ishis = '${params.ishis}' 
+			</if>
+			group by m.itemcode,m.itemname,m.cusmodel,m.warehousename,m.invcatename,
+	           m.unitname,
+	           m.stock_qty,
+	           m.price, 
+	           m.no_tax_price,
+	           m.binname,
+	           ii.ishis
+	        ) m1
+   </select>
+   
+   <!-- 查询子表信息 -->
+   <select id="queryMatSnapshotDetailList" resultMap="InvMatSnapshotDetailVOMap">
+   		select t.imsdid,t.itemcode,t.itemname,t.invcatename,t.cusmodel,t.warehousename,
+		       t.unitname,t.stock_qty, t.stock_qty_now, 
+		       nvl(t.price,0.00) as price, 
+		       nvl(t.price_now,0.00) as price_now 
+   		from (
+   			select imsd.imsdid,imsd.itemcode,imsd.itemname,imsd.invcatename,imsd.cusmodel,
+					imsd.warehousename,imsd.unitname,imsd.stock_qty,
+		        	(select sum(imtd.in_qty)-sum(imtd.out_qty) 
+		         	 from inv_mat_tran_rec imtd 
+		         	 where imtd.itemid = imsd.itemid and imtd.site_id = imsd.site_id) as stock_qty_now,
+		        	imsd.price,
+		        	(select round(sum(imtd.price*imtd.in_qty)/case when sum(imtd.in_qty) = 0 then 1 else sum(imtd.in_qty) end,2) 
+		         	 from inv_mat_tran_rec imtd 
+		         	 where imtd.itemid = imsd.itemid and <![CDATA[imtd.in_qty>0]]> and imtd.site_id = imsd.site_id 
+		        	) as price_now 
+			from inv_mat_snapshot_detail imsd 
+			where imsd.imsid = '${params.imsid}' and imsd.site_id = '${params.siteId}'
+   		) t where 1=1
+   		<if test="params.itemcode != null and params.itemcode != ''">
+		  	and t.itemcode like '%'||'${params.itemcode}'||'%' 
+		</if>
+		<if test="params.itemname != null and params.itemname != ''">
+		  	and t.itemname like '%'||'${params.itemname}'||'%' 
+		</if>
+		<if test="params.invcatename != null and params.invcatename != ''">
+		  	and t.invcatename like '%'||'${params.invcatename}'||'%' 
+		</if>
+   		<if test="params.cusmodel != null and params.cusmodel != ''">
+		  	and t.cusmodel like '%'||'${params.cusmodel}'||'%' 
+		</if>
+		<if test="params.warehousename != null and params.warehousename != ''">
+		  	and t.warehousename like '%'||'${params.warehousename}'||'%' 
+		</if>
+		<if test="params.unitname != null and params.unitname != ''">
+		  	and t.unitname like '%'||'${params.unitname}'||'%' 
+		</if>
+		<if test="params.stockQty != null and params.stockQty != ''">
+		  	and t.stock_qty like '%'||'${params.stockQty}'||'%' 
+		</if>
+   		<if test="params.stockQtyNow != null and params.stockQtyNow != ''">
+		  	and t.stock_qty_now like '%'||'${params.stockQtyNow}'||'%' 
+		</if>
+		<if test="params.price != null and params.price != ''">
+		  	and t.price like '%'||'${params.price}'||'%' 
+		</if>
+		<if test="params.priceNow != null and params.priceNow != ''">
+		  	and t.price_now like '%'||'${params.priceNow}'||'%' 
+		</if>
+   </select>
+</mapper>

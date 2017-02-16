@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceGeneralLedgerInfoDao">
+	<!-- 在resultMap中设置为指定的ID，然后即可将数据库中的column名称转换为bean中的属性。名字一样的可以不写在result中。 -->
+	<!-- 返回总帐信息实体 -->
+	<resultMap type="FinanceGeneralLedgerInfo" id="financeGeneralLedgerInfoMap"></resultMap>
+	
+	<!-- <select id="queryFinanceGeneralLedgerInfoListByFid" resultMap="financeGeneralLedgerInfoMap">
+		select fmd.id as seqno,fs.sub_group as subject, 
+			    fs.sub_desc as subjectremark,
+			    decode(fs.borrow_direction, 'D', fmd.amount, 'C', null) as debitamt, 
+			    decode(fs.borrow_direction, 'C', fm.total_amount, 'D', null) as creditamt,
+			    decode(fs.borrow_direction, 'D', '', 'C', fs.cash_item) as cashitem, 
+			    decode(fs.borrow_direction, 'D', '', 'C', fs.internal_unit) as intervalunit,
+			    decode(fs.borrow_direction, 'D', '付'||fmd.beneficiary||'报销款', 'C', '贷方总帐') as certrowdesc
+			    from fin_main fm, fin_main_details fmd, fin_subject fs, sec_user_role sur
+			        where fm.fid=#{params.fid} and fm.fid=fmd.fid and fmd.beneficiaryid=sur.user_id
+		                and fm.finance_flow like '%'||fs.fintype_name||'%'
+		                and fs.entity_code='OU_ITC' and fs.company_code='ITC' 
+		                and fs.currency_code='CNY' and fs.borrow_direction='D' 
+		                and ((fs.fintype_id='businessentertainment' and 
+		                    fs.dept_id in (select sou.org_code from sec_organization_user sou where sou.user_id=fmd.beneficiaryid)
+	                        and ((fs.dept_id='1232601' and fs.role_id=sur.role_id) or (fs.dept_id!='1232601')))
+		                    or (fs.fintype_id!='businessentertainment' and fs.dept_id='-'))
+		union
+			select 'ZZZZZZZZZZZZZZZZZZ' as seqno, fs.sub_group as subject, 
+		    fs.sub_desc as subjectremark, null as debitAmt, fm.total_amount as creditamt, 
+		    case when 
+		        fm.finance_flow in('培训费报销','补充医疗保险','福利费','疗养费','家属医药费') then '800102'
+		        else '80010401' end as cashitem,
+		    'A001' as intervalunit,
+		    decode(fs.borrow_direction, 'C', '贷方总帐') as certrowdesc
+			from fin_main fm, fin_subject fs
+		    where fm.fid=#{params.fid} and fs.fintype_id='bankdeposit' and entity_code='OU_ITC' and company_code='ITC'
+		        and currency_code='CNY' and borrow_direction='C' and dept_id='-'
+		order by seqno
+	</select> -->
+	
+	<select id="queryFinanceGeneralLedgerInfoListByFid2" resultMap="financeGeneralLedgerInfoMap">
+		select fs.sub_group as subject, fs.sub_desc as subjectremark, fsm.subject_id as subjectid,
+			fsm.borrow_direction as borrowdirection, fsm.cash_item as cashitem, fsm.subject_seq_no subjectSeqNo,
+			fsm.internal_unit as intervalunit, fsm.cert_row_desc as certrowdesc 
+			from fin_subject fs, fin_subject_match fsm 
+				where fs.subject_id=fsm.subject_id and fin_type=#{finNameEn} 
+					and fsm.subject_seq_no in 
+					<foreach collection="subjectNoArr" item="item" index="index" open="("
+			            separator="," close=")">
+			            #{item}
+			        </foreach>
+			 	order by fsm.subject_seq_no
+	</select>
+	<select id="queryFinanceGeneralLedgerInfoListByFinType" resultMap="financeGeneralLedgerInfoMap">
+		select fs.sub_group as subject, fs.sub_desc as subjectremark, fsm.subject_id as subjectid,
+			fsm.borrow_direction as borrowdirection, fsm.cash_item as cashitem, fsm.subject_seq_no subjectSeqNo,
+			fsm.internal_unit as intervalunit, fsm.cert_row_desc as certrowdesc 
+			from fin_subject fs, fin_subject_match fsm 
+				where fs.subject_id=fsm.subject_id and fin_type=#{finNameEn} 
+			 	order by fsm.subject_seq_no
+	</select>
+</mapper> 

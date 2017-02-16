@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatApplyDao">
+	<resultMap type="com.timss.inventory.bean.InvMatApply" id="InvMatApplyMap">
+		<result property="applyType" column="apply_type"/>
+		<result property="siteId" column="site_id"/>
+		<result property="applyBudget" column="apply_budget"/>
+		<result property="remainBudget" column="remain_budget"/>
+		<result property="isOver" column="is_over"/>
+		<result property="applyUse" column="apply_use"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvMatApplyVO" id="InvMatApplyVOMap">
+		<result property="applyType" column="apply_type"/>
+		<result property="siteId" column="site_id"/>
+		<result property="applyBudget" column="apply_budget"/>
+		<result property="remainBudget" column="remain_budget"/>
+		<result property="isOver" column="is_over"/>
+		<result property="workOrderNo" column="work_order_no"/>
+		<result property="applyUse" column="apply_use"/>
+	</resultMap>
+
+	<!-- 物资领料列表数据 -->
+	<select id="queryMatApplyList" resultMap="InvMatApplyVOMap">
+       	select t.imaid,t.sheetno,t.sheetname,t.apply_type,t.createuser,
+       			t.dept,t.createdate,t.price,t.site_id,
+               	case when t.status is null then be.enum_val else t.status end as status
+        from(
+			select t.imaid,t.sheetno,t.sheetname,t.apply_type,t.createuser,t.imastatus,
+					t.dept,t.createdate,t.price,hm.classtype as classtype, t.site_id,
+					case when t.imastatus='stopsend' then '已终止' 
+					when t.imastatus='auto_complete' then '已完成' 
+					else decode(hm.statusname,'已中止', '已作废', '已归档','已完成', hm.statusname ) end as status 
+ 			from (
+ 				select ima.imaid,ima.sheetno,ima.sheetname,be1.enum_val as apply_type,
+ 						su.name as createuser,ima.site_id,ima.status as imastatus,
+ 						so.name as dept, ima.createdate, 
+ 						round(sum(imad.price*imad.qty_apply),2) as price 
+				from inv_mat_apply ima
+                    inner join (
+                    	select invd.imaid, invd.qty_apply, invd.price
+				         from inv_mat_apply_detail invd, inv_item invi
+				        where invd.itemid = invi.itemid 
+				        <if test="params.itemCode != null and params.itemCode != ''">
+			              and (invi.itemCode like '%'||'${params.itemCode}'||'%'
+			              or invi.itemname like '%'||'${params.itemName}'||'%')
+			            </if>
+                    ) imad on ima.imaid = imad.imaid
+                    left join sec_user su on ima.createuser = su.user_id
+                    left join sec_organization so on ima.deptid = so.org_code
+                    left join b_enum be1 on ima.apply_type = be1.enum_code  and ima.site_id = be1.siteid and be1.ecat_code='INV_APPLY_TYPE'
+				where ima.site_id = #{params.siteId}
+				group by ima.imaid,ima.sheetno,ima.sheetname,be1.enum_val,ima.createuser,
+    					su.name,so.name,ima.createdate,ima.site_id,ima.status
+    		) t
+			left join hop_main_list hm on t.sheetno = hm.flowno 
+							and t.site_id = hm.siteid 
+							and hm.id = hm.groupid
+			group by t.imaid, t.sheetno, t.sheetname, t.apply_type, t.createuser, t.imastatus,
+                  	t.dept, t.createdate, t.price, t.site_id,hm.classtype,hm.statusname
+        ) t 
+        left join b_enum be on be.ecat_code = 'INV_PROCESS_STATUS' and be.enum_code = t.imastatus and t.site_id = be.siteid
+        where ((<![CDATA[t.classtype<>'Draft']]> and <![CDATA[t.classtype<>'Delete']]>) or t.classtype is null)
+             and (t.imastatus is null or <![CDATA[t.imastatus <>'deleted']]>)
+		<if test="params.sheetno != null and params.sheetno != ''">
+		  	and t.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.sheetname != null and params.sheetname != ''">
+		  	and t.sheetname like '%'||'${params.sheetname}'||'%' 
+		</if>
+		<if test="params.applyType != null and params.applyType != ''">
+		  	and t.apply_type like '%'||'${params.applyType}'||'%' 
+		</if>
+		<if test="params.createuser != null and params.createuser != ''">
+		  	and t.createuser like '%'||'${params.createuser}'||'%' 
+		</if>
+		<if test="params.dept != null and params.dept != ''">
+		  	and t.dept like '%'||'${params.dept}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and t.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.price != null and params.price != ''">
+		  	and t.price like '%'||'${params.price}'||'%' 
+		</if>
+		<if test="params.status != null and params.status != ''">
+		  	and t.status like '%'||'${params.status}'||'%' 
+		</if>
+	</select>
+	
+	<!-- 查询表单数据 -->
+	<select id="queryMatApplyForm" parameterType="java.util.Map" resultMap="InvMatApplyVOMap">
+		select ima.imaid,
+				ima.sheetname,
+				ima.sheetno,
+	        	case when #{type} = 0 then a.enum_val else ima.apply_type end as apply_type,
+	          	'' as totalprice,
+	        	ima.remark,
+	        	ima.instanceid,
+	        	ima.taskid,
+	        	ima.status,
+	        	ima.createdate,
+	        	ima.modifydate,
+	        	ima.spmaterial,
+	        	round(ima.apply_budget,2) as apply_budget,
+	        	round(ima.remain_budget,2) as remain_budget,
+	        	ima.is_over,
+	        	ima.createuser,
+	          	iom.outter_no as work_order_no,
+	           	su.name as dept,
+	        	ima.apply_use     
+	    from inv_mat_apply ima
+	         left join (select iom.outter_no,
+	         					iom.inv_id,
+	         					iom.siteid 
+	             		from inv_outter_mapping iom 
+	               		where iom.inv_type = 'pickingmaterials') iom on iom.inv_id = ima.imaid  and iom.siteid = ima.site_id 
+	         left join (select so.name,
+	         					sso.site_id,
+	         					sou.user_id
+	              		from sec_organization so, 
+	              			 sec_organization_user sou,
+	              			 sec_site_organization sso
+	             		where so.org_code = sou.org_code 
+	             			and <![CDATA[instr(so.org_code, sso.org_code) > 0]]> ) su on su.site_id = ima.site_id and su.user_id = ima.createuser
+	         left join b_enum a on a.enum_code = ima.apply_type and a.ecat_code = 'INV_APPLY_TYPE' and a.siteid = ima.site_id
+	    where ima.imaid=#{imaid} and ima.site_id=#{siteId}
+	    order by ima.sheetno desc
+	</select>
+	<!-- 查询领料申请对应的采购单  与上面的关联条件一致，但关联了INV_PURMATAPPLY_MAP有可能返回多条数据-->
+	<select id="queryPurApplyOfMatApply" parameterType="java.util.Map" resultType="java.lang.String">
+		select ipm.purchapplyid
+	    from inv_mat_apply ima
+	         left join (select iom.outter_no,
+	         					iom.inv_id,
+	         					iom.siteid 
+	             		from inv_outter_mapping iom 
+	               		where iom.inv_type = 'pickingmaterials') iom on iom.inv_id = ima.imaid  and iom.siteid = ima.site_id 
+	         left join (select so.name,
+	         					sso.site_id,
+	         					sou.user_id
+	              		from sec_organization so, 
+	              			 sec_organization_user sou,
+	              			 sec_site_organization sso
+	             		where so.org_code = sou.org_code 
+	             			and <![CDATA[instr(so.org_code, sso.org_code) > 0]]> ) su on su.site_id = ima.site_id and su.user_id = ima.createuser
+	         left join b_enum a on a.enum_code = ima.apply_type and a.ecat_code = 'INV_APPLY_TYPE' and a.siteid = ima.site_id
+	         left join INV_PURMATAPPLY_MAP ipm on ipm.matapplyid = ima.imaid and ipm.siteid = ima.site_id
+	    where ima.imaid=#{imaid} and ima.site_id=#{siteId}
+	    order by ima.sheetno desc
+	</select>
+	
+	
+	<!-- 更新领料信息 -->
+	<update id="updateInvMatApply" parameterType="com.timss.inventory.bean.InvMatApply">
+		update inv_mat_apply t 
+		<set>
+	      <if test="sheetno != null and sheetno != ''"> t.sheetno=#{sheetno,jdbcType=VARCHAR}, </if>
+	      <if test="sheetname != null and sheetname != ''"> t.sheetname=#{sheetname,jdbcType=VARCHAR}, </if>
+	      <if test="status != null and status != ''"> t.status=#{status,jdbcType=VARCHAR}, </if>
+	      <if test="applyType != null and applyType != ''"> t.apply_type=#{applyType,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null and modifyuser != ''"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null and modifydate != ''"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null and siteId != ''"> t.site_id=#{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="instanceid != null and instanceid != ''"> t.instanceid=#{instanceid,jdbcType=VARCHAR}, </if>
+	      <if test="taskid != null and taskid != ''"> t.taskid=#{taskid,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null and deptid != ''"> t.deptid=#{deptid,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null and remark != ''"> t.remark=#{remark,jdbcType=VARCHAR}, </if>
+	      <if test="spmaterial != null and spmaterial != ''"> t.spmaterial=#{spmaterial,jdbcType=VARCHAR}, </if>
+	      <if test="applyBudget != null and applyBudget != ''"> t.apply_budget=#{applyBudget,jdbcType=NUMERIC}, </if>
+	      <if test="remainBudget != null and remainBudget != ''"> t.remain_budget=#{remainBudget,jdbcType=NUMERIC}, </if>
+	      <if test="isOver != null and isOver != ''"> t.is_over=#{isOver,jdbcType=VARCHAR}, </if>
+	      <if test="applyUse != null and applyUse != ''"> t.apply_use=#{applyUse,jdbcType=VARCHAR}, </if>
+	    </set>
+		where t.imaid=#{imaid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 插入领料信息 -->
+	<insert id="insertInvMatApply" parameterType="com.timss.inventory.bean.InvMatApply">
+		insert into inv_mat_apply
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imaid != null"> imaid, </if>
+	      <if test="sheetno != null"> sheetno, </if>
+	      <if test="sheetname != null"> sheetname, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="applyType != null"> apply_type, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="instanceid != null"> instanceid, </if>
+	      <if test="deptid != null"> deptid, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="taskid != null"> taskid, </if>
+	      <if test="applyBudget != null"> apply_budget, </if>
+	      <if test="remainBudget != null"> remain_budget, </if>
+	      <if test="applyUse != null"> apply_use, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imaid != null"> #{imaid,jdbcType=VARCHAR}, </if>
+	      <if test="sheetno != null"> #{sheetno,jdbcType=VARCHAR}, </if>
+	      <if test="sheetname != null"> #{sheetname,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="applyType != null"> #{applyType,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="instanceid != null"> #{instanceid,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="taskid != null"> #{taskid,jdbcType=VARCHAR}, </if>
+	      <if test="applyBudget != null"> #{applyBudget,jdbcType=NUMERIC}, </if>
+	      <if test="remainBudget != null"> #{remainBudget,jdbcType=NUMERIC}, </if>
+	      <if test="applyUse != null"> #{applyUse,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 查询物资类型
+	<select id="queryApplyType" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select a.enum_code as key,a.enum_val as value from b_enum a where a.ecat_code='INV_APPLY_TYPE' and a.siteid=#{siteId} order by decode(a.sort_num,'2','1','1','2','3','3')
+	</select> -->
+	
+	<!-- 通过flowNo找到表中id -->
+	<select id="queryImaIddByFlowNo" parameterType="java.util.Map" resultType="java.lang.String">
+		select a.imaid from inv_mat_apply a where a.sheetno = #{sheetNo} and a.site_id = #{siteId}
+	</select>
+	
+	<!-- 通过申请表id和站点id找到sheetNo -->
+	<select id="queryFlowNoByImaId" parameterType="java.util.Map" resultType="java.lang.String">
+		select a.sheetno from inv_mat_apply a where a.imaid = #{imaId} and a.site_id = #{siteId}
+	</select>
+	
+	<!-- 通过外部ID找到领料申请信息 -->
+	<select id="queryMatApplyByOutterId" resultMap="InvMatApplyMap">
+		select ima.* 
+		from inv_outter_mapping iom,
+			 inv_mat_apply ima 
+		where iom.inv_id = ima.imaid 
+			and iom.siteid = ima.site_id
+			and iom.outter_id = #{woId,jdbcType=VARCHAR} 
+			and iom.apply_type = #{applyType,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insertPurApplyMatApplyMap" >
+    	INSERT INTO INV_PURMATAPPLY_MAP (PURCHAPPLYID, MATAPPLYID, SITEID)
+    	VALUES (#{purApplyId,jdbcType=VARCHAR},
+    	#{matApplyId,jdbcType=VARCHAR},
+    	#{siteId,jdbcType=VARCHAR})
+    </insert>
+    
+    <delete id="deletePurApplyMatApplyMapByMatApplyId">
+    	DELETE FROM INV_PURMATAPPLY_MAP 
+    	WHERE MATAPPLYID = #{matApplyId,jdbcType=VARCHAR} 
+    	AND SITEID = #{siteId,jdbcType=VARCHAR}
+    </delete>
+</mapper> 

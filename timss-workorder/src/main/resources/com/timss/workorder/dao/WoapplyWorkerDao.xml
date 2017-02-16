@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoapplyWorkerDao">
+	<resultMap type="WoapplyWorker" id="woapplyWorkerMap">
+		<id column="ID" property="id" />
+		<result column="WOAPPLY_ID" property="workapplyId" />
+		<result column="NAME" property="name" />
+		<result column="SEX" property="sex" /> 
+		<result column="CERTIFICATE" property="certificate" />
+		<result column="PPE" property="ppe" />
+		<result column="SCORE" property="score" />
+	</resultMap>	
+	
+	<insert id="insertWoapplyWorker" parameterType="WoapplyWorker">  
+        insert into WO_APPLY_WORKER ( ID,WOAPPLY_ID, NAME, SEX, CERTIFICATE, PPE, SCORE ) 
+        values( #{id,jdbcType=VARCHAR},
+				#{workapplyId,jdbcType=VARCHAR},
+				#{name,jdbcType=VARCHAR},
+				#{sex,jdbcType=VARCHAR},
+				#{certificate,jdbcType=VARCHAR},
+				#{ppe,jdbcType=VARCHAR},
+				#{score,jdbcType=VARCHAR})
+	</insert>
+  
+	<!-- 删除 -->
+	<delete id="deleteWorkerByWoapplyId" parameterType="String">
+		delete from WO_APPLY_WORKER t 
+		where t.WOAPPLY_ID = #{woapplyId} 
+	</delete>
+	
+	<!-- 查询-->
+	<select id="queryWoapplyWorker" parameterType="String" resultMap="woapplyWorkerMap" >
+		select ID,WOAPPLY_ID, NAME, SEX, CERTIFICATE, PPE, SCORE 
+		from WO_APPLY_WORKER t
+		where t.WOAPPLY_ID = #{woapplyId} 
+	</select>
+	
+</mapper>

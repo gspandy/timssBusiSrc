@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.operation.dao.HandoverDao">
+	<!--说明：#{}内的参数，需要与传入的Handover中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertHandover" parameterType="Handover">
+		<!--Oracle中返回自增主键到Handover中的方法 -->
+		 <selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_OPR_HANDOVER.nextval from dual
+		</selectKey>
+			insert into opr_handover( id,writeDate,jobsId, nowScheduleId,nextScheduleId,isOver ) 
+			values(#{id},#{writeDate},#{jobsId},#{nowScheduleId},#{nextScheduleId},#{ isOver })
+	</insert>
+	
+	<update id="updateHandover" parameterType="HandoverVo">
+	update opr_handover set content = #{nextContent}, currentPerson = #{currentPerson}, nextScheduleId = #{ nextScheduleId },
+	nextPerson = #{ nextPerson }, updateDate = #{ updateDate }, remark = #{ nextRemark }, isOver = #{ isOver }  
+	where id = #{ id }
+	</update>
+		
+	<select id="queryHandoverById" parameterType="int" resultType="Handover">
+		select * from opr_handover where id= #{ id }
+	</select>
+	
+	<delete id="deleteHandoverById" parameterType="int">
+		delete from opr_handover where id= #{ id }
+	</delete>
+	
+	<select id="queryAllHandover" resultType="Handover">
+		select * from opr_handover
+	</select>
+	
+	<!-- queryByPage 暂时不用 -->
+	<select id="queryHandoverByPage" resultType="Handover">
+		select * from opr_handover
+	</select>
+
+	<select id="queryHandoverByCalendarVo" parameterType="CalendarVo" resultType="Handover">
+		select * from opr_handover where dutyId = #{ dutyId } and TO_CHAR(WRITEDATE,'yyyy-MM-dd') = TO_CHAR(#{ dateTime },'yyyy-MM-dd') 
+		ORDER by WRITEDATE desc
+	</select>
+	
+	<select id="queryHandoverBySDS" parameterType="HashMap" resultType="HandoverVo">
+		select h.id,h.content nextContent,h.remark nextRemark,h.writeDate,h.isOver,h.updateDate,h.jobsId,
+		h.currentPerson,h.nextPerson,h.nowScheduleId,h.nextScheduleId,h.preShiftMeeting,h.postShiftMeeting,
+		u1.name as currentPersonName,u2.name as nextPersonName,
+		s1.dutyId currentDutyId,s1.shiftId currentShiftId,s1.dateTime nowShiftDate,s1.stationId,
+		du1.name currentDutyName,sh1.name currentShiftName,
+		dp1.name currentDeptName
+		from 
+		(select * from opr_handover where 1 = 1 
+		<if test="jobsId != null">
+		and jobsId = #{ jobsId }
+		</if>
+		<if test="isOver != null and isOver != ''">
+		and isOver = #{ isOver }
+		</if>
+		and nowScheduleId in 
+		(
+		select id from opr_schedule_detail where dateTime = #{ dateYMD } and stationId = #{ stationId }
+		<if test="shiftId != null and shiftId != 0">
+		and shiftId = #{ shiftId }
+		</if>
+		<if test="dutyId != null">
+		and dutyId = #{ dutyId }
+		</if>
+		)
+		) h
+		left join opr_schedule_detail s1 on s1.id = nowScheduleId
+		left join OPR_DUTY du1 on du1.id = s1.dutyId
+		left join OPR_SHIFT sh1 on sh1.id = s1.shiftId
+		left join opr_dept dp1 on dp1.deptid=s1.stationId
+		left join sec_user u1 on u1.user_id=h.currentPerson
+		left join sec_user u2 on u2.user_id=h.nextPerson
+	</select>
+	
+	<select id="queryHandoverBySearch" resultType="Handover" >
+		select * from opr_handover where 1 = 1
+		<if test="params.currentPerson != null">
+		 	and currentPerson like '%${ params.currentPerson }%'
+		</if>
+		<if test="params.nextPerson != null">
+		 	and nextPerson like '%${ params.nextPerson }%'
+		</if>
+		<if test="params.content != null">
+		 	and content like '%${ params.content }%'
+		</if>
+		<if test="params.writeDate != null">
+		 	and writeDate like '%${ params.writeDate }%'
+		</if>
+	</select>
+	
+	<select id="validateHandoverUserJobsId" parameterType="HandoverVo" resultType="PersonJobs">
+		select userId from opr_jobs_person
+		where jobsId = #{jobsId,jdbcType=NUMERIC}
+	</select>
+	
+	<select id = "queryNowAndLastHandoverVo" resultType = "HandoverVo">
+	select h.id,h.content nextContent,h.remark nextRemark,h.writeDate,h.isOver,h.updateDate,h.jobsId,
+	h.currentPerson,h.nextPerson,h.nowScheduleId,h.nextScheduleId,h.preShiftMeeting,h.postShiftMeeting,
+	s1.dutyId currentDutyId,s1.shiftId currentShiftId,s1.dateTime nowShiftDate,s1.stationId,
+	du1.name currentDutyName,sh1.name currentShiftName,sh1.starttime currentShiftStartTime,
+	s2.dutyId nextDutyId,s2.shiftId nextShiftId,s2.dateTime nextShiftDate,
+	du2.name nextDutyName,sh2.name nextShiftName,sh2.starttime nextShiftStartTime,
+	dp1.name currentDeptName,dp2.name nextDeptName
+	from (
+	(select h1.* from (
+	select * from opr_handover where isOver = 'N' and jobsId = #{ jobsId } order by writeDate DESC) h1 where ROWNUM = 1 )
+	UNION 
+	(select h2.* from (
+	select * from opr_handover where isOver = 'Y' and jobsId = #{ jobsId } order by writeDate DESC) h2 where ROWNUM = 1 )
+	) h
+	left join opr_schedule_detail s1 on s1.id = nowScheduleId
+	left join opr_schedule_detail s2 on s2.id = nextScheduleId 
+	left join OPR_DUTY du1 on du1.id = s1.dutyId
+	left join OPR_SHIFT sh1 on sh1.id = s1.shiftId
+	left join OPR_DUTY du2 on du2.id = s2.dutyId
+	left join OPR_SHIFT sh2 on sh2.id = s2.shiftId
+	left join opr_dept dp1 on dp1.deptid=s1.stationId
+	left join opr_dept dp2 on dp2.deptid=s2.stationId
+	</select>
+	
+	<select id="queryHandoverByDSD" parameterType="HashMap" resultType="HandoverVo">
+		select h.id,h.content nextContent,h.remark nextRemark,h.writeDate,h.isOver,h.updateDate,h.jobsId,
+		h.currentPerson,h.nextPerson,h.nowScheduleId,h.nextScheduleId,
+		s1.dutyId currentDutyId,s1.shiftId currentShiftId,s1.dateTime nowShiftDate,s1.stationId,
+		du1.name currentDutyName,sh1.name currentShiftName 
+		from 
+		(select * from opr_handover where 1 = 1 
+		<if test="jobsId != null">
+		and jobsId = #{ jobsId }
+		</if>
+		and nowScheduleId in 
+		(
+		select id from opr_schedule_detail where dateTime = #{ dateYMD } and stationId = #{ stationId }
+		<if test="dutyId != null">
+		and dutyId = #{ dutyId }
+		</if>
+		)
+		) h
+		left join opr_schedule_detail s1 on s1.id = nowScheduleId
+		left join OPR_DUTY du1 on du1.id = s1.dutyId
+		left join OPR_SHIFT sh1 on sh1.id = s1.shiftId
+	</select>
+	
+	<update id="updateHandoverNote" parameterType="NoteBaseVo">
+	update opr_handover 
+	set preShiftMeeting = #{preShiftMeeting,jdbcType=VARCHAR}, postShiftMeeting = #{postShiftMeeting,jdbcType=VARCHAR},
+	updatedate=sysdate
+	where id = #{ currentHandoverId,jdbcType=NUMERIC }
+	</update>
+	
+	<insert id="insertHandoverPerson">
+		insert into opr_handover_person(handoverid,userid)
+		select temp.* from (
+		<foreach collection="userIds" item="userId" index="index" separator="union all">
+			select #{handoverId, jdbcType=VARCHAR } ,#{userId, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+		) temp
+	</insert>
+	
+	<delete id="deleteHandoverPerson">
+		DELETE FROM opr_handover_person 
+		where handoverid=#{handoverId}
+		<if test="userIds != null and userIds.length>0 ">
+		 	and USERID in 
+			<foreach item="item" collection="userIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</delete> 
+	
+	<select id="queryHandoverPersonByHandoverId" parameterType="Integer" resultType="PersonJobs">
+		select distinct p.userId,su.name userName
+		from opr_handover_person p
+		inner join sec_user su on su.user_id = p.userId
+		where p.handoverid= #{ handoverId }
+	</select>
+</mapper> 

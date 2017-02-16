@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmHomepageCardDao">
+    <select id="queryOneLevlFtWoSum" parameterType="HashMap" resultType="HashMap">
+		select A.ONELEVEL_ID as FTID,COUNT(A.ONELEVEL_ID) AS WOSUM
+		FROM (
+		      select  t.*,ft.onelevel_id
+	          from   itsm_workorder t ,itsm_faulttype ft
+	          where t.CREATEDATE between #{beginTime} and #{endTime} and 
+          			t.YXBZ = 1 and t.fault_type_id=ft.id and t.CURR_STATUS != 'draft' and  
+	          		t.CURR_STATUS != 'woObsolete'
+		) A
+		GROUP BY ONELEVEL_ID
+	</select>
+	
+	 <select id="queryFbWoSum" parameterType="HashMap" resultType="int">
+		select COUNT(1) 
+		from itsm_workorder t 
+		where  t.CREATEDATE between #{beginTime} and #{endTime} and
+				t.YXBZ = 1 and t.CURR_STATUS != 'draft' and t.CURR_STATUS != 'woObsolete' and
+				(t.feedback_result!='F' or t.feedback_result IS NOT NULL)
+	</select>
+	
+	 <select id="queryUnOkWoSum" parameterType="HashMap" resultType="int">
+		select COUNT(1) 
+		from itsm_workorder t 
+		where  t.CREATEDATE between #{beginTime} and #{endTime} and
+				t.YXBZ = 1 and t.CURR_STATUS != 'draft' and t.CURR_STATUS != 'woObsolete' and
+				(t.feedback_result ='D' or t.feedback_result ='E')
+	</select>
+	
+	 <select id="queryteamWoSum" parameterType="HashMap" resultType="HashMap">
+		select OPERUSER_TEAM TEAMID, count(OPERUSER_TEAM) WOSUM
+		from (
+		      select  t.*,o.OPERUSER,o.OPERUSER_TEAM
+		      from   itsm_workorder t  
+		           left join (
+		                 select wo_id,workflow_id, operuser, operuser_team,
+		                     oper_type,oper_content,oper_date, siteid
+		                from (select tt.*, row_number() over(partition by tt.wo_id order by rownum) rn
+		                        from (select *
+		                                from itsm_oper_his 
+		                               order by wo_id asc, oper_date desc) tt)
+		               where rn = 1        
+		           ) o on o.wo_id=t.id
+		      where t.CREATEDATE between #{beginTime} and #{endTime} and t.YXBZ = 1
+		          and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete'
+		)A
+		group by OPERUSER_TEAM
+	</select>
+	
+	 <select id="queryteamOnTimeRespondWoSum" parameterType="HashMap" resultType="HashMap">
+		select OPERUSER_TEAM TEAMID, count(OPERUSER_TEAM) WOSUM
+		from (
+		      select  t.*,o.OPERUSER,o.OPERUSER_TEAM
+		      from   itsm_workorder t  
+		           left join (
+		                 select wo_id,workflow_id, operuser, operuser_team,
+		                     oper_type,oper_content,oper_date, siteid
+		                from (select tt.*, row_number() over(partition by tt.wo_id order by rownum) rn
+		                        from (select *
+		                                from itsm_oper_his 
+		                               order by wo_id asc, oper_date desc) tt)
+		               where rn = 1        
+		           ) o on o.wo_id=t.id,itsm_priority p
+		      where  t.CREATEDATE between #{beginTime} and #{endTime} and t.YXBZ = 1 
+		      		and t.priority_id=p.id and t.respond_len <![CDATA[<=]]> p.respond_len*60
+		          and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete'
+		)A
+		group by OPERUSER_TEAM
+	</select>
+	
+	 <select id="queryteamOnTimeSolveWoSum" parameterType="HashMap" resultType="HashMap">
+		select OPERUSER_TEAM TEAMID, count(OPERUSER_TEAM) WOSUM
+		from (
+		      select  t.*,o.OPERUSER,o.OPERUSER_TEAM
+		      from   itsm_workorder t  
+		           left join (
+		                 select wo_id,workflow_id, operuser, operuser_team,
+		                     oper_type,oper_content,oper_date, siteid
+		                from (select tt.*, row_number() over(partition by tt.wo_id order by rownum) rn
+		                        from (select *
+		                                from itsm_oper_his 
+		                               order by wo_id asc, oper_date desc) tt)
+		               where rn = 1        
+		           ) o on o.wo_id=t.id,itsm_priority p
+		      where t.CREATEDATE between #{beginTime} and #{endTime} and t.YXBZ = 1 
+		      		and t.priority_id=p.id and t.solve_len <![CDATA[<=]]> p.solve_len*60*60
+		          and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete'
+		)A
+		group by OPERUSER_TEAM
+	</select>
+	
+	
+	 <select id="queryWoSolveAbilitySum" parameterType="HashMap" resultType="int">
+		select  count(1)
+		from   itsm_workorder t
+		where   t.CREATEDATE between #{beginTime} and #{endTime} and 
+		        t.YXBZ = 1 and t.curr_status not in ('draft','woObsolete','newWo','sendWO','workPlan') and
+		        t.wo_type_code!='rwxWoType'and t.wo_type_code!='whWoType'
+	</select>
+	
+	 <select id="queryOverTimeRespondSum" parameterType="HashMap" resultType="int">
+		select  count(1)
+		from   itsm_workorder t,itsm_priority p
+		where   t.CREATEDATE between #{beginTime} and #{endTime} and 
+		        t.YXBZ = 1  and t.curr_status not in ('draft','woObsolete','newWo','sendWO','workPlan') and
+		        t.wo_type_code!='rwxWoType'and t.wo_type_code!='whWoType'and 
+		        p.id=t.priority_id and t.respond_len > p.respond_len*60
+	</select>
+	
+	 <select id="queryOverTimeSolveSum" parameterType="HashMap" resultType="int">
+		select  count(1)
+		from   itsm_workorder t,itsm_priority p
+		where   t.CREATEDATE between #{beginTime} and #{endTime} and 
+		        t.YXBZ = 1  and t.curr_status not in ('draft','woObsolete','newWo','sendWO','workPlan') and
+		        t.wo_type_code!='rwxWoType'and t.wo_type_code!='whWoType'and 
+		        p.id=t.priority_id and t.solve_len > p.solve_len*60*60
+	</select>
+	
+	
+	<select id="queryeveryFtAvgRespondTime" parameterType="HashMap" resultType="HashMap">
+		select t.priority_id prioridid, round(avg(t.respond_len)) as respondlen
+		from itsm_workorder t 
+		where  t.priority_id is not null and t.CREATEDATE between #{beginTime} and #{endTime} and
+		       t.YXBZ = 1 and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete' and
+		        t.wo_type_code!='rwxWoType'and t.wo_type_code!='whWoType'  AND t.respond_len IS NOT NULL
+		group by t.priority_id
+	</select>
+</mapper>

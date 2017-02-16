@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.LeaderNoticeDao">
+	
+	<!--说明：#{}内的参数，需要与传入的LeaderNotice中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertLeaderNotice" parameterType="LeaderNoticeVo">
+		<!--Oracle中返回自增主键到LeaderNoticeVo中的方法 -->
+		 <selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_OPR_LEADERNOTICE.nextval from dual
+		</selectKey>
+			insert into opr_leadernotice( id, num, writeDate, executeUserId,
+			leaderUserId, content, feedBackContent, siteId, updateTime, writeUserId, updateUserId,isFinished ) 
+			values(#{id}, #{num}, #{writeDate}, #{executeUserId}, 
+			#{leaderUserId}, #{content}, #{feedBackContent}, #{siteId}, #{updateTime}, #{writeUserId}, #{ updateUserId }, #{ isFinished })
+	</insert>
+	
+	<update id="updateLeaderNotice" parameterType="LeaderNoticeVo">
+	update opr_leadernotice set num = #{ num }, writeDate = #{ writeDate }, executeUserId = #{ executeUserId },
+	leaderUserId = #{ leaderUserId },content = #{ content }, feedBackContent = #{ feedBackContent }, siteId = #{ siteId },
+	updateTime = #{ updateTime }, 
+	<if test="finishTime != null">
+		  finishTime = #{ finishTime }, 
+	</if>
+	<if test="finishTime == null">
+		  finishTime = null, 
+	</if>
+	updateUserId = #{ updateUserId }, isFinished = #{ isFinished }  
+	where id = #{ id }
+	</update>
+		
+	<select id="queryLeaderNoticeById" parameterType="int" resultType="LeaderNoticeVo">
+		SELECT l.*,r1.name leaderUserName,r2.name executeUserName,r3.name writeUserName from ( 
+		SELECT * from OPR_LEADERNOTICE where id = #{ id } ) l
+		left join SEC_USER r1 on r1.user_id = l.leaderUserId
+		left join SEC_USER r2 on r2.user_id = l.executeUserId
+		left join SEC_USER r3 on r3.user_id = l.writeUserId
+	</select>
+	
+	<delete id="deleteLeaderNoticeById" parameterType="int">
+		delete from opr_leadernotice where id= #{ id }
+	</delete>
+	
+	<select id="queryAllLeaderNotice" resultType="LeaderNoticeVo">
+		SELECT l.*,r1.name leaderUserName,r2.name executeUserName,r3.name writeUserName from ( 
+		SELECT * from OPR_LEADERNOTICE ) l
+		left join SEC_USER r1 on r1.user_id = l.leaderUserId
+		left join SEC_USER r2 on r2.user_id = l.executeUserId
+		left join SEC_USER r3 on r3.user_id = l.writeUserId 
+	</select>
+	
+	<select id="queryLeaderNoticeByPage" resultType="LeaderNoticeVo">
+		SELECT l.*,r1.name leaderUserName,r2.name executeUserName,r3.name writeUserName from ( 
+		SELECT * from OPR_LEADERNOTICE WHERE  siteId like '%${ params.siteId }%' ) l
+		left join SEC_USER r1 on r1.user_id = l.leaderUserId
+		left join SEC_USER r2 on r2.user_id = l.executeUserId
+		left join SEC_USER r3 on r3.user_id = l.writeUserId
+	</select>
+	
+	<select id="queryLeaderNoticeBySearch" resultType="LeaderNoticeVo" >
+		select temp2.*,u3.name writeUserName from 
+		(select temp.*, u2.name executeUserName from
+		 (select searchResult.*, u1.name leaderUserName from 
+		  (select l.* from opr_leadernotice l 
+		where 1 = 1
+		<if test="params.id != null">
+		 	and l.id like '%${ params.id }%'
+		</if>
+		<if test="params.writeDate != null">
+		 	and l.writeDate like '%${ params.writeDate }%'
+		</if>
+		<if test="params.num != null">
+		 	and l.num like '%${ params.num }%'
+		</if>
+		<if test="params.content != null">
+		 	and l.content like '%${ params.content }%'
+		</if>
+		<if test="params.writeUserId != null">
+		 	and l.writeUserId in ( 
+		 	select s.user_id from sec_user s where name like '%${ params.writeUserId }%' 
+		 	) 
+		</if>
+		<if test="params.leaderUserId != null">
+		 	and l.leaderUserId in ( 
+		 	select s.user_id from sec_user s where name like '%${ params.leaderUserId }%'
+			)
+		</if>
+		<if test="params.executeUserId != null">
+		 	and l.executeUserId in ( 
+		 	select s.user_id from sec_user s where name like '%${ params.executeUserId }%'
+		 	)
+		</if>
+		<if test="params.finishTime != null">
+		 	and l.finishTime like '%${ params.finishTime }%'
+		</if>
+		<if test="params.updateTime != null">
+		 	and l.updateTime like '%${ params.updateTime }%'
+		</if>
+		<if test="params.feedBackContent != null">
+		 	and l.feedBackContent like '%${ params.feedBackContent }%'
+		</if>
+		<if test="params.siteId != null">
+		 	and l.siteId like '%${ params.siteId }%'
+		</if>
+		) searchResult
+		left join sec_user u1 on u1.user_id = searchResult.leaderUserId ) temp
+		left join sec_user u2 on u2.user_id = temp.executeUserId ) temp2
+		left join sec_user u3 on u3.user_id = temp2.writeUserId
+	</select>
+</mapper> 

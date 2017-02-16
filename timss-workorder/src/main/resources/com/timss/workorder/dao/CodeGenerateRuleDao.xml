@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.CodeGenerateRuleDao">
+
+	<resultMap type="CodeGenerateRule" id="CodeGenerateRuleMap">
+		<result column="SITEID" property="siteId" />
+		<result column="MODULE_CODE" property="moduleCode" />
+		<result column="SUBMODULE" property="subModule" />
+		<result column="PLANT_CODE" property="plantCode" />
+		<result column="PLANT_NAME" property="plantName" />
+		<result column="DATE_FORMAT" property="dateFormat" />
+		<result column="NUMBER_BIT" property="numberBit" />
+		<result column="STARTNUM" property="startNum" />
+		<result column="PRE_CODE" property="preCode" />
+		<result column="EXAMPLE" property="example" />
+	</resultMap>	
+	
+	<select id="queryCodeGenerateRule" parameterType="HashMap" resultMap="CodeGenerateRuleMap">
+		select * 
+		from CODE_GENERATE_RULE T 
+		where T.SITEID=#{siteid} AND T.MODULE_CODE = #{moduleCode} 
+				<if test="plantCode != null">
+					and t.PLANT_CODE = #{plantCode}
+				</if>
+				<if test="subModule != null">
+					and t.SUBMODULE = #{subModule}
+				</if>
+	</select>
+</mapper>

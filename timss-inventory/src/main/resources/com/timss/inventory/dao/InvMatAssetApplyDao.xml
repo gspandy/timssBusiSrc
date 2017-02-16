@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.inventory.dao.InvMatAssetApplyDao">
+	<resultMap type="InvMatAssetApply" id="InvMatAssetApplyMap">
+		<id property="astApplyId" column="AST_APPLY_ID"/>
+		<result property="imadId" column="IMADID"/>
+		<result property="itemName" column="ITEM_NAME"/>
+		<result property="poId" column="PO_ID"/>
+		<result property="cusmodel" column="CUSMODEL"/>
+		<result property="companyName" column="COMPANY_NAME"/>
+		<result property="companyTel" column="COMPANY_TEL"/>
+		<result property="purchaseDate" column="PURCHASE_DATE"/>
+		<result property="memo" column="MEMO"/>
+		<result property="status" column="STATUS"/>
+		<result property="flowNo" column="FLOW_NO"/>
+		<result property="imtdId" column="IMTDID"/>
+		<result property="itemCode" column="itemcode"/>
+		<result property="iitemName" column="iitemname"/>
+		<result property="itemId" column="ITEMID"/>
+		<result property="financialCode" column="FINANCIALCODE"/>
+		<result property="logo" column="LOGO"/>
+		<result property="equipmentId" column="EQUIPMENTID"/>
+	</resultMap>
+	
+	<select id="queryAssetApplyById" resultMap="InvMatAssetApplyMap">
+        select T.AST_APPLY_ID,T.IMADID,T.ITEM_NAME,T.PO_ID,T.CUSMODEL,T.COMPANY_NAME,T.COMPANY_TEL,T.PURCHASE_DATE,T.MEMO,T.FLOW_NO,T.IMTDID,T.ITEMID,T.FINANCIALCODE,T.LOGO,T.EQUIPMENTID,ii.itemcode as itemcode,ii.itemname as iitemname
+        from AST_ASSET_APPLY T 
+        left join inv_item ii on ii.itemid = T.itemid
+        where T.AST_APPLY_ID = #{astApplyId}
+	</select>
+	
+	<select id="queryAssetApplyByImadId" resultMap="InvMatAssetApplyMap">
+        select AST_APPLY_ID,IMADID,ITEM_NAME,PO_ID,CUSMODEL,COMPANY_NAME,COMPANY_TEL,PURCHASE_DATE,MEMO,FLOW_NO 
+        from ast_asset_apply
+        where IMADID = #{imadId}
+	</select>
+	
+	<insert id="insertAssetApply" parameterType="com.timss.inventory.bean.InvMatAssetApply">
+		insert into ast_asset_apply 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="astApplyId != null"> AST_APPLY_ID, </if>
+		<if test="imadId != null"> IMADID, </if>
+		<if test="itemName != null"> ITEM_NAME, </if>
+		<if test="poId != null"> PO_ID, </if>
+		<if test="cusmodel != null"> CUSMODEL, </if>
+		<if test="companyName != null"> COMPANY_NAME, </if>
+		<if test="companyTel != null"> COMPANY_TEL, </if>
+		<if test="purchaseDate != null"> PURCHASE_DATE, </if>
+		<if test="memo != null"> MEMO, </if>
+		<if test="createuser != null"> CREATE_USER, </if>
+		<if test="createdate != null"> CREATE_DATE, </if>
+		<if test="siteid != null"> SITE_ID, </if>
+		<if test="deptid != null"> DEPT_ID, </if>
+		<if test="status != null"> STATUS, </if>
+		<if test="flowNo != null"> FLOW_NO, </if>
+		<if test="imtdId != null"> IMTDID, </if>
+		<if test="itemId != null"> ITEMID, </if>
+		<if test="financialCode != null"> FINANCIALCODE, </if>
+		<if test="logo != null"> LOGO, </if>
+		<if test="equipmentId != null"> EQUIPMENTID, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="astApplyId != null"> #{astApplyId,jdbcType=VARCHAR}, </if>
+		<if test="imadId != null"> #{imadId,jdbcType=VARCHAR}, </if>
+		<if test="itemName != null"> #{itemName,jdbcType=VARCHAR}, </if>
+		<if test="poId != null"> #{poId,jdbcType=VARCHAR}, </if>
+		<if test="cusmodel != null"> #{cusmodel,jdbcType=VARCHAR}, </if>
+		<if test="companyName != null"> #{companyName,jdbcType=VARCHAR}, </if>
+		<if test="companyTel != null"> #{companyTel,jdbcType=VARCHAR}, </if>
+		<if test="purchaseDate != null"> #{purchaseDate,jdbcType=VARCHAR}, </if>
+		<if test="memo != null"> #{memo,jdbcType=VARCHAR}, </if>
+		<if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+		<if test="createdate != null"> #{createdate,jdbcType=VARCHAR}, </if>
+		<if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+		<if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+		<if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+		<if test="flowNo != null"> #{flowNo,jdbcType=VARCHAR}, </if>
+		<if test="imtdId != null"> #{imtdId,jdbcType=VARCHAR}, </if>
+		<if test="itemId != null"> #{itemId,jdbcType=VARCHAR}, </if>
+		<if test="financialCode != null"> #{financialCode,jdbcType=VARCHAR}, </if>
+		<if test="logo != null"> #{logo,jdbcType=VARCHAR}, </if>
+		<if test="equipmentId != null"> #{equipmentId,jdbcType=VARCHAR}, </if>
+		</trim>
+	</insert>
+	
+	<delete id="removeAssetApply">
+		delete from ast_asset_apply where AST_APPLY_ID = #{astApplyId} 
+	</delete>
+</mapper>

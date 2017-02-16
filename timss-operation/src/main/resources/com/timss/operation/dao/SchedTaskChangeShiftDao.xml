@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.operation.dao.SchedTaskChangeShiftDao">
+
+	<resultMap type="ScheduleTaskChangeShift" id="scheduleTaskChangeShiftMap">
+		<id column="ID" property="id" />
+		<result column="BEFORE_SHIFT" property="beforeShift" />
+		<result column="AFTER_SHIFT" property="afterShift" />
+		<result column="REMARKS" property="remarks" />
+		<result column="TASK_ID" property="taskId" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="BEFORE_SHIFT_ID" property="beforeShiftId" />
+		<result column="BEFORE_SHIFT_DATE" property="beforeShiftDate" />
+	</resultMap>	
+	
+	<insert id="insertSchedTaskChangeShift">
+		insert into opr_schedule_task_changeshift(ID,BEFORE_SHIFT_ID,BEFORE_SHIFT_DATE,
+				BEFORE_SHIFT,AFTER_SHIFT,REMARKS,TASK_ID,CREATEUSER,CREATEDATE) 
+		values( #{id},
+				#{beforeShiftId,jdbcType=VARCHAR},
+				#{beforeShiftDate,jdbcType=TIMESTAMP},
+				#{beforeShift,jdbcType=VARCHAR},
+				#{afterShift,jdbcType=VARCHAR},
+				#{remarks,jdbcType=VARCHAR},
+				#{taskId,jdbcType=VARCHAR},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP}
+			) 
+	</insert>
+	
+	<select id="querySchedTaskChangeShiftList" parameterType="HashMap" resultMap="scheduleTaskChangeShiftMap">
+		select ID,BEFORE_SHIFT,AFTER_SHIFT,REMARKS,TASK_ID,CREATEUSER,CREATEDATE			   
+		from opr_schedule_task_changeshift t 
+		where t.TASK_ID=#{params.taskId} and t.AFTER_SHIFT is not null
+		order by t.createdate desc
+	</select>
+	
+	<select id="queryLastSchedTaskChangeShift" parameterType="String" resultMap="scheduleTaskChangeShiftMap">
+		select ID,BEFORE_SHIFT,AFTER_SHIFT,REMARKS,TASK_ID,CREATEUSER,CREATEDATE			   
+		from opr_schedule_task_changeshift t 
+		where t.TASK_ID=#{params.taskId} and t.AFTER_SHIFT is null
+	</select>
+	
+	<!-- 修改-->
+	<update id="updateSchedTaskChangeShift" parameterType="ScheduleTaskChangeShift">
+		update opr_schedule_task_changeshift t
+		set  BEFORE_SHIFT = #{beforeShift,jdbcType=VARCHAR},
+			 BEFORE_SHIFT_DATE = #{beforeShiftDate,jdbcType=TIMESTAMP},
+			 BEFORE_SHIFT_ID = #{beforeShiftId,jdbcType=VARCHAR},
+			 CREATEUSER = #{createuser,jdbcType=VARCHAR},
+			 CREATEDATE = #{createdate,jdbcType=TIMESTAMP}
+		where ID=#{id,jdbcType=VARCHAR} and t.AFTER_SHIFT is null
+	</update>
+	
+	
+</mapper>

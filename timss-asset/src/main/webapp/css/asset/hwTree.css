@@ -1,0 +1,34 @@
+.icon-net {
+	background: url('img/neticon.png') no-repeat center
+		center;
+}
+
+.icon-room {
+	background: url('img/roomicon.png') no-repeat center
+		center;
+}
+
+.icon-server {
+	background: url('img/servericon.png') no-repeat center
+		center;
+}
+
+.icon-storage {
+	background: url( 'img/storageicon.png') no-repeat center
+		center;
+}
+
+.icon-vm {
+	background: url('img/vmicon.png') no-repeat center
+		center;
+}
+
+.icon-cabinet {
+	background: url('img/cabineticon.png') no-repeat center
+		center;
+}
+
+.icon-house {
+	background: url('img/houseicon.png') no-repeat center
+		center;
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmJobPlanDao">
+
+	<resultMap type="ItsmJobPlan" id="jobPlanMap">
+		<id column="ID" property="id" />
+		<result column="JOBPLAN_CODE" property="jobPlanCode" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="SPEC" property="specialtyId" />
+		<result column="KEYWORDS" property="keywords" />
+		<!-- ITC -->
+		<result column="FAULT_TYPE_ID" property="faultTypeId" />
+		
+		<result column="REMARKS" property="remarks" />
+		<result column="CREW" property="crew" />
+		<result column="LOCATION" property="location" />
+		<result column="JPDURATION" property="jpDuration" />
+		<result column="DOWNTIME" property="downtime" />
+		<result column="JP_TYPE" property="JobPlanType" />
+		<result column="WO_ID" property="workOrderId" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+		
+		
+		<!--数据库表中没有的信息字段-->
+		<result column="FALUT_TYPE_NAME" property="faultTypeName" />
+	</resultMap>	
+     
+
+	<insert id="insertJobPlan">
+			insert into itsm_jobplan(ID,JOBPLAN_CODE,DESCRIPTION,SPEC,CREATEDATE,MODIFYDATE,WO_ID,
+									FAULT_TYPE_ID,CREATEUSER,MODIFYUSER,JP_TYPE,SITEID,DEPTID,REMARKS,YXBZ) 
+			values( #{id},
+					#{jobPlanCode,jdbcType=VARCHAR},
+					#{description,jdbcType=VARCHAR},
+					#{specialtyId,jdbcType=VARCHAR},
+					#{createdate,jdbcType=TIMESTAMP},
+					#{modifydate,jdbcType=TIMESTAMP},
+					#{workOrderId,jdbcType=NUMERIC},
+					#{faultTypeId,jdbcType=VARCHAR},
+					#{createuser,jdbcType=VARCHAR},
+					#{modifyuser,jdbcType=VARCHAR},
+					#{JobPlanType,jdbcType=VARCHAR},
+					#{siteid,jdbcType=VARCHAR},
+					#{deptid,jdbcType=VARCHAR},
+					#{remarks,jdbcType=VARCHAR},
+					#{yxbz,jdbcType=NUMERIC}) 
+	</insert>
+	<!-- 删除某条作业方案 -->
+	<delete id="deleteJPById" parameterType="int">
+		delete from itsm_jobplan t 
+		where t.ID = #{jpId} 
+	</delete>
+	<!-- 更新作业方案的基本信息 -->
+	<update id="updateJobPlan" parameterType="ItsmJobPlan">
+		update itsm_jobplan 
+		set DESCRIPTION=#{description,jdbcType=VARCHAR},
+			SPEC=#{specialtyId,jdbcType=VARCHAR},
+			FAULT_TYPE_ID=#{faultTypeId,jdbcType=VARCHAR},
+			REMARKS=#{remarks,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifydate},MODIFYUSER=#{modifyuser}
+		where id=#{id} 
+	</update>
+	
+	<update id="updateJPToUnvailable" parameterType="int">
+		update itsm_jobplan 
+		set YXBZ = 0
+		where id=#{id} 
+	</update>
+	<!-- 查询标准作业方案 -->
+	<select id="queryStandardJP" resultMap="jobPlanMap" >
+		select ID, JOBPLAN_CODE,SPEC, description, remarks,CREATEDATE,MODIFYDATE
+		from itsm_jobplan t
+		where t.JP_TYPE = 'standard' and t.YXBZ = 1
+		<if test="params.siteid != null">
+			and siteid = #{params.siteid}
+		</if>
+	</select>
+	<!-- 查询标准作业方案(IT) -->
+	<select id="queryITStandardJP" resultMap="jobPlanMap" >
+		select t.ID, JOBPLAN_CODE, description, t.remarks,t.CREATEDATE,t.modifydate,t.fault_type_id,ft.name FALUT_TYPE_NAME
+	    from itsm_jobplan t,itsm_faulttype ft
+	    where t.JP_TYPE = 'standard' and t.YXBZ = 1 and t.fault_type_id=ft.id
+		<if test="params.siteid != null">
+			and t.siteid = #{params.siteid}
+		</if>
+	</select>
+	
+	  <!-- 查询汇报时对应的作业方案记录（暂存和提交都适应） -->
+	 <select id="queryReportJPByWOId" resultMap="jobPlanMap" parameterType="HashMap">
+		select ID, JOBPLAN_CODE,SPEC, description, remarks 
+		from itsm_jobplan t
+		where t.JP_TYPE = 'actual'  and t.WO_ID=#{woId}
+	</select>
+	    <!-- 查询策划时对应的作业方案记录（暂存和提交都适应） -->
+	 <select id="queryPlanJPByWOId" resultMap="jobPlanMap" parameterType="HashMap">
+		select ID, JOBPLAN_CODE,SPEC, description, remarks 
+		from itsm_jobplan t
+		where t.JP_TYPE = 'plan' and t.WO_ID=#{woId}
+	</select>
+	<!-- 根据ID查询作业方案信息 -->
+	<select id="queryJPById" parameterType="int" resultMap="jobPlanMap">
+		select * from itsm_jobplan where id= #{id}
+	</select>
+	<!-- 根据ID查询作业方案信息 (IT)-->
+	<select id="queryITJPById" parameterType="int" resultMap="jobPlanMap">
+		select t.id,t.jobplan_code,t.description,t.keywords,t.fault_type_id, 
+				t.createuser,ft.name FALUT_TYPE_NAME,t.remarks
+		from itsm_jobplan t ,itsm_faulttype ft
+		where t.id= #{id} and t.fault_type_id = ft.id
+	</select>
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextJPId" resultType="int">
+		select SEQ_ITSM_JOBPLAN.nextval from dual
+	</select>
+	
+</mapper>

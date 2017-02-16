@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmWorkOrderDao">
+	<resultMap type="ItsmWorkOrder" id="workOrderMap">
+		<!-- 公用 -->
+		<id column="ID" property="id" />
+		<result column="WO_NAME" property="woName" />
+		<result column="WO_CODE" property="workOrderCode" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="REMARKS" property="remarks" /> 
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="YXBZ" property="yxbz" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="ISSTOP" property="isStop" />
+		
+		<result column="CUSTOMER_CODE" property="customerCode" />
+		<result column="CUSTOMER_PHONE" property="customerPhone" />
+		<result column="CUSTOMER_LOCATION" property="customerLocation" />
+		<result column="CUSTOMER_NAME" property="customerName" />
+		<result column="CUSTOMER_COM" property="customerCom" />
+		<result column="CUSTOMER_DEPT" property="customerDept" />
+		
+		<!-- 
+		<result column="NEW_FAULT_REMARKS" property="newFaultRemarks" />
+		-->
+		
+		
+		<!-- SBS  -->
+		<result column="MAINTAINPLAN_ID" property="maintainPlanId" />
+		<result column="JOBPLAN_ID" property="jobPlanId" />
+		<result column="PARENT_WO_ID" property="parentWOId" />
+		<result column="PARENT_WO_CODE" property="parentWOCode" />
+		<result column="WO_TYPE_CODE" property="workOrderTypeCode" />
+		<result column="EQUIPSITE_CODE" property="equipSiteCode" />
+		<result column="EQUIPSITE" property="equipSite" />
+		<result column="EQUIPSITE_ID" property="equipSiteId" />
+		<result column="EQUIPNAME_CODE" property="equipNameCode" />
+		<result column="EQUIPNAME" property="equipName" />
+		<result column="EQUIP_ID" property="equipId" />
+		<result column="FAULT_DEGREE_CODE" property="faultDegreeCode" />
+		<result column="WO_SPEC_CODE" property="woSpecCode" />
+		<result column="DISCOVER_TIME" property="discoverTime" />
+		<result column="URGENT_DEGREE_CODE" property="urgentDegreeCode" />
+		<result column="CURR_WINDSPEED" property="currWindSpeed" />
+		<result column="LOSE_ELECTRICPOWER" property="loseElectricPower" />
+		<result column="IS_STEPOVER" property="isStepOver" />
+		<result column="IS_NOWHANDLER_MONITOR" property="isNowHandlerMonitor" />
+		<result column="IS_NOWHANDLER_ASSISTANT" property="isNowHandlerAssistant" />
+		<result column="IS_NOWHANDLER_PLANTLEADER" property="isNowHandlerPlantLeader" />
+		<result column="IS_TOWORKTICKET" property="isToWorkTicket" />
+		<result column="PTWID" property="ptwId" />
+		<result column="MAINTAINPLAN_FROM" property="maintainPlanFrom" />
+		<result column="APPROVESTOP_TIME" property="approveStopTime" />
+		
+		<result column="CURR_STATUS" property="currStatus" />
+		<result column="WORKFLOW_ID" property="workflowId" />
+		<result column="CURR_HANDLERUSER" property="currHandlerUser" />
+		<result column="CURR_HANDUSERNAME" property="currHandUserName" />
+		<result column="FAULTCONFRIMUSER" property="faultConfrimUser" />
+		<result column="ACCEPTANCEUSER" property="acceptanceUser" />
+		
+		<!-- 完工汇报 -->
+		<result column="BEGIN_TIME" property="beginTime" />
+		<result column="END_TIME" property="endTime" />
+		<result column="IS_HAS_REMAINFAULT" property="isHasRemainFault" />
+		<result column="NEXT_WO_MTP" property="nextWoMtp" />
+		<result column="END_REPORT" property="endReport" />
+		<result column="ENDREPORTUSER" property="endReportUser" />
+		
+		
+		<!-- ITC -->
+		<result column="FAULT_TYPE_ID" property="faultTypeId" />
+		<result column="SERCHARACTER_ID" property="serCharacterId" />
+		<result column="MAINT_TYPE" property="maintType" />
+		<result column="INFLUENCE_SCOPE" property="influenceScope" />
+		<result column="PARTNERIDS" property="partnerIds" />
+		<result column="PARTNERNAMES" property="partnerNames" />
+		
+		<result column="FEEDBACK_RESULT" property="fbResultType" />
+		<result column="IS_COMPLAINT" property="isComplaint" />
+		<result column="IS_NEXT_ENGINEER" property="isNextEngineer" />
+		<result column="FEEDBACK_REMARKS" property="feedbackRemarks" /> 
+		
+		<result column="DEFAULT_BEGIN_TIME" property="defaultBeginTime" />
+		<result column="DEFAULT_END_TIME" property="defaultEndTime" />
+		<result column="PRIORITY_ID" property="priorityId" />
+		<result column="APPOINT_TIME" property="appointTime" />
+		<result column="SENDWO_TIME" property="sendWoTime" />
+		
+		<result column="RESPOND_LEN" property="respondLen" />
+		<result column="SOLVE_LEN" property="solveLen" />
+		
+		<!--数据库表中没有的信息字段-->
+		<result column="FALUT_TYPE_NAME" property="faultTypeName" />
+		<result column="SERCHARACTER_NAME" property="serCharacterName" />
+		<result column="PRIORITY_NAME" property="priorityName" />
+		<result column="ENDREPORTUSER_NAME" property="endReportUserName" />
+		<result column="OPERUSER" property="principalEngeer" />
+		<result column="OPERUSER_TEAM" property="principalEngeerTeam" />
+		
+	</resultMap>	
+	
+	<!-- 新建工单基本信息 -->
+	<insert id="insertWorkOrder">
+		 insert into itsm_workorder(ID,WO_NAME,WO_CODE,CUSTOMER_CODE,CUSTOMER_PHONE,CUSTOMER_NAME,CUSTOMER_LOCATION,
+		 							CUSTOMER_COM,CUSTOMER_DEPT,
+		 							MAINTAINPLAN_ID,JOBPLAN_ID,WO_TYPE_CODE,FAULT_TYPE_ID,SERCHARACTER_ID,MAINT_TYPE,
+		 							EQUIP_ID,APPOINT_TIME,
+		 							EQUIPNAME_CODE,EQUIPNAME,WORKFLOW_ID,CURR_STATUS,FAULT_DEGREE_CODE,INFLUENCE_SCOPE,
+		 							WO_SPEC_CODE,DISCOVER_TIME,URGENT_DEGREE_CODE,DESCRIPTION,PARENT_WO_CODE,
+		 							REMARKS,CREATEUSER,CREATEDATE,MODIFYDATE,SITEID,DEPTID,YXBZ,ISSTOP,
+		 							DEFAULT_BEGIN_TIME,DEFAULT_END_TIME,PRIORITY_ID) 
+		values( #{id},
+				#{woName,jdbcType=VARCHAR},
+				#{workOrderCode,jdbcType=VARCHAR},
+				#{customerCode,jdbcType=VARCHAR},
+				#{customerPhone,jdbcType=VARCHAR},
+				#{customerName,jdbcType=VARCHAR},
+				#{customerLocation,jdbcType=VARCHAR},
+				#{customerCom,jdbcType=VARCHAR},
+				#{customerDept,jdbcType=VARCHAR},
+
+				#{maintainPlanId,jdbcType=NUMERIC},
+				#{jobPlanId,jdbcType=NUMERIC},
+				#{workOrderTypeCode,jdbcType=VARCHAR},
+				#{faultTypeId,jdbcType=VARCHAR},
+				#{serCharacterId,jdbcType=VARCHAR},
+				#{maintType,jdbcType=VARCHAR},
+				#{equipId,jdbcType=VARCHAR},
+				#{appointTime,jdbcType=TIMESTAMP},
+				
+				#{equipNameCode,jdbcType=VARCHAR},
+				#{equipName,jdbcType=VARCHAR},
+				#{workflowId,jdbcType=VARCHAR},
+				#{currStatus,jdbcType=VARCHAR},
+				#{faultDegreeCode,jdbcType=VARCHAR},
+				#{influenceScope,jdbcType=VARCHAR},
+				
+				#{woSpecCode,jdbcType=VARCHAR},
+				#{discoverTime,jdbcType=TIMESTAMP},
+				#{urgentDegreeCode,jdbcType=VARCHAR},
+				#{description,jdbcType=VARCHAR},
+				#{parentWOCode,jdbcType=VARCHAR},
+				
+				#{remarks,jdbcType=VARCHAR},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{modifydate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC},
+				#{isStop,jdbcType=NUMERIC},
+				
+				#{defaultBeginTime,jdbcType=TIMESTAMP},
+				#{defaultEndTime,jdbcType=TIMESTAMP},
+				#{priorityId,jdbcType=NUMERIC}) 
+	</insert>
+			
+	<!-- 更新工单基本信息 -->
+	<update id="updateWorkOrder" parameterType="ItsmWorkOrder">
+		update itsm_workorder
+		set  DESCRIPTION=#{description,jdbcType=VARCHAR},
+			 WO_TYPE_CODE=#{workOrderTypeCode,jdbcType=VARCHAR},
+			 FAULT_DEGREE_CODE=#{faultDegreeCode,jdbcType=VARCHAR},
+			 EQUIPNAME_CODE = #{equipNameCode,jdbcType=VARCHAR},
+			 EQUIP_ID = #{equipId,jdbcType=VARCHAR},
+			 EQUIPNAME=#{equipName,jdbcType=VARCHAR},
+			 <if test="discoverTime != null">
+		        DISCOVER_TIME=#{discoverTime,jdbcType=TIMESTAMP},
+		     </if>
+			 PARENT_WO_CODE=#{parentWOCode,jdbcType=VARCHAR},
+			 <if test="workflowId != null">
+				 WORKFLOW_ID=#{workflowId,jdbcType=VARCHAR},
+			 </if>
+			 CURR_STATUS=#{currStatus,jdbcType=VARCHAR},
+			 
+			 FAULT_TYPE_ID = #{faultTypeId,jdbcType=VARCHAR},
+			 SERCHARACTER_ID = #{serCharacterId,jdbcType=VARCHAR},
+			 URGENT_DEGREE_CODE=#{urgentDegreeCode,jdbcType=VARCHAR},
+			 INFLUENCE_SCOPE=#{influenceScope,jdbcType=VARCHAR},
+			 <if test="priorityId != null">
+			 PRIORITY_ID=#{priorityId,jdbcType=NUMERIC},
+			 </if>
+			 <if test="appointTime != null">
+			 	APPOINT_TIME=#{appointTime,jdbcType=TIMESTAMP},
+			 </if>
+			  <if test="customerPhone != null">
+			 	CUSTOMER_PHONE=#{customerPhone,jdbcType=VARCHAR},
+			 </if>
+			 <if test="maintType != null">
+			 	MAINT_TYPE=#{maintType,jdbcType=VARCHAR},
+			 </if>
+			 REMARKS=#{remarks,jdbcType=VARCHAR},
+			 <if test="modifydate != null">
+			 	MODIFYDATE=#{modifydate,jdbcType=TIMESTAMP},
+			 </if>
+			 MODIFYUSER=#{modifyuser,jdbcType=VARCHAR}
+		where ID=#{id} 
+	</update>
+	
+	
+	<!-- 更新工单基本信息 -->
+	<update id="updateInitWorkOrder">
+		UPDATE ITSM_WORKORDER
+		<set>
+		<foreach item="item" index="index" collection="params" >
+		<if test="item=='description'">DESCRIPTION = #{workOrder.description,jdbcType=VARCHAR}, </if>
+		<if test="item=='maintType'">MAINT_TYPE = #{workOrder.maintType,jdbcType=VARCHAR}, </if>
+		<if test="item=='faultTypeId'"> FAULT_TYPE_ID = #{workOrder.faultTypeId,jdbcType=VARCHAR}, </if>
+		<if test="item=='customerPhone'">CUSTOMER_PHONE = #{workOrder.customerPhone,jdbcType=VARCHAR}, </if>
+		</foreach>
+		<if test="workOrder.modifydate != null">
+			MODIFYDATE=#{workOrder.modifydate,jdbcType=TIMESTAMP},
+		</if>
+		MODIFYUSER=#{workOrder.modifyuser,jdbcType=VARCHAR}
+		</set>
+		WHERE ID=#{workOrder.id} 
+	</update>
+	
+	
+	<!-- 修改工单的状态 -->
+	<update id="updateWOStatus" parameterType="HashMap">
+		update itsm_workorder t
+		set  CURR_STATUS=#{woStatus} , MODIFYDATE = #{modifydate}
+		 	<if test="woStatus == 'woObsolete'.toString()">
+		        ,t.curr_handusername = null,  t.curr_handleruser=null
+		    </if>
+		    <if test="ptwId == 'rollbackToPlan'.toString()">
+		        ,t.PTWID = null
+		    </if>
+		where ID=#{id} 
+	</update>
+	<!-- 修改工单处理方式（设置班长、助理、场长处理方式） -->
+	<update id="updateWOHandlerStyle" parameterType="HashMap">
+		update itsm_workorder
+		set  MODIFYDATE=#{modifydate},MODIFYUSER=#{modifyuser},${attribute}=#{value}
+		where ID=#{id} 
+	</update>
+	<!-- 工单策划阶段修改工单信息（是否走工作票，作业方案ID） -->
+	<update id="updateWOOnPlan" parameterType="HashMap">
+		update itsm_workorder
+		set  MODIFYDATE=#{modifydate},
+			 MODIFYUSER=#{modifyuser},
+			 JOBPLAN_ID=#{jobPlanId,jdbcType=NUMERIC},
+			 IS_TOWORKTICKET=#{isToPTW}
+		where ID=#{id} 
+	</update>
+	<!-- 工单完工汇报阶段，修改工单信息（实际开工时间，实际完工时间，是否有遗留问题，完工汇报内容） -->
+	<update id="updateWOOnReport" parameterType="HashMap">
+		update itsm_workorder
+		set  MODIFYDATE=#{modifydate},
+			 MODIFYUSER=#{modifyuser},
+			 JOBPLAN_ID=#{jobPlanId,jdbcType=NUMERIC},
+			 END_REPORT=#{endReport},
+			 IS_HAS_REMAINFAULT=#{isHasRemainFault},
+			 END_TIME=#{endTime},
+			 BEGIN_TIME=#{beginTime},
+			 RESPOND_LEN=#{respondLen},
+			 SOLVE_LEN=#{solveLen}
+			 <if test="remainFaultId != null">
+		        ,NEXT_WO_MTP=#{remainFaultId}
+		    </if>
+		    <if test=" faultTypeId != null">
+		        , FAULT_TYPE_ID=#{faultTypeId}
+		    </if>
+		    <if test="serCharacterId != null">
+		        , SERCHARACTER_ID=#{serCharacterId}
+		    </if>
+		    <if test=" faultDescription!= null">
+		        ,DESCRIPTION =#{faultDescription}
+		    </if>
+		where ID=#{id} 
+	</update>
+	<!-- 工单验收阶段修改工单信息（批准停机时间，损失电量） -->
+	<update id="updateWOOnAcceptance" parameterType="HashMap">
+		update itsm_workorder
+		set  MODIFYDATE=#{modifydate},MODIFYUSER=#{modifyuser},APPROVESTOP_TIME=#{approveStopTime},
+			 LOSE_ELECTRICPOWER=#{loseElectricPower}
+		where ID=#{id} 
+	</update>
+	
+	<update id="updateWOAddPTWId" parameterType="HashMap">
+		update itsm_workorder
+		set  PTWID=#{ptwId}
+		where ID=#{woId} 
+	</update>
+	<!-- 在流程的环节中添加审批人信息 -->
+	<update id="updateOperUserById" parameterType="HashMap">
+		update itsm_workorder
+		set <if test="currHandlerUser != null">
+		        CURR_HANDLERUSER=#{currHandlerUser},
+		    </if>
+		    <if test="faultConfrimUser != null">
+		        FAULTCONFRIMUSER=#{faultConfrimUser},
+		    </if>
+		    <if test="acceptanceUser != null">
+		        ACCEPTANCEUSER=#{acceptanceUser},
+		    </if>
+		    <if test="endReportUser != null">
+		        ENDREPORTUSER=#{endReportUser},
+		    </if>
+		    id = #{woId} 
+		where ID=#{woId} 
+	</update>
+		<!-- 在流程的环节中当前处理人信息 -->
+	<update id="updateCurrHandUserById" parameterType="HashMap">
+		update itsm_workorder
+		set CURR_HANDLERUSER=#{currHandlerUser},
+		    CURR_HANDUSERNAME = #{currHandUserName}
+		where ID=#{woId} 
+	</update>
+	<!-- 审批时选择终止工单 -->
+	<update id="updateStopWO" parameterType="HashMap">
+		update itsm_workorder
+		set ISSTOP=1, MODIFYDATE=#{modifydate},MODIFYUSER=#{modifyuser},
+			CURR_STATUS=#{woStatus},CURR_HANDLERUSER=#{currHandlerUser},
+			CURR_HANDUSERNAME=#{currHandUserName}
+		where ID=#{woId} 
+	</update>
+	
+	<sql id="queryAllWOTemplate">
+		select ID,WO_CODE,EQUIP_ID,WO_SPEC_CODE,DESCRIPTION,u1.name CREATEUSER,CREATEDATE,
+				MODIFYDATE,URGENT_DEGREE_CODE,CURR_HANDUSERNAME CURR_HANDLERUSER,CURR_STATUS
+	    from  itsm_workorder t
+	          left join sec_user u1 on t.createuser = u1.user_id
+	    where YXBZ = 1 and t.curr_status !='draft'
+		<if test="params.siteid != null">
+			and siteid = #{params.siteid}
+		</if>
+		<if test="params.selectTreeId != null">
+			<!-- and t.EQUIP_ID = #{params.selectTreeId} -->
+			and t.EQUIP_ID in (select aat.assetid from ast_asset aat start with aat.assetid = #{params.selectTreeId}
+								connect by prior assetid = aat.parentid)
+		</if> 
+	</sql>
+	<!-- 查询所有工单  列表 -->
+	<select id="queryAllWO" resultMap="workOrderMap">
+		<include refid="queryAllWOTemplate"/>
+	</select>
+	<!-- 查询所有工单  列表 -->
+	<select id="queryFilterAllWO" resultMap="workOrderMap">
+		<include refid="queryAllWOTemplate"/>
+	</select>
+	<!-- 查询所有工单(It)  列表 -->
+	<select id="queryAllItWO" resultMap="workOrderMap">
+		select t.ID,WO_NAME,WO_CODE,EQUIP_ID,fault_type_id,ft.name FALUT_TYPE_NAME,DESCRIPTION,t.CUSTOMER_NAME,
+			u1.name CREATEUSER,t.CREATEDATE,t.MODIFYDATE,URGENT_DEGREE_CODE,CURR_HANDUSERNAME CURR_HANDLERUSER,
+             CURR_STATUS,DEFAULT_BEGIN_TIME,DEFAULT_END_TIME,t.PRIORITY_ID,wp.name priorityname,APPOINT_TIME
+	    from  itsm_workorder t 
+	          left join sec_user u1 on t.createuser = u1.user_id 
+	          left join itsm_faulttype ft on ft.id=t.fault_type_id
+	          left join itsm_priority wp on wp.id = t.priority_id
+	    where t.YXBZ = 1 
+		<if test="params.siteid != null">
+			and t.siteid = #{params.siteid}
+		</if>
+	</select>
+	<sql id="queryAllItWoTemplate">
+		select case when  tt.CURR_STATUS='woObsolete' then '0'
+					when  tt.CURR_STATUS='woFiling' then '1'
+		            when tt.has_release=1 and tt.urgent_degree_code='critical_urgencyDegree' then '6'
+		            when tt.has_release=1 then '5'
+		            when tt.urgent_degree_code='critical_urgencyDegree' then '4'
+		            when tt.urgent_degree_code='urgency_urgencyDegree' then '3'
+		            else '2' end as column1,tt.*         
+		from ( 
+			select  tx.*,nvl(tx.CURR_HANDUSERNAME,endReportUserName) CURR_HANDLERUSER
+			from 
+			     ( select t.ID,NVL(t.WO_NAME,t.DESCRIPTION) WO_NAME,WO_CODE,fault_type_id,ft.name FALUT_TYPE_NAME,DESCRIPTION,t.CUSTOMER_NAME,
+			     		 u1.name CREATEUSER,t.CREATEDATE,t.MODIFYDATE,URGENT_DEGREE_CODE,
+			     		 CURR_HANDUSERNAME,t.endreportuser, u2.name endReportUserName,
+			             CURR_STATUS,DEFAULT_BEGIN_TIME,DEFAULT_END_TIME,t.PRIORITY_ID,wp.name PRIORITY_NAME,APPOINT_TIME,
+			             t.has_release,T.SITEID
+			      from  itsm_workorder t 
+			            left join sec_user u1 on t.createuser = u1.user_id 
+			            left join itsm_faulttype ft on ft.id=t.fault_type_id
+			            left join itsm_priority wp on wp.id = t.priority_id
+			            left join sec_user u2 on t.endreportuser = u2.user_id 
+			      where t.YXBZ = 1 and t.CURR_STATUS != 'draft' 
+			      		<!-- <if test="params.siteid != null and params.siteid !='ITC'.toString()">
+			      			<if test="params.siteid =='YDZ'.toString() ">
+								and t.siteid != 'ITC'
+							</if>
+							<if test="params.siteid !='YDZ'.toString() ">
+								and t.siteid = #{params.siteid}
+							</if> 
+						</if> -->
+						<if test="params.unEndFilterFlag !='0'.toString() ">
+							and t.CURR_STATUS != 'woFeedback' and t.CURR_STATUS != 'woFiling' and t.CURR_STATUS != 'woObsolete'
+						</if> 
+						<if test="params.selectTreeId != null">
+							<!-- and t.FAULT_TYPE_ID = #{params.selectTreeId} -->
+							and  t.fault_type_id in (select ft.id from itsm_faulttype ft start with ft.id= #{params.selectTreeId}
+														connect by prior id = parent_id AND ft.faulttype_code='SD')
+						</if> ) tx
+
+		) tt
+	</sql>
+	<!-- 查询所有工单(It)  列表 -->
+	<select id="queryAllSortedItWO" resultMap="workOrderMap">
+		<include refid="queryAllItWoTemplate"/>
+	</select>
+	<!-- 查询所有工单(It)  列表（行过滤） -->
+	<select id="queryFilterAllSortedItWO" resultMap="workOrderMap">
+		<include refid="queryAllItWoTemplate"/>
+	</select>
+	
+	 <!-- 查询所有工单，不分站点，用于定时任务 -->
+	<select id="queryAllWoNoSiteId" resultMap="workOrderMap">
+		select * from  itsm_workorder t 
+      	where t.YXBZ = 1 
+      		  and t.URGENT_DEGREE_CODE='critical_urgencyDegree'
+		      and t.priority_id is not null 
+		      and t.curr_status = 'workPlan'
+		      and t.SITEID = 'ITC'
+	</select>
+	
+	 <!-- 根据工单ID 查看工单基本信息（电厂） -->
+	<select id="queryWOById" parameterType="String" resultMap="workOrderMap">
+		select  ID,WO_NAME,WO_CODE,MAINTAINPLAN_ID,JOBPLAN_ID,DESCRIPTION,WO_TYPE_CODE,FAULT_DEGREE_CODE,
+				WO_SPEC_CODE,CURR_STATUS,EQUIPNAME_CODE,EQUIPSITE_CODE,EQUIP_ID,EQUIPNAME,EQUIPSITE,
+				WORKFLOW_ID,DISCOVER_TIME,PARENT_WO_CODE,URGENT_DEGREE_CODE,REMARKS,BEGIN_TIME,
+				END_TIME,IS_HAS_REMAINFAULT,NEXT_WO_MTP,END_REPORT,PTWID,CREATEDATE,MODIFYDATE,
+				IS_NOWHANDLER_MONITOR,IS_NOWHANDLER_ASSISTANT,IS_NOWHANDLER_PLANTLEADER,CREATEUSER,
+				IS_TOWORKTICKET,CURR_HANDLERUSER,CURR_HANDUSERNAME,lose_electricpower,approvestop_time
+		from   itsm_workorder 
+		where  id= #{id} and YXBZ = 1
+	</select>
+	 
+	 <!-- 根据工单ID 查看工单基本信息（ITC） -->
+	<select id="queryItWOById" parameterType="String" resultMap="workOrderMap">
+	  select  t.ID,WO_NAME,WO_CODE,MAINTAINPLAN_ID,JOBPLAN_ID,DESCRIPTION,WO_TYPE_CODE,FAULT_DEGREE_CODE,
+          CUSTOMER_CODE,CUSTOMER_NAME,CUSTOMER_PHONE,CUSTOMER_LOCATION,CUSTOMER_COM,CUSTOMER_DEPT,
+          CURR_HANDLERUSER,CURR_HANDUSERNAME,WO_SPEC_CODE,CURR_STATUS,EQUIPNAME_CODE,EQUIPSITE_CODE,
+          EQUIP_ID,EQUIPNAME,EQUIPSITE,WORKFLOW_ID,URGENT_DEGREE_CODE,t.REMARKS,BEGIN_TIME,END_TIME,
+          IS_HAS_REMAINFAULT,NEXT_WO_MTP,END_REPORT,t.CREATEDATE,t.MODIFYDATE,t.CREATEUSER,PARTNERNAMES,
+          FEEDBACK_RESULT,IS_COMPLAINT,FEEDBACK_REMARKS, DEFAULT_BEGIN_TIME,DEFAULT_END_TIME,
+          t.fault_type_id,ft1.name FALUT_TYPE_NAME,t.serCharacter_id, ft2.name serCharacter_NAME,
+          T.MAINT_TYPE,PRIORITY_ID, APPOINT_TIME, SENDWO_TIME,HAS_RELEASE,INFLUENCE_SCOPE,DISCOVER_TIME,
+          u.name ENDREPORTUSER_NAME,T.SITEID
+      from   itsm_workorder t  
+      		 left join itsm_faulttype ft1 on ft1.id=t.fault_type_id
+      		 left join itsm_faulttype ft2 on ft2.id=t.serCharacter_id
+      		 left join sec_user u on t.endreportuser = u.user_id 
+      where  t.id= #{id} and t.YXBZ = 1  
+	</select>
+	
+	 <!-- 根据工单ID 查看工单基本信息（ITC） -->
+	<select id="queryWOByProcessInstId" parameterType="HashMap" resultMap="workOrderMap">
+	  select  t.ID,WO_NAME,WO_CODE,MAINTAINPLAN_ID,JOBPLAN_ID,DESCRIPTION,WO_TYPE_CODE,FAULT_DEGREE_CODE,
+          CUSTOMER_CODE,CUSTOMER_NAME,CUSTOMER_PHONE,CUSTOMER_LOCATION,CUSTOMER_COM,CUSTOMER_DEPT,
+          CURR_HANDLERUSER,CURR_HANDUSERNAME,WO_SPEC_CODE,CURR_STATUS,EQUIPNAME_CODE,EQUIPSITE_CODE,
+          EQUIP_ID,EQUIPNAME,EQUIPSITE,WORKFLOW_ID,URGENT_DEGREE_CODE,t.REMARKS,BEGIN_TIME,END_TIME,
+          IS_HAS_REMAINFAULT,NEXT_WO_MTP,END_REPORT,t.CREATEDATE,t.MODIFYDATE,t.CREATEUSER,PARTNERNAMES,
+          FEEDBACK_RESULT,IS_COMPLAINT,FEEDBACK_REMARKS, DEFAULT_BEGIN_TIME,DEFAULT_END_TIME,
+          t.fault_type_id,t.serCharacter_id, T.MAINT_TYPE,PRIORITY_ID, APPOINT_TIME,
+           SENDWO_TIME,HAS_RELEASE,INFLUENCE_SCOPE,DISCOVER_TIME,T.SITEID         
+      from   itsm_workorder t        		 
+      where  t.workflow_id= #{processInstId} and SITEID = #{siteid} and t.YXBZ = 1  
+	</select>
+	 <!-- 根据工单编号查询工单基本信息 -->
+	 <select id="queryWOBaseInfoByWOCode" parameterType="HashMap" resultMap="workOrderMap">
+		select  *
+		from   itsm_workorder 
+		where  WO_CODE = #{woCode} and SITEID = #{siteid} and YXBZ = 1
+	</select>
+	
+	<!-- 删除工单 -->
+	<update id="deleteWorkOrder" parameterType="HashMap">
+		update itsm_workorder
+		set  YXBZ= 0
+		where ID=#{id} 
+	</update>
+	
+	<!-- 删除工单 -->
+	<update id="deleteWorkOrderByWoCode" parameterType="HashMap">
+		update itsm_workorder t
+		set  YXBZ= 0
+		where t.WO_CODE = #{woCode} and t.siteid = #{siteid} 
+	</update>
+	
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextWOId" resultType="int">
+		select SEQ_ITSM_WORKORDER.nextval id from dual
+	</select>
+	
+	<!-- 查找最早一张工单的年份 -->
+	<select id="queryYearOfFirstWO" resultType="int">
+		select to_char(min(t.createdate),'YYYY') min_year 
+		from itsm_workorder t 
+		where t.siteid= #{siteid} 
+	</select>
+	
+	<!-- 修改当前风速 -->
+	<update id="updateWOCurrWindSpeed" parameterType="HashMap">
+		update itsm_workorder
+		set  CURR_WINDSPEED = #{windSpeed}
+		where ID=#{id} 
+	</update>
+	
+	<!-- IT工单中，添加协助人员信息  -->
+	<update id="updatePartnerInfo" parameterType="HashMap">
+		update itsm_workorder
+		set  PARTNERIDS = #{partnerIds},PARTNERNAMES = #{partnerNames},
+		     MODIFYDATE=#{modifydate},MODIFYUSER=#{modifyuser}
+		where ID=#{id} 
+	</update>
+	
+	<!-- IT工单中，添加延时信息（上门延时，完工延时）  -->
+	<update id="updateDelayInfo" parameterType="HashMap">
+		update itsm_workorder
+		set  <if test="delayType == 'workPlan'.toString()">
+		        DEFAULT_BEGIN_TIME=#{delayToTime},
+		    </if>
+		    <if test="delayType == 'inWorking'.toString()">
+		        DEFAULT_END_TIME=#{delayToTime},
+		    </if>
+		    MODIFYDATE=#{modifydate},MODIFYUSER=#{modifyuser}
+		where ID=#{id} 
+	</update>
+	
+	<!--  IT工单中，添加工单回访结果信息 -->
+	<update id="updateWOOnFeedback" parameterType="HashMap">
+		update itsm_workorder
+		set  FEEDBACK_RESULT=#{evaluateService}, FEEDBACK_REMARKS=#{feedbackRemarks},
+		    MODIFYDATE=#{modifydate},MODIFYUSER=#{modifyuser}
+		where ID=#{id} 
+	</update>
+	
+	<!--  IT工单中，处理中状态时，选择释放，则将之前策划的内容全部清掉 -->
+	<update id="updateClearPartnerInfo" parameterType="String">
+		update itsm_workorder t
+		set  t.jobplan_id=null,t.partnerids=null,t.partnernames=null
+		where ID=#{id} 
+	</update>
+	
+	<!-- 修改工单流程ID -->
+	<update id="updateWorkflowId"  parameterType="HashMap">
+		update itsm_workorder t
+		set  t.WORKFLOW_ID=#{workflowId}
+		where ID=#{id} 
+	</update>
+	
+	<!-- 上门服务时间（开工时间） -->
+	<update id="updateWoBeginTime"  parameterType="HashMap">
+		update itsm_workorder t
+		set  t.BEGIN_TIME=#{beginTime},
+			 t.RESPOND_LEN=#{resopndLen}
+		where ID=#{woId} 
+	</update>
+	
+	<!-- 派单时间 -->
+	<update id="updateSendWoTime"  parameterType="HashMap">
+		update itsm_workorder t
+		set  t.SENDWO_TIME=#{sendWoTime}
+		where ID=#{woId} 
+	</update>
+	<!-- 增加自动释放记录 -->
+	<update id="updateReleaseWo"  parameterType="HashMap">
+		update itsm_workorder t
+		set  t.has_release=1
+		where ID=#{woId} 
+	</update>
+	
+	<!-- 查询某段时间的新建工单，排除草稿、作废的工单，且不统计"周期性""任务型"类型工单-->
+	 <select id="queryNewWoSize" parameterType="HashMap" resultType="int">
+		select  count(1)
+		from   itsm_workorder t  
+			   left join (
+			   			select wo_id,workflow_id, operuser, operuser_team,
+						       oper_type,oper_content,oper_date, siteid
+						  from (select tt.*, row_number() over(partition by tt.wo_id order by rownum) rn
+						          from (select *
+						                  from itsm_oper_his 
+						                 order by wo_id asc, oper_date desc) tt)
+						 where rn = 1				
+			   ) o on o.wo_id=t.id
+		where  t.CREATEDATE between #{beginTime} and #{endTime} and YXBZ = 1
+				and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete'
+				and t.WO_TYPE_CODE !='whWoType' and t.WO_TYPE_CODE !='rwxWoType'
+				<if test="siteid != null">
+					and t.SITEID = #{siteid} 
+				</if>
+	</select>
+	
+	<!-- 查询某段时间的新建工单，排除草稿、作废的工单，且不统计"周期性""任务型"类型工单-->
+	 <select id="queryNewWoList" parameterType="HashMap" resultMap="workOrderMap">
+		 select * from
+		 (
+		 	SELECT A.*, ROWNUM RN
+		 	FROM (select  t.*,o.OPERUSER,o.OPERUSER_TEAM
+					from   itsm_workorder t  
+						   left join (
+						   			select wo_id,workflow_id, operuser, operuser_team,
+									       oper_type,oper_content,oper_date, siteid
+									  from (select tt.*, row_number() over(partition by tt.wo_id order by rownum) rn
+									          from (select *
+									                  from itsm_oper_his 
+									                 order by wo_id asc, oper_date desc) tt)
+									 where rn = 1				
+						   ) o on o.wo_id=t.id
+					where  t.CREATEDATE between #{beginTime} and #{endTime} and YXBZ = 1
+							and t.CURR_STATUS != 'draft' and t.CURR_STATUS != 'sendWO' and  t.CURR_STATUS != 'woObsolete'
+							and t.CURR_STATUS != 'initComAudit' and t.CURR_STATUS != 'infoCenterAudit'
+							and t.CURR_STATUS != 'applicantAudit' and t.CURR_STATUS != 'groupDeptAudit'
+							and t.WO_TYPE_CODE !='whWoType' and t.WO_TYPE_CODE !='rwxWoType'
+							<if test="siteid != null">
+								and t.SITEID = #{siteid} 
+							</if>) A
+		 	WHERE  ROWNUM <![CDATA[<=]]> (#{selectIndex}+1)*#{selectSize}
+		 ) where rn <![CDATA[>]]> #{selectIndex}*#{selectSize}
+	</select>
+	
+	<!-- 查询某个时间点内的所有新建的工单 -->
+	 <select id="queryAllWoOfSomePeriod" parameterType="HashMap" resultMap="workOrderMap">
+		 select * from
+		 (
+		 	SELECT A.*, ROWNUM RN
+		 	FROM (select  t.*,o.OPERUSER,o.OPERUSER_TEAM
+					from   itsm_workorder t  
+						   left join (
+						   			select wo_id,workflow_id, operuser, operuser_team,
+									       oper_type,oper_content,oper_date, siteid
+									  from (select tt.*, row_number() over(partition by tt.wo_id order by rownum) rn
+									          from (select *
+									                  from itsm_oper_his 
+									                 order by wo_id asc, oper_date desc) tt)
+									 where rn = 1				
+						   ) o on o.wo_id=t.id
+					where  t.CREATEDATE between #{beginTime} and #{endTime} and YXBZ = 1
+							and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete') A
+		 	WHERE  ROWNUM <![CDATA[<=]]> (#{selectIndex}+1)*#{selectSize}
+		 ) where rn <![CDATA[>]]> #{selectIndex}*#{selectSize}
+	</select>
+	
+	 <select id="getUserWoSum" parameterType="HashMap" resultType="int">
+		select count(*) 
+		from itsm_workorder t 
+		where t.curr_handleruser=#{userId} and t.SITEID = #{siteid} 
+				and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete'
+				and t.CURR_STATUS != 'woFiling' and YXBZ = 1
+				
+	</select>
+	
+	
+	 <select id="queryAllWoSumOfSomePeriod" parameterType="HashMap" resultType="int">
+		select  count(1)
+		from   itsm_workorder t  
+			   left join (
+			   			select wo_id,workflow_id, operuser, operuser_team,
+						       oper_type,oper_content,oper_date, siteid
+						  from (select tt.*, row_number() over(partition by tt.wo_id order by rownum) rn
+						          from (select *
+						                  from itsm_oper_his 
+						                 order by wo_id asc, oper_date desc) tt)
+						 where rn = 1				
+			   ) o on o.wo_id=t.id
+		where  t.CREATEDATE between #{beginTime} and #{endTime} and YXBZ = 1
+				and t.CURR_STATUS != 'draft' and  t.CURR_STATUS != 'woObsolete'
+	</select>
+	
+	<!-- 专用于客服直接派单，然后在弹出的审批框中点击“取消”，然后回界面之后修改工单内容，然后再审批时调用 -->
+	<update id="updateWOByCsOnCommit" parameterType="ItsmWorkOrder">
+		update itsm_workorder
+		set CUSTOMER_PHONE=#{customerPhone,jdbcType=VARCHAR},
+			<if test="customerName != null">
+				CUSTOMER_NAME=#{customerName,jdbcType=VARCHAR},
+			</if>
+			<if test="customerCode != null">
+				CUSTOMER_CODE=#{customerCode,jdbcType=VARCHAR},
+			</if>
+			<if test="customerCom != null">
+				CUSTOMER_COM=#{customerCom,jdbcType=VARCHAR},
+			</if>
+			<if test="customerDept != null">
+				CUSTOMER_DEPT=#{customerDept,jdbcType=VARCHAR},
+			</if>
+			<if test="customerLocation != null">
+				CUSTOMER_LOCATION=#{customerLocation,jdbcType=VARCHAR},
+			</if>
+			FAULT_TYPE_ID = #{faultTypeId,jdbcType=VARCHAR},
+			SERCHARACTER_ID = #{serCharacterId,jdbcType=VARCHAR},
+			URGENT_DEGREE_CODE=#{urgentDegreeCode,jdbcType=VARCHAR},
+			INFLUENCE_SCOPE=#{influenceScope,jdbcType=VARCHAR},
+			PRIORITY_ID=#{priorityId,jdbcType=NUMERIC},
+			<if test="appointTime != null">
+			 	APPOINT_TIME=#{appointTime,jdbcType=TIMESTAMP},
+			 </if>
+			DESCRIPTION=#{description,jdbcType=VARCHAR}
+		where ID=#{id} 
+	</update>
+    
+    <update id="updateRespondSolveLen" parameterType="HashMap">
+		update itsm_workorder t
+		set  t.id=t.id
+		 	<if test="respondLen != null">
+		        ,t.respond_len = #{respondLen}
+		    </if>
+		    <if test="solveLen != null">
+		        ,t.solve_len = #{solveLen}
+		    </if>
+		where ID=#{id} 
+	</update>
+	
+	<!-- 为补充响应时长和解决时长而打补丁需要的测试代码 -->
+	<select id="queryAddResponTimeLenSum" resultType="int">
+     	select count(*) 
+		from itsm_workorder t
+		where t.YXBZ = 1 and t.curr_status !='woObsolete' and 
+			  t.curr_status !='draft' and t.wo_type_code!='rwxWoType' and t.wo_type_code!='whWoType'
+	</select>
+	
+	<select id="queryAddResponTimeLen" parameterType="HashMap" resultMap="workOrderMap">
+	 select * from
+		 (
+		 	SELECT A.*, ROWNUM RN
+		 	FROM (
+		 		select  t.id,t.wo_code,t.wo_type_code ,t.curr_status,t.discover_time,t.begin_time,t.end_time 
+			    from  itsm_workorder t 
+			    where t.YXBZ = 1 and t.curr_status !='woObsolete' and 
+					  t.curr_status !='draft' and t.wo_type_code!='rwxWoType' and t.wo_type_code!='whWoType'
+		 	) A
+		 	WHERE  ROWNUM <![CDATA[<=]]> (#{selectIndex}+1)*#{selectSize}
+		 ) where rn <![CDATA[>]]> #{selectIndex}*#{selectSize}
+	</select>
+	
+	
+	  <update id="updateWoOnSendWo" parameterType="HashMap">
+		update itsm_workorder t
+		set  t.FAULT_TYPE_ID=#{faultTypeId},t.SERCHARACTER_ID=#{serCharacterId},t.PRIORITY_ID=#{priorityId}
+		where ID=#{woId} 
+	</update>
+	
+		
+</mapper>

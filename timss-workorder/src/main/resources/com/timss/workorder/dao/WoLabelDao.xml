@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoLabelDao">
+
+	<resultMap type="WoLabel" id="woLabelMap">
+		<id column="ID" property="id" />
+		<result column="NAME" property="name" />
+		<result column="LABELCODE" property="labelCode" />
+		<result column="WEIGHT" property="weight" />
+		<result column="REMARKS" property="remarks" />
+		<result column="SITEID" property="siteId" />
+		<result column="DEPTID" property="deptId" />
+		<result column="YXBZ" property="yxbz" />
+	</resultMap>	
+  
+	<insert id="insertWoLabel"  parameterType="WoLabel" >
+		insert into wo_label(ID,NAME,LABELCODE,WEIGHT,REMARKS) 
+		values( #{id},
+				#{name,jdbcType=VARCHAR},
+				#{labelCode,jdbcType=VARCHAR},
+				#{weight,jdbcType=NUMERIC},
+				#{remarks,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateWoLabel" parameterType="WoLabel">
+		update wo_label 
+		set NAME=#{name},REMARKS = #{remarks},WEIGHT=#{weight},
+			LABELCODE = #{labelCode}
+		where ID=#{id} 
+	</update>
+	
+	 
+	<select id="queryWoLabelById" parameterType="int" resultMap="woLabelMap">
+		select * from wo_label where id= #{ id }
+	</select>
+	
+	<delete id="deleteWoLabel" parameterType="int">
+		update wo_label 
+		set YXBZ = 0
+		where ID=#{id} 
+	</delete>
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextParamsConfId" resultType="int">
+		select SEQ_WO_PARAMSCONF.nextval id from dual
+	</select>
+	<!-- 查询列表信息 -->
+	<select id="queryWoLabelList" resultMap="woLabelMap" >
+		select *
+		from wo_label t
+	</select>
+		
+</mapper>

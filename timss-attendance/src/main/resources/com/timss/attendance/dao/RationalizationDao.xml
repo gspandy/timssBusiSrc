@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.attendance.dao.RationalizationDao">
+   	<sql id="RationalizationBeanField">
+r.CREATE_USER createUser, r.RATIONAL_ID rationalId,r.RATIONAL_NO rationalNo  ,r.DEPT_NAME deptName,r.HANDLER_NAME handleName,
+r.USERNAME userName,r.RATIONAL_Type rationalType,r.PROJECT_NAME projectName,r.RECOM_NAME recomName, r.RECOM_IDS recomIds,r.STATUS,r.DEPT_ID deptId,
+r.CREATE_DATE createdate,r.IMP_CON impCon, r.BEN_CALC benCalc, r.INSTANCE_ID instanceId,r.SITE_ID siteId,r.MODIFY_USER modifyUser,
+r.ISFILE isFile,r.BRIEF brief, r.MAJORDEPT majorDept, r.APPRAISAL appraiSal,r.IS_FILE2 isFile2,r.COUNTER_PARTTYPE counterPartType,formatnum2(r.BONUS_SPLIT) as bonusSplit, formatnum2(r.IMP_DEPT) as impDept,
+r.USER_ID userId,r.CUR_PERSON curPerson
+	</sql>
+	
+	
+	<update id="update" parameterType="RationalizationBean">
+        update atd_rationalization set 
+MODIFY_USER=#{modifyuser,jdbcType=VARCHAR},
+MODIFY_DATE=#{modifydate,jdbcType=TIMESTAMP},
+RATIONAL_TYPE=#{rationalType,jdbcType=VARCHAR},
+RECOM_IDS=#{recomIds,jdbcType=VARCHAR},
+RECOM_NAME=#{recomName,jdbcType=VARCHAR},
+PROJECT_NAME=#{projectName,jdbcType=VARCHAR},
+IMP_CON=#{impCon,jdbcType=VARCHAR},
+BEN_CALC=#{benCalc,jdbcType=VARCHAR},
+BRIEF=#{brief,jdbcType=VARCHAR},
+MAJORDEPT=#{majorDept,jdbcType=VARCHAR},
+BONUS_SPLIT=#{bonusSplit,jdbcType=NUMERIC},
+IMP_DEPT=#{impDept,jdbcType=NUMERIC},
+APPRAISAL=#{appraiSal,jdbcType=VARCHAR},
+COUNTER_PARTTYPE=#{counterPartType,jdbcType=VARCHAR}
+where RATIONAL_ID=#{rationalId,jdbcType=VARCHAR}
+    </update>
+	
+	<delete id="delete" parameterType="RationalizationBean">
+    	update atd_rationalization set 
+    	MODIFY_USER=#{modifyuser,jdbcType=VARCHAR},MODIFY_DATE=sysdate,del_ind='Y'
+    	where RATIONAL_ID=#{rationalId,jdbcType=VARCHAR}
+    </delete>  
+	
+    <select id="queryList" resultType="RationalizationBean">
+select t.*
+from(
+	select <include refid="RationalizationBeanField"/>
+	from atd_rationalization r
+	where r.site_Id=#{params.siteId,jdbcType=VARCHAR} and r.del_ind!='Y' and r.status not in ('草稿')
+)t
+left join sec_user u on u.USER_ID=t.USERNAME 	
+left join sec_organization o on o.ORG_CODE=t.deptId	
+    </select>
+ 
+    <select id="queryDetail" resultType="RationalizationBean">
+select t.*
+from(
+	select <include refid="RationalizationBeanField"/>
+	from atd_rationalization r
+	where r.rational_id=#{rationalId,jdbcType=VARCHAR}
+)t
+left join sec_user u on u.user_id=t.username 	
+left join sec_organization o on o.org_code=t.deptid
+    </select>
+    
+    <insert id="insert" parameterType="RationalizationBean" >
+    	insert into ATD_RATIONALIZATION (
+RATIONAL_ID,
+RATIONAL_NO,
+DEPT_ID,
+DEPT_NAME,
+RECOM_IDS,
+RECOM_NAME,
+USER_ID,
+USERNAME,
+RATIONAL_TYPE,
+PROJECT_NAME,
+STATUS,
+SITE_ID,
+IMP_CON,
+BEN_CALC,
+CREATE_USER
+)
+values (
+#{rationalId,jdbcType=VARCHAR},
+#{rationalNo,jdbcType=VARCHAR},
+#{deptid,jdbcType=VARCHAR},
+#{deptName,jdbcType=VARCHAR},
+#{recomIds,jdbcType=VARCHAR},
+#{recomName,jdbcType=VARCHAR},
+#{userId,jdbcType=VARCHAR},
+#{userName,jdbcType=VARCHAR},
+#{rationalType,jdbcType=VARCHAR},
+#{projectName,jdbcType=VARCHAR},
+#{status,jdbcType=VARCHAR},
+#{siteid,jdbcType=VARCHAR},
+#{impCon,jdbcType=VARCHAR},
+#{benCalc,jdbcType=VARCHAR},
+#{userId,jdbcType=VARCHAR}
+)
+    </insert>
+    
+    
+    
+    
+ <update id="updateCreateDate">
+        update ATD_RATIONALIZATION set 
+MODIFY_USER=#{modifyuser,jdbcType=VARCHAR},MODIFY_DATE=sysdate,
+CREATE_DATE=#{createDate,jdbcType=TIMESTAMP}
+		where RATIONAL_ID=#{rationalId,jdbcType=VARCHAR}
+    </update>    
+    
+    <update id="updateAuditStatus">
+        update atd_rationalization set 
+MODIFY_USER=#{modifyuser,jdbcType=VARCHAR},MODIFY_DATE=sysdate,
+<if test="instanceId != null and instanceId != '' ">
+INSTANCE_ID=#{instanceId,jdbcType=VARCHAR},
+</if>
+STATUS=#{status,jdbcType=VARCHAR}
+<if test="userId != null and userId != '' ">
+	,CUR_PERSON=#{userId,jdbcType=VARCHAR}
+</if>
+	where RATIONAL_ID=#{rationalId,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="updateById" parameterType="RationalizationBean">
+    	 update atd_rationalization 
+		 set  atd_rationalization.HANDLER_NAME = (SELECT b.name FROM SEC_USER b 
+		 where b.user_id = #{userId,jdbcType=VARCHAR})
+		 where atd_rationalization.rational_id=#{rationalId,jdbcType=VARCHAR}
+    </update>	
+    
+    
+    <update id="setRecomNameNull" parameterType="String">
+		update ATD_RATIONALIZATION  
+		set HANDLER_NAME=null 
+		where rational_id=#{id} 
+	</update>
+	
+	<update id="updateCurrHandUserById" parameterType="HashMap">
+		update ATD_RATIONALIZATION
+		set HANDLER_NAME = #{HandlerName}
+		where rational_id=#{rationId} 
+	</update>
+
+	 <select id="selectNameByUserList" parameterType="list" resultType="String">
+		select wm_concat(name) name from sec_user where user_id in 
+		<foreach collection="list" item="user" index="index" open="(" close=")" separator=",">
+			#{user}
+		</foreach>
+	</select>
+</mapper>

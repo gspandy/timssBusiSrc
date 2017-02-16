@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.OutsourcingDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+ 
+	
+	<resultMap type="com.timss.pms.vo.OutsourcingVo" id="outsourcingVoMap">
+		<id property="outsourcingId" column="outsourcing_id"/>
+		<result property="projectId" column="project_id"/>
+		<result property="outsourcingName" column="outsourcing_name"/>
+		<result property="outsourcingType" column="outsourcing_type"/>
+		<result property="price" column="price"/>
+		<result property="num" column="num"/>
+		<result property="siteid" column="siteid"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="command" column="command"/>
+		
+		<result property="updateTime" column="update_time"/>
+		<result property="updateUser" column="update_user"/>
+		
+	
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.InvoiceDtlVo" id="invoiceDtlVoMap">
+		<id property="outsourcingId" column="outsourcing_id"/>
+		<result property="projectId" column="project_id"/>
+		<result property="outsourcingName" column="outsourcing_name"/>
+		<result property="outsourcingType" column="outsourcing_type"/>
+		<result property="price" column="price"/>
+		<result property="num" column="num"/>
+		<result property="siteid" column="siteid"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="command" column="command"/>
+		
+		<result property="updateTime" column="update_time"/>
+		<result property="updateUser" column="update_user"/>
+	</resultMap>
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		outsourcing_id,project_id,outsourcing_name,outsourcing_type,price,num,siteid,create_time,
+    	create_user,del_flag,command
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertOutsourcing" parameterType="com.timss.pms.bean.Outsourcing">
+
+    insert into Tim_Pms_OUTSOURCING (<include refid="columnBasic"/>)
+    values (#{outsourcingId,jdbcType=NUMERIC},#{projectId,jdbcType=NUMERIC},#{outsourcingName,jdbcType=VARCHAR},
+    	#{outsourcingType,jdbcType=VARCHAR},#{price,jdbcType=NUMERIC},#{num,jdbcType=NUMERIC},
+    	#{siteid,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR},
+    	0,#{command,jdbcType=VARCHAR})
+</insert>
+
+<update id="updateOutsourcing">
+	update Tim_Pms_Outsourcing
+	set project_id=#{projectId,jdbcType=NUMERIC},outsourcing_name=#{outsourcingName,jdbcType=VARCHAR},
+    	outsourcing_type=#{outsourcingType,jdbcType=VARCHAR},price=#{price,jdbcType=NUMERIC},num=#{num,jdbcType=NUMERIC},
+    	siteid=#{siteid,jdbcType=VARCHAR},create_time=#{createTime,jdbcType=TIMESTAMP},create_user=#{createUser,jdbcType=VARCHAR},
+    	command=#{command,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=TIMESTAMP},update_user=#{updateUser,jdbcType=VARCHAR}
+    	
+    where outsourcing_id=#{outsourcingId}
+</update>
+
+
+
+
+
+<select id="queryOutsourcingListByProjectId" resultMap="outsourcingVoMap">
+	select <include refid="columnBasic"/>
+	from Tim_Pms_Outsourcing t
+	where project_id=#{projectId} and del_flag='0'
+</select>
+
+
+
+
+<delete id="deleteOutsourcing">
+    delete from Tim_Pms_Outsourcing t 
+    where outsourcing_id=#{outsourcingId}
+</delete>
+
+<delete id="deleteOutsourcingByProjectId">
+	delete from Tim_Pms_Outsourcing t
+	where project_id=#{projectId}
+</delete>
+</mapper>

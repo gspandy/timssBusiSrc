@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurInvoiceDao">
+
+<sql id="purInvoiceBeanFields">
+	ID, sheetNo, invoiceNo, invoiceCreateDate, status, reimDate, contractId, contractNo, 
+	supplierId, supplier, businessNo, noTaxSumPrice, tax, effectiveDate, endDate, isDelete,
+	deptId, siteId, createUser, createUserName, createDate, modifyUserName, modifyUser, modifyDate
+</sql>
+
+<select id="queryInvoiceBySiteId" resultType="PurInvoiceBean">
+	SELECT <include refid="purInvoiceBeanFields"></include>
+	FROM PUR_INVOICE
+	WHERE siteId = #{params.siteId, jdbcType = VARCHAR } 
+	AND isDelete = #{params.isDelete, jdbcType=VARCHAR }
+</select>
+
+<select id="queryInvoiceById" parameterType="String" resultType="PurInvoiceBean">
+	SELECT <include refid="purInvoiceBeanFields"></include>
+	FROM PUR_INVOICE
+	WHERE id = #{id, jdbcType = VARCHAR } 
+</select>
+
+
+<select id="queryInvoiceItemById" parameterType="String" resultType="PurInvoiceItemBean">
+	SELECT id, invoiceId, imtNo, itemId, noTaxSumPrice, tax
+	FROM PUR_INVOICEITEM
+	WHERE invoiceId = #{invoiceId, jdbcType = VARCHAR }
+	ORDER BY imtNo
+</select>
+
+<select id="remindInvoice" parameterType="Map" resultType="PurInvoiceScheduleVo">
+	select p.ID, p.sheetNo, p.invoiceNo, p.invoiceCreateDate, p.status, p.reimDate, p.contractId, p.contractNo, 
+	p.supplierId, p.supplier, p.businessNo, p.noTaxSumPrice, p.tax, p.effectiveDate, p.endDate, p.isDelete,
+	p.deptId, p.siteId, p.createUser, p.createUserName, p.createDate, p.modifyUserName, p.modifyUser, p.modifyDate,
+	iwp.createaccount contractUser
+	from pur_invoice p, itceam_workflow_purchorder iwp
+	where to_char(p.endDate, 'yyyy-mm-dd') &lt; #{ endDate, jdbcType = VARCHAR } 
+	and p.status = #{ status,jdbcType=VARCHAR}
+	and p.siteId = #{ siteId,jdbcType=VARCHAR}
+	AND isDelete = #{isDelete, jdbcType=VARCHAR }
+	and p.contractid = iwp.sheet_id
+</select>
+
+
+<select id="queryInvoiceBySearch" resultType="PurInvoiceBean">
+	SELECT <include refid="purInvoiceBeanFields"></include>
+	FROM PUR_INVOICE
+	WHERE siteId = #{params.siteId, jdbcType = VARCHAR } 
+	AND isDelete = #{params.isDelete, jdbcType=VARCHAR }
+	<if test="params.invoiceNo != null and params.invoiceNo != '' ">
+		AND ( lower( invoiceNo ) like '%'||lower( '${params.invoiceNo}' )||'%' OR
+		lower( contractNo ) like '%'||lower( '${params.invoiceNo}' )||'%' OR
+		lower( sheetNo ) like '%'||lower( '${params.invoiceNo}' )||'%' )
+	</if>
+</select>
+
+<select id="queryInvoiceBaseInfoByContractId" parameterType="Map" resultType="PurInvoiceBean">
+	SELECT <include refid="purInvoiceBeanFields"></include>
+	FROM PUR_INVOICE
+	WHERE siteId = #{ siteId, jdbcType = VARCHAR } 
+	AND isDelete = #{ isDelete, jdbcType=VARCHAR }
+	AND contractId = #{ contractId,jdbcType=VARCHAR }
+</select>
+
+<select id="queryCheckInvoiceNo" parameterType="Map" resultType="PurInvoiceBean">
+	SELECT <include refid="purInvoiceBeanFields"></include>
+	FROM PUR_INVOICE
+	WHERE siteId = #{ siteId, jdbcType = VARCHAR } 
+	AND isDelete = #{ isDelete, jdbcType=VARCHAR }
+	AND invoiceNo = #{ invoiceNo,jdbcType=VARCHAR }
+	<if test="id != null and id != '' ">
+		AND <![CDATA[ id <> #{id,jdbcType=VARCHAR} ]]>  
+	</if>
+</select>
+
+<select id="queryAllSite" resultType="String">
+	SELECT T.SITE_ID siteId FROM SEC_SITE T
+</select>
+
+<delete id="deleteInvoiceByInvoiceId" parameterType="String">
+	DELETE FROM PUR_INVOICEITEM WHERE invoiceId = #{invoiceId, jdbcType=VARCHAR}
+</delete>
+
+<insert id="insertWuziItem" parameterType="java.util.List">
+	insert into  PUR_INVOICEITEM( ID,invoiceId, imtNo, itemId, noTaxSumPrice, tax ) 
+		select  temp.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			 select #{item.id, jdbcType = VARCHAR} id ,#{item.invoiceId, jdbcType = VARCHAR} invoiceId,
+			 #{item.imtNo, jdbcType = VARCHAR } imtNo ,#{item.itemId, jdbcType = VARCHAR} itemId, #{item.noTaxSumPrice, jdbcType = NUMERIC} noTaxSumPrice,
+			 #{item.tax, jdbcType = NUMERIC} tax
+			 from dual
+		</foreach>
+		) temp
+</insert>
+
+<insert id="insertInvoice" parameterType="PurInvoiceBean">
+	INSERT INTO PUR_INVOICE( ID, sheetNo, invoiceNo, invoiceCreateDate, status, reimDate, contractId, contractNo, 
+	supplierId, supplier, businessNo, noTaxSumPrice, tax, effectiveDate, endDate, isDelete,
+	deptId, siteId, createUser, createUserName, createDate )
+	VALUES(
+	#{ id, jdbcType = VARCHAR }, #{sheetNo, jdbcType = VARCHAR }, #{invoiceNo, jdbcType = VARCHAR }, #{invoiceCreateDate, jdbcType = TIMESTAMP }, 
+	#{status, jdbcType = VARCHAR }, #{reimDate, jdbcType = TIMESTAMP }, #{contractId, jdbcType = VARCHAR }, #{contractNo, jdbcType = VARCHAR },
+	#{	supplierId, jdbcType = VARCHAR }, #{supplier, jdbcType = VARCHAR }, #{businessNo, jdbcType = VARCHAR }, 
+	#{noTaxSumPrice, jdbcType = NUMERIC }, #{tax, jdbcType = NUMERIC },
+	#{effectiveDate, jdbcType = NUMERIC }, #{endDate, jdbcType = TIMESTAMP }, #{isDelete, jdbcType = VARCHAR },
+	#{deptid, jdbcType = VARCHAR }, #{siteid, jdbcType = VARCHAR }, #{createuser, jdbcType = VARCHAR },
+	#{createUserName, jdbcType = VARCHAR }, #{createdate, jdbcType = TIMESTAMP }
+	)
+</insert>
+
+<update id="updateInvoice" parameterType="PurInvoiceBean">
+	UPDATE PUR_INVOICE SET 
+	sheetNo=#{sheetNo,jdbcType=VARCHAR},invoiceNo=#{invoiceNo,jdbcType=VARCHAR},
+	invoiceCreateDate=#{invoiceCreateDate,jdbcType=TIMESTAMP},
+	contractId=#{contractId,jdbcType=VARCHAR},contractNo=#{contractNo,jdbcType=VARCHAR},	supplierId=#{supplierId,jdbcType=VARCHAR},
+	supplier=#{supplier,jdbcType=VARCHAR},
+	businessNo=#{businessNo,jdbcType=VARCHAR},noTaxSumPrice=#{noTaxSumPrice,jdbcType=NUMERIC},
+	tax=#{tax,jdbcType=NUMERIC},endDate=#{endDate,jdbcType=TIMESTAMP},modifyUserName=#{modifyUserName,jdbcType=VARCHAR},
+	modifyUser=#{modifyuser,jdbcType=VARCHAR},modifyDate=#{modifydate,jdbcType=TIMESTAMP}
+	WHERE id=#{id,jdbcType=VARCHAR}
+</update>
+
+<update id="updateInvoiceById" parameterType="PurInvoiceBean">
+	UPDATE PUR_INVOICE SET 
+	<if test="isDelete != null and isDelete != '' ">
+		isDelete=#{isDelete,jdbcType=VARCHAR},
+	</if>
+	<if test="status != null and status != '' ">
+		status=#{status,jdbcType=VARCHAR},
+	</if>
+	modifyUserName=#{modifyUserName,jdbcType=VARCHAR},
+	modifyUser=#{modifyuser,jdbcType=VARCHAR},modifyDate=#{modifydate,jdbcType=TIMESTAMP}
+	WHERE id=#{id,jdbcType=VARCHAR}
+</update>
+
+</mapper>

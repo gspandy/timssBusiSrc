@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatReturnsDao">
+	<resultMap type="com.timss.inventory.vo.InvMatReturnsVO" id="InvMatReturnsVOMap">
+		<result property="purchOrderNo" column="purch_order_no"/>
+		<result property="purchOrderName" column="purch_order_name"/>
+		<result property="purOrderType" column="pur_order_type"/>
+		<result property="returnDate" column="return_date"/>
+		<result property="operType" column="oper_type"/>
+		<result property="siteid" column="site_id"/>
+		<result property="returnReason" column="REMARK"/>
+		<result property="imtid" column="IMTID"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.bean.InvMatReturns" id="InvMatReturnsMap">
+		<result property="returnDate" column="return_date"/>
+		<result property="operType" column="oper_type"/>
+		<result property="returnReason" column="REMARK"/>
+	</resultMap>
+	
+	
+	<!-- 通过申请表id和站点id找到sheetNo -->
+	<select id="queryAllReturnItem" resultMap="InvMatReturnsVOMap">
+		select imrs.imrsid,
+		           imrs.imrsno,
+		           wm_concat(iwp.sheetno) as purch_order_no,
+		           wm_concat(iwp.sheetname) as purch_order_name,
+		           imrs.return_date as return_date,
+		           imrs.remark
+		    from inv_mat_returns imrs,
+		         inv_outter_mapping iom,
+		         itceam_workflow_purchorder iwp
+	      where (
+	            imrs.imrsid = iom.inv_id and imrs.site_id = iom.siteid 
+	            and iom.inv_type = 'strippermaterials'
+	             and iom.outter_id = iwp.sheet_id 
+	             and iom.siteid = iwp.siteid
+	             )  
+	       and imrs.site_id = '${params.siteid}'
+	       <if test="params.schfield != null and params.schfield != ''">
+	       and (imrs.imrsid = (select imrd.imrsid from inv_mat_returns_detail imrd where imrd.imtno = '${params.schfield}' group by imrd.imrsid) or iwp.sheetno = '${params.schfield}')
+	       </if>
+	    group by imrs.imrsid,imrs.imrsno,imrs.return_date,imrs.remark
+	</select>
+	
+	<!-- 查询退换货表单 -->
+	<select id="queryMatReturnsForm" parameterType="java.util.Map" resultMap="InvMatReturnsVOMap">
+		select t.imrsid,
+				t.imrsno,
+				t.return_date,
+				t.oper_type,
+				t.remark,
+				t.createuser,
+				t.createdate,
+				t.modifyuser,
+				t.modifydate,
+				t.site_id,
+				t.deptid,
+				t.imtid 
+		from inv_mat_returns t 
+		WHERE t.imrsid = '${imrsid}' 
+		AND t.site_id = '${siteid}'
+	</select>
+	
+	<!-- 查询退换货表单 -->
+	<!-- <select id="queryMatReturnsFormByImtId" parameterType="java.util.Map" resultMap="InvMatReturnsVOMap">
+		select wm_concat(c.sheetno) as purch_order_no,
+		       wm_concat(c.sheetname) as purch_order_name,
+		       wm_concat(d.enum_val) as pur_order_type,
+		       a.return_date,
+		       a.oper_type,
+		       a.remark    
+		from inv_mat_returns a,
+		     inv_outter_mapping b,
+		     itceam_workflow_purchorder c,
+		     b_enum d   
+		where a.imrsid = b.inv_id and a.site_id = b.siteid
+		      and b.outter_id = c.sheet_id and b.siteid = c.siteid
+		      and c.sheet_i_type = d.enum_code and d.ecat_code = 'ITEMORDER_TYPE' and d.siteid = c.siteid
+		      and a.imtid = '${imtid}' and a.site_id = '${siteid}'
+		group by a.return_date, a.oper_type, a.remark 
+	</select> -->
+	
+	<!-- 删除物资退换货的主表信息 -->
+	<delete id="deleteMatReturnsByImrsid">
+		delete from inv_mat_returns b where b.imrsid=#{params.imrsid}
+	</delete>
+	
+	<!-- 插入物资退换货信息 -->
+	<insert id="insertMatReturns" parameterType="com.timss.inventory.bean.InvMatReturns">
+		insert into inv_mat_returns
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imrsid != null"> imrsid, </if>
+	      <if test="imrsno != null"> imrsno, </if>
+	      <if test=" imtid != null"> imtid, </if>
+	      <if test="returnDate != null"> return_date, </if>
+	      <if test="operType != null"> oper_type, </if>
+	      <if test="returnReason != null"> remark, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="siteid != null"> site_id, </if>
+	      <if test="deptid != null"> deptid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imrsid != null"> #{imrsid,jdbcType=VARCHAR}, </if>
+	      <if test="imrsno != null"> #{imrsno,jdbcType=VARCHAR}, </if>
+	      <if test="imtid != null"> #{imtid,jdbcType=VARCHAR}, </if>
+	      <if test="returnDate != null"> #{returnDate,jdbcType=TIMESTAMP},</if>
+	      <if test="operType != null"> #{operType,jdbcType=VARCHAR}, </if>
+	      <if test="returnReason != null"> #{returnReason,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 更新物资退换货功能 -->
+	<update id="updateMatReturns" parameterType="com.timss.inventory.bean.InvMatReturns">
+		update inv_mat_returns t 
+		<set>
+	      <if test="returnDate != null and returnDate != ''"> t.return_date=#{returnDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="operType != null and operType != ''"> t.oper_type=#{operType,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null and modifyuser != ''"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null and modifydate != ''"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="returnReason != null and returnReason != ''"> t.remark=#{returnReason,jdbcType=VARCHAR}, </if>
+	    </set>
+		where t.imrsid=#{imrsid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 根据sheetno找到退库信息 -->
+	<select id="queryReturnsBySheetNo" parameterType="java.util.Map" resultMap="InvMatReturnsMap">
+		SELECT IMR.IMRSID,IMR.RETURN_DATE,IMR.OPER_TYPE,IMR.REMARK,IMR.IMTID 
+		FROM INV_MAT_RETURNS IMR 
+		WHERE IMR.IMRSNO = #{sheetNo} AND IMR.SITE_ID=#{siteId}
+	</select>
+	
+	
+	<select id="queryReturnsNumByImaid" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		SELECT SUM(TT.RETURN_QTY) num
+		  FROM INV_MAT_RETURNS_DETAIL TT, INV_MAT_APPLY_DETAIL IMAD
+		 WHERE TT.IMRSID IN (SELECT T.IMRSID
+		                       FROM INV_MAT_RETURNS T
+		                      WHERE T.IMTID = #{imaid}
+		                        AND T.OPER_TYPE = 'refund')
+		   <if test="itemid != null and itemid != ''">
+	        	AND IMAD.ITEMID = #{itemid}
+	        	AND IMAD.WAREHOUSEID = #{wareHouseId}
+	       </if>
+		   AND IMAD.IMADID = TT.IMTDID
+		   AND TT.SITE_ID = #{siteid}
+	</select>
+	
+	<!-- 查询某张领料单的某种物资退库总数  -->
+	<select id="queryReturnsTotalByImadid" resultType="java.lang.Integer">
+		select nvl(sum(t.return_qty),0)
+			from inv_mat_returns_detail t
+			where t.imtdid = #{params.imadId}
+	</select>
+</mapper> 

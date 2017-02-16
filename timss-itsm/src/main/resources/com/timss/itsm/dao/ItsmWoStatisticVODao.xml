@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmWoStatisticVODao">
+	<resultMap type="ItsmWoStatisticVO" id="itWoStatisticVOMap">
+		<result column="SER_LEVEL" property="serLevel" />
+		<result column="EVENT_TYPE" property="eventType" />
+		<result column="EVENT_SUM" property="sum" /> 
+		<result column="SOLVE_RATIO" property="solveRatio" />
+		<result column="OVERT_SOLVE_RATIO" property="overTimeSolveRatio" />
+		<result column="OVERT_RESPOND_RATIO" property="overTimeRespondRatio" />
+		<result column="CS_ONT_SOLVE_RATIO" property="csOnTimeSolveRatio" />
+		<result column="TEAM_ONT_SOLVE_RATIO" property="teamOnTimeSolveRatio" />
+		<result column="AVG_SOLVE_TIME" property="avgSolveTime" />
+		<result column="STATISTIC_NUM" property="statisticNum" />
+	</resultMap>	
+	
+	<insert id="insertBatchItWoStatisticVO" parameterType="java.util.List">  
+        insert into itsm_wostatis_ittemp
+        ( SER_LEVEL, EVENT_TYPE, EVENT_SUM, SOLVE_RATIO, OVERT_SOLVE_RATIO, OVERT_RESPOND_RATIO,
+ 	 	   CS_ONT_SOLVE_RATIO, TEAM_ONT_SOLVE_RATIO, AVG_SOLVE_TIME, STATISTIC_NUM ) 
+		<foreach collection="list" item="item" index="index" separator="union all">  
+            select	#{item.serLevel,jdbcType=VARCHAR},
+					#{item.eventType,jdbcType=VARCHAR},
+					#{item.sum,jdbcType=NUMERIC},
+					#{item.solveRatio,jdbcType=NUMERIC},
+					#{item.overTimeSolveRatio,jdbcType=NUMERIC},
+					#{item.overTimeRespondRatio,jdbcType=NUMERIC},
+					#{item.csOnTimeSolveRatio,jdbcType=NUMERIC},
+					#{item.teamOnTimeSolveRatio,jdbcType=NUMERIC},
+					#{item.avgSolveTime,jdbcType=NUMERIC},
+					#{item.statisticNum,jdbcType=NUMERIC}
+			from dual	
+		</foreach>  
+	</insert>
+  
+	<!-- 获取某次查询的查询编号 -->
+	<select id="getNextPrintNum" resultType="int">
+		SELECT SEQ_ITSM_PRINTNUM.NEXTVAL FROM DUAL
+	</select>
+</mapper>

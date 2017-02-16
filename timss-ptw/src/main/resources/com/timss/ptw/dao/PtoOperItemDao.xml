@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtoOperItemDao">
+	<resultMap type="PtoOperItem" id="ptoItemMap">
+		<id column="ID" property="id" />
+		<result column="PTOID" property="ptoId" />
+		<result column="SHOWORDER" property="showOrder" />
+		<result column="CONTENT" property="content" />
+		<result column="HAS_OPER" property="hasOper" />
+		<result column="OPER_TIME" property="operTime" />
+		<result column="REMARKS" property="remarks" />
+	</resultMap>
+	
+
+	<insert id="insertPtoOperItem">
+		INSERT INTO PTO_OPERITEM
+		(ID,PTOID,SHOWORDER,CONTENT,HAS_OPER,OPER_TIME,REMARKS) 
+		VALUES( #{id},
+				#{ptoId,jdbcType=VARCHAR},
+				#{showOrder,jdbcType=NUMERIC},
+				#{content,jdbcType=VARCHAR},
+				#{hasOper,jdbcType=VARCHAR},
+				#{operTime,jdbcType=VARCHAR},
+				#{remarks,jdbcType=VARCHAR}
+			)
+	</insert>
+
+	<select id="queryPtoOperItemByPtoId" resultMap="ptoItemMap">
+		SELECT T.ID,T.PTOID,T.SHOWORDER,T.CONTENT,T.HAS_OPER, T.OPER_TIME, T.REMARKS
+		FROM PTO_OPERITEM T
+		WHERE T.PTOID = #{ptoId}
+		ORDER BY T.SHOWORDER ASC
+	</select>
+
+
+	<delete id="deletePtoOperItemsByPtoId">
+		DELETE FROM PTO_OPERITEM
+		WHERE PTOID = #{ptoId}
+	</delete>
+
+	
+
+</mapper>

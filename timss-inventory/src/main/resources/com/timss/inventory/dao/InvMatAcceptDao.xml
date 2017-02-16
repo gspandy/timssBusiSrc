@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.timss.inventory.dao.InvMatAcceptDao" >
+  <resultMap id="BaseResultMap" type="com.timss.inventory.bean.InvMatAccept" >
+    <id column="INAC_ID" property="inacId" jdbcType="VARCHAR" />
+    <result column="INAC_NO" property="inacNo" jdbcType="VARCHAR" />
+    <result column="PO_ID" property="poId" jdbcType="VARCHAR" />
+    <result column="PO_SHEETNO" property="poSheetno" jdbcType="VARCHAR" />
+    <result column="DELIVERY_NAME" property="deliveryName" jdbcType="VARCHAR" />
+    <result column="DELIVERY_DATE" property="deliveryDate"  />
+    <result column="DELIVERY_MAN" property="deliveryMan" jdbcType="VARCHAR" />
+    <result column="SPECIAL_MATERIALS" property="specialMaterials" jdbcType="VARCHAR" />
+    <result column="ACPT_CNLUS" property="acptCnlus" jdbcType="VARCHAR" />
+    <result column="PROC_RULT" property="procRult" jdbcType="VARCHAR" />
+    <result column="ACPT_TYPE" property="acptType" jdbcType="VARCHAR"/>
+    <result column="SITEID" property="siteid" jdbcType="VARCHAR" />
+    <result column="CREATEUSER" property="createuser" jdbcType="VARCHAR" />
+    <result column="CREATEDATE" property="createdate"  />
+    <result column="MODIFYUSER" property="modifyuser" jdbcType="VARCHAR" />
+    <result column="MODIFYDATE" property="modifydate"  />
+    <result column="DEPTID" property="deptid" jdbcType="VARCHAR" />
+    <result column="INSTANCEID" property="instanceid" jdbcType="VARCHAR" />
+    <result column="DEL_FLAG" property="delFlag" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="PROBLEMS" property="problems" jdbcType="VARCHAR" />
+    <result column="PO_NAME" property="poName" />
+    <result column="WAREHOUSE_USER" property="wareHouseUser" />
+    <result column="AUTO_DELIVERY" property="autoDelivery" />
+  </resultMap>
+  <resultMap id="InvMatAcceptVOMap" type="com.timss.inventory.vo.InvMatAcceptVo" >
+    <id column="INAC_ID" property="inacId"  />
+    <result column="INAC_NO" property="inacNo"  />
+    <result column="PO_ID" property="poId"  />
+    <result column="PO_SHEETNO" property="poSheetno"  />
+    <result column="DELIVERY_NAME" property="deliveryName"/>
+    <result column="DELIVERY_DATE" property="deliveryDate"  />
+    <result column="DELIVERY_MAN" property="deliveryMan"  />
+    <result column="SPECIAL_MATERIALS" property="specialMaterials" />
+    <result column="ACPT_CNLUS" property="acptCnlus" />
+    <result column="PROC_RULT" property="procRult"  />
+    <result column="ACPT_TYPE" property="acptType"/>
+    <result column="SITEID" property="siteid"  />
+    <result column="CREATEUSER" property="createuser"  />
+    <result column="CREATEDATE" property="createdate"  />
+    <result column="MODIFYUSER" property="modifyuser"  />
+    <result column="MODIFYDATE" property="modifydate"  />
+    <result column="DEPTID" property="deptid" />
+    <result column="INSTANCEID" property="instanceid"/>
+    <result column="DEL_FLAG" property="delFlag"  />
+    <result column="STATUS" property="status"  />
+    <result column="PROBLEMS" property="problems"  />
+    
+    <result column="apply_user" property="applyUser" />
+    <result column="apply_sheetno" property="applySheetNo" />
+    <result column="PO_NAME" property="poName" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    INAC_ID, INAC_NO, PO_ID, PO_SHEETNO, DELIVERY_NAME, DELIVERY_DATE, DELIVERY_MAN, 
+    SPECIAL_MATERIALS, ACPT_CNLUS, PROC_RULT, ACPT_TYPE, SITEID, CREATEUSER, CREATEDATE, MODIFYUSER, 
+    MODIFYDATE, DEPTID, INSTANCEID, DEL_FLAG, STATUS, PROBLEMS ,PO_NAME,CREATEUSERNAME,WAREHOUSE_USER, AUTO_DELIVERY
+  </sql>
+  <select id="queryByPrimaryKey" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from INV_MAT_ACCEPT
+    where INAC_ID = #{inacId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey"  >
+    update INV_MAT_ACCEPT
+    set DEL_FLAG= '1'
+    where INAC_ID = #{inacId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.timss.inventory.bean.InvMatAccept" >
+    insert into INV_MAT_ACCEPT (INAC_ID, INAC_NO, PO_ID, 
+      PO_SHEETNO, DELIVERY_NAME, DELIVERY_DATE, 
+      DELIVERY_MAN, SPECIAL_MATERIALS, ACPT_CNLUS, 
+      PROC_RULT, ACPT_TYPE, SITEID, CREATEUSER, 
+      CREATEDATE, MODIFYUSER, MODIFYDATE, 
+      DEPTID, INSTANCEID, DEL_FLAG, 
+      STATUS, PROBLEMS,PO_NAME,CREATEUSERNAME)
+    values (#{inacId,jdbcType=VARCHAR}, #{inacNo,jdbcType=VARCHAR}, #{poId,jdbcType=VARCHAR}, 
+      #{poSheetno,jdbcType=VARCHAR}, #{deliveryName,jdbcType=VARCHAR}, #{deliveryDate,jdbcType=TIMESTAMP}, 
+      #{deliveryMan,jdbcType=VARCHAR}, #{specialMaterials,jdbcType=VARCHAR}, #{acptCnlus,jdbcType=VARCHAR}, 
+      #{procRult,jdbcType=VARCHAR},#{acptType,jdbcType=VARCHAR}, #{siteid,jdbcType=VARCHAR}, #{createuser,jdbcType=VARCHAR}, 
+      #{createdate,jdbcType=TIMESTAMP}, #{modifyuser,jdbcType=VARCHAR}, #{modifydate,jdbcType=TIMESTAMP}, 
+      #{deptid,jdbcType=VARCHAR}, #{instanceid,jdbcType=VARCHAR}, 0, 
+      #{status,jdbcType=VARCHAR}, #{problems,jdbcType=VARCHAR}, #{poName,jdbcType=VARCHAR},#{createusername,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.timss.inventory.bean.InvMatAccept" >
+    insert into INV_MAT_ACCEPT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="inacId != null" >
+        INAC_ID,
+      </if>
+      <if test="inacNo != null" >
+        INAC_NO,
+      </if>
+      <if test="poId != null" >
+        PO_ID,
+      </if>
+      <if test="poSheetno != null" >
+        PO_SHEETNO,
+      </if>
+      <if test="deliveryName != null" >
+        DELIVERY_NAME,
+      </if>
+      <if test="deliveryDate != null" >
+        DELIVERY_DATE,
+      </if>
+      <if test="deliveryMan != null" >
+        DELIVERY_MAN,
+      </if>
+      <if test="specialMaterials != null" >
+        SPECIAL_MATERIALS,
+      </if>
+      <if test="acptCnlus != null" >
+        ACPT_CNLUS,
+      </if>
+      <if test="procRult != null" >
+        PROC_RULT,
+      </if>
+      <if test="acptType != null" >
+        ACPT_TYPE,
+      </if>
+      <if test="siteid != null" >
+        SITEID,
+      </if>
+      <if test="createuser != null" >
+        CREATEUSER,
+      </if>
+      <if test="createdate != null" >
+        CREATEDATE,
+      </if>
+      <if test="modifyuser != null" >
+        MODIFYUSER,
+      </if>
+      <if test="modifydate != null" >
+        MODIFYDATE,
+      </if>
+      <if test="deptid != null" >
+        DEPTID,
+      </if>
+      <if test="instanceid != null" >
+        INSTANCEID,
+      </if>
+      <if test="delFlag != null" >
+        DEL_FLAG,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="problems != null" >
+        PROBLEMS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="inacId != null" >
+        #{inacId,jdbcType=VARCHAR},
+      </if>
+      <if test="inacNo != null" >
+        #{inacNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poId != null" >
+        #{poId,jdbcType=VARCHAR},
+      </if>
+      <if test="poSheetno != null" >
+        #{poSheetno,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryName != null" >
+        #{deliveryName,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryDate != null" >
+        #{deliveryDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deliveryMan != null" >
+        #{deliveryMan,jdbcType=VARCHAR},
+      </if>
+      <if test="specialMaterials != null" >
+        #{specialMaterials,jdbcType=VARCHAR},
+      </if>
+      <if test="acptCnlus != null" >
+        #{acptCnlus,jdbcType=VARCHAR},
+      </if>
+      <if test="procRult != null" >
+        #{procRult,jdbcType=VARCHAR},
+      </if>
+      <if test="acptType != null" >
+        #{acptType,jdbcType=VARCHAR},
+      </if>
+      <if test="siteid != null" >
+        #{siteid,jdbcType=VARCHAR},
+      </if>
+      <if test="createuser != null" >
+        #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyuser != null" >
+        #{modifyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifydate != null" >
+        #{modifydate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceid != null" >
+        #{instanceid,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="problems != null" >
+        #{problems,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.timss.inventory.bean.InvMatAccept" >
+    update INV_MAT_ACCEPT
+    <set >
+      <if test="inacNo != null" >
+        INAC_NO = #{inacNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poId != null" >
+        PO_ID = #{poId,jdbcType=VARCHAR},
+      </if>
+      <if test="poSheetno != null" >
+        PO_SHEETNO = #{poSheetno,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryName != null" >
+        DELIVERY_NAME = #{deliveryName,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryDate != null" >
+        DELIVERY_DATE = #{deliveryDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deliveryMan != null" >
+        DELIVERY_MAN = #{deliveryMan,jdbcType=VARCHAR},
+      </if>
+      <if test="specialMaterials != null" >
+        SPECIAL_MATERIALS = #{specialMaterials,jdbcType=VARCHAR},
+      </if>
+      <if test="acptCnlus != null" >
+        ACPT_CNLUS = #{acptCnlus,jdbcType=VARCHAR},
+      </if>
+      <if test="procRult != null" >
+        PROC_RULT = #{procRult,jdbcType=VARCHAR},
+      </if>
+      <if test="acptType != null" >
+        ACPT_TYPE = #{acptType,jdbcType=VARCHAR},
+      </if>
+      <if test="siteid != null" >
+        SITEID = #{siteid,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="modifyuser != null" >
+        MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifydate != null" >
+        MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deptid != null" >
+        DEPTID = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceid != null" >
+        INSTANCEID = #{instanceid,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        DEL_FLAG = #{delFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="problems != null" >
+        PROBLEMS = #{problems,jdbcType=VARCHAR},
+      </if>
+      <if test="poName != null" >
+        PO_NAME = #{poName,jdbcType=VARCHAR},
+      </if>
+      <if test="createusername != null" >
+        createusername = #{createusername,jdbcType=VARCHAR},
+      </if>
+      <if test="wareHouseUser != null" >
+        WAREHOUSE_USER = #{wareHouseUser,jdbcType=VARCHAR},
+      </if>     
+      <if test="imtId != null" >
+        IMT_ID = #{imtId,jdbcType=VARCHAR},
+      </if>           
+    </set>
+    where INAC_ID = #{inacId,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateAutoDelivery" parameterType="com.timss.inventory.bean.InvMatAccept" >
+    UPDATE INV_MAT_ACCEPT
+    SET AUTO_DELIVERY = #{autoDelivery,jdbcType=VARCHAR},
+    MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+    MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP}
+    WHERE INAC_ID = #{inacId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.timss.inventory.bean.InvMatAccept" >
+    update INV_MAT_ACCEPT
+    set INAC_NO = #{inacNo,jdbcType=VARCHAR},
+      PO_ID = #{poId,jdbcType=VARCHAR},
+      PO_SHEETNO = #{poSheetno,jdbcType=VARCHAR},
+      DELIVERY_NAME = #{deliveryName,jdbcType=VARCHAR},
+      DELIVERY_DATE = #{deliveryDate,jdbcType=TIMESTAMP},
+      DELIVERY_MAN = #{deliveryMan,jdbcType=VARCHAR},
+      SPECIAL_MATERIALS = #{specialMaterials,jdbcType=VARCHAR},
+      ACPT_CNLUS = #{acptCnlus,jdbcType=VARCHAR},
+      PROC_RULT = #{procRult,jdbcType=VARCHAR},
+      ACPT_TYPE = #{acptType,jdbcType=VARCHAR},
+      SITEID = #{siteid,jdbcType=VARCHAR},
+      MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+      MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP},
+      DEPTID = #{deptid,jdbcType=VARCHAR},
+      INSTANCEID = #{instanceid,jdbcType=VARCHAR},
+      DEL_FLAG = #{delFlag,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      PROBLEMS = #{problems,jdbcType=VARCHAR},
+      CREATEUSERNAME=#{createusername,jdbcType=VARCHAR},
+      PO_NAME=#{poName,jdbcType=VARCHAR}
+    where INAC_ID = #{inacId,jdbcType=VARCHAR}
+  </update>
+    
+  <select id="queryListByMatAccept" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from INV_MAT_ACCEPT 
+    <where>
+      <if test="inacNo != null" >
+      AND  instr(INAC_NO,#{inacNo,jdbcType=VARCHAR}) > 0
+      </if>
+      <if test="poId != null" >
+      AND  PO_ID = #{poId,jdbcType=VARCHAR}
+      </if>
+      <if test="poSheetno != null" >
+      AND  instr(PO_SHEETNO ,#{poSheetno,jdbcType=VARCHAR})>0
+      </if>
+      <if test="deliveryName != null" >
+      AND  instr(DELIVERY_NAME , #{deliveryName,jdbcType=VARCHAR})>0
+      </if>
+      <if test="deliveryDate != null" >
+      AND  DELIVERY_DATE = #{deliveryDate,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deliveryMan != null" >
+      AND  instr(DELIVERY_MAN , #{deliveryMan,jdbcType=VARCHAR})
+      </if>
+      <if test="specialMaterials != null" >
+      AND  SPECIAL_MATERIALS = #{specialMaterials,jdbcType=VARCHAR}
+      </if>
+      <if test="acptCnlus != null" >
+      AND  ACPT_CNLUS = #{acptCnlus,jdbcType=VARCHAR}
+      </if>
+      <if test="procRult != null" >
+      AND  PROC_RULT = #{procRult,jdbcType=VARCHAR}
+      </if>
+      <if test="acptType != null" >
+      AND  ACPT_TYPE = #{acptType,jdbcType=VARCHAR}
+      </if>
+      <if test="siteid != null" >
+      AND  SITEID = #{siteid,jdbcType=VARCHAR}
+      </if>
+      <if test="createuser != null" >
+      AND  CREATEUSER = #{createuser,jdbcType=VARCHAR}
+      </if>
+      <if test="createdate != null" >
+      AND  CREATEDATE = #{createdate,jdbcType=TIMESTAMP}
+      </if>
+      <if test="modifyuser != null" >
+      AND  MODIFYUSER = #{modifyuser,jdbcType=VARCHAR}
+      </if>
+      <if test="modifydate != null" >
+      AND  MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deptid != null" >
+      AND  DEPTID = #{deptid,jdbcType=VARCHAR}
+      </if>
+      <if test="instanceid != null" >
+      AND  INSTANCEID = #{instanceid,jdbcType=VARCHAR}
+      </if>
+      <if test="delFlag != null" >
+      AND  DEL_FLAG = #{delFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null" >
+      AND  STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="problems != null" >
+      AND  PROBLEMS = #{problems,jdbcType=VARCHAR}
+      </if>
+      <if test="poName != null" >
+      AND  PO_NAME = #{poName,jdbcType=VARCHAR}
+      </if>
+      <if test="createusername != null" >
+      AND  createusername = #{createusername,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  
+<!-- 查询物资验收列表 -->
+<!-- TODO 优化 -->
+<select id="queryInvMatAcceptList" resultMap="InvMatAcceptVOMap">
+	select t.INAC_ID, t.INAC_NO, t.PO_ID, t.PO_SHEETNO, t.DELIVERY_NAME, t.DELIVERY_DATE, t.DELIVERY_MAN, 
+             t.SPECIAL_MATERIALS, t.ACPT_CNLUS, t.PROC_RULT,t.ACPT_TYPE,t.SITEID, t.CREATEUSER, t.CREATEDATE, t.MODIFYUSER, 
+             t.MODIFYDATE, t.DEPTID, t.INSTANCEID, t.DEL_FLAG, t.STATUS, t.PROBLEMS,t.PO_NAME, t.createusername ,
+              gg.pUser as apply_user
+    from INV_MAT_ACCEPT t
+   
+    , (
+         select MAX(ad.purapply_user) as pUser, ad.inac_id from (
+         	select ad.purapply_user,ad.inac_id from INV_MAT_Accept_Detail ad,inv_item invi where ad.itemid=invi.itemid 
+         	<if test="params.itemCode != null and params.itemCode != ''">
+              and (invi.itemCode like '%'||'${params.itemCode}'||'%'
+              or invi.itemname like '%'||'${params.itemName}'||'%')
+            </if>
+            group by ad.purapply_user,ad.inac_id
+         ) ad 
+         group by ad.inac_id
+    ) gg where gg.inac_id=t.inac_id
+    
+    and t.SITEID=#{params.siteid,jdbcType=VARCHAR} and t.DEL_FLAG='0' and t.status != 'DRAFT'
+		
+   <if test="params.inacNo != null and params.inacNo != ''">
+		  	and instr(t.INAC_NO,#{params.inacNo,jdbcType=VARCHAR}) > 0 
+   </if>
+   <if test="params.applyUser != null and params.applyUser != ''">
+		  	and instr(gg.pUser,#{params.applyUser,jdbcType=VARCHAR}) > 0 
+   </if>
+   <if test="params.applySheetNo != null and params.applySheetNo != ''">
+		  	and instr(t.PO_SHEETNO,#{params.applySheetNo,jdbcType=VARCHAR}) > 0 
+   </if>
+   <if test="params.poName != null and params.poName != ''">
+		  	and instr(t.PO_NAME,#{params.poName,jdbcType=VARCHAR}) > 0 
+   </if>
+   <if test="params.status != null and params.status != ''">
+		  	and instr(t.STATUS,#{params.status,jdbcType=VARCHAR}) > 0 
+   </if>
+   <if test="params.acptCnlus != null and params.acptCnlus != ''">
+		  	and instr(t.acpt_cnlus,#{params.acptCnlus,jdbcType=VARCHAR}) > 0 
+   </if>
+   <if test="params.poSheetno != null and params.poSheetno != ''">
+		  	and instr(t.PO_SHEETNO,#{params.poSheetno,jdbcType=VARCHAR}) > 0 
+   </if>
+   <if test="params.deliveryDay != null and params.deliveryDay != ''">
+		  	and  instr(to_char(t.delivery_date,'yyyy-mm-dd hh24:mi:ss'),#{params.deliveryDay,jdbcType=VARCHAR})>0
+   </if>
+   <if test="params.createdate != null and params.createdate != ''">
+		  	and  instr(to_char(t.CREATEDATE,'yyyy-mm-dd hh24:mi:ss'),#{params.createdate,jdbcType=VARCHAR})>0
+   </if>
+   order by t.INAC_NO desc
+</select>
+<!-- 获取采购单号列表方法 -->
+	<select id="queryPurOrderList" resultType="com.timss.inventory.vo.MTPurOrderVO">
+			SELECT * FROM (
+				SELECT TT.SHEETNO,TT.SHEETNAME,TT.DHDATE,TT.SHEET_I_TYPE AS APPLYTYPENAME,TT.COMPANYNAME
+				FROM (
+		             SELECT IWOE.ITEMID AS ITEMCODE,
+		                IWOE.SHEET_ID,
+		                 IWOE.ITEMNUM,
+		                 NVL(T.RECEIVENUM,0) AS RECEIVENUM,
+		                 IWP.SHEETNO,
+		                 IWP.SHEETNAME,
+		                 FORMATDATETIME(IWP.DHDATE) AS DHDATE,
+		                 IWP.SHEET_I_TYPE,
+		                 SBI.NAME AS COMPANYNAME
+				     FROM ITCEAM_WORKFLOW_ORDERITEM_EXC IWOE
+				     INNER JOIN ITCEAM_WORKFLOW_PURCHORDER IWP ON IWOE.SHEET_ID = IWP.SHEET_ID
+				     LEFT JOIN SUP_BASE_INFO SBI ON SBI.CODE = IWP.COMPANY_NO AND SBI.SITEID = IWP.SITEID
+				     LEFT JOIN 
+                     (
+                         SELECT IMM.OUTTERID,
+                                IMM.ITEMCODE,
+                                NVL(SUM(IMTD.IN_QTY)-NVL(SUM(IMRD.RETURN_QTY),0),0) AS RECEIVENUM,
+                                IMTD.PURA_ID
+                         FROM INV_MAT_MAP IMM,
+                              INV_MAT_TRAN_REC IMTD 
+                              LEFT JOIN INV_MAT_RETURNS_DETAIL IMRD ON IMTD.IMTDID = IMRD.IMTDID
+                         WHERE IMM.IMTDID = IMTD.IMTDID 
+                         GROUP BY IMM.OUTTERID,IMM.ITEMCODE,IMTD.PURA_ID
+                     ) T ON IWOE.SHEET_ID = T.OUTTERID AND IWOE.ITEMID = T.ITEMCODE AND IWOE.APPLY_SHEET_ID = T.PURA_ID
+				     WHERE IWP.SITEID = #{params.siteId} AND IWP.STATUS = 1
+				) TT  
+				WHERE <![CDATA[TT.ITEMNUM >TT.RECEIVENUM]]>
+				GROUP BY TT.SHEETNO,TT.SHEETNAME,TT.DHDATE,TT.SHEET_I_TYPE,TT.COMPANYNAME
+			) T WHERE 1=1 
+	    <if test="params.sheetno != null and params.sheetno != ''">
+		  	and t.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.sheetname != null and params.sheetname != ''">
+		  	and t.sheetname like '%'||'${params.sheetname}'||'%' 
+		</if>
+		<if test="params.companyname != null and params.companyname != ''">
+		  	and t.companyname like '%'||'${params.companyname}'||'%' 
+		</if>
+		<if test="params.dhdate != null and params.dhdate != ''">
+		  	and t.dhdate like '%'||'${params.dhdate}'||'%' 
+		</if>
+		
+	</select>
+	
+	<!-- 通过flowNo找到表中id -->
+	<select id="queryInvMatAcceptIdByFlowNo" parameterType="java.util.Map" resultType="java.lang.String">
+		select a.inac_id from inv_mat_accept a where a.inac_no = #{sheetNo} and a.siteid = #{siteId}
+	</select>	
+</mapper>

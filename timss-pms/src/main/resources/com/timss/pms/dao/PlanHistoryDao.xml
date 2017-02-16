@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.PlanHistoryDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+ 
+	
+	<resultMap type="com.timss.pms.vo.PlanHistoryVo" id="planHistoryVoMap">
+		<id property="planHistoryId" column="plan_history_id"/>
+		<result property="planId" column="plan_id"/>
+		<result property="planName" column="plan_name"/>
+		<result property="year" column="year"/>
+
+		<result property="planType" column="plan_type"/>
+		<result property="projectLeader" column="project_leader"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="planPercent" column="plan_percent"/>
+		
+		<result property="projectIncome" column="project_income"/>
+		<result property="projectCost" column="project_cost"/>
+		
+		<result property="annualIncome" column="annual_income"/>
+		<result property="annualCost" column="annual_cost"/>
+		<result property="changingTime" column="changing_time"/>
+		<result property="changingUser" column="changing_user"/>
+		<result property="command" column="command"/>
+		
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateUser" column="update_user"/>
+		<result property="updateTime" column="update_time"/>
+		
+		<result property="histIncome" column="hist_income" />
+		<result property="histCost" column="hist_cost" />
+		<result property="histProfit" column="hist_profit" />
+		<result property="histPercent" column="hist_percent" />
+		<result property="actualEndTime" column="actual_end_time" />
+		<result property="carryOverTimes" column="carry_over_times" />
+		
+		<result property="annualPercent" column="annual_percent" />
+	
+	</resultMap>
+	
+	
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		plan_history_id,plan_id,plan_name,year,plan_type,project_leader,
+    	custom_manager,start_time,end_time,plan_percent,project_income,project_cost,annual_income,
+    	annual_cost,changing_time,changing_user,command,create_user,create_time,hist_income,hist_cost,
+    	hist_profit,hist_percent,actual_end_time,carry_over_times,annual_percent
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertPlanHistory" parameterType="com.timss.pms.bean.PlanHistory">
+
+    insert into Tim_Pms_Plan_History (<include refid="columnBasic"/>)
+    values (#{planHistoryId,jdbcType=NUMERIC},#{planId,jdbcType=NUMERIC},#{planName,jdbcType=VARCHAR},
+    	#{year,jdbcType=VARCHAR},
+    	#{planType,jdbcType=VARCHAR},#{projectLeader,jdbcType=VARCHAR},#{customManager,jdbcType=VARCHAR},
+    	#{startTime,jdbcType=TIMESTAMP},#{endTime,jdbcType=TIMESTAMP},
+    	#{planPercent,jdbcType=NUMERIC},#{projectIncome,jdbcType=NUMERIC},#{projectCost,jdbcType=NUMERIC},
+    	#{annualIncome,jdbcType=NUMERIC},#{annualCost,jdbcType=NUMERIC},
+    	#{changingTime,jdbcType=TIMESTAMP},#{changingUser,jdbcType=VARCHAR},#{command,jdbcType=VARCHAR},
+    	#{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{histIncome,jdbcType=NUMERIC},
+    	#{histCost,jdbcType=NUMERIC},#{histProfit,jdbcType=NUMERIC},#{histPercent,jdbcType=NUMERIC},
+    	#{actualEndTime,jdbcType=TIMESTAMP},#{carryOverTimes,jdbcType=NUMERIC},#{annualPercent,jdbcType=VARCHAR}
+    	)
+</insert>
+
+
+<select id="queryPlanHistoryListByPlanId" resultMap="planHistoryVoMap">
+	select <include refid="columnBasic"/>
+	from Tim_Pms_Plan_History t
+	where plan_id=#{planId} 
+</select>
+
+<delete id="deletePlanHistoryByPlanId">
+	delete from Tim_Pms_Plan_History t
+	where plan_id=#{planId}
+</delete>
+</mapper>

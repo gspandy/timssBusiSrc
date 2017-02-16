@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvOutterMappingDao">
+	<resultMap type="com.timss.inventory.bean.InvOutterMapping" id="InvOutterMappingMap">
+		<result property="invId" column="inv_id"/>
+		<result property="invType" column="inv_type"/>
+		<result property="outterId" column="outter_id"/>
+		<result property="outterType" column="outter_type"/>
+		<result property="outterNo" column="outter_no"/>
+		<result property="applyType" column="apply_type"/>
+	</resultMap>
+
+	<insert id="insertInvOutterMapping" parameterType="com.timss.inventory.bean.InvOutterMapping">
+		insert into inv_outter_mapping 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="invId != null"> inv_id, </if>
+	      <if test="invType != null"> inv_type, </if>
+	      <if test="outterId != null"> outter_id, </if>
+	      <if test="outterType != null"> outter_type, </if>
+	      <if test="outterNo != null"> outter_no, </if>
+	      <if test="siteid != null"> siteid, </if>
+	      <if test="applyType != null"> apply_type, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="invId != null"> #{invId,jdbcType=VARCHAR}, </if>
+	      <if test="invType != null"> #{invType,jdbcType=VARCHAR}, </if>
+	      <if test="outterId != null"> #{outterId,jdbcType=VARCHAR}, </if>
+	      <if test="outterType != null"> #{outterType,jdbcType=VARCHAR}, </if>
+	      <if test="outterNo != null"> #{outterNo,jdbcType=VARCHAR}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="applyType != null"> #{applyType,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 查询中间表数据 -->
+	<select id="queryInvOutterMappingByOutterNo" parameterType="java.util.Map" resultMap="InvOutterMappingMap">
+		select a.outter_type,a.outter_no,a.siteid 
+		from inv_outter_mapping a 
+		where a.outter_id = #{outterId} and a.siteid = #{siteId}
+		group by a.outter_type,a.outter_no,a.siteid
+	</select>
+	
+	<select id="queryInvOutterMapping" parameterType="com.timss.inventory.bean.InvOutterMapping" resultMap="InvOutterMappingMap">
+		select iom.inv_id,iom.inv_type,iom.outter_id,iom.outter_type,
+				iom.outter_no,iom.siteid,iom.apply_type 
+		from inv_outter_mapping iom
+		where 1=1 
+		<if test="invId != null and invId != ''">
+		 	and iom.inv_id = '${invId}'
+		 </if>
+		 <if test="invType != null and invType != ''">
+		 	and iom.inv_type = '${invType}'
+		 </if>
+		 <if test="outterId != null and outterId != ''">
+		 	and iom.outter_id = '${outterId}'
+		 </if>
+		 <if test="outterType != null and outterType != ''">
+		 	and iom.outter_type = '${outterType}'
+		 </if>
+		 <if test="outterNo != null and outterNo != ''">
+		 	and iom.outter_no = '${outterNo}'
+		 </if>
+		 <if test="siteid != null and siteid != ''">
+		 	and iom.siteid = '${siteid}'
+		 </if>
+		 <if test="applyType != null and applyType != ''">
+		 	and iom.apply_type = '${applyType}'
+		 </if>
+	</select>
+	
+	<!-- 删除映射关系信息 -->
+	<delete id="deleteOutterMappingByMap" parameterType="java.util.Map">
+		delete from inv_outter_mapping a where 1=1
+		 <if test="invId != null and invId != ''">
+		 	and a.inv_id = '${invId}'
+		 </if>
+		 <if test="invType != null and invType != ''">
+		 	and a.inv_type = '${invType}'
+		 </if>
+		 <if test="outterId != null and outterId != ''">
+		 	and a.outter_id = '${outterId}'
+		 </if>
+		 <if test="outterType != null and outterType != ''">
+		 	and a.outter_type = '${outterType}'
+		 </if>
+		 <if test="outterNo != null and outterNo != ''">
+		 	and a.outter_no = '${outterNo}'
+		 </if>
+		 <if test="siteid != null and siteid != ''">
+		 	and a.siteid = '${siteid}'
+		 </if>
+		 <if test="applyType != null and applyType != ''">
+		 	and a.apply_type = '${applyType}'
+		 </if>
+	</delete>
+</mapper>

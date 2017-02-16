@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.JPJobtaskDao">
+
+
+	<resultMap type="JPJobtask" id="jpJobtaskMap">
+		<id column="ID" property="id" />
+		<result column="JOBPLAN_ID" property="jobPlanId" />
+		<result column="NAME" property="name" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="TASKDURATION" property="taskDuration" />
+		<result column="PROJ" property="proj" />
+		<result column="ITEM" property="item" />
+		<result column="APPLY" property="apply" />
+		<result column="REMARKS" property="remarks" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+	</resultMap>	
+	  
+	
+	
+	<insert id="insertJPJobtask">
+		insert into wo_jp_jobtask(ID,JOBPLAN_ID,DESCRIPTION,PROJ,ITEM,APPLY,SITEID,DEPTID,YXBZ,REMARKS) 
+		values( #{id},
+				#{jobPlanId,jdbcType=NUMERIC},
+				#{description,jdbcType=VARCHAR},
+				#{proj,jdbcType=VARCHAR},
+				#{item,jdbcType=VARCHAR},
+				#{apply,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC},
+				#{remarks,jdbcType=VARCHAR})
+	</insert>
+	
+	
+	<update id="updateJPJobtask" parameterType="JPJobtask">
+		update wo_jp_jobtask
+		set NAME=#{name}
+		where ID=#{id} 
+	</update>
+	<update id="updateJPJobtaskCopy" parameterType="JPJobtask">
+		update wo_jp_jobtask
+		set NAME=#{name},DESCRIPTION=#{description},TASKDURATION=#{taskDuration}
+			REMARKS=#{remarks},APPLY=#{apply},ITEM=#{item},PROJ=#{proj}
+		where ID=#{id} and SITEID=#{siteid} and DEPTID=#{deptid} and YXBZ=#{yxbz}
+	</update>
+	
+	<select id="queryJPJobtaskByJPId" parameterType="int" resultMap="jpJobtaskMap">
+		select * from wo_jp_jobtask t
+		where t.JOBPLAN_ID = #{jpId}
+	</select>
+	
+	<delete id="deleteJPJobtaskByJPId" parameterType="int" >
+		delete from wo_jp_jobtask t
+		where t.JOBPLAN_ID = #{jpId}
+	</delete>
+	 
+	<select id="queryJPJobtaskById" parameterType="int" resultMap="jpJobtaskMap">
+		select * from wo_jp_jobtask where id= #{ id }
+	</select>
+	
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextJPJobtaskId" resultType="int">
+		select SEQ_WO_JPOTHERS.nextval from dual
+	</select>
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <list-property name="configVars">
+        <structure>
+            <property name="name">__isnull_759_0</property>
+            <property name="value">author_759</property>
+        </structure>
+        <structure>
+            <property name="name">author_759_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__jobsId_1104_1</property>
+            <property name="value">140</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__stationId_1121_2</property>
+            <property name="value">SWF_opr_2a65b6c0-037e-41a7-8c79-4aab37b054fb</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__scheduleId_1140_3</property>
+            <property name="value"></property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__siteId_1162_4</property>
+            <property name="value">SWF</property>
+        </structure>
+        <structure>
+            <property name="name">__isdisplay__team_1482_5</property>
+            <property name="value"></property>
+        </structure>
+        <structure>
+            <property name="name">scheduleId_1140_6</property>
+            <property name="value"></property>
+        </structure>
+        <structure>
+            <property name="name">scheduleId_1140_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">siteId_1162_7</property>
+            <property name="value">SWF</property>
+        </structure>
+        <structure>
+            <property name="name">siteId_1162_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">jobsId_1104_8</property>
+            <property name="value">140</property>
+        </structure>
+        <structure>
+            <property name="name">jobsId_1104_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">stationId_1121_9</property>
+            <property name="value">SWF_opr_2a65b6c0-037e-41a7-8c79-4aab37b054fb</property>
+        </structure>
+        <structure>
+            <property name="name">stationId_1121_type_</property>
+            <property name="value">string</property>
+        </structure>
+        <structure>
+            <property name="name">team_1482_10</property>
+            <property name="value"></property>
+        </structure>
+        <structure>
+            <property name="name">team_1482_type_</property>
+            <property name="value">string</property>
+        </structure>
+    </list-property>
+</report>

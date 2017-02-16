@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exceptions>
+	<exception name="transferException1" class="com.timss.inventory.exception.TransferException1">
+	        <page></page>
+	        <data>
+	            <flag>123456</flag>
+	            <msg>移库数量不能超过可用库存和实际库存</msg> 
+	        </data>
+	</exception>
+	<exception name="transferException2" class="com.timss.inventory.exception.TransferException2">
+	        <page></page>
+	        <data>
+	            <flag>456789</flag>
+	            <msg>请检查当前移入仓库下，物资都有启用的绑定分类</msg> 
+	        </data>
+	</exception>	
+	<exception name="insufficientException" class="com.timss.inventory.exception.InsufficientException">
+	        <page></page>
+	        <data>
+	            <flag>112233</flag>
+	            <msg>库存不足，无法出库</msg> 
+	        </data>
+	</exception>	
+	<exception name="priceNotExistException" class="com.timss.inventory.exception.PriceNotExistException">
+	        <page></page>
+	        <data>
+	            <flag>112244</flag>
+	            <msg>无法获取物资价格，请联系系统管理员</msg> 
+	        </data>
+	</exception>			
+</exceptions>

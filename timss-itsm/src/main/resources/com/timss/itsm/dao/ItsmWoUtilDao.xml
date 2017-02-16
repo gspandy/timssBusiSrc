@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmWoUtilDao">
+	<resultMap type="ItsmCustomerLoc" id="ItsmCustomerLocMap">
+		<id column="ID" property="id" />
+		<result column="CUSTOMER_CODE" property="customerCode" />
+		<result column="CUSTOMER_LOC" property="customerLoc" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="YXBZ" property="yxbz" />
+	</resultMap>	
+	
+		<insert id="insertCustomerLocInfo">
+			insert into ITSM_CUSTOMER_LOC(CUSTOMER_CODE,CUSTOMER_LOC,CREATEDATE,MODIFYDATE,CREATEUSER,MODIFYUSER,YXBZ) 
+			values( #{customerCode,jdbcType=VARCHAR},
+					#{customerLoc,jdbcType=VARCHAR},
+					#{createdate,jdbcType=TIMESTAMP},
+					#{modifydate,jdbcType=TIMESTAMP},
+					#{createuser,jdbcType=VARCHAR},
+					#{modifyuser,jdbcType=VARCHAR},
+					#{yxbz,jdbcType=NUMERIC}) 
+	</insert>
+	<!-- 更新客户位置的基本信息 -->
+	<update id="updateCustomerLocInfo" parameterType="HashMap">
+		update ITSM_CUSTOMER_LOC 
+		set CUSTOMER_LOC=#{customerLoc,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifydate},
+			MODIFYUSER=#{modifyuser}
+		where CUSTOMER_CODE=#{customerCode} 
+	</update>
+	
+	
+	<select id="queryCustomerLocByUserId" resultMap="ItsmCustomerLocMap" >
+		select CUSTOMER_CODE,CUSTOMER_LOC
+		from ITSM_CUSTOMER_LOC t
+		where t.YXBZ = 1 and CUSTOMER_CODE=#{customerCode} 
+	</select>
+	
+	
+	
+	
+	
+</mapper>

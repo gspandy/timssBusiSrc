@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.attendance.dao.CarApplyDao">
+   	<resultMap type="CarApplyBean" id="carApplyMap">
+		<id column="CA_ID" property="caId" />
+		<result column="CA_NUM" property="caNum" />
+		<result column="DESTINATION_TYPE" property="destinationType" />
+		<result column="DESTINATION" property="destination" />
+		<result column="PHONE" property="phone" />
+		<result column="START_TIME" property="startTime" />
+		<result column="END_TIME" property="endTime" />
+		<result column="REASON" property="reason" />
+		<result column="TOGETHERS" property="togethers" />
+		<result column="CAR_TYPE" property="carType" />
+		<result column="DRIVER" property="driver" />
+		<result column="CREATE_USER" property="createUser" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="MODIFY_USER" property="modifyUser" />
+		<result column="MODIFY_DATE" property="modifyDate" />
+		<result column="SITE_ID" property="siteId" />
+		<result column="DEPT_ID" property="depId" />
+		<result column="WORKFLOWID" property="workflowId" />
+		<result column="STATUS" property="status" />
+		<result column="DEL_IND" property="delInd" />
+		<result column="curr_hand_user" property="currHandUser" />
+		
+		<result column="create_username" property="createUserName" />
+		<result column="dept_name" property="deptName" />
+	</resultMap>
+	
+    <!-- 查询列表信息 -->
+    <select id="queryList" resultMap="carApplyMap" >
+        select t.ca_id,
+           t.ca_num,
+           t.create_user,
+           t.dept_id,
+           t.destination,
+           t.reason,
+           t.start_time,
+           t.end_time,
+           t.phone,
+           t.driver,
+           t.car_type,
+           t.create_date,
+           t.status,
+           s.name  create_username,
+           d.name dept_name
+        from atd_carapply t,sec_user s,sec_organization d
+        where t.create_user = s.user_id
+        and t.dept_id = d.org_code
+        and t.status != 'draft'
+        and t.DEL_IND !='N'
+        <if test="params.siteId != null">
+			and t.site_id = #{params.siteId} 
+		</if>
+	</select>
+		
+<!-- 插入 -->
+<insert id="insertCarApply"  parameterType="CarApplyBean">
+  insert into atd_carapply
+   (ca_id,ca_num,destination_type,destination,phone,start_time,end_time,
+    reason,togethers,car_type,driver,create_user,create_date,
+    modify_user,modify_date,site_id,dept_id,workflowid,status,del_ind,curr_hand_user)
+  values
+   (#{caId},
+   	#{caNum,jdbcType=VARCHAR},
+   	#{destinationType,jdbcType=VARCHAR},
+   	#{destination,jdbcType=VARCHAR},
+   	#{phone,jdbcType=VARCHAR},
+   	#{startTime,jdbcType=TIMESTAMP},
+   	#{endTime,jdbcType=TIMESTAMP},
+   	#{reason,jdbcType=VARCHAR},
+   	#{togethers,jdbcType=VARCHAR},
+   	#{carType,jdbcType=VARCHAR},
+   	#{driver,jdbcType=VARCHAR},
+   	#{createUser,jdbcType=VARCHAR},
+   	#{createDate,jdbcType=TIMESTAMP},
+   	#{modifyUser,jdbcType=VARCHAR},
+   	#{modifyDate,jdbcType=TIMESTAMP},
+   	#{siteId,jdbcType=VARCHAR},
+   	#{depId,jdbcType=VARCHAR},
+   	#{workflowId,jdbcType=VARCHAR},
+   	#{status,jdbcType=VARCHAR},
+   	#{delInd,jdbcType=VARCHAR},
+   	#{currHandUser,jdbcType=VARCHAR}
+   )
+</insert>	
+
+<update id="updateCarApply"  parameterType="CarApplyBean">
+update atd_carapply
+   set  ca_id = ca_id 
+   	   <if test="destinationType !=null">
+   	    , destination_type = #{destinationType}
+   	   </if>
+   	   <if test="destination !=null">
+   	    , destination = #{destination}
+   	   </if>
+   	   <if test="phone !=null">
+   	    , phone = #{phone}
+   	   </if>
+   	   <if test="startTime !=null">
+   	    , start_time = #{startTime}
+   	   </if>
+       <if test="endTime !=null">
+   	    , end_time = #{endTime}
+   	   </if>
+   	   <if test="reason !=null">
+   	    , reason = #{reason}
+   	   </if>
+       <if test="togethers !=null">
+   	    , togethers = #{togethers}
+   	   </if>
+   	   <if test="carType !=null and carType != '' ">
+   	    , car_type = #{carType}
+   	   </if>
+   	   <if test="driver !=null and driver != '' ">
+   	    , driver = #{driver}
+   	   </if>
+   	   <if test="modifyUser !=null">
+   	    , modify_user = #{modifyUser}
+   	   </if>
+   	   <if test="modifyDate !=null">
+   	    , modify_date = #{modifyDate}
+   	   </if>
+   	   <if test="workflowId !=null and workflowId != ''">
+   	    , workflowid = #{workflowId}
+   	   </if>
+   	   <if test="status !=null">
+   	    , status = #{status}
+   	   </if>
+       <if test="delInd !=null">
+   	    , del_ind = #{delInd}
+   	   </if>
+   	   <if test="currHandUser !=null">
+   	    , curr_hand_user = #{currHandUser}
+   	   </if>
+ where ca_id = #{caId}
+</update> 
+
+<!-- 根据工单id查询 -->
+<select id="queryById"  resultMap="carApplyMap">
+select ca_id,
+       ca_num,
+       destination_type,
+       destination,
+       phone,
+       end_time,
+       reason,
+       togethers,
+       car_type,
+       driver,
+       create_user,
+       create_date,
+       modify_user,
+       modify_date,
+       site_id,
+       dept_id,
+       workflowid,
+       status,
+       start_time,
+       t.del_ind,
+       curr_hand_user,
+       s.name  create_username,
+       d.name dept_name
+  from atd_carapply t,sec_user s,sec_organization d
+  where ca_id=#{caId} 
+  and t.create_user = s.user_id
+  and t.dept_id = d.org_code
+</select>
+
+	
+<!-- 草稿删除 -->
+<delete id="deleteCarApply" parameterType="CarApplyBean">
+    update  atd_carapply  t set t.DEL_IND ='N'
+    where ca_Id = #{caId}
+</delete>
+</mapper>

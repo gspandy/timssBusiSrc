@@ -1,0 +1,29 @@
+.pms-progress-defered {
+	width:10px;
+	height:10px;
+	background-color:Red;
+	float:left;
+	border:1px solid #A3A8A3;
+}
+
+.pms-progress-finished {
+	width:10px;
+	height:10px;
+	background-color:#AADD11;
+	float:left;
+	border:1px solid #A3A8A3;
+}
+
+.pms-progress-unfinished {
+	width:10px;
+	height:10px;
+	
+	float:left;
+	border:1px solid #A3A8A3;
+}
+
+.pms-progress-wrapper {
+	width:100px;
+	height:12px;
+	margin-left:3px;;
+}

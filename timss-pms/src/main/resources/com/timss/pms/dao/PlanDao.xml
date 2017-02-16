@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.PlanDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+    <resultMap type="com.timss.pms.bean.Plan" id="planMap">
+		<id property="id" column="id"/>
+		<result property="planName" column="plan_name"/>
+		<result property="year" column="year"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="type" column="type"/>
+		<result property="projectIncome" column="project_income"/>
+		<result property="projectCost" column="project_cost"/>
+		<result property="projectProfit" column="project_profit"/>
+		<result property="planPercent" column="plan_percent"/>
+		<result property="annualIncome" column="annual_income"/>
+		<result property="annualCost" column="annual_cost"/>
+		<result property="annualProfit" column="annual_profit"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="projectLeader" column="project_Leader"/>
+		<result property="planAttach" column="plan_attach"/>
+		<result property="command" column="command"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.PlanVo" id="planVoMap">
+		<id property="id" column="id"/>
+		<result property="planName" column="plan_name"/>
+		<result property="year" column="year"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="type" column="type"/>
+		<result property="projectIncome" column="project_income"/>
+		<result property="projectCost" column="project_cost"/>
+		<result property="projectProfit" column="project_profit"/>
+		<result property="planPercent" column="plan_percent"/>
+		<result property="annualIncome" column="annual_income"/>
+		<result property="annualCost" column="annual_cost"/>
+		<result property="annualProfit" column="annual_profit"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="projectLeader" column="project_Leader"/>
+		<result property="command" column="command"/>
+		<result property="status" column="status"/>
+		<result property="planAttach" column="plan_attach"/>
+		<result property="siteid" column="siteid"/>
+		
+		<result property="typeName" column="typeName" />
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.PlanDtlVo" id="planDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="planName" column="plan_name"/>
+		<result property="year" column="year"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="type" column="type"/>
+		<result property="projectIncome" column="project_income"/>
+		<result property="projectCost" column="project_cost"/>
+		<result property="projectProfit" column="project_profit"/>
+		<result property="planPercent" column="plan_percent"/>
+		<result property="annualIncome" column="annual_income"/>
+		<result property="annualCost" column="annual_cost"/>
+		<result property="annualProfit" column="annual_profit"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="projectLeader" column="project_Leader"/>
+		<result property="command" column="command"/>
+		<result property="status" column="status"/>
+		<result property="planAttach" column="plan_attach"/>
+		<result property="siteid" column="siteid"/>
+		
+		<result property="createUser" column="create_user" />
+		<result property="createTime" column="create_time" />
+		
+		<result property="histIncome" column="hist_income" />
+		<result property="histCost" column="hist_cost" />
+		<result property="histProfit" column="hist_profit" />
+		<result property="histPercent" column="hist_percent" />
+		<result property="actualEndTime" column="actual_end_time" />
+		<result property="carryOverTimes" column="carry_over_times" />
+		
+		<result property="annualPercent" column="annual_percent" />
+	</resultMap>
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,plan_name,year,del_flag,start_time,end_time,type,project_income,
+    	project_cost,project_profit,annual_income,annual_cost,annual_profit,project_leader,
+    	custom_manager,command,plan_percent,status,plan_attach,annual_percent
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertPlan" parameterType="com.timss.pms.bean.Plan">
+    <selectKey resultType="int" keyProperty="id" order="BEFORE">
+        select SEQ_PMS_PLAN.nextval from dual
+    </selectKey>
+    insert into Tim_Pms_Plan(<include refid="columnBasic"/>,create_time,create_user,siteid)
+    values (#{id},#{planName,jdbcType=VARCHAR},#{year,jdbcType=VARCHAR},0,#{startTime,jdbcType=TIMESTAMP},#{endTime,jdbcType=TIMESTAMP},#{type,jdbcType=VARCHAR},#{projectIncome,jdbcType=NUMERIC},
+    #{projectCost,jdbcType=NUMERIC},#{projectProfit,jdbcType=NUMERIC},#{annualIncome,jdbcType=NUMERIC},#{annualCost,jdbcType=NUMERIC},#{annualProfit,jdbcType=NUMERIC}
+    ,#{projectLeader,jdbcType=VARCHAR},#{customManager,jdbcType=VARCHAR},#{command,jdbcType=VARCHAR},#{planPercent,jdbcType=NUMERIC},#{status,jdbcType=VARCHAR}
+    ,#{planAttach,jdbcType=VARCHAR},#{annualPercent,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},
+    #{createUser,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR})
+</insert>
+
+<update id="updatePlan" parameterType="com.timss.pms.bean.Plan">
+    update Tim_Pms_Plan set plan_name=#{planName,jdbcType=VARCHAR},year=#{year,jdbcType=VARCHAR},start_time=#{startTime,jdbcType=TIMESTAMP},end_time=#{endTime,jdbcType=TIMESTAMP},
+    		project_income=#{projectIncome,jdbcType=NUMERIC},project_cost=#{projectCost,jdbcType=NUMERIC},project_profit=#{projectProfit,jdbcType=NUMERIC},
+    		annual_income=#{annualIncome,jdbcType=NUMERIC},annual_cost=#{annualCost,jdbcType=NUMERIC},annual_profit=#{annualProfit,jdbcType=NUMERIC},
+    		project_leader=#{projectLeader,jdbcType=VARCHAR},custom_manager=#{customManager,jdbcType=VARCHAR},command=#{command,jdbcType=VARCHAR},
+    		plan_percent=#{planPercent,jdbcType=NUMERIC},type=#{type,jdbcType=VARCHAR},status=#{status,jdbcType=VARCHAR},plan_attach=#{planAttach,jdbcType=VARCHAR},
+    		update_time=#{updateTime,jdbcType=TIMESTAMP},update_user=#{updateUser,jdbcType=VARCHAR},annual_percent=#{annualPercent,jdbcType=NUMERIC}
+     where id=#{id}
+</update>
+
+<select id="queryPlanList"  resultMap="planVoMap">
+    select  <include refid="columnVo"/>,t.siteid ,to_char(start_time,'yyyy-MM-dd') as startTimeStr,to_char(end_time,'yyyy-MM-dd') as endTimeStr
+    from Tim_Pms_Plan t
+    where t.del_flag='0' 
+    
+</select>
+
+<select id="queryPlanById"  resultMap="planDtlVoMap">
+    select <include refid="columnBasic"/>,create_time,create_user,siteid,
+    hist_income,hist_cost,hist_profit,hist_percent,actual_end_time,carry_over_times 
+    from Tim_Pms_Plan t
+    where t.del_flag='0' and t.id=#{id}
+</select>
+
+<delete id="deletePlan" parameterType="int">
+    delete from Tim_Pms_Plan where id=#{id}
+</delete>
+
+<select id="countPlan"  resultType="long">
+    select count(t.id)
+    from Tim_Pms_Plan t
+    
+</select>
+
+<select id="queryActualCost"  resultType="double">
+    select sum(pay.actualpay) 
+    from tim_pms_plan plan
+    left join tim_pms_project project on plan.id=project.plan_id and project.status='approved'
+    left join tim_pms_contract contract on contract.type='cost' and contract.project_id=project.id
+    left join tim_pms_pay pay on pay.contract_id=contract.id and pay.status='approved'
+    where plan.id=#{planId}
+</select>
+
+<select id="queryActualIncome"  resultType="double">
+   select sum(pay.actualpay) 
+    from tim_pms_plan plan
+    left join tim_pms_project project on plan.id=project.plan_id and project.status='approved'
+    left join tim_pms_contract contract on contract.type='income' and contract.project_id=project.id
+    left join tim_pms_pay pay on pay.contract_id=contract.id and pay.status='approved'
+     where plan.id=#{planId}
+</select>
+
+<update id="updateHistInfo" >
+	update tim_pms_plan 
+	set hist_income=#{histIncome,jdbcType=NUMERIC},hist_cost=#{histCost,jdbcType=NUMERIC},
+	    hist_profit=#{histProfit,jdbcType=NUMERIC},hist_percent=#{histPercent,jdbcType=NUMERIC}
+	where id=#{id}
+</update>
+
+<update id="increaseCarryOverTimes">
+	update tim_pms_plan set carry_over_times=
+         ( case when carry_over_times is null then 1 
+           else carry_over_times+1 end
+         
+         ) 
+where id=#{id}
+</update>
+</mapper>

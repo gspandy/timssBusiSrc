@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurPayDao">
+	
+	<resultMap type="com.timss.purchase.vo.PurPayVO" id="PurPayVOMap">
+		<result property="payId" column="PAY_ID"/>
+		<result property="sheetId" column="SHEET_ID"/>
+		<result property="pay" column="PAY"/>
+		<result property="usage" column="USAGE"/>
+		<result property="payType" column="PAY_TYPE"/>
+		<result property="qaPay" column="QA_PAY"/>
+		<result property="refusePay" column="REFUSE_PAY"/>
+		<result property="relatePayId" column="RELATE_PAY_ID"/>
+		<result property="qaDeadLine" column="QA_DEADLINE"/>
+		<result property="excludeDate" column="EXCLUDE_DATE"/>
+		<result property="auditDate" column="AUDIT_DATE"/>
+		<result property="invoiceNos" column="INVOICE_NOS"/>
+		<result property="payNo" column="PAY_NO"/>
+		<result property="transactor" column="TRANSACTOR"/>
+		<result property="status" column="STATUS"/>
+		<result property="remark" column="REMARK"/>
+		<result property="procInstId" column="PROCINST_ID"/>
+		<result property="createdate" column="CREATEDATE"/>
+		<result property="createuser" column="CREATEUSER"/>
+		<result property="modifydate" column="MODIFYDATE"/>
+		<result property="modifyuser" column="MODIFYUSER"/>
+		<result property="siteid" column="SITEID"/>
+		<result property="erpStatus" column="ERP_STATUS"/>
+		<!-- vo独占属性  -->
+		<result property="sheetNo" column="SHEETNO"/>
+		<result property="sheetName" column="SHEETNAME"/>
+		<result property="sheetTotal" column="SHEETTOTAL"/>
+		<result property="payRatio" column="PAYRATIO"/>
+		<result property="supplierName" column="SUPPLIERNAME"/>
+		<result property="noTaxTotal" column="NOTAXTOTAL"/>
+		<result property="taxTotal" column="TAXTOTAL"/>
+		<result property="total" column="TOTAL"/>
+		<result property="actualPayTotal" column="ACTUALPAYTOTAL"/>
+		<result property="relatePayNo" column="RELATE_PAY_NO"/>
+		<result property="createrName" column="CREATERNAME"/>
+		<result property="supplierCode" column="SUPPLIERCODE"/>
+		<result property="spNo" column="SPNO"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.purchase.vo.PurPayDtlVO" id="PurPayDtlVOMap">
+		<result property="payDtlId" column="PAYDTL_ID"/>
+		<result property="payId" column="PAY_ID"/>
+		<result property="notaxTotal" column="NOTAX_TOTAL"/>
+		<result property="taxTotal" column="TAX_TOTAL"/>
+		<result property="sendAccount" column="SEND_ACCOUNT"/>
+		<result property="status" column="STATUS"/>
+		<result property="warehouseId" column="WAREHOUSE_ID"/>
+		<result property="imtdId" column="IMTD_ID"/>
+		<!-- vo独占属性  -->
+		<result property="itemId" column="ITEMID"/>
+		<result property="itemCode" column="ITEMCODE"/>
+		<result property="itemName" column="ITEMNAME"/>
+		<result property="customModel" column="CUSMODEL"/>
+		<result property="unit" column="UNITNAME"/>
+		<result property="applyNum" column="APPLYNUM"/>
+		<result property="invNum" column="INVNUM"/>
+		<result property="noSendAccount" column="NOSENDACCOUNT"/>
+		<result property="noTaxPrice" column="NOTAXPRICE"/>
+		<result property="taxPrice" column="TAXPRICE"/>
+		<result property="invcateid" column="INVCATEID"/>
+		
+	</resultMap>
+	<!-- 查询空白的的付款记录  -->
+	<select id="queryBlankPurPayBySheetId" resultMap="PurPayVOMap">
+		SELECT 
+			'' AS PAY_ID,PO.SHEET_ID,'' AS PAY,'' AS USAGE,'' AS PAY_TYPE,'' AS QA_PAY,'' AS REFUSE_PAY,
+			'' AS RELATE_PAY_ID,'' AS QA_DEADLINE,'' AS EXCLUDE_DATE,'' AS AUDIT_DATE,'' AS INVOICE_NOS,
+			'' AS PAY_NO,'' AS TRANSACTOR,'' AS STATUS,
+			PO.SHEETNO,PO.SHEETNAME,PO.TOTAL_PRICE AS SHEETTOTAL,
+			'' AS PAYRATIO,'' AS NOTAXTOTAL,
+			'' AS TAXTOTAL,'' AS TOTAL, 
+			SBI.CODE AS SUPPLIERCODE,SBI.NAME AS SUPPLIERNAME,'' AS ACTUALPAYTOTAL,
+			'' AS RELATE_PAY_NO,'' AS REMARK,
+			'' AS PROCINST_ID,'' AS CREATERNAME,
+			PO.SPNO
+	    FROM ITCEAM_WORKFLOW_PURCHORDER PO  
+	    LEFT JOIN SUP_BASE_INFO SBI ON PO.COMPANY_NO = SBI.CODE
+	    WHERE 1=1
+ 		<if test="sheetId != null and sheetId != '' ">
+		  	AND PO.SHEET_ID = #{sheetId}  
+		</if>
+	</select>
+	<!-- 根据条件查询付款记录  -->
+	<select id="queryPurPayByCondition" resultMap="PurPayVOMap">
+		SELECT 
+			PAY.PAY_ID,PAY.SHEET_ID,PAY.PAY,PAY.USAGE,PAY.PAY_TYPE,PAY.QA_PAY,PAY.REFUSE_PAY,
+			PAY.RELATE_PAY_ID,PAY.QA_DEADLINE,PAY.EXCLUDE_DATE,PAY.AUDIT_DATE,PAY.INVOICE_NOS,
+			PAY.PAY_NO,PAY.TRANSACTOR,PAY.STATUS,PO.SHEETNO,PO.SHEETNAME,PO.TOTAL_PRICE AS SHEETTOTAL,
+			PAY.PAY/PO.TOTAL_PRICE*100 AS PAYRATIO,SUM(PAYDTL.NOTAX_TOTAL) AS NOTAXTOTAL,
+			SUM(PAYDTL.TAX_TOTAL) AS TAXTOTAL,SUM(PAYDTL.NOTAX_TOTAL)+SUM(PAYDTL.TAX_TOTAL) AS TOTAL, 
+			SBI.CODE AS SUPPLIERCODE,SBI.NAME AS SUPPLIERNAME,PAY.PAY-PAY.REFUSE_PAY AS ACTUALPAYTOTAL,
+			PAY_RELATE.PAY_NO AS RELATE_PAY_NO,PAY.REMARK,
+			PAY.PROCINST_ID,U2.NAME AS CREATERNAME,PAY.CREATEUSER,PAY.MODIFYUSER,PAY.MODIFYDATE,
+			PAY.SITEID,PAY.CREATEDATE,PAY.ERP_STATUS,PO.SPNO
+	    FROM ITCEAM_WORKFLOW_PURCHORDER PO INNER JOIN ITCEAM_WORKFLOW_PAY PAY ON PO.SHEET_ID = PAY.SHEET_ID 
+	    LEFT JOIN ITCEAM_WORKFLOW_PAY PAY_RELATE ON PAY.RELATE_PAY_ID = PAY_RELATE.PAY_ID
+	    LEFT JOIN ITCEAM_WORKFLOW_PAYDTL PAYDTL ON PAYDTL.PAY_ID = PAY.PAY_ID 
+	    LEFT JOIN SUP_BASE_INFO SBI ON PO.COMPANY_NO = SBI.CODE
+	    LEFT JOIN SEC_USER U2 ON PAY.CREATEUSER = U2.USER_ID
+	    WHERE 1=1
+ 		<if test="sheetId != null and sheetId != '' ">
+		  	AND PO.SHEET_ID = #{sheetId}  AND PAY.STATUS <![CDATA[<>]]> 'deleted'
+		</if>
+		<if test="payId != null and payId != ''">
+		  	AND PAY.PAY_ID = #{payId}
+		</if>
+		<if test="(sheetId == null or sheetId == '') and (payId == null or payId == '')">
+			AND 1 = 0
+		</if>
+		GROUP BY PAY.PAY_ID,PAY.SHEET_ID,PAY.PAY,PAY.USAGE,PAY.PAY_TYPE,PAY.QA_PAY,
+			PAY.REFUSE_PAY,PAY.RELATE_PAY_ID,PAY.QA_DEADLINE,PAY.EXCLUDE_DATE,PAY.AUDIT_DATE,
+			PAY.INVOICE_NOS,PAY.PAY_NO,PAY.TRANSACTOR,PAY.STATUS,PO.SHEETNO,PO.SHEETNAME,PO.TOTAL_PRICE,
+			SBI.CODE,SBI.NAME,PAY_RELATE.PAY_NO,PAY.REMARK,PAY.PROCINST_ID,U2.NAME,PAY.CREATEUSER,
+			PAY.MODIFYUSER,PAY.MODIFYDATE,PAY.SITEID,PAY.CREATEDATE,PAY.ERP_STATUS,PO.SPNO 
+		ORDER BY PAY.CREATEDATE ASC,PAY.PAY_NO ASC
+	</select>
+	
+	<!-- 根据条件查询到货款付款明细 -->
+	<select id="queryPurPayDtlListByCondition" resultMap="PurPayDtlVOMap">
+		SELECT PAYDTL.PAYDTL_ID,
+		<if test="payId != null and payId != ''">
+			PAYDTL.PAY_ID,
+			ROUND(NVL(PAYDTL.NOTAX_TOTAL,0),2) AS NOTAX_TOTAL,
+			ROUND(NVL(PAYDTL.TAX_TOTAL,0),2) AS TAX_TOTAL,
+			NVL(PAYDTL.SEND_ACCOUNT,0) AS SEND_ACCOUNT,
+			PAYDTL.IMTD_ID,
+			PAYDTL.WAREHOUSE_ID,
+		</if>
+		<if test="payId == null or payId == ''">
+			'' AS PAY_ID,
+			<!--
+			ROUND((ORDERITEM.PRICE)*NVL(A.NOSENDACCOUNT,IMTD.IN_QTY),2) AS NOTAX_TOTAL,
+			ROUND(ORDERITEM.TAX*NVL(A.NOSENDACCOUNT,IMTD.IN_QTY),2) AS TAX_TOTAL,
+			生物质税额的计算时从税后 税率推算出税前和税额的
+			-->
+			ROUND((ORDERITEM.COST/(1+ORDERITEM.TAX_RATE/100))*NVL(A.NOSENDACCOUNT-NVL(B.RETURNNUM,0),IMTD.IN_QTY-NVL(B.RETURNNUM,0)),2) AS NOTAX_TOTAL,
+			ROUND((ORDERITEM.COST/(1+ORDERITEM.TAX_RATE/100)*ORDERITEM.TAX_RATE/100)*NVL(A.NOSENDACCOUNT-NVL(B.RETURNNUM,0),IMTD.IN_QTY-NVL(B.RETURNNUM,0)),2) AS TAX_TOTAL,
+			FORMATNUM2(CASE WHEN
+			NVL(A.NOSENDACCOUNT-NVL(B.RETURNNUM,0),IMTD.IN_QTY-NVL(B.RETURNNUM,0)) >0 
+			THEN NVL(A.NOSENDACCOUNT-NVL(B.RETURNNUM,0),IMTD.IN_QTY-NVL(B.RETURNNUM,0))
+			ELSE 0 END)
+			AS SEND_ACCOUNT,
+			IMTD.IMTDID AS IMTD_ID,
+			WAREHOUSEITEM.WAREHOUSEID AS WAREHOUSE_ID,
+		</if>
+	    PAYDTL.STATUS,IMTD.ITEMCODE,ITEM.ITEMNAME,
+	    ITEM.CUSMODEL,UNIT.UNITNAME,FORMATNUM2(ORDERITEM.ITEMNUM) AS APPLYNUM,FORMATNUM2(IMTD.IN_QTY-NVL(B.RETURNNUM,0)) AS INVNUM,
+	    FORMATNUM2(CASE WHEN
+	    NVL(A.NOSENDACCOUNT-NVL(B.RETURNNUM,0),IMTD.IN_QTY-NVL(B.RETURNNUM,0)) >0
+	    THEN NVL(A.NOSENDACCOUNT-NVL(B.RETURNNUM,0),IMTD.IN_QTY-NVL(B.RETURNNUM,0))
+		ELSE 0 END)
+	    AS NOSENDACCOUNT,
+	    ORDERITEM.PRICE AS NOTAXPRICE,ORDERITEM.COST AS TAXPRICE,
+	    IMTD.INVCATEID,
+	    CAT.INVCATENAME
+	    FROM ITCEAM_WORKFLOW_PAYDTL PAYDTL
+	    RIGHT JOIN INV_MAT_TRAN_REC IMTD ON IMTD.IMTDID = PAYDTL.IMTD_ID
+	    <if test="payId == null or payId == ''">
+	    AND PAYDTL.PAY_ID IS NULL
+	    </if>
+	    INNER JOIN INV_WAREHOUSE_ITEM WAREHOUSEITEM ON WAREHOUSEITEM.ITEMID = IMTD.ITEMID AND WAREHOUSEITEM.WAREHOUSEID = IMTD.WAREHOUSEID AND WAREHOUSEITEM.INVCATEID = IMTD.INVCATEID 
+	    INNER JOIN INV_ITEM ITEM ON ITEM.ITEMID = IMTD.ITEMID AND ITEM.SITE_ID = IMTD.SITE_ID
+	    INNER JOIN ITCEAM_WORKFLOW_ORDERITEM_EXC ORDERITEM ON ITEM.ITEMCODE = ORDERITEM.ITEMID AND ORDERITEM.WAREHOUSEID = IMTD.WAREHOUSEID AND ORDERITEM.APPLY_SHEET_ID = IMTD.PURA_ID
+	    INNER JOIN ITCEAM_WORKFLOW_PURCHORDER PO ON PO.SHEET_ID = ORDERITEM.SHEET_ID
+	    INNER JOIN INV_MAT_MAP MAPPING ON MAPPING.OUTTERID = PO.SHEET_ID AND MAPPING.IMTDID = IMTD.IMTDID
+	    INNER JOIN INV_UNIT UNIT ON UNIT.UNITID = ITEM.UNIT1
+	    INNER JOIN INV_CATEGORY CAT ON  CAT.INVCATEID = WAREHOUSEITEM.INVCATEID AND CAT.WAREHOUSEID = WAREHOUSEITEM.WAREHOUSEID  
+	    LEFT JOIN 
+	    (
+	    SELECT MATDTL.IMTDID,MATDTL.IN_QTY-SUM(NVL(PAYDTL.SEND_ACCOUNT,0)) AS NOSENDACCOUNT
+	      FROM INV_MAT_TRAN_REC MATDTL 
+	      LEFT JOIN ITCEAM_WORKFLOW_PAYDTL PAYDTL ON MATDTL.IMTDID = PAYDTL.IMTD_ID 
+	      LEFT JOIN ITCEAM_WORKFLOW_PAY PAY ON PAYDTL.PAY_ID = PAY.PAY_ID 
+	      WHERE PAY.STATUS = 'processed' 	OR PAY.STATUS = 'processing' OR PAY.STATUS = 'draft'
+	      GROUP BY MATDTL.IMTDID,MATDTL.IN_QTY
+	    )A ON A.IMTDID = IMTD.IMTDID 
+	    <!-- 统计退货的记录 -->
+	    LEFT JOIN 
+	    (
+      	SELECT IMRSD.IMTDID,IMTD3.ITEMID,IMTD3.WAREHOUSEID,IMTD3.INVCATEID,SUM(NVL(IMTD2.OUT_QTY,0)) AS RETURNNUM
+      	FROM INV_MAT_RETURNS IMRS
+      	INNER JOIN INV_MAT_RETURNS_DETAIL IMRSD ON IMRS.IMRSID = IMRSD.IMRSID
+      	INNER JOIN INV_MAT_MAP MAPPING ON MAPPING.OUTTERID = IMRS.IMRSID
+      	INNER JOIN INV_MAT_TRAN_REC IMTD2 ON MAPPING.IMTDID = IMTD2.IMTDID
+      	INNER JOIN INV_MAT_TRAN_REC IMTD3 ON MAPPING.IMTDID = IMTD3.IMTDID
+      	WHERE IMRS.OPER_TYPE ='returns'
+      	GROUP BY IMRSD.IMTDID,IMTD3.ITEMID,IMTD3.WAREHOUSEID,IMTD3.INVCATEID
+      	) B ON B.IMTDID = IMTD.IMTDID
+      	AND B.ITEMID = IMTD.ITEMID
+      	AND B.WAREHOUSEID = IMTD.WAREHOUSEID
+      	<!-- AND B.INVCATEID = IMTD.INVCATEID -->
+	    LEFT JOIN INV_MAT_TRAN IMT ON IMT.IMTID = IMTD.IMTID 
+	    WHERE 1=1 AND IMT.SHEETNO NOT LIKE '%RS%'
+		<if test="payId != null and payId != ''">
+		   <!-- 当payId不为空时，转为内连接 -->
+		  	AND PAYDTL.PAY_ID = #{payId} AND IMTD.IMTDID = PAYDTL.IMTD_ID
+		</if>
+		<if test="payId == null or payId == ''">
+		  	AND NVL(A.NOSENDACCOUNT-NVL(B.RETURNNUM,0),IMTD.IN_QTY-NVL(B.RETURNNUM,0)) > 0
+		</if>
+		<if test="sheetId != null and sheetId != ''">
+		  	AND PO.SHEET_ID = #{sheetId} 
+		</if>
+	</select>
+	<!-- 获取付款信息对应采购合同的采购类型 -->
+	<select id="queryPurPaySheetClassId" resultType="java.lang.String">
+		SELECT ENUM.ENUM_VAL
+		FROM ITCEAM_WORKFLOW_PURCHORDER PURORDER, B_ENUM ENUM 
+		WHERE ENUM.ENUM_CODE = PURORDER.SHEET_I_TYPE AND ENUM.ECAT_CODE = 'ITEMORDER_TYPE' AND ENUM.SITEID = PURORDER.SITEID
+		<if test="sheetId != null and sheetId != ''">
+		  	AND PURORDER.SHEET_ID = #{sheetId}
+		</if>
+	</select>
+	
+	<!-- 获取付款信息对应物资的物资类型 -->
+	<select id="queryPurPayItemClassId" resultType="java.lang.String">
+		SELECT CAT.INVCATENAME 
+	    FROM 
+	    INV_MAT_MAP MAP,
+	    INV_MAT_TRAN_REC IMTD,
+	    INV_WAREHOUSE_ITEM WAREHOUSEITEM,
+	    INV_CATEGORY CAT
+	    WHERE MAP.IMTDID = IMTD.IMTDID
+	    AND IMTD.WAREHOUSEID = WAREHOUSEITEM.WAREHOUSEID 
+	    AND IMTD.ITEMID = WAREHOUSEITEM.ITEMID
+	    <!-- AND WAREHOUSEITEM.INVCATEID = CAT.INVCATEID -->
+	    AND MAP.TRAN_TYPE = 'receivingmaterial'
+		<if test="sheetId != null and sheetId != ''">
+		  	AND MAP.OUTTERID = #{sheetId}
+		</if>
+	</select>
+	
+	<!-- 获取付款信息对应物资的物资类型 -->
+	<select id="queryArrivePurPayHasQualityPurPay" resultType="java.lang.String">
+		SELECT COUNT(1) 
+	    FROM 
+	    ITCEAM_WORKFLOW_PAY A,ITCEAM_WORKFLOW_PAY B
+	    WHERE A.PAY_ID = B.RELATE_PAY_ID AND B.STATUS <![CDATA[<>]]> 'deleted' AND B.STATUS <![CDATA[<>]]> 'obsoleted' 
+		<if test="payId != null and payId != ''">
+		  	AND A.PAY_ID = #{payId}
+		</if>
+	</select>
+	
+	<!-- 根据流程实例id查询付款 -->
+	<select id="queryPurPayByProcInstId" resultMap="PurPayVOMap">
+		SELECT 
+			PAY.PAY_ID,PAY.SHEET_ID,PAY.PAY,PAY.USAGE,PAY.PAY_TYPE,PAY.QA_PAY,PAY.REFUSE_PAY,
+			PAY.RELATE_PAY_ID,PAY.QA_DEADLINE,PAY.EXCLUDE_DATE,PAY.AUDIT_DATE,PAY.INVOICE_NOS,
+			PAY.PAY_NO,PAY.TRANSACTOR,PAY.STATUS,PO.SHEETNO,PO.SHEETNAME,PO.TOTAL_PRICE AS SHEETTOTAL,
+			PAY.PAY/PO.TOTAL_PRICE*100 AS PAYRATIO,SUM(PAYDTL.NOTAX_TOTAL) AS NOTAXTOTAL,
+			SUM(PAYDTL.TAX_TOTAL) AS TAXTOTAL,SUM(PAYDTL.NOTAX_TOTAL)+SUM(PAYDTL.TAX_TOTAL) AS TOTAL, 
+			SBI.CODE AS SUPPLIERCODE,SBI.NAME AS SUPPLIERNAME,PAY.PAY-PAY.REFUSE_PAY AS ACTUALPAYTOTAL,
+			PAY_RELATE.PAY_NO AS RELATE_PAY_NO,PAY.REMARK,
+			PAY.PROCINST_ID,U2.NAME AS CREATERNAME,PAY.CREATEUSER,PAY.MODIFYUSER,PAY.MODIFYDATE,
+			PAY.SITEID,PAY.CREATEDATE,PAY.ERP_STATUS,PO.SPNO
+	    FROM ITCEAM_WORKFLOW_PURCHORDER PO INNER JOIN ITCEAM_WORKFLOW_PAY PAY ON PO.SHEET_ID = PAY.SHEET_ID 
+	    LEFT JOIN ITCEAM_WORKFLOW_PAY PAY_RELATE ON PAY.RELATE_PAY_ID = PAY_RELATE.PAY_ID
+	    LEFT JOIN ITCEAM_WORKFLOW_PAYDTL PAYDTL ON PAYDTL.PAY_ID = PAY.PAY_ID 
+	    LEFT JOIN SUP_BASE_INFO SBI ON PO.COMPANY_NO = SBI.CODE
+	    LEFT JOIN SEC_USER U2 ON PAY.CREATEUSER = U2.USER_ID
+	    WHERE 1=1
+		<if test="procInstId != null and procInstId != ''">
+		  	AND PAY.PROCINST_ID = #{procInstId}
+		</if>
+		GROUP BY PAY.PAY_ID,PAY.SHEET_ID,PAY.PAY,PAY.USAGE,PAY.PAY_TYPE,PAY.QA_PAY,
+			PAY.REFUSE_PAY,PAY.RELATE_PAY_ID,PAY.QA_DEADLINE,PAY.EXCLUDE_DATE,PAY.AUDIT_DATE,
+			PAY.INVOICE_NOS,PAY.PAY_NO,PAY.TRANSACTOR,PAY.STATUS,PO.SHEETNO,PO.SHEETNAME,PO.TOTAL_PRICE,
+			SBI.CODE,SBI.NAME,PAY_RELATE.PAY_NO,PAY.REMARK,PAY.PROCINST_ID,U2.NAME,PAY.CREATEUSER,
+			PAY.MODIFYUSER,PAY.MODIFYDATE,PAY.SITEID,PAY.CREATEDATE,PAY.ERP_STATUS,PO.SPNO 
+	</select>
+	
+	<select id ="queryPayPriceWithWID" resultType = "com.timss.purchase.vo.PurPayStatVO">
+		SELECT WAREHOUSEITEM.WAREHOUSEID,CAT.INVCATEID,SUM(PD.NOTAX_TOTAL) AS REIMBURSEDAMOUNTNOTAX,SUM(PD.NOTAX_TOTAL+PD.TAX_TOTAL) AS REIMBURSEDAMOUNT
+		FROM ITCEAM_WORKFLOW_PAY P 
+		INNER JOIN ITCEAM_WORKFLOW_PAYDTL PD ON P.PAY_ID = PD.PAY_ID 
+		INNER JOIN INV_MAT_TRAN_REC IMTD ON IMTD.IMTDID = PD.IMTD_ID
+		INNER JOIN INV_WAREHOUSE_ITEM WAREHOUSEITEM ON WAREHOUSEITEM.ITEMID = IMTD.ITEMID AND WAREHOUSEITEM.WAREHOUSEID = IMTD.WAREHOUSEID AND WAREHOUSEITEM.INVCATEID = IMTD.INVCATEID 
+		INNER JOIN INV_ITEM ITEM ON ITEM.ITEMID = IMTD.ITEMID AND ITEM.SITE_ID = IMTD.SITE_ID
+		INNER JOIN INV_CATEGORY CAT ON  CAT.INVCATEID = WAREHOUSEITEM.INVCATEID AND CAT.WAREHOUSEID = WAREHOUSEITEM.WAREHOUSEID   
+		AND P.STATUS = 'processed' 
+		<if test="siteid != null and siteid !=''">
+		AND P.SITEID = #{siteid}
+		</if>
+		<if test="month != null and month !=''">
+		AND TO_CHAR(P.AUDIT_DATE,'yyyyMM') = #{month}
+		</if>
+		<if test="warehouseid != null and warehouseid !=''">
+		AND WAREHOUSEITEM.WAREHOUSEID = #{warehouseid}
+		</if>
+		<if test="invcateid != null and invcateid !=''">
+		AND CAT.INVCATEID = #{invcateid}
+		</if>
+		GROUP BY WAREHOUSEITEM.WAREHOUSEID,CAT.INVCATEID
+	</select>
+	
+	<!-- PurPay更新操作 -->
+	<update id="updatePurPayInfo" parameterType="com.timss.purchase.bean.PurPay">
+		UPDATE ITCEAM_WORKFLOW_PAY PAY
+		<set>
+		  SHEET_ID = #{sheetId,jdbcType=VARCHAR},
+		  PAY = #{pay,jdbcType=NUMERIC},
+		  PAY_TYPE = #{payType,jdbcType=VARCHAR},
+		  USAGE = #{usage,jdbcType=VARCHAR},
+		  REMARK = #{remark,jdbcType=VARCHAR},
+		  MODIFYDATE = #{modifydate,jdbcType=TIMESTAMP},
+		  MODIFYUSER = #{modifyuser,jdbcType=VARCHAR},
+		  <if test="payType == 'arrivepay'"> QA_PAY = #{qaPay,jdbcType=NUMERIC}, </if>
+	      <if test="payType == 'arrivepay'"> INVOICE_NOS = #{invoiceNos,jdbcType=VARCHAR}, </if>
+	      <if test="payType == 'qualitypay'"> REFUSE_PAY = #{refusePay,jdbcType=NUMERIC}, </if>
+	      <if test="payType == 'qualitypay'"> QA_DEADLINE = #{qaDeadLine,jdbcType=TIMESTAMP}, </if>
+	      <if test="payType == 'qualitypay'"> EXCLUDE_DATE = #{excludeDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="payType == 'qualitypay'"> RELATE_PAY_ID = #{relatePayId,jdbcType=VARCHAR}, </if>
+	    </set>
+		WHERE PAY.PAY_ID = #{payId}
+	</update>
+	
+	<update id="updatePurPayProcInst" parameterType="com.timss.purchase.bean.PurPay">
+		UPDATE ITCEAM_WORKFLOW_PAY PAY
+		<set>
+		  PROCINST_ID = #{procInstId,jdbcType=VARCHAR},
+	    </set>
+		WHERE PAY.PAY_ID = #{payId}
+	</update>
+	
+	<update id="updatePurPayERPStatus">
+		UPDATE ITCEAM_WORKFLOW_PAY PAY
+		<set>
+		  <if test="erpStatus != null">erp_status = #{erpStatus,jdbcType=VARCHAR},</if>
+		  <if test="erpDate != null">erp_date = #{erpDate,jdbcType=TIMESTAMP},</if>
+	    </set>
+		WHERE PAY.PAY_ID = #{payId}
+	</update>
+	
+	<!-- PurPay更新状态和待办人操作 -->
+	<update id="updatePurPayStatusInfo">
+		UPDATE ITCEAM_WORKFLOW_PAY PAY
+		<set>
+		  <if test="transactor != null"> TRANSACTOR = #{transactor,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> STATUS = #{status,jdbcType=VARCHAR}, </if>
+	    </set>
+		WHERE PAY.PAY_ID = #{payId}
+	</update>
+	
+	<!-- Purpay更新payno -->
+	<update id="updatePurpayPayNo">
+	UPDATE ITCEAM_WORKFLOW_PAY P SET P.PAY_NO = 
+	(SELECT 
+	<if test="payType == 'prepay' ">
+	'FKYF'||TO_CHAR(SYSDATE,'YYYYMMDD')||REPLACE(TO_CHAR(NVL(SUBSTR(MAX(P.PAY_NO),13,3)+1,1),'000'),' ','') 
+	</if>
+	<if test="payType == 'arrivepay' ">
+	'FKDH'||TO_CHAR(SYSDATE,'YYYYMMDD')||REPLACE(TO_CHAR(NVL(SUBSTR(MAX(P.PAY_NO),13,3)+1,1),'000'),' ','') 
+	</if>
+	<if test="payType == 'qualitypay' ">
+	'FKZB'||TO_CHAR(SYSDATE,'YYYYMMDD')||REPLACE(TO_CHAR(NVL(SUBSTR(MAX(P.PAY_NO),13,3)+1,1),'000'),' ','') 
+	</if>
+	<if test="payType == 'settlepay' ">
+	'FKJS'||TO_CHAR(SYSDATE,'YYYYMMDD')||REPLACE(TO_CHAR(NVL(SUBSTR(MAX(P.PAY_NO),13,3)+1,1),'000'),' ','') 
+	</if>
+	FROM ITCEAM_WORKFLOW_PAY P 
+	WHERE P.PAY_TYPE = #{payType} AND P.SITEID = #{siteId} 
+	<if test="payType == 'prepay' ">
+	AND P.PAY_NO LIKE 'FKYF'||TO_CHAR(SYSDATE,'YYYYMMDD')||'%'
+	</if>
+	<if test="payType == 'arrivepay' ">
+	AND P.PAY_NO LIKE 'FKDH'||TO_CHAR(SYSDATE,'YYYYMMDD')||'%'
+	</if>
+	<if test="payType == 'qualitypay' ">
+	AND P.PAY_NO LIKE 'FKZB'||TO_CHAR(SYSDATE,'YYYYMMDD')||'%'
+	</if>
+	<if test="payType == 'settlepay' ">
+	AND P.PAY_NO LIKE 'FKJS'||TO_CHAR(SYSDATE,'YYYYMMDD')||'%'
+	</if>
+	)WHERE P.PAY_ID = #{payId}
+	
+	</update>
+	
+	<!-- 更新状态 -->
+	<update id="updatePurpaySpecProperties" >
+		UPDATE ITCEAM_WORKFLOW_PAY PAY 
+		<set>
+	      <if test="properties.auditDate != null"> PAY.AUDIT_DATE=#{properties.auditDate}, </if>
+	    </set>
+		WHERE PAY.PAY_ID=#{payId}  
+	</update>
+	
+	<!-- 跟新库存流水表价格 -->
+	<update id="updateInvMatTranDetailPrice">
+		UPDATE INV_MAT_TRAN_DETAIL IMTD SET IMTD.PRICE = #{price,jdbcType=NUMERIC} 
+		WHERE IMTD.IMTDID = #{imtdid} 
+	</update>
+	
+	<!-- 更新库存改造后库存流水表价格 -->
+	<update id="updateInvMatTranRecPrice">
+		UPDATE INV_MAT_TRAN_REC IMTD SET IMTD.PRICE = #{price,jdbcType=NUMERIC}, 
+		IMTD.TAX = #{tax,jdbcType=NUMERIC},
+		IMTD.NO_TAX_PRICE = #{price,jdbcType=NUMERIC}-#{tax,jdbcType=NUMERIC}
+		WHERE IMTD.IMTDID = #{imtdid} 
+	</update>
+	
+	<!-- PurPay插入操作 -->
+	<insert id="insertPurPayInfo" parameterType="com.timss.purchase.bean.PurPay">
+		INSERT INTO ITCEAM_WORKFLOW_PAY
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		  PAY_ID,
+		  SHEET_ID,
+		  PAY,
+		  USAGE,
+		  PAY_TYPE,
+		  STATUS,
+		  REMARK,
+		  CREATEDATE,
+		  CREATEUSER,
+		  TRANSACTOR,
+		  SITEID,
+	      <if test="payType == 'arrivepay'"> QA_PAY, </if>
+	      <if test="payType == 'arrivepay' or payType == 'settlepay'"> INVOICE_NOS, </if>
+	      <if test="payType == 'qualitypay'"> REFUSE_PAY, </if>
+	      <if test="payType == 'qualitypay'"> QA_DEADLINE, </if>
+	      <if test="payType == 'qualitypay'"> EXCLUDE_DATE, </if>
+	      <if test="payType == 'qualitypay'"> RELATE_PAY_ID, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		  #{payId,jdbcType=VARCHAR},
+		  #{sheetId,jdbcType=VARCHAR},
+		  #{pay,jdbcType=NUMERIC},
+		  #{usage,jdbcType=VARCHAR},
+		  #{payType,jdbcType=VARCHAR},
+		  #{status,jdbcType=VARCHAR},
+		  #{remark,jdbcType=VARCHAR},
+		  #{createdate,jdbcType=VARCHAR},
+		  #{createuser,jdbcType=VARCHAR},
+		  #{transactor,jdbcType=VARCHAR},
+		  #{siteid,jdbcType=VARCHAR},	
+	      <if test="payType == 'arrivepay'"> #{qaPay,jdbcType=NUMERIC}, </if>
+	      <if test="payType == 'arrivepay' or payType == 'settlepay'"> #{invoiceNos,jdbcType=VARCHAR}, </if>
+	      <if test="payType == 'qualitypay'"> #{refusePay,jdbcType=NUMERIC}, </if>
+	      <if test="payType == 'qualitypay'"> #{qaDeadLine,jdbcType=TIMESTAMP}, </if>
+	      <if test="payType == 'qualitypay'"> #{excludeDate,jdbcType=TIMESTAMP}, </if>
+	      <if test="payType == 'qualitypay'"> #{relatePayId,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- PurPayDtl插入操作 -->
+	<insert id="insertPurPayDtlInfo" parameterType="java.util.List">
+		INSERT INTO ITCEAM_WORKFLOW_PAYDTL
+			(PAYDTL_ID,PAY_ID,NOTAX_TOTAL,TAX_TOTAL,SEND_ACCOUNT,IMTD_ID,WAREHOUSE_ID)
+		SELECT T.* FROM(
+			<foreach collection="list" item="dtl" index="index" separator="union all">
+	            SELECT #{dtl.payDtlId,jdbcType=VARCHAR} PAYDTL_ID,#{dtl.payId,jdbcType=VARCHAR} PAY_ID,#{dtl.notaxTotal,jdbcType=NUMERIC} NOTAX_TOTAL,
+	            #{dtl.taxTotal,jdbcType=NUMERIC} TAX_TOTAL,#{dtl.sendAccount,jdbcType=NUMERIC} SEND_ACCOUNT,
+	            #{dtl.imtdId,jdbcType=VARCHAR} IMTD_ID,
+	            #{dtl.warehouseId,jdbcType=VARCHAR} WAREHOUSE_ID
+	            FROM DUAL
+	        </foreach>
+		) T
+	</insert>
+	
+	<!-- 根据payId删除PurPayDtlInfo信息 -->
+	<delete id="deletePurPayDtlByPayId">
+		DELETE FROM ITCEAM_WORKFLOW_PAYDTL PAYDTL WHERE PAYDTL.PAY_ID =#{payId}
+	</delete>
+	<!-- 查询付款报账的主键-->
+	<select id="queryPayVoByFlowNo" resultMap="PurPayVOMap" parameterType="java.util.Map">
+		select * from itceam_workflow_pay t where t.pay_no = #{payNo}  and t.siteid=#{siteId}
+	</select>
+	
+	
+</mapper>

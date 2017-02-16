@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excel model="inv" entity="InvOrganizeData">
+	<cell name="warehouseName" type="String" isNull="N" maxLength="150" sortOrder="0" cName="仓库名称"/>
+	<cell name="containerName" type="String" isNull="Y" maxLength="128" sortOrder="1" cName="货柜名称"/>
+	<cell name="categroyO" type="String" isNull="N" maxLength="64" sortOrder="2" cName="物资分类（一级）"/>
+	<cell name="categroyS" type="String" isNull="Y" maxLength="128" sortOrder="3" cName="物资分类（二级）"/>
+	<cell name="itemName" type="String" isNull="N" maxLength="255" sortOrder="4" cName="物资名称"/>
+	<cell name="cusmodel" type="String" isNull="Y" maxLength="1024" sortOrder="5" cName="型号规格"/>
+	<cell name="qty" type="Number" isNull="Y" sortOrder="6" cName="数量"/>
+	<cell name="unitName" type="String" isNull="N" maxLength="48" sortOrder="7" cName="单位"/>
+	<cell name="price" type="Number" isNull="Y" sortOrder="8" cName="价格（元）"/>
+</excel>

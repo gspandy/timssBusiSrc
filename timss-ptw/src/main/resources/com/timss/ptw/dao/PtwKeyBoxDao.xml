@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwKeyBoxDao">
+
+
+	<select id="queryPtwKeyBoxList" resultType="PtwKeyBox">
+		select *
+		from ptw_keybox t
+		where yxbz = 1
+	</select>
+	
+	<select id="queryByIds" resultType="PtwKeyBox">
+		select *
+		from ptw_keybox t
+		where yxbz = 1 and id in (${ids})
+	</select>
+
+	<select id="queryPtwKeyBoxById" resultType="PtwKeyBox">
+		select *
+		from ptw_keybox t
+		where id = #{id} 
+	</select>
+	
+	<insert id="insertPtwKeyBox">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_MORE.nextval from dual
+		</selectKey>
+		insert into ptw_keybox
+		  (id,keyBoxNo,useType,purpose,curStatus,siteid,deptid,createuser,modifyuser,
+		  createdate,modifydate,yxbz)
+		values
+		  (#{id},
+		  #{keyBoxNo,jdbcType=VARCHAR},
+		  #{useType,jdbcType=VARCHAR},
+		  #{purpose,jdbcType=VARCHAR},
+		  #{curStatus,jdbcType=VARCHAR},
+		  #{siteid,jdbcType=VARCHAR},
+		  #{deptid,jdbcType=VARCHAR},
+		  #{createuser,jdbcType=VARCHAR},
+		  #{modifyuser,jdbcType=VARCHAR},
+		  #{createdate,jdbcType=TIMESTAMP},
+		  #{modifydate,jdbcType=TIMESTAMP},
+		  #{yxbz,jdbcType=NUMERIC})
+	</insert>
+	
+	<update id="updatePtwKeyBox">
+		update ptw_keybox t
+		set keyBoxNo = #{keyBoxNo,jdbcType=VARCHAR},
+			useType = #{useType,jdbcType=VARCHAR},
+			purpose = #{purpose,jdbcType=VARCHAR},
+			curStatus = #{curStatus,jdbcType=VARCHAR},
+			modifyuser = #{modifyuser},
+			modifydate = #{modifydate}
+		where id = #{id}
+	</update>
+	
+	<update id="deletePtwKeyBoxById">
+		update ptw_keybox t
+		set yxbz = 0
+		where id = #{id}
+	</update>
+	
+	
+	<select id="queryPtwKeyBoxByNo" parameterType="HashMap" resultType="int">
+		select count(*)
+		from ptw_keybox t
+		where yxbz = 1 and siteId = #{siteId} and keyBoxNo = #{keyBoxNo}
+	</select>
+	
+	<update id="updateKeyBoxStatus">
+		update ptw_keybox t
+		set curStatus = #{status}
+		where id = #{id}
+	</update>
+	
+	
+</mapper> 

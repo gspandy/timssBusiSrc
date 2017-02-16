@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.asset.dao.AttachmentDao">
+	 <!-- 插入附件关联信息 -->
+    <insert id="insertAttachment">
+    	insert into ast_attach_match(assetid,attachid,site) values(#{param1},#{param2},#{param3})
+    </insert>
+    
+    <!-- 根据assetid和site查找ast_attach_match表中的attachid -->
+    <select id="queryAssetAttach" resultType="AssetAttachBean">
+    	select assetid,attachid,site from ast_attach_match where assetid=#{param1} and site=#{param2}
+    </select>
+    
+    <!-- 根据atch_id查找b_attachment表中的值 -->
+    <select id="queryAttachment" resultType="AttachmentBean">
+    	select atch_id fileID,ori_filename fileName,filesize from b_attachment where atch_id=#{params.attachId}
+    </select>
+    
+    <!-- 根据assetid和site删除ast_attach_match表中的数据 -->
+    <delete id="deleteAssetAttach">
+    	delete from ast_attach_match where assetid=#{param1} and site=#{param2}
+    </delete>
+</mapper>

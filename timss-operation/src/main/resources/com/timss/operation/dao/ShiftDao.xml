@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.ShiftDao">
+	
+	<!--说明：#{}内的参数，需要与传入的Shift中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	
+	<insert id="insertShift" parameterType="Shift">
+		<!--Oracle中返回自增主键到Shift中的方法 -->
+		 <selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_OPR_SHIFT.nextval from dual
+		</selectKey>
+			insert into opr_shift( id, num, name, startTime, longTime,
+			sortType, abbName, siteId, isactive, deptId, stationId, type ) 
+			values(#{id,jdbcType=NUMERIC}, #{num,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, 
+			#{longTime,jdbcType=NUMERIC}, #{sortType,jdbcType=NUMERIC}, #{abbName,jdbcType=VARCHAR},#{ siteId,jdbcType=VARCHAR }, 
+			#{isActive,jdbcType=VARCHAR}, #{deptId,jdbcType=NUMERIC}, #{stationId,jdbcType=VARCHAR}, #{ type,jdbcType=VARCHAR })
+	</insert>
+	
+	<update id="updateShift" parameterType="Shift">
+	update opr_shift set  name = #{name,jdbcType=VARCHAR} ,startTime =#{ startTime,jdbcType=VARCHAR },longTime = #{ longTime,jdbcType=NUMERIC },
+	sortType = #{ sortType,jdbcType=NUMERIC },abbName = #{ abbName,jdbcType=VARCHAR },
+	isactive = #{ isActive,jdbcType=VARCHAR },stationId = #{ stationId,jdbcType=VARCHAR }, type = #{ type,jdbcType=VARCHAR } 
+	where id = #{ id }
+	</update>
+		
+	<select id="queryShiftById" parameterType="int" resultType="Shift">
+		select * from opr_shift where id= #{ id }
+	</select>
+	
+	<delete id="deleteShiftById" parameterType="int">
+		update opr_shift set del_ind = 'Y' where id= #{ id }
+	</delete>
+	
+	<select id="queryAllShift" resultType="Shift">
+		select * from opr_shift where del_ind!='Y'
+	</select>
+	
+	<select id="queryShiftByPage" resultType="Shift">
+		select s.id, s.num, s.name, s.startTime, s.longTime,
+			s.sortType, s.abbName, s.siteId, s.isactive, s.deptId, s.type,
+			d.name stationId
+		from opr_shift s
+		left join opr_dept d on s.stationId = d.deptId 
+		where s.siteId = '${ params.siteId }' and s.del_ind!='Y'
+	</select>
+	
+	<select id="queryShiftBySearch" resultType="Shift" >
+		select s.id, s.num, s.name, s.startTime, s.longTime,
+			s.sortType, s.abbName, s.siteId, s.isactive, s.deptId, s.type,d.name stationId 
+		from opr_shift s
+		left join opr_dept d on s.stationId = d.deptId 
+		where s.del_ind!='Y'
+		<if test="params.id != null">
+		 	and s.id like '%${params.id}%'
+		</if>
+		<if test="params.num != null">
+		 	and s.num like '%${ params.num }%'
+		</if>
+		<if test="params.name != null and params.name !='' ">
+		 	and s.name like '%${ params.name }%'
+		</if>
+		<if test="params.sortType != null">
+		 	and s.sortType like '%${ params.sortType }%'
+		</if>
+		<if test="params.deptId != null">
+		 	and s.deptId like '%${ params.deptId }%'
+		</if>
+		<if test="params.siteId != null">
+		 	and s.siteId like '%${ params.siteId }%'
+		</if>
+		<if test="params.startTime != null">
+		 	and s.startTime like '%${ params.startTime }%'
+		</if>
+		<if test="params.longTime != null">
+		 	and s.longTime like '%${ params.longTime }%'
+		</if>
+		<if test="params.abbName != null">
+		 	and s.abbName like '%${ params.abbName }%'
+		</if>
+		<if test="params.isActive != null">
+		 	and s.isactive like '%${ params.isActive }%'
+		</if>
+		<if test="params.stationId != null">
+			and d.name like '%${ params.stationId }%'
+		</if>
+	</select>
+	
+	<select id="queryShiftByStationId" parameterType="String" resultType="Shift">
+		select * from opr_shift where stationId= #{ stationId } and isactive = 'Y' and del_ind!='Y'
+	</select>
+	
+	<select id="querySortTypeByStationId" parameterType="String" resultType="String">
+		SELECT MAX(sortType) FROM OPR_SHIFT where stationId= #{ stationId } and del_ind!='Y'
+	</select>
+</mapper> 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.NoteDao">
+
+	<sql id="noteBeanField">
+		n.id,n.writeTimeStr, n.writeTime, n.crewNum, n.type, n.content,
+		n.createBy, n.createTime, n.dutyId, n.jobsId, n.handoverId, 
+		n.updateBy, n.updateTime
+	</sql>
+	
+	<!--说明：#{}内的参数，需要与传入的Note中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertNote" parameterType="Note">
+		<!--Oracle中返回自增主键到Note中的方法 -->
+		 <selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_OPR_NOTE.nextval from dual
+		</selectKey>
+			insert into opr_note( id,writeTimeStr, writeTime, crewNum, type, content,
+			createBy, createTime, dutyId, jobsId, handoverId ) 
+			values(#{id}, #{writeTimeStr}, #{writeTime}, #{crewNum}, #{type}, #{content}, 
+			#{createBy}, #{createTime}, #{dutyId}, #{jobsId}, #{handoverId} )
+	</insert>
+	
+	<update id="updateNote" parameterType="Note">
+	update opr_note set writeTime = #{writeTime}, writeTimeStr = #{writeTimeStr}, crewNum = #{crewNum} ,type = #{ type },
+	content = #{ content },	updateBy = #{ updateBy },updateTime = #{ updateTime }, jobsId = #{jobsId}
+	where id = #{ id }
+	</update>
+		
+	<select id="queryNoteById" parameterType="int" resultType="Note">
+		select * from opr_note where id= #{ id }
+	</select>
+	
+	<delete id="deleteNoteById" parameterType="int">
+		delete from opr_note where id= #{ id }
+	</delete>
+	
+	<select id="queryAllNote" resultType="Note">
+		select * from opr_note
+	</select>
+	
+	<select id="queryNoteBySearch" resultType="Note" >
+		select <include refid="noteBeanField"></include>,j.name jobsName,h.nowscheduleid,d.datetime nowscheduleDate,
+			dy.name dutyName,d.shiftid,s.name shiftName,d.stationid deptId,dt.name deptName
+		from opr_note n
+		left join opr_handover h on h.id=n.handoverid
+		left join opr_schedule_detail d on d.id=h.nowscheduleid
+		left join opr_dept dt on dt.deptid=d.stationid
+		left join opr_shift s on s.id=d.shiftid
+		left join opr_duty dy on dy.id=d.dutyid
+		left join opr_jobs j on j.id=h.jobsid
+		where 1 = 1
+		<if test="params.handoverId != null and params.handoverId != 0">
+			AND N.HANDOVERID = #{ params.handoverId, jdbcType=NUMERIC } 
+		</if>
+		<if test="params.jobsId != null and params.jobsId != 0">
+			AND N.JOBSID = #{ params.jobsId, jdbcType=NUMERIC } 
+		</if>
+		<if test="params.shiftId != null and params.shiftId != 0">
+			AND d.SHIFTID = #{ params.shiftId, jdbcType=NUMERIC } 
+		</if>
+		<if test="params.nowscheduleDate != null and params.nowscheduleDate != ''">
+			AND d.datetime = #{ params.nowscheduleDate, jdbcType=TIMESTAMP } 
+		</if>
+		<if test="params.deptId != null and params.deptId != ''">
+			AND d.stationid = #{ params.deptId, jdbcType=VARCHAR } 
+		</if>
+	</select>
+	
+	<select id="isOnDuty" parameterType="Map" resultType="Shift">
+		SELECT * FROM OPR_SHIFT WHERE isactive = 'Y' and type='normal' and id in (
+         SELECT shiftId from ( 
+         	SELECT * FROM OPR_SCHEDULE_DETAIL where DATETIME= #{ currentDate } 
+         	) sd RIGHT JOIN
+         ( SELECT * FROM opr_duty_person where USERID = #{ userId } ) pj ON sd.dutyId = pj.dutyId)
+	</select>
+</mapper> 

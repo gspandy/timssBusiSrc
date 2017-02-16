@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvWarehouseDao">
+	<resultMap type="com.timss.inventory.bean.InvWarehouse" id="InvWarehouseMap">
+		<result property="siteId" column="site_id"/>
+	</resultMap>
+
+	<!-- 查询所有仓库 -->
+	<select id="queryWarehouse" resultMap="InvWarehouseMap">
+		select * from inv_warehouse t where 1=1
+		<if test="params.warehouseid != null and params.warehouseid != ''">
+		  	and t.warehouseid like '%'||'${params.warehouseid}'||'%' 
+		</if>
+		<if test="params.warehousename != null and params.warehousename != ''">
+		  	and t.warehousename like '%'||'${params.warehousename}'||'%' 
+		</if>
+		<if test="params.descriptions != null and params.descriptions != ''">
+		  	and t.descriptions like '%'||'${params.descriptions}'||'%' 
+		</if>
+		<if test="params.active != null and params.active != ''">
+		  	and t.active = '${params.active}' 
+		</if>
+		<if test="params.siteId != null and params.siteId != ''">
+		  	and t.site_id = '${params.siteId}' 
+		</if>
+		order by t.warehouseid asc
+	</select>
+	
+	<!-- 查看仓库节点 -->
+	<select id="queryWarehouseNode" resultType="com.timss.inventory.vo.TreeBean">
+		select t.warehouseid as id,t.warehousename as text,
+				'close' as state,'warehouse' as type 
+		from inv_warehouse t where t.site_id=#{params.parentId} and t.active = 'Y' 
+		order by t.warehouseid asc
+	</select>
+	
+	<!-- 查看仓库节点 ById-->
+	<select id="queryWarehouseNodeById" resultType="com.timss.inventory.vo.TreeBean" parameterType="java.util.Map">
+		select t.warehouseid as id,t.warehousename as text,
+				'close' as state,'warehouse' as type 
+		from inv_warehouse t where t.site_id='${siteId}' and t.active = 'Y' and t.warehouseid in (${warehouseid})
+		order by t.warehouseid asc 
+	</select>
+	
+	<!-- 根据仓库名称查询仓库id -->
+	<select id="queryWarehouseIdByName" parameterType="java.util.Map" resultType="java.lang.String">
+		select t.warehouseid from inv_warehouse t where t.site_id=#{siteId} and t.active = 'Y' 
+		<if test="name != null and name != ''">
+		  	and t.warehousename like '%'||#{name}||'%' 
+		</if>
+		order by t.warehouseid asc 
+	</select>
+	
+	<!-- 用categoryid查询仓库所在 -->
+	<select id="queryWarehouseByCategoryId" parameterType="java.util.Map" resultType="com.timss.inventory.bean.InvWarehouse">
+		select iw.* 
+		from inv_warehouse iw 
+		where iw.warehouseid = (
+				select ic.warehouseid 
+				from inv_category ic 
+				where ic.invcateid=#{categoryId,jdbcType=VARCHAR}) 
+			and iw.site_id=#{siteId,jdbcType=VARCHAR}
+		order by iw.warehouseid asc 
+	</select>
+	
+	<!-- 通过id找到仓库 -->
+	<select id="queryWarehouseById" parameterType="java.lang.String" resultType="com.timss.inventory.bean.InvWarehouse">
+		select * from inv_warehouse iw where iw.warehouseid=#{warehouseid} order by iw.warehouseid asc 
+	</select>
+	
+	<select id="queryWarehouseListBySiteId" resultType="InvWarehouse">
+		select t.warehouseid as warehouseid,t.warehousename as warehousename,t.descriptions as descriptions,t.active as active,t.warehousecode as warehousecode
+		from inv_warehouse t
+		where t.site_id=#{params.siteId}
+		order by t.warehouseid asc 
+	</select>
+	
+	<select id="queryWarehouseDetail" resultType="InvWarehouse">
+		select t.warehouseid as warehouseid,t.warehousename as warehousename,t.descriptions as descriptions,t.active as active,t.warehousecode as warehousecode
+		from inv_warehouse t
+		where t.site_id=#{siteId} and t.warehouseid=#{id}
+		order by t.warehouseid asc 
+	</select>
+	
+	<insert id="insertWarehouseInfo" parameterType="InvWarehouse" >
+    	insert into inv_warehouse (warehouseid, warehousename, descriptions, active, site_id, warehousecode, createdate, createuser)
+    	values (#{warehouseid,jdbcType=VARCHAR},
+    	#{warehousename,jdbcType=VARCHAR},
+    	#{descriptions,jdbcType=VARCHAR},
+    	#{active,jdbcType=VARCHAR},
+    	#{siteId,jdbcType=VARCHAR},
+    	#{warehousecode,jdbcType=VARCHAR},
+    	#{createdate,jdbcType=TIMESTAMP},
+    	#{createuser,jdbcType=VARCHAR})
+    </insert>
+    
+	<update id="updateWarehouseInfo" parameterType="InvWarehouse">
+    	update inv_warehouse set 
+    		warehousename = #{warehousename,jdbcType=VARCHAR}, 
+    		descriptions = #{descriptions,jdbcType=VARCHAR}, 
+    		active = #{active,jdbcType=VARCHAR}, 
+    		warehousecode = #{warehousecode,jdbcType=VARCHAR},
+    		modifydate = #{modifydate,jdbcType=TIMESTAMP},
+    		modifyuser = #{modifyuser,jdbcType=VARCHAR}
+    	where warehouseid = #{warehouseid} and site_id = #{siteId}
+    </update>
+    
+	<update id="updateWarehouseState">
+    	update inv_warehouse set 
+    		active = #{state}
+    	where warehouseid = #{id} and site_id = #{siteId}
+    </update>
+    
+	<delete id="deleteWarehouse">
+    	delete from inv_warehouse where warehouseid = #{id} and site_id = #{siteId}
+    </delete>
+    
+	<select id="isWarehouseCodeExist" resultType="Integer">
+		select count(1)
+		from inv_warehouse t
+		where t.site_id=#{siteId} and t.warehousecode=#{code}
+	</select>
+	
+	<select id='queryWarehouseByCodeAndSiteId' resultType="InvWarehouse">
+        select t.warehouseid as warehouseid,t.warehousename as warehousename,t.descriptions as descriptions,t.active as active,t.warehousecode as warehousecode
+		from inv_warehouse t
+        where t.site_id=#{siteId} and t.warehousecode=#{code} 
+        order by t.warehouseid asc      
+    </select>
+    
+	<select id="queryAllWarehouseBySiteId" resultType="InvWarehouse">
+		select t.warehouseid as warehouseid,t.warehousename as warehousename,t.descriptions as descriptions,t.active as active,t.warehousecode as warehousecode
+		from inv_warehouse t
+		where t.site_id=#{siteId} and t.active = 'Y'
+		order by NLSSORT(t.warehousename,'NLS_SORT = SCHINESE_PINYIN_M')
+	</select>
+</mapper> 

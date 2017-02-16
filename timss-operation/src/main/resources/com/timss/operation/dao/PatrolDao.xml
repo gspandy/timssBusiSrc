@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.PatrolDao">
+	
+	<sql id="patrolBeanField">
+		patrolid, seqnum, checkdate, speciality, patrolsituation, defectsituation, startstopsituation, 
+		instantid, status, iscancel, isdelete, 
+		deptid, siteid,
+		createuser, createusername, createdate,
+		modifyuser, modifyusername, modifydate,
+		approve_user as approveUser, approve_user_name as approveUserName, approve_time as approveTime
+	</sql>
+	
+	<!--说明：#{}内的参数，需要与传入的Patrol中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+	<insert id="insertPatrol" parameterType="Patrol">
+		insert into opr_patrol (patrolid, seqnum, checkdate, speciality, patrolsituation, defectsituation, startstopsituation, instantid, status, iscancel, isdelete, deptid, siteid, createuser, createusername, createdate)  
+		values(#{patrolId}, #{seqNum}, #{checkDate}, #{speciality}, #{patrolSituation}, #{defectSituation, jdbcType=VARCHAR}, #{startStopSituation, jdbcType=VARCHAR}, #{instantId, jdbcType=VARCHAR}, #{status, jdbcType=VARCHAR}, #{isCancel, jdbcType=VARCHAR}, #{isDelete}, #{deptid}, #{siteid}, #{createuser}, #{createUserName}, #{createdate})
+	</insert>
+	
+	<delete id="deletePatrolById" parameterType="String">
+		delete from opr_patrol where patrolid = #{ patrolId }
+	</delete>
+	
+	<update id="updatePatrol" parameterType="Patrol">
+		update opr_patrol set 
+		checkdate = #{ checkDate }, 
+		speciality = #{ speciality }, 
+		patrolsituation = #{ patrolSituation },
+		defectsituation = #{ defectSituation }, 
+		startstopsituation = #{ startStopSituation },
+		modifyuser = #{ modifyuser },
+		modifyusername = #{ modifyUserName },
+		modifydate = #{ modifydate}
+		where patrolid = #{ patrolId }
+	</update>	
+	
+	<update id="updatePatrolStatus">
+		update opr_patrol set 
+		instantid = #{ patrol.instantId, jdbcType=VARCHAR},
+		status = #{ patrol.status ,jdbcType=VARCHAR},
+		approve_user = #{ patrol.approveUser , jdbcType=VARCHAR},
+		approve_user_name = #{ patrol.approveUserName , jdbcType=VARCHAR},
+		approve_time = #{ patrol.approveTime , jdbcType=TIMESTAMP}
+		where patrolid = #{ patrol.patrolId }
+	</update>	
+	
+	<select id="queryPatrolById" parameterType="String" resultType="Patrol">
+		select <include refid="patrolBeanField"/> from opr_patrol where patrolid= #{ patrolId }
+	</select>
+
+	<select id="queryPatrolByPage" resultType="Patrol">
+		select <include refid="patrolBeanField"/> from opr_patrol where siteid = '${ params.siteid }' and instantid is not null
+	</select>
+	
+	<select id="queryPatrolBySearch" resultType="Patrol" >
+		select  <include refid="patrolBeanField"/> from opr_patrol 
+		where 1 = 1
+		and instantid is not null
+		<if test="params.search != null">
+			and	(instr(patrolsituation,#{params.search})<![CDATA[>]]>0 or instr(createusername,#{params.search})<![CDATA[>]]>0) 	
+		</if>
+		<if test="params.siteId != null">
+		 	and siteid like '%${ params.siteid }%'
+		</if>
+	</select>
+</mapper> 

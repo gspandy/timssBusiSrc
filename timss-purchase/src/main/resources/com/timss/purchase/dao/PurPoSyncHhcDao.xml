@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurPoSyncHhcDao">
+	<resultMap type="com.timss.purchase.bean.PurPoSyncHhc" id="PurPoSyncHhcMap">
+		<result property="hhcPono" column="hhc_pono"/>
+		<result property="hhcPano" column="hhc_pano"/>
+		<result property="timPono" column="tim_pono"/>
+	</resultMap>
+	
+	<!-- 查询映射表信息 -->
+	<select id="queryPurPoSyncHhcData" resultMap="PurPoSyncHhcMap">
+		select ppsh.hhc_pono,ppsh.hhc_pano,ppsh.tim_pono,ppsh.createdate,ppsh.siteid 
+		from pur_po_sync_hhc ppsh 
+		where 1=1 
+ 		<if test="params.hhcPono != null and params.hhcPono != ''">
+		  	and ppsh.hhc_pono = '${params.hhcPono}' 
+		</if>
+		<if test="params.hhcPano != null and params.hhcPano != ''">
+		  	and ppsh.hhc_pano = '${params.hhcPano}' 
+		</if>
+		<if test="params.timPono != null and params.timPono != ''">
+		  	and ppsh.tim_pono = '${params.timPono}' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and ppsh.createdate = '${params.createdate}' 
+		</if>
+		<if test="params.siteid != null and params.siteid != ''">
+		  	and ppsh.siteid = '${params.siteid}' 
+		</if>
+	</select>
+	
+	<!-- 插入中间表信息 -->
+	<insert id="insertPurPoSyncHhcInfo" parameterType="com.timss.purchase.bean.PurPoSyncHhc">
+		insert into pur_po_sync_hhc
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="hhcPono != null"> hhc_pono, </if>
+	      <if test="hhcPano != null"> hhc_pano, </if>
+	      <if test="timPono != null"> tim_pono, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteid != null"> siteid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="hhcPono != null">  #{hhcPono,jdbcType=VARCHAR}, </if>
+	      <if test="hhcPano != null"> #{hhcPano,jdbcType=VARCHAR}, </if>
+	      <if test="timPono != null"> #{timPono,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+</mapper>

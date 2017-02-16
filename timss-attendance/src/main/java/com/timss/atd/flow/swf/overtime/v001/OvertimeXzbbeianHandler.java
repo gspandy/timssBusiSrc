@@ -1,0 +1,97 @@
+package com.timss.atd.flow.swf.overtime.v001;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.timss.attendance.dao.OvertimeDao;
+import com.timss.attendance.service.StatService;
+import com.timss.attendance.util.AtdUserPrivUtil;
+import com.timss.attendance.util.AtdWorkFlowUtil;
+import com.timss.attendance.util.ProcessStatusUtil;
+import com.yudean.mvc.bean.userinfo.UserInfoScope;
+import com.yudean.workflow.service.WorkflowService;
+import com.yudean.workflow.task.TaskHandlerBase;
+import com.yudean.workflow.task.TaskInfo;
+
+/**
+ * 加班申请-行政部门登记备案
+ */
+public class OvertimeXzbbeianHandler extends TaskHandlerBase {
+    Logger logger = LoggerFactory.getLogger( OvertimeXzbbeianHandler.class );
+    
+    @Autowired
+    private WorkflowService workflowService;
+    @Autowired
+    private StatService statService;
+    @Autowired
+    private AtdWorkFlowUtil wfUtil;
+    @Autowired
+    private AtdUserPrivUtil privUtil;
+    
+    final String handlerName="SWF OvertimeXzbbeianHandler";
+    
+    /**
+     * 回滚前
+     */
+    @Override
+    public void beforeRollback(TaskInfo sourceTaskInfo, String destTaskKey) {
+        logger.info(  handlerName+" beforeRollback" );
+        super.beforeRollback( sourceTaskInfo, destTaskKey );
+    }
+
+    /**
+     * 初始化
+     */
+    @Override
+    public void init(TaskInfo taskInfo) {
+        logger.info(  handlerName+" init" );
+        wfUtil.updateOvertimeAuditStatusByTask(taskInfo, ProcessStatusUtil.XZBDJBA);
+        super.init( taskInfo );
+    }
+
+    @Override
+    public void onShowAudit(String taskId){
+    	logger.info( handlerName+" onShowAudit" );
+    	UserInfoScope userInfo = privUtil.getUserInfoScope();
+        try {
+        	String businessData = userInfo.getParam( "businessData" );
+        	if ( StringUtils.isNotBlank( businessData ) ) {
+            	if(wfUtil.updateOvertimeTransferCompensate(null,businessData)){
+            		logger.info("更新"+ProcessStatusUtil.XZBDJBA+"成功");
+                }else{
+                	logger.error("更新"+ProcessStatusUtil.XZBDJBA+"失败");
+                }
+            }
+        } catch (Exception e) {
+        	logger.error( e.getMessage(), e );
+        }
+    }
+    
+    /**
+     * 完成
+     */
+    @Override
+    public void onComplete(TaskInfo taskInfo) {
+        logger.info(  handlerName+" onComplete" );
+        wfUtil.updateOvertimeAuditStatusByTask(taskInfo, ProcessStatusUtil.CLOSED);
+        
+        String instanceId = taskInfo.getProcessInstanceId();
+        String id = workflowService.getVariable( instanceId, "businessId").toString();
+        //更新统计信息
+        //statService.updateCurrentYearStat();
+        
+        //已有核定时长的节点
+        //overtimeDao.updateOvertimeItemRealOverHoursByPlanOverHours(Integer.parseInt(id));
+        //已有核定转补休时长的节点
+        //wfUtil.updateOvertimeTransferCompensate(Integer.parseInt(id),null);
+        
+        try {
+			wfUtil.checkWorkStatusAndStatByOvertimeId(Integer.parseInt(id));
+		} catch (Exception e) {
+			logger.error("error checkWorkStatusAndStatByOvertimeId("+id+")",e);
+		}
+        super.onComplete( taskInfo );
+    }
+}

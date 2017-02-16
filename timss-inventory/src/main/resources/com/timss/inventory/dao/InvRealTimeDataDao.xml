@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvRealTimeDataDao">
+	<resultMap type="com.timss.inventory.bean.InvRealTimeData" id="InvRealTimeDataMap">
+		<result property="irtdId" column="IRTDID"/>
+		<result property="itemid" column="ITEMID"/>
+		<result property="itemcode" column="ITEMCODE"/>
+		<result property="invcateid" column="INVCATEID"/>
+		<result property="siteid" column="SITE_ID"/>
+		<result property="canUseQty" column="CAN_USE_QTY"/>
+		<result property="canUseQtyOld" column="CAN_USE_QTY_OLD"/>
+		<result property="actualQty" column="ACTUAL_QTY"/>
+		<result property="canOutQtyTotal" column="CAN_OUT_QTY_TOTAL"/>
+		<result property="withTaxPrice" column="WITH_TAX_PRICE"/>
+		<result property="noTaxPrice" column="NO_TAX_PRICE"/>
+		<result property="tax" column="TAX"/>
+		<result property="withTaxPriceOld" column="WITH_TAX_PRICE_OLD"/>
+		<result property="noTaxPriceOld" column="NO_TAX_PRICE_OLD"/>
+		<result property="taxOld" column="TAX_OLD"/>		
+		<result property="lastInTime" column="LAST_IN_TIME"/>
+		<result property="lastInQty" column="LAST_IN_QTY"/>
+		<result property="lastInPrice" column="LAST_IN_PRICE"/>
+		<result property="lastInNoTaxPrice" column="LAST_IN_NO_TAX_PRICE"/>
+		<result property="lastInTax" column="LAST_IN_TAX"/>
+	</resultMap>
+
+	<!-- 根据联合主键查询物资库存实时数据 -->
+	<select id="queryInvRealTimeDataByCompositeKey" resultMap="InvRealTimeDataMap">
+		select t.* from inv_realtime_data t 
+	    where t.itemid=#{itemId} and t.invcateid = #{invCateId} and t.site_id = #{siteId}
+	</select>
+	
+	<!-- 通过脚本执行获取InvRealTimeData数据 -->
+	<select id="queryInvRealTimeDataByScript"  resultMap="InvRealTimeDataMap">
+		select ${execSql} from dual
+	</select>
+	
+	<!-- 查询当前站点下的物资条目 -->
+	<select id="queryInvItemBaseField4AllItem" resultType="com.timss.inventory.bean.InvItemBaseField">
+		select ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,iwi.warehouseid,iwi.invcateid,ii.site_id as siteid
+		from inv_item ii,inv_warehouse_item iwi 
+		where ii.itemid = iwi.itemid 
+			and ii.site_id = iwi.site_id
+			<if test="siteId != null and siteId != ''">
+				and ii.site_id = #{siteId}
+			</if>
+			<if test="itemCodes != null and itemCodes != ''">
+				and ii.itemcode in (${itemCodes})
+			</if>			
+		group by ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,iwi.warehouseid,iwi.invcateid,ii.site_id
+	</select>
+	
+	<!-- 插入实时数据 -->
+	<insert id="insertInvRealTimeData" parameterType="com.timss.inventory.bean.InvRealTimeData">
+		insert into inv_realtime_data
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="irtdId != null"> IRTDID, </if>
+	      <if test="itemid != null"> ITEMID, </if>
+	      <if test="itemcode != null"> ITEMCODE, </if>
+	      <if test="invcateid != null"> INVCATEID, </if>
+	      <if test="siteid != null"> SITE_ID, </if>
+	      <if test="canUseQty != null"> CAN_USE_QTY, </if>
+	      <if test="canUseQtyOld != null"> CAN_USE_QTY_OLD, </if>
+	      <if test="actualQty != null"> ACTUAL_QTY, </if>
+	      <if test="canOutQtyTotal != null"> CAN_OUT_QTY_TOTAL, </if>
+	      <if test="withTaxPrice != null"> WITH_TAX_PRICE, </if>
+	      <if test="noTaxPrice != null"> NO_TAX_PRICE, </if>
+	      <if test="tax != null"> TAX, </if>
+	      <if test="withTaxPriceOld != null"> WITH_TAX_PRICE_OLD, </if>
+	      <if test="noTaxPriceOld != null"> NO_TAX_PRICE_OLD, </if>
+	      <if test="taxOld != null"> TAX_OLD, </if>	      
+	      <if test="lastInTime != null"> LAST_IN_TIME, </if>
+	      <if test="lastInQty != null"> LAST_IN_QTY, </if>
+	      <if test="lastInPrice != null"> LAST_IN_PRICE, </if>
+	      <if test="lastInNoTaxPrice != null"> LAST_IN_NO_TAX_PRICE, </if>
+	      <if test="lastInTax != null"> LAST_IN_TAX, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="irtdId != null"> #{irtdId,jdbcType=VARCHAR}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="itemcode != null"> #{itemcode,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>	      
+	      <if test="canUseQty != null"> #{canUseQty,jdbcType=NUMERIC}, </if>
+	      <if test="canUseQtyOld != null"> #{canUseQtyOld,jdbcType=NUMERIC}, </if>
+	      <if test="actualQty != null"> #{actualQty,jdbcType=NUMERIC}, </if>
+	      <if test="canOutQtyTotal != null"> #{canOutQtyTotal,jdbcType=NUMERIC}, </if>
+	      <if test="withTaxPrice != null"> #{withTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPrice != null"> #{noTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="tax != null"> #{tax,jdbcType=NUMERIC}, </if>
+	      <if test="withTaxPriceOld != null"> #{withTaxPriceOld,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPriceOld != null"> #{noTaxPriceOld,jdbcType=NUMERIC}, </if>
+	      <if test="taxOld != null"> #{taxOld,jdbcType=NUMERIC}, </if>	      
+	      <if test="lastInTime != null"> #{lastInTime,jdbcType=TIMESTAMP}, </if>
+	      <if test="lastInQty != null"> #{lastInQty,jdbcType=NUMERIC}, </if>
+	      <if test="lastInPrice != null"> #{lastInPrice,jdbcType=NUMERIC}, </if>
+	      <if test="lastInNoTaxPrice != null"> #{lastInNoTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="lastInTax != null"> #{lastInTax,jdbcType=NUMERIC}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 更新实时数据-->
+	<update id="updateInvRealTimeData" parameterType="com.timss.inventory.bean.InvRealTimeData">
+		update inv_realtime_data t 
+		<set>
+	      <if test="canUseQty != null"> t.CAN_USE_QTY=#{canUseQty,jdbcType=NUMERIC}, </if>
+	      <if test="canUseQtyOld != null"> t.CAN_USE_QTY_OLD=#{canUseQtyOld,jdbcType=NUMERIC}, </if>
+	      <if test="actualQty != null"> t.ACTUAL_QTY=#{actualQty,jdbcType=NUMERIC}, </if>
+	      <if test="canOutQtyTotal != null"> t.CAN_OUT_QTY_TOTAL=#{canOutQtyTotal,jdbcType=NUMERIC}, </if>
+	      <if test="withTaxPrice != null"> t.WITH_TAX_PRICE=#{withTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPrice != null"> t.NO_TAX_PRICE=#{noTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="tax != null"> t.TAX=#{tax,jdbcType=NUMERIC}, </if>
+	      <if test="withTaxPriceOld != null"> t.WITH_TAX_PRICE_OLD=#{withTaxPriceOld,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPriceOld != null"> t.NO_TAX_PRICE_OLD=#{noTaxPriceOld,jdbcType=NUMERIC}, </if>
+	      <if test="taxOld != null"> t.TAX_OLD=#{taxOld,jdbcType=NUMERIC}, </if>	      
+	      <if test="lastInTime != null"> t.LAST_IN_TIME=#{lastInTime,jdbcType=TIMESTAMP}, </if>
+	      <if test="lastInQty != null"> t.LAST_IN_QTY=#{lastInQty,jdbcType=NUMERIC}, </if>
+	      <if test="lastInPrice != null"> t.LAST_IN_PRICE=#{lastInPrice,jdbcType=NUMERIC}, </if>
+	      <if test="lastInNoTaxPrice != null"> t.LAST_IN_NO_TAX_PRICE=#{lastInNoTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="lastInTax != null"> t.LAST_IN_TAX=#{lastInTax,jdbcType=NUMERIC}, </if>
+	    </set>
+		where t.IRTDID=#{irtdId,jdbcType=VARCHAR}
+	</update>
+</mapper> 

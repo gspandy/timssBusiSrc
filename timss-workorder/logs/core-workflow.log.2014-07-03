@@ -1,0 +1,3 @@
+2014-07-03 15:10:27,301 DEBUG [com.timss.workorder.dao.JPWorkerDao.deleteJPWorkerByJPId.debug] - ==>  Preparing: delete from wo_jp_worker t where t.JOBPLAN_ID = ? 
+2014-07-03 15:10:27,384 DEBUG [com.timss.workorder.dao.JPWorkerDao.deleteJPWorkerByJPId.debug] - ==> Parameters: 64(Integer)
+2014-07-03 15:10:27,386 DEBUG [com.timss.workorder.dao.JPWorkerDao.deleteJPWorkerByJPId.debug] - <==    Updates: 0

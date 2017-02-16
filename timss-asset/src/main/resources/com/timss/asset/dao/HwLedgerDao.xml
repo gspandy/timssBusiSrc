@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.asset.dao.HwLedgerDao">
+    
+    <sql id="insertHwLedgerBasic">
+    	HW_ID,HW_NAME,PARENT_ID,
+    	HW_TYPE,CREATED_BY,CREATE_TIME,
+    	ISROOT,SITE_ID
+    </sql>
+    
+    <sql id="insertHwLedger">
+    	(#{hwId,jdbcType=VARCHAR}, #{hwName,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR},
+    	 #{hwType,jdbcType=VARCHAR},#{createuser,jdbcType=VARCHAR},#{createdate,jdbcType=TIMESTAMP},
+    	 #{isRoot, jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR})
+    </sql>
+    
+    <sql id="hwLedgerBeanField">
+    	HW_ID hwId,HW_NAME hwName,PARENT_ID parentId,
+    	HW_TYPE hwType,CREATED_BY createuser,CREATE_TIME createdate,
+    	ISROOT isRoot,SITE_ID siteid, UPDATED_BY modifyuser, UPDATE_TIME modifydate
+    </sql>
+    
+    <sql id="hwLedgerServerBeanField">
+    	HW_ID,<!--  LOCATION, ASSET_CODE, --> SERVER_MODEL, SN_CODE, SERVER_BRAND, CPU_MODEL, 
+    	CPU_NUM, MEM_MODEL, MEM_NUM, HARDDISK_MODEL, HARDDISK_NUM, HBA_MODEL, HBA_NUM,
+    	NETCARD_MODEL, NETCARD_NUM, RAID_MODEL, POWER<!-- , TO_USE_TIME, ELAPSED_TIME, MAINTAIN, 
+    	SUPPLIER, REPAIR_RECARD -->
+    </sql>
+    
+    <sql id="queryHwLedgerServerBeanFields">
+    	HW_ID hwId, <!-- LOCATION location, ASSET_CODE assetCode, --> SERVER_MODEL serverModel, 
+    	SN_CODE snCode, SERVER_BRAND serverBrand, CPU_MODEL cpuModel, 
+    	CPU_NUM cpuNum, MEM_MODEL memModel, MEM_NUM memNum, HARDDISK_MODEL harddiskModel, 
+    	HARDDISK_NUM harddiskNum, HBA_MODEL hbaModel, HBA_NUM hbaNum,
+    	NETCARD_MODEL netcardModel, NETCARD_NUM netcardNum, RAID_MODEL raidModel,
+    	POWER power<!-- , TO_USE_TIME toUseTime, ELAPSED_TIME elapsedTime, MAINTAIN maintain, 
+    	SUPPLIER supplier, REPAIR_RECARD repairRecard -->
+    </sql>
+    
+    <sql id="insertHwLedgerServer">
+    	( #{hwId,jdbcType=VARCHAR},<!--  #{location,jdbcType=VARCHAR}, #{assetCode,jdbcType=VARCHAR}, --> #{serverModel,jdbcType=VARCHAR},
+    		#{snCode,jdbcType=VARCHAR}, #{serverBrand,jdbcType=VARCHAR}, #{cpuModel,jdbcType=VARCHAR},
+    		
+    	 #{cpuNum,jdbcType=INTEGER}, #{memModel,jdbcType=VARCHAR}, #{memNum,jdbcType=INTEGER}, #{harddiskModel,jdbcType=VARCHAR},
+    		#{harddiskNum,jdbcType=INTEGER}, #{hbaModel,jdbcType=VARCHAR}, #{hbaNum,jdbcType=INTEGER},
+    		
+    	 #{netcardModel,jdbcType=VARCHAR}, #{netcardNum,jdbcType=INTEGER}, #{raidModel,jdbcType=VARCHAR}, #{power,jdbcType=DOUBLE}<!-- ,
+    		#{toUseTime,jdbcType=TIMESTAMP}, #{elapsedTime,jdbcType=TIMESTAMP}, #{maintain,jdbcType=VARCHAR},
+    		
+    	 #{supplier,jdbcType=VARCHAR}, #{repairRecard,jdbcType=VARCHAR }-->
+    		
+    	)
+    </sql>
+    
+    <sql id="hwLedgerDeviceBeanField">
+    	HW_ID, <!-- OWN_ORG, STATUS, REMARKS, --> COMPUTER_NAME, OS, OS_PATH,
+    	LOGIC_CPU, LOGIC_MEM, LOGIC_HARDDISK, IP, IS_CLUSTER_IP, MAC, VLAN,
+    	NET_AREA, IS_PUBLIC_NET, IS_REMOTE_BACKUP, IS_VTL_BACKUP, IS_CDP_BACKUP, IS_PTL_BACKUP,IS_MANUAL_BACKUP,
+    	STORAGE_MODEL, STORAGE_TYPE, SAN_LUN, RAID_TYPE, LUN_NUM, DATA_CHANGE_DEGREE
+    </sql>
+    
+    <sql id="queryHwLedgerDeviceBeanFields">
+    	HW_ID hwId, <!-- OWN_ORG ownOrg, STATUS status, REMARKS remarks, -->
+    	COMPUTER_NAME computerName, OS os, OS_PATH osPath,
+    	LOGIC_CPU logicCpu, LOGIC_MEM logicMem, LOGIC_HARDDISK logicHarddisk, 
+    	IP ip, IS_CLUSTER_IP isClusterIp, MAC mac, VLAN vlan,
+    	NET_AREA netArea, IS_PUBLIC_NET isPublicNet, IS_REMOTE_BACKUP isRemoteBackup, 
+    	IS_VTL_BACKUP isVtlBackup, IS_CDP_BACKUP isCdpBackup, IS_PTL_BACKUP isPtlBackup,
+    	IS_MANUAL_BACKUP isManualBackup,
+    	STORAGE_MODEL storageModel, STORAGE_TYPE storageType, SAN_LUN sanLun, 
+    	RAID_TYPE raidType, LUN_NUM lunNum, DATA_CHANGE_DEGREE dataChangeDegree
+    </sql>
+    
+    <sql id="insertHwLedgerDevice">
+    	#{hwId,jdbcType=VARCHAR},<!--  #{ownOrg,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR},  -->
+    	#{computerName,jdbcType=VARCHAR}, #{os,jdbcType=VARCHAR}, #{osPath,jdbcType=VARCHAR}, 
+    	
+    	#{logicCpu,jdbcType=VARCHAR}, #{logicMem,jdbcType=VARCHAR}, #{logicHarddisk,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+    	#{isClusterIp,jdbcType=VARCHAR}, #{mac,jdbcType=VARCHAR}, #{vlan,jdbcType=VARCHAR}, 
+    	
+    	#{netArea,jdbcType=VARCHAR}, #{isPublicNet,jdbcType=VARCHAR}, #{isRemoteBackup,jdbcType=VARCHAR}, #{isVtlBackup,jdbcType=VARCHAR}, 
+    	#{isCdpBackup,jdbcType=VARCHAR}, #{isPtlBackup,jdbcType=VARCHAR}, #{isManualBackup,jdbcType=VARCHAR}, 
+    	
+    	#{storageModel,jdbcType=VARCHAR}, #{storageType,jdbcType=VARCHAR}, #{sanLun,jdbcType=VARCHAR}, #{raidType,jdbcType=VARCHAR}, 
+    	#{lunNum,jdbcType=VARCHAR}, #{dataChangeDegree,jdbcType=VARCHAR}
+    </sql>
+    
+    <sql id="queryHwLedgerVMBeanFields">
+    	HW_ID hwId , VIRTUAL_DEPLOY_LOCATION virtualDeployLocation,ATTR01 vmAttr01, ATTR02 vmAttr02, ATTR03 vmAttr03
+    </sql>
+    
+    <sql id="hwLedgerRoomBeanField">
+    	HW_ID hwId , DESCRIPTION description
+    </sql>
+    
+    <sql id="hwLedgerCabinetBeanField">
+    	HW_ID hwId , DESCRIPTION description
+    </sql>
+    
+    <sql id="hwLedgerAddressBeanField">
+    	HW_ID hwId , DESCRIPTION description
+    </sql>
+    
+	<insert id = "insertHwLedger" parameterType="HwLedgerBean">
+		insert into AST_HW_L (<include refid="insertHwLedgerBasic" />)
+		values <include refid="insertHwLedger" />
+	</insert>
+	
+	<insert id = "insertHwLedgerServer" parameterType="HwLedgerServerBean">
+		insert into AST_HW_L_SERVER (<include refid="hwLedgerServerBeanField" />)
+		values <include refid="insertHwLedgerServer" />
+	</insert>
+	
+	<insert id = "insertHwLedgerDevice" parameterType="HwLedgerDeviceBean">
+		insert into AST_HW_L_DEVICE (<include refid="hwLedgerDeviceBeanField" />)
+		values ( <include refid="insertHwLedgerDevice" /> )
+	</insert>
+	
+	<insert id = "insertAddress" parameterType="HwLedgerAddressBean">
+		insert into AST_HW_L_ADDRESS (HW_ID)
+		values ( #{ hwId } )
+	</insert>
+	
+	<insert id = "insertRoom" parameterType="HwLedgerRoomBean">
+		insert into AST_HW_L_ROOM (HW_ID)
+		values ( #{ hwId } )
+	</insert>
+	
+	<insert id = "insertCabinet" parameterType="HwLedgerCabinetBean">
+		insert into AST_HW_L_CABINET (HW_ID)
+		values ( #{ hwId } )
+	</insert>
+	
+	<insert id = "insertHwLedgerVM" parameterType="HwLedgerVMBean">
+		insert into AST_HW_L_VM (HW_ID, VIRTUAL_DEPLOY_LOCATION,ATTR01 , ATTR02 , ATTR03 )
+		values ( 
+			#{ hwId ,jdbcType=VARCHAR}, #{ virtualDeployLocation,jdbcType=VARCHAR },
+			#{ vmAttr01 ,jdbcType=VARCHAR}, #{ vmAttr02,jdbcType=VARCHAR },
+			#{ vmAttr03 ,jdbcType=VARCHAR}
+		 )
+	</insert>
+	
+	<select id="queryHwLedgerRootIdBySite" parameterType="String" resultType="String">
+		select hw.HW_ID
+		from AST_HW_L hw
+		where hw.isroot='Y' and hw.site_id=#{siteId}
+	</select>
+	
+	<select id="queryHwLedgerDetail" parameterType="String" resultType="HwLedgerBean">
+		select <include refid="hwLedgerBeanField"/>
+		from AST_HW_L hw
+		where hw.HW_ID = #{ id }
+	</select>
+	
+	<select id="queryHwLedgerChildren" parameterType="String" resultType="HwLedgerBean">
+		select <include refid="hwLedgerBeanField"/>
+		from AST_HW_L hw
+		where hw.PARENT_ID = #{ id } order by hw.hw_name
+	</select>
+	
+	<select id="searchHwLedgerHint" parameterType="Map" resultType="Map">
+		  select 
+        	hw.HW_ID as &quot;id&quot;, 
+			hw.HW_NAME as &quot;name&quot;
+		from AST_HW_L hw
+        where hw.SITE_ID=#{siteId } and 
+        ( upper( hw.HW_NAME ) like '%${keyWord}%' or hw.hw_id in ( SELECT ld.hw_id FROM  AST_HW_L_DEVICE ld where ip like '%${keyWord}%' ) )
+        and rownum&lt;=11
+	</select>
+	
+	<select id="searchHintHwLedgerParentIds" parameterType="String" resultType="String">
+		  select 
+        	p.HW_ID as hwId
+		from AST_HW_L p
+		start with p.HW_ID=#{id}
+		connect by p.HW_ID=prior PARENT_ID
+	</select>
+	
+	<select id="queryHwLedgerByRoot" parameterType="String" resultType="Map">
+		  select 
+        	p.HW_TYPE as hwType, count(p.hw_type) as hwTypeCount
+		from AST_HW_L p
+		where p.SITE_ID = #{ siteId } and p.isRoot != 'Y' group by p.HW_TYPE
+	</select>
+	
+	<update id="updateHwLedger" parameterType="HwLedgerBean">
+		 UPDATE AST_HW_L  SET HW_NAME = #{ hwName }, UPDATED_BY = #{ modifyuser,jdbcType=VARCHAR }, 
+		 	UPDATE_TIME = #{ modifydate,jdbcType=TIMESTAMP } 
+		 	WHERE HW_ID = #{ hwId }
+	</update>
+	
+	<update id="updateHwLedgerDevice" parameterType="HwLedgerDeviceBean">
+		 UPDATE AST_HW_L_DEVICE  SET 
+		 <!-- OWN_ORG = #{ ownOrg,jdbcType=VARCHAR }, STATUS = #{ status,jdbcType=VARCHAR },
+		 REMARKS = #{ remarks ,jdbcType=VARCHAR},  -->COMPUTER_NAME = #{ computerName ,jdbcType=VARCHAR}, 
+		 OS = #{ os,jdbcType=VARCHAR }, OS_PATH = #{ osPath,jdbcType=VARCHAR }, 
+		 LOGIC_CPU = #{ logicCpu,jdbcType=VARCHAR }, LOGIC_MEM = #{ logicMem,jdbcType=VARCHAR }, 
+		 LOGIC_HARDDISK = #{ logicHarddisk,jdbcType=VARCHAR }, IP = #{ ip,jdbcType=VARCHAR },
+		 IS_CLUSTER_IP = #{ isClusterIp,jdbcType=VARCHAR }, MAC = #{ mac ,jdbcType=VARCHAR}, 
+		 VLAN = #{ vlan,jdbcType=VARCHAR }, NET_AREA = #{ netArea,jdbcType=VARCHAR }, 
+		 IS_PUBLIC_NET = #{ isPublicNet,jdbcType=VARCHAR }, IS_REMOTE_BACKUP = #{ isRemoteBackup,jdbcType=VARCHAR }, 
+		 IS_VTL_BACKUP = #{ isVtlBackup,jdbcType=VARCHAR }, IS_CDP_BACKUP = #{ isCdpBackup,jdbcType=VARCHAR },
+		 IS_PTL_BACKUP = #{ isPtlBackup ,jdbcType=VARCHAR}, IS_MANUAL_BACKUP = #{ isManualBackup ,jdbcType=VARCHAR}, 
+		 STORAGE_MODEL = #{ storageModel ,jdbcType=VARCHAR}, STORAGE_TYPE = #{ storageType ,jdbcType=VARCHAR}, 
+		 SAN_LUN = #{ sanLun ,jdbcType=VARCHAR}, RAID_TYPE = #{ raidType ,jdbcType=VARCHAR}, 
+		 LUN_NUM = #{ lunNum ,jdbcType=VARCHAR}, DATA_CHANGE_DEGREE = #{ dataChangeDegree,jdbcType=VARCHAR }
+
+	 	WHERE HW_ID = #{ hwId }
+	</update>
+	
+	<update id="updateHwLedgerServer" parameterType="HwLedgerServerBean">
+		 UPDATE AST_HW_L_SERVER  SET 
+		<!--  LOCATION = #{ location,jdbcType=VARCHAR }, ASSET_CODE = #{ assetCode,jdbcType=VARCHAR }, -->
+		 SERVER_MODEL = #{ serverModel ,jdbcType=VARCHAR}, SN_CODE = #{ snCode ,jdbcType=VARCHAR}, 
+		 SERVER_BRAND = #{ serverBrand,jdbcType=VARCHAR }, CPU_MODEL = #{ cpuModel,jdbcType=VARCHAR }, 
+		 CPU_NUM = #{ cpuNum,jdbcType=NUMERIC }, MEM_MODEL = #{ memModel,jdbcType=VARCHAR }, 
+		 MEM_NUM = #{ memNum,jdbcType=NUMERIC }, HARDDISK_MODEL = #{ harddiskModel,jdbcType=VARCHAR },
+		 HARDDISK_NUM = #{ harddiskNum,jdbcType=NUMERIC }, HBA_MODEL = #{ hbaModel ,jdbcType=VARCHAR}, 
+		 HBA_NUM = #{ hbaNum,jdbcType=NUMERIC }, NETCARD_MODEL = #{ netcardModel ,jdbcType=VARCHAR}, 
+		 NETCARD_NUM = #{ netcardNum,jdbcType=NUMERIC }, RAID_MODEL = #{ raidModel,jdbcType=VARCHAR }, 
+		 POWER = #{ power,jdbcType=NUMERIC }<!-- , TO_USE_TIME = #{ toUseTime,jdbcType=TIMESTAMP }, 
+		 ELAPSED_TIME = #{ elapsedTime,jdbcType=TIMESTAMP }, MAINTAIN = #{ maintain,jdbcType=VARCHAR },
+		 SUPPLIER = #{ supplier ,jdbcType=VARCHAR}, REPAIR_RECARD = #{ repairRecard ,jdbcType=VARCHAR} -->
+
+	 	WHERE HW_ID = #{ hwId }
+	</update>
+	
+	<update id="updateHwLedgerVM" parameterType="HwLedgerVMBean">
+		 UPDATE AST_HW_L_VM  SET 
+		 VIRTUAL_DEPLOY_LOCATION = #{ virtualDeployLocation,jdbcType=VARCHAR },
+		 ATTR01 = #{ vmAttr01,jdbcType=VARCHAR },
+		 ATTR02 = #{ vmAttr02,jdbcType=VARCHAR },
+		 ATTR03 = #{ vmAttr03,jdbcType=VARCHAR }
+
+	 	WHERE HW_ID = #{ hwId }
+	</update>
+	
+	<update id="updateDropHwlTreeNode" parameterType="Map">
+		 UPDATE AST_HW_L  SET 
+		 PARENT_ID = #{ parentId,jdbcType=VARCHAR }
+	  	 WHERE HW_ID = #{ id }
+	</update>
+	
+	<delete id="deleteHwLedger" parameterType="String">
+		 	delete AST_HW_L 
+		 	WHERE HW_ID in (
+		 	select p.HW_ID 
+			from AST_HW_L p
+			start with p.HW_ID= #{ hwId }
+			connect by prior p.HW_ID= p.PARENT_ID )
+	</delete>
+	
+	<delete id="delelteHwLedgerServer" parameterType="String">
+		 	delete AST_HW_L_SERVER 
+		 	WHERE HW_ID = #{ hwId }
+	</delete>
+	
+	<delete id="delelteHwLedgerDevice" parameterType="String">
+		 	delete AST_HW_L_DEVICE 
+		 	WHERE HW_ID = #{ hwId }
+	</delete>
+	
+	<delete id="deleteAddress" parameterType="String">
+		 	delete AST_HW_L_ADDRESS 
+		 	WHERE HW_ID = #{ hwId }
+	</delete>
+	
+	<delete id="deleteRoom" parameterType="String">
+		 	delete AST_HW_L_ROOM 
+		 	WHERE HW_ID = #{ hwId }
+	</delete>
+	
+	<delete id="deleteCabinet" parameterType="String">
+		 	delete AST_HW_L_CABINET 
+		 	WHERE HW_ID = #{ hwId }
+	</delete>
+	
+	<delete id="delelteHwLedgerVM" parameterType="String">
+		 	delete AST_HW_L_VM 
+		 	WHERE HW_ID = #{ hwId }
+	</delete>
+	
+	<select id="searchHwModelHint" parameterType="Map" resultType="Map">
+		  select 
+        	hw.MODEL_ID as &quot;id&quot;, 
+			hw.MODEL_NAME as &quot;name&quot;
+		from AST_HW_MODEL hw
+        where hw.MODEL_TYPE=#{ modelType }
+        <if test="keyWord != null  and keyWord != '' ">
+         and upper( hw.MODEL_NAME ) like '%${keyWord}%'
+        </if>
+        and rownum&lt;=110 order by hw.MODEL_NAME
+	</select>
+	
+	<select id="queryHwModelNameBySiteId" parameterType="String" resultType="Map">
+		  select 
+        	hw.MODEL_ID as &quot;id&quot;, 
+			hw.MODEL_NAME as &quot;name&quot;
+		from AST_HW_MODEL hw
+        where site_id = #{ siteId }
+	</select>
+	
+	<select id="queryHwModelNameById" parameterType="Map" resultType="Map">
+		  select 
+        	hw.MODEL_ID as &quot;id&quot;, 
+			hw.MODEL_NAME as &quot;name&quot;
+		from AST_HW_MODEL hw
+        where site_id = #{ siteId } and hw.MODEL_ID = #{ id }
+	</select>
+	
+	<select id="queryHwLedgerDeviceById" parameterType="String" resultType="HwLedgerDeviceBean">
+		  select 
+        	<include refid="queryHwLedgerDeviceBeanFields"/>
+		from AST_HW_L_DEVICE hw
+        where hw.hw_id = #{ hwId }
+	</select>
+	
+	<select id="queryHwLedgerServerById" parameterType="String" resultType="HwLedgerServerBean">
+		  select 
+        	<include refid="queryHwLedgerServerBeanFields"/>
+		from AST_HW_L_SERVER hw
+        where hw.hw_id = #{ hwId }
+	</select>
+	
+	<select id="queryHwLedgerVMById" parameterType="String" resultType="HwLedgerVMBean">
+		  select 
+        	<include refid="queryHwLedgerVMBeanFields"/>
+		from AST_HW_L_VM hw
+        where hw.hw_id = #{ hwId }
+	</select>
+	
+	<select id="queryCheckHwLedgerName" parameterType="Map" resultType="HwLedgerBean">
+		  select 
+        	<include refid="hwLedgerBeanField"/>
+		from AST_HW_L hw
+        where hw.SITE_ID = #{ siteId } and hw.HW_NAME = #{ hwName }
+        <if test="hwId != null and hwId != '' ">
+        	and hw_id != #{ hwId }
+        </if>
+	</select>
+	
+	<select id="queryHwAddressByHwId" parameterType="String" resultType="HwLedgerAddressBean">
+		  select 
+        	<include refid="hwLedgerAddressBeanField"/>
+		from AST_HW_L_ADDRESS hw
+        where
+        hw_id = #{ hwId }
+	</select>
+	
+	<select id="queryHwRoomByHwId" parameterType="String" resultType="HwLedgerRoomBean">
+		  select 
+        	<include refid="hwLedgerRoomBeanField"/>
+		from AST_HW_L_ROOM hw
+        where
+        hw_id = #{ hwId }
+	</select>
+	
+	<select id="queryHwCabinetByHwId" parameterType="String" resultType="HwLedgerCabinetBean">
+		  select 
+        	<include refid="hwLedgerCabinetBeanField"/>
+		from AST_HW_L_CABINET hw
+        where
+        hw_id = #{ hwId }
+	</select>
+	
+	<select id="queryHwLedgerMulti" resultType="MultiSearchVo">
+		  select 
+        	hw.HW_ID hwId, hw.HW_NAME hwName, hw.HW_TYPE hwType,
+        	eq.TO_USE_TIME toUseTime, TEMP.ip
+			from ( 
+			select p.* from AST_HW_L p
+			start with p.HW_ID= '${ params.hwId }'
+			connect by prior p.HW_ID= p.PARENT_ID ) hw 
+			left join AST_HW_L_EQPT eq ON hw.hw_id = EQ.HW_ID 
+			LEFT JOIN (
+			 SELECT D.HW_ID hwId, d.ip ip FROM AST_HW_L_DEVICE d
+				WHERE 1=1 
+				<if test="params.ip != null  and params.ip != ''">
+					AND D.IP LIKE '%${ params.ip }%'
+				</if>
+			UNION
+	 		SELECT s.hw_id, S.IP ip FROM  AST_HW_L_STORAGE S 
+				WHERE 1=1 
+				<if test="params.ip != null  and params.ip != ''">
+					AND s.ip LIKE '%${ params.ip }%'
+				</if>
+			UNION 
+			SELECT N.hw_id, N.IP ip FROM   AST_HW_L_NETWORK N
+			WHERE 1=1
+			<if test="params.ip != null  and params.ip != ''">
+				AND N.ip LIKE '%${ params.ip }%'
+			</if>
+			) TEMP ON hw.hw_id = TEMP.hwId
+		WHERE HW.SITE_ID= '${ params.siteId }'
+		<if test="params.hwName != null  and params.hwName != ''">
+		  	AND HW.HW_NAME LIKE '%${ params.hwName }%'
+		</if>
+		<if test="params.hwType != null  and params.hwType != ''">
+		  	and HW.HW_TYPE = '${ params.hwType }' 
+		</if>
+		<if test="params.toUseTime != null  and params.toUseTime != ''">
+			AND to_char(eq.TO_USE_TIME,'yyyy-mm-dd') = '${params.toUseTime}' 
+		</if>
+		<if test="params.ip != null  and params.ip != ''">
+			and TEMP.ip LIKE '%${ params.ip }%'
+		</if>
+	</select>
+	
+	
+</mapper> 

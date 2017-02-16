@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.MaintainPlanDao">
+
+
+	<resultMap type="MaintainPlan" id="maintainPlanMap">
+		<id column="ID" property="id" />
+		<result column="MTP_CODE" property="maintainPlanCode" />
+		<result column="JOBPLAN_ID" property="jobPlanId" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="MTP_SPEC_ID" property="specialtyId" />
+		<result column="EQUIP_ID" property="equipId" />
+		<result column="EQUIPNAME" property="equipName" />
+		<result column="EQUIPNAME_CODE" property="equipNameCode" />
+		
+		<result column="WO_CYCLE" property="maintainPlanCycle" />
+		<result column="CURR_START_TIME" property="currStartTime" />
+		<result column="ALERT_TIME_LENGTH" property="alertTime" />
+		<result column="MTP_FROM" property="maintainPlanFrom" />
+		<result column="REMARKS" property="remarks" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="PRE_WO" property="preWO" />
+		<result column="NEW_TODO_TIME" property="newToDoTime" />
+		<result column="PARENTMTP_ID" property="parentMTPId" />
+		<result column="PARENTMTP_CODE" property="parentMTPCode" />
+		<result column="MTP_ISHANDLER" property="isHandler" />
+		<result column="WORKTEAM" property="workTeam" />
+		<result column="WORKTEAM_NAME" property="workTeamName" />
+		<result column="PRINCIPAL" property="principal" />
+		<result column="PRINCIPAL_NAME" property="principalName" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+		
+		<result column="FAULT_TYPE_ID" property="faultTypeId" />
+		<result column="ISAUTO_GENER_WO" property="isAutoGenerWo" />
+		<result column="HAS_ALERTTODO" property="hasAlertTodo" />
+		
+		<!-- 数据库中没有的字段 -->
+		<result column="FAULT_TYPE_NAME" property="faultTypeName" />
+	</resultMap>	
+	
+
+	<insert id="insertMaintainPlan">
+		insert into WO_MAINTAINPLAN(ID,MTP_CODE,JOBPLAN_ID,DESCRIPTION,MTP_SPEC_ID,FAULT_TYPE_ID,EQUIP_ID,EQUIPNAME,EQUIPNAME_CODE,
+									WO_CYCLE,CURR_START_TIME,NEW_TODO_TIME,ALERT_TIME_LENGTH,MTP_FROM,PARENTMTP_CODE,
+									PRE_WO,REMARKS,WORKTEAM,WORKTEAM_NAME,PRINCIPAL,PRINCIPAL_NAME,CREATEUSER,CREATEDATE,MODIFYUSER,
+									MODIFYDATE,SITEID,DEPTID,YXBZ,ISAUTO_GENER_WO,HAS_ALERTTODO) 
+		values( #{id},
+				#{maintainPlanCode,jdbcType=VARCHAR},
+				#{jobPlanId,jdbcType=NUMERIC},
+				#{description,jdbcType=VARCHAR},
+				#{specialtyId,jdbcType=VARCHAR},
+				#{faultTypeId,jdbcType=VARCHAR},
+				#{equipId,jdbcType=VARCHAR},
+				#{equipName,jdbcType=VARCHAR},
+				#{equipNameCode,jdbcType=VARCHAR},
+				#{maintainPlanCycle,jdbcType=NUMERIC},
+				#{currStartTime,jdbcType=TIMESTAMP},
+				#{newToDoTime,jdbcType=TIMESTAMP},
+				#{alertTime,jdbcType=NUMERIC},
+				#{maintainPlanFrom,jdbcType=VARCHAR},
+				#{parentMTPCode,jdbcType=VARCHAR},
+				#{preWO,jdbcType=NUMERIC},
+				#{remarks,jdbcType=VARCHAR},
+				#{workTeam,jdbcType=VARCHAR},
+				#{workTeamName,jdbcType=VARCHAR},
+				#{principal,jdbcType=VARCHAR},
+				#{principalName,jdbcType=VARCHAR},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{modifyuser,jdbcType=VARCHAR},
+				#{modifydate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC},
+				#{isAutoGenerWo,jdbcType=NUMERIC},
+				#{hasAlertTodo,jdbcType=NUMERIC})
+	</insert>
+	
+	<update id="updateMaintainPlan" parameterType="MaintainPlan">
+		update WO_MAINTAINPLAN 
+		set JOBPLAN_ID=#{jobPlanId,jdbcType=NUMERIC},
+			DESCRIPTION=#{description,jdbcType=VARCHAR},
+			MTP_SPEC_ID=#{specialtyId,jdbcType=VARCHAR},
+			FAULT_TYPE_ID=#{faultTypeId,jdbcType=VARCHAR},
+			EQUIP_ID=#{equipId,jdbcType=VARCHAR},
+			EQUIPNAME=#{equipName,jdbcType=VARCHAR},
+			EQUIPNAME_CODE=#{equipNameCode,jdbcType=VARCHAR},
+			WO_CYCLE=#{maintainPlanCycle,jdbcType=NUMERIC},
+			CURR_START_TIME=#{currStartTime,jdbcType=TIMESTAMP},
+			ALERT_TIME_LENGTH=#{alertTime,jdbcType=NUMERIC},
+			PARENTMTP_CODE=#{parentMTPCode,jdbcType=VARCHAR}, 
+			WORKTEAM=#{workTeam,jdbcType=VARCHAR},
+			WORKTEAM_NAME=#{workTeamName,jdbcType=VARCHAR},
+			PRINCIPAL=#{principal,jdbcType=VARCHAR},
+			PRINCIPAL_NAME=#{principalName,jdbcType=VARCHAR},
+			REMARKS=#{remarks,jdbcType=VARCHAR},
+			MODIFYUSER=#{modifyuser,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifydate,jdbcType=TIMESTAMP},
+			ISAUTO_GENER_WO=#{isAutoGenerWo,jdbcType=NUMERIC}
+		where id=#{id} 
+	</update>
+	
+	<update id="updateMTPToUnvailable" parameterType="int">
+		update WO_MAINTAINPLAN 
+		set YXBZ = 0
+		where id=#{id} 
+	</update>
+	
+	<update id="updateMTPTodoTime" parameterType="HashMap">
+		update WO_MAINTAINPLAN 
+		set NEW_TODO_TIME=#{newToDoTime},CURR_START_TIME=#{currStartTime}
+		where id=#{id} 
+	</update>
+	
+	<update id="updateMTPhasAlertTodo" parameterType="HashMap">
+		update WO_MAINTAINPLAN 
+		set HAS_ALERTTODO = #{value}
+		where id = #{mtpId} 
+	</update>
+	
+	<select id="queryMTPById" parameterType="int" resultMap="maintainPlanMap">
+		select ID,MTP_CODE,JOBPLAN_ID,DESCRIPTION,MTP_SPEC_ID,EQUIP_ID,EQUIPNAME,EQUIPNAME_CODE,
+				WORKTEAM,PRINCIPAL,WO_CYCLE,CURR_START_TIME,ALERT_TIME_LENGTH,MTP_FROM,ISAUTO_GENER_WO,
+				PARENTMTP_ID,PARENTMTP_CODE,REMARKS,CREATEUSER,CREATEDATE,SITEID,DEPTID,YXBZ
+		from WO_MAINTAINPLAN 
+		where id= #{id}
+	</select>
+	<select id="queryITMTPById" parameterType="int" resultMap="maintainPlanMap">
+		select t.ID,MTP_CODE,JOBPLAN_ID,DESCRIPTION,EQUIP_ID,EQUIPNAME,EQUIPNAME_CODE,
+	       PRINCIPAL,PRINCIPAL_NAME,WO_CYCLE,CURR_START_TIME,ALERT_TIME_LENGTH,MTP_FROM,
+	      t.REMARKS,t.fault_type_id,ft.name FAULT_TYPE_NAME,t.CREATEUSER,NEW_TODO_TIME,
+	      ISAUTO_GENER_WO,t.workteam
+	    from WO_MAINTAINPLAN t,wo_faulttype ft
+	    where t.id= #{id} and t.fault_type_id=ft.id
+	</select>
+	
+	
+	
+	<select id="queryAllMTP" resultMap="maintainPlanMap">
+		select ID,MTP_CODE,JOBPLAN_ID,DESCRIPTION,MTP_SPEC_ID,EQUIPNAME,
+				WO_CYCLE,CURR_START_TIME,ALERT_TIME_LENGTH,MTP_FROM,PARENTMTP_ID,PARENTMTP_CODE,
+				REMARKS,CREATEUSER,CREATEDATE,SITEID,DEPTID,YXBZ,EQUIP_ID,MODIFYDATE
+		from WO_MAINTAINPLAN t
+		where YXBZ = 1 
+		<if test="params.siteid != null">
+			and siteid = #{params.siteid}
+		</if>
+	</select>
+	<select id="queryAllITMTP" resultMap="maintainPlanMap">
+		select t.ID,MTP_CODE,JOBPLAN_ID,DESCRIPTION,FAULT_TYPE_ID,ft.name FAULT_TYPE_NAME,EQUIPNAME,
+	        WO_CYCLE,CURR_START_TIME,ALERT_TIME_LENGTH,MTP_FROM,EQUIP_ID,
+	        t.REMARKS,t.modifydate,t.PRINCIPAL_NAME,t.WORKTEAM_NAME
+	    from WO_MAINTAINPLAN t,wo_faulttype ft
+	    where t.YXBZ = 1 and 
+	    	  ft.id = t.fault_type_id
+		<if test="params.siteid != null">
+			and T.siteid = #{params.siteid}
+		</if>
+	</select>
+	
+	<select id="queryAllCycMTP" resultMap="maintainPlanMap">
+		select * 
+		from WO_MAINTAINPLAN t
+		where YXBZ = 1 and MTP_FROM='cycle_maintainPlan' 
+	</select>
+	
+	 <select id="queryAllParentMTP" resultMap="maintainPlanMap">
+		select ID,MTP_CODE,JOBPLAN_ID,DESCRIPTION,MTP_SPEC_ID,EQUIPNAME,
+				WO_CYCLE,CURR_START_TIME,ALERT_TIME_LENGTH,MTP_FROM,PARENTMTP_ID,PARENTMTP_CODE,
+				REMARKS,CREATEUSER,CREATEDATE,SITEID,DEPTID,YXBZ 
+		from WO_MAINTAINPLAN t
+		where MTP_FROM = 'cycle_maintainPlan'
+		<if test="params.siteid != null">
+			and siteid = #{params.siteid}
+		</if>
+	</select>
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextMTPId" resultType="int">
+		select SEQ_WO_MAINTAINPLAN.nextval from dual
+	</select>
+</mapper>

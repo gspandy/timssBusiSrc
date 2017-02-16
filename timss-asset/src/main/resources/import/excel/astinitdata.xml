@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excel model="ast" entity="AstOrganizeData">
+	<cell name="parentid" type="String" isNull="Y" maxLength="300" sortOrder="0" cName="资产编码（父级）"/>
+	<cell name="assetid" type="String" isNull="N" maxLength="300" sortOrder="1" cName="资产编码"/>
+	<cell name="assetname" type="String" isNull="N" maxLength="300" sortOrder="2" cName="设备名称"/>
+	<cell name="spec" type="String" isNull="Y" maxLength="20" sortOrder="3" cName="专业"/>
+	<cell name="description" type="String" isNull="Y" maxLength="200" sortOrder="4" cName="资产说明/备注"/>
+	<cell name="modeldesc" type="String" isNull="Y" maxLength="4000" sortOrder="5" cName="详细参数"/>
+	<cell name="manufacturer" type="String" isNull="Y" maxLength="255" sortOrder="6" cName="制造商"/>
+	<cell name="producedate" type="String" isNull="Y" maxLength="20" sortOrder="7" cName="生产日期"/>
+	<cell name="isroot" type="String" isNull="Y" maxLength="3" sortOrder="8" cName="根节点"/>
+	<cell name="cumodel" type="String" isNull="Y" maxLength="250" sortOrder="9" cName="物资型号"/>
+</excel>

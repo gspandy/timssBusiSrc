@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvStocktakingDetailDao">
+	<resultMap type="com.timss.inventory.bean.InvStocktakingDetail" id="InvStocktakingDetailMap">
+		<result property="siteId" column="site_id"/>
+		<result property="qtyBefore" column="qty_before"/>
+		<result property="qtyAfter" column="qty_after"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvStocktakingDetailVO" id="InvStocktakingDetailVOMap">
+		<result property="siteId" column="site_id"/>
+		<result property="qtyBefore" column="qty_before"/>
+		<result property="qtyAfter" column="qty_after"/>
+	</resultMap>
+
+	<!-- 查询表单中列表的详细信息 -->
+	<select id="queryStocktakingDetailList" resultMap="InvStocktakingDetailVOMap">
+		select t.istdid,t.istid,t.itemid,t.itemcode,t.itemname,t.cusmodel,t.qty_before,t.qty_after,t.unitid,
+               iu.unitname as unitname,t.price,t.binid,t.createuser,t.createdate,t.modifyuser,t.modifydate,t.site_id,
+               ib.binname as bin,t.remark,
+               case when t.breakeven > 0 then '+'||to_char(t.breakeven)
+                	when t.breakeven = 0 then '--' 
+                	else to_char(t.breakeven) end as breakeven,t.warehouseid,t.invcateid,ird.can_use_qty as nowqty,ird.actual_qty as stockqty
+	    from (
+	      select isd.istdid,isd.istid,ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,isd.qty_before,isd.qty_after,ii.unit1 as unitid,
+	                isd.price,isd.binid,isd.createuser,isd.createdate,isd.modifyuser,isd.modifydate,isd.site_id,
+	                isd.remark,(isd.qty_after - isd.qty_before) as breakeven,ist.warehouseid,isd.invcateid
+	          from inv_stocktaking_detail isd,inv_stocktaking ist,inv_item ii 
+	          where isd.itemid = ii.itemid and isd.site_id = ii.site_id 
+	          		and isd.istid = ist.istid and isd.site_id = ist.site_id
+	                and isd.istid=#{params.istId} 
+	                and isd.site_id=#{params.siteId}) t
+        left join inv_unit iu on  iu.unitid = t.unitid and iu.site_id = t.site_id
+        left join inv_bin ib on ib.binid = t.binid and ib.site_id = t.site_id
+        left join inv_realtime_data ird on ird.itemid = t.itemid and ird.invcateid = t.invcateid and ird.site_id = t.site_id     
+	</select>
+	
+	<!-- 通过istid删除 -->
+	<delete id="deleteInvStocktakingDetailByIstId">
+		delete from inv_stocktaking_detail istd where istd.istid=#{params.istId}
+	</delete>
+	
+	<!-- 插入InvStocktakingDetail信息 -->
+	<insert id="insertInvStocktakingDetail" parameterType="com.timss.inventory.bean.InvStocktakingDetail">
+		insert into inv_stocktaking_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="istdid != null"> istdid, </if>
+	      <if test="istid != null"> istid, </if>
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="qtyBefore != null"> qty_before, </if>
+	      <if test="qtyAfter != null"> qty_after, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="binid != null"> binid, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="price != null"> price, </if>
+	      <if test="invcateid != null"> invcateid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="istdid != null"> #{istdid,jdbcType=VARCHAR}, </if>
+	      <if test="istid != null"> #{istid,jdbcType=VARCHAR}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="qtyBefore != null"> #{qtyBefore,jdbcType=NUMERIC}, </if>
+	      <if test="qtyAfter != null"> #{qtyAfter,jdbcType=NUMERIC}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="binid != null"> #{binid,jdbcType=VARCHAR}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> #{price,jdbcType=NUMERIC}, </if>
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+</mapper> 

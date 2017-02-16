@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvFormulaDefDao">
+	<resultMap type="com.timss.inventory.bean.InvFormulaDef" id="InvFormulaDefMap">
+		<result property="ifdId" column="IFDID"/>
+		<result property="fieldCode" column="FIELD_CODE"/>
+		<result property="formulaContent" column="FORMULA_CONTENT"/>
+		<result property="siteid" column="SITE_ID"/>
+	</resultMap>
+	
+	<!-- 查询物资库存实时数据信息列表 -->
+	<select id="queryInvFormulaDefByEntity" resultMap="InvFormulaDefMap">
+        select ifd.ifdid, ifd.field_code,ifd.formula_content,ifd.site_id
+        from inv_formula_def ifd
+		where 1=1 
+		<if test="InvFormulaDef.ifdId != null and InvFormulaDef.ifdId != ''">
+		  	and ifd.ifdid = #{InvFormulaDef.ifdId}  
+		</if>
+		<if test="InvFormulaDef.fieldCode != null and InvFormulaDef.fieldCode != ''">
+		  	and ifd.field_code = #{InvFormulaDef.fieldCode}  
+		</if>
+		<if test="InvFormulaDef.formulaContent != null and InvFormulaDef.formulaContent != ''">
+		  	and ifd.formula_content = #{InvFormulaDef.formulaContent}  
+		</if>
+		<if test="InvFormulaDef.siteid != null and InvFormulaDef.siteid != ''">
+		  	and ifd.site_id = #{InvFormulaDef.siteid}  
+		</if>
+	</select>
+</mapper> 

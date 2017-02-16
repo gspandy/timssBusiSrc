@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.WorkStatusDao">
+	
+	<sql id="workStatusBeanField">
+		w.id, w.userId, w.userName, w.workDate, 
+		w.status, w.mornStartCheck, w.mornEndCheck,
+		w.noonStartCheck, w.noonEndCheck, w.mornStartTime, 
+		w.mornEndTime, w.noonStartTime, w.noonEndTime,	
+		w.mornStartCheckType, w.mornEndCheckType,
+		w.noonStartCheckType, w.noonEndCheckType,
+		w.mornStartCheckSrc, w.mornEndCheckSrc,
+		w.noonStartCheckSrc, w.noonEndCheckSrc,
+		w.createBy, w.createDate, w.updateBy, w.updateDate, 
+		w.siteId, w.deptName, w.deptId, w.isOpr, w.oprScheduleId
+	</sql>
+	
+	<insert id="insertWorkStatus" parameterType="WorkStatusBean">
+		insert into  ATD_WORKSTATUS(
+			id, userId, userName, workDate, 
+			status, mornStartCheck, mornEndCheck,
+			noonStartCheck, noonEndCheck, mornStartTime, 
+			mornEndTime, noonStartTime, noonEndTime,	
+			mornStartCheckType, mornEndCheckType,
+			noonStartCheckType, noonEndCheckType,
+			mornStartCheckSrc, mornEndCheckSrc,
+			noonStartCheckSrc, noonEndCheckSrc,	
+			createBy, createDate, siteId, deptName, deptId, isOpr, oprScheduleId
+		) 
+		values(
+			#{id, jdbcType=VARCHAR } ,#{userId, jdbcType=VARCHAR},#{userName, jdbcType=VARCHAR},#{workDate, jdbcType=VARCHAR},
+			#{status, jdbcType=VARCHAR } ,#{mornStartCheck, jdbcType=VARCHAR},#{mornEndCheck, jdbcType=VARCHAR},
+	 		#{noonStartCheck, jdbcType=VARCHAR } ,#{noonEndCheck, jdbcType=VARCHAR }, #{mornStartTime, jdbcType=VARCHAR },
+	 		#{mornEndTime,jdbcType=VARCHAR } ,#{noonStartTime, jdbcType=VARCHAR }, #{noonEndTime, jdbcType=VARCHAR}, 
+	 		#{mornStartCheckType, jdbcType=VARCHAR},#{mornEndCheckType, jdbcType=VARCHAR},
+	 		#{noonStartCheckType, jdbcType=VARCHAR } ,#{noonEndCheckType, jdbcType=VARCHAR },
+	 		#{mornStartCheckSrc, jdbcType=VARCHAR},#{mornEndCheckSrc, jdbcType=VARCHAR},
+	 		#{noonStartCheckSrc, jdbcType=VARCHAR } ,#{noonEndCheckSrc, jdbcType=VARCHAR },
+	 		#{createBy,jdbcType=VARCHAR } ,#{createDate, jdbcType=TIMESTAMP }, #{siteId, jdbcType=VARCHAR}, 
+	 		#{deptName,jdbcType=VARCHAR } ,#{deptId, jdbcType=VARCHAR }, #{isOpr, jdbcType=VARCHAR }, #{oprScheduleId, jdbcType=NUMERIC }   
+		)
+	</insert>
+	
+	
+	<!-- 批量操作 -->
+	<insert id="insertBatchWorkStatus" parameterType="java.util.List">
+		insert into  ATD_WORKSTATUS(
+			id, userId, userName, workDate, 
+			status, mornStartCheck, mornEndCheck,
+			noonStartCheck, noonEndCheck, mornStartTime, 
+			mornEndTime, noonStartTime, noonEndTime,	
+			mornStartCheckType, mornEndCheckType,
+			noonStartCheckType, noonEndCheckType,
+			mornStartCheckSrc, mornEndCheckSrc,
+			noonStartCheckSrc, noonEndCheckSrc,		
+			createBy, createDate, siteId, deptName, deptId, isOpr, oprScheduleId
+		) 
+		select temp.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			select #{item.id, jdbcType=VARCHAR } ,#{item.userId, jdbcType=VARCHAR},#{item.userName, jdbcType=VARCHAR},#{item.workDate, jdbcType=VARCHAR},
+				#{item.status, jdbcType=VARCHAR } ,#{item.mornStartCheck, jdbcType=VARCHAR},#{item.mornEndCheck, jdbcType=VARCHAR},
+		 		#{item.noonStartCheck, jdbcType=VARCHAR } ,#{item.noonEndCheck, jdbcType=VARCHAR }, #{item.mornStartTime, jdbcType=VARCHAR },
+		 		#{item.mornEndTime,jdbcType=VARCHAR } ,#{item.noonStartTime, jdbcType=VARCHAR }, #{item.noonEndTime, jdbcType=VARCHAR}, 
+		 		#{item.mornStartCheckType, jdbcType=VARCHAR},#{item.mornEndCheckType, jdbcType=VARCHAR},
+		 		#{item.noonStartCheckType, jdbcType=VARCHAR } ,#{item.noonEndCheckType, jdbcType=VARCHAR },
+		 		#{item.mornStartCheckSrc, jdbcType=VARCHAR},#{item.mornEndCheckSrc, jdbcType=VARCHAR},
+		 		#{item.noonStartCheckSrc, jdbcType=VARCHAR } ,#{item.noonEndCheckSrc, jdbcType=VARCHAR },
+		 		#{item.createBy,jdbcType=VARCHAR } ,#{item.createDate, jdbcType=TIMESTAMP }, #{item.siteId, jdbcType=VARCHAR}, 
+		 		#{item.deptName,jdbcType=VARCHAR } ,#{item.deptId, jdbcType=VARCHAR }, #{item.isOpr, jdbcType=VARCHAR }, #{item.oprScheduleId, jdbcType=NUMERIC }   
+			from dual
+			</foreach>
+		) temp
+	</insert>
+	
+	
+	<update id="updateWorkStatus" parameterType="WorkStatusBean"  >
+		update ATD_WORKSTATUS set 
+		status=#{status,jdbcType=VARCHAR},isopr=#{isOpr,jdbcType=VARCHAR},
+		updateBy = #{updateBy,jdbcType=VARCHAR }, updateDate = #{updateDate, jdbcType=TIMESTAMP },
+		oprScheduleId=#{oprScheduleId, jdbcType=NUMERIC },
+		mornStartCheck = #{mornStartCheck,jdbcType=VARCHAR }, mornStartTime = #{mornStartTime,jdbcType=VARCHAR },
+		mornStartCheckType = #{mornStartCheckType,jdbcType=VARCHAR }, mornStartCheckSrc = #{mornStartCheckSrc,jdbcType=VARCHAR },
+		mornEndCheck = #{mornEndCheck,jdbcType=VARCHAR }, mornEndTime = #{mornEndTime,jdbcType=VARCHAR },
+		mornEndCheckType = #{mornEndCheckType,jdbcType=VARCHAR }, mornEndCheckSrc = #{mornEndCheckSrc,jdbcType=VARCHAR },
+		noonStartCheck = #{noonStartCheck,jdbcType=VARCHAR }, noonStartTime = #{noonStartTime,jdbcType=VARCHAR },
+		noonStartCheckType = #{noonStartCheckType,jdbcType=VARCHAR }, noonStartCheckSrc = #{noonStartCheckSrc,jdbcType=VARCHAR },
+		noonEndCheck = #{noonEndCheck,jdbcType=VARCHAR }, noonEndTime = #{noonEndTime,jdbcType=VARCHAR },
+		noonEndCheckType = #{noonEndCheckType,jdbcType=VARCHAR }, noonEndCheckSrc = #{noonEndCheckSrc,jdbcType=VARCHAR }
+		where id=#{id}
+	</update>
+	
+	<update id="updateBatchWorkStatus" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ATD_WORKSTATUS
+			<set> 
+				mornStartCheck=#{item.mornStartCheck,jdbcType=VARCHAR},
+				mornEndCheck=#{item.mornEndCheck,jdbcType=VARCHAR},
+				noonStartCheck=#{item.noonStartCheck,jdbcType=VARCHAR},
+				noonEndCheck=#{item.noonEndCheck,jdbcType=VARCHAR},
+				mornStartTime=#{item.mornStartTime,jdbcType=VARCHAR},
+				mornEndTime=#{item.mornEndTime,jdbcType=VARCHAR},
+				noonStartTime=#{item.noonStartTime,jdbcType=VARCHAR},
+				noonEndTime=#{item.noonEndTime,jdbcType=VARCHAR},
+				mornStartCheckType=#{item.mornStartCheckType,jdbcType=VARCHAR},
+				mornEndCheckType=#{item.mornEndCheckType,jdbcType=VARCHAR},
+				noonStartCheckType=#{item.noonStartCheckType,jdbcType=VARCHAR},
+				noonEndCheckType=#{item.noonEndCheckType,jdbcType=VARCHAR},
+				mornStartCheckSrc=#{item.mornStartCheckSrc,jdbcType=VARCHAR},
+				mornEndCheckSrc=#{item.mornEndCheckSrc,jdbcType=VARCHAR},
+				noonStartCheckSrc=#{item.noonStartCheckSrc,jdbcType=VARCHAR},
+				noonEndCheckSrc=#{item.noonEndCheckSrc,jdbcType=VARCHAR},
+				status=#{item.status,jdbcType=VARCHAR},
+				updateBy=#{item.updateBy,jdbcType=VARCHAR},updateDate=#{item.updateDate, jdbcType=TIMESTAMP},
+				oprScheduleId=#{item.oprScheduleId, jdbcType=NUMERIC },
+				isopr=#{item.isOpr,jdbcType=VARCHAR}
+			</set> 
+			where id=#{item.id}
+		</foreach>
+	</update>
+	
+	<delete id="deleteBatchWorkStatus" parameterType="java.util.List">
+		delete from ATD_WORKSTATUS
+		where id in  
+		<foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+			#{item.id,jdbcType=VARCHAR}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteWorkstatus" parameterType="WorkStatusBean">
+		delete from ATD_WORKSTATUS
+		where id=#{id,jdbcType=VARCHAR}
+	</delete>
+	
+	 <select id="queryWorkStatusListBySearch" resultType="WorkStatusBean">
+		SELECT <include refid="workStatusBeanField"/>, 
+d.id dutyId,d.name dutyName,
+s.id shiftId,s.name shiftName,s.starttime,s.longtime,s.type shiftType 
+		FROM ATD_WORKSTATUS w
+		left join opr_schedule_detail sd on sd.id=w.oprscheduleid 
+		left join opr_duty d on sd.dutyid=d.id
+		left join opr_shift s on s.id=sd.shiftid
+		WHERE  w.siteId = #{ params.siteId } and w.workDate &lt;= #{ params.currentDate,jdbcType=VARCHAR }
+		and not exists (
+	        select 1 from atd_exempt e 
+	        where (e.type='user_id' and e.relationid=w.userid) or (e.type='org_code' and e.relationid=w.deptid)
+	    ) 
+		<if test="params.isOpr != null  and params.isOpr != '' ">
+			and (w.isOpr=#{params.isOpr,jdbcType=VARCHAR}
+			<if test="params.isOpr == 'N'.toString() ">
+				or w.isOpr is null 
+			</if>
+			)
+		</if>	
+		<if test="params.checkInvalidSql != null  and params.checkInvalidSql != '' ">
+			and ${params.checkInvalidSql}
+		</if>
+		<if test="params.deptId!=null and params.deptId!=''">
+			and w.deptId = #{ params.deptId,jdbcType=VARCHAR }
+		</if>
+		<if test="params.deptName!=null and params.deptName!=''">
+			and w.deptId in (select distinct so.org_code
+  from sec_organization so
+ where so.org_code in
+       (select distinct t.org_code
+          from sec_organization t
+         start with t.org_code in
+                    (select distinct sso.org_code
+                       from sec_site_organization sso
+                      where sso.site_id = #{params.siteId, jdbcType = VARCHAR})
+        connect by prior t.org_code = t.parent_code)
+ start with instr(so.name, #{params.deptName, jdbcType = VARCHAR}) > 0
+connect by prior so.org_code = so.parent_code)
+
+		</if>		
+		<if test="params.userId!=null and params.userId!=''">
+			and w.userId = #{ params.userId,jdbcType=VARCHAR }
+		</if>
+	</select>
+	
+	<delete id="deleteWorkStatusByEndTime">
+		delete from atd_workstatus
+		where workdate &lt;= #{ endTimeStr, jdbcType=VARCHAR }
+		<if test="siteId != null  and siteId != '' ">
+		 	and siteid=#{siteId,jdbcType=VARCHAR} 
+		</if>
+	</delete>
+	
+	<select id="queryExistWorkStatusBySiteAndTime" resultType="WorkStatusBean">
+		SELECT concat(w.workdate,concat('_',w.userid)) flag, <include refid="workStatusBeanField"/>
+		FROM ATD_WORKSTATUS w
+		WHERE 1=1
+		<if test="siteId != null  and siteId != '' ">
+		 	and w.siteId = #{ siteId,jdbcType=VARCHAR }
+		</if>
+		<if test="startDateStr != null  and startDateStr != '' ">
+		 	and w.WORKDATE &gt;= #{ startDateStr,jdbcType=VARCHAR }
+		</if>
+		<if test="endDateStr != null  and endDateStr != '' ">
+		 	and w.WORKDATE &lt;= #{ endDateStr,jdbcType=VARCHAR }
+		</if>
+		<if test="userId != null  and userId != '' ">
+		 	and w.userId = #{ userId,jdbcType=VARCHAR }
+		</if>
+	</select>
+</mapper> 

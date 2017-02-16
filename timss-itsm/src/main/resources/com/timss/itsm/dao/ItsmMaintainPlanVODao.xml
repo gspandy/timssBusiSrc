@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmMaintainPlanVODao">
+	<resultMap type="ItsmMaintainPlanVO" id="maintainPlanVOMap">
+		<id column="ID" property="id" />
+		<result column="MTP_CODE" property="maintainPlanCode" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="MTP_SPEC" property="specialty" />
+		<result column="EQUIP_ID" property="equipId" />
+		<!-- <result column="WO_CYCLE" property="maintainPlanCycle" /> -->
+		<result column="CURR_START_TIME" property="nextDate" />
+		<result column="MTP_STATUS" property="status" />
+		<result column="WORKTEAM" property="workTeam" />
+		<result column="PRINCIPAL" property="principal" />
+	</resultMap>	
+
+	<select id="queryMTPVOByAssetId" parameterType="HashMap" resultMap="maintainPlanVOMap">
+		select ID,MTP_CODE,DESCRIPTION,b1.enum_val MTP_SPEC,b2.enum_val WORKTEAM,u.name PRINCIPAL,
+ 				EQUIP_ID,CURR_START_TIME,DECODE(MTP_ISHANDLER,1,'已处理','未处理') MTP_STATUS
+   		from itsm_maintainplan t ,sec_user u, B_ENUM b1 , B_ENUM b2
+    	where MTP_FROM = 'cycle_maintainPlan' and u.user_id=t.principal
+         	 and b1.enum_code =t.mtp_spec_id and b2.enum_code = t.workteam AND
+         	 EQUIP_ID= #{assetId} and T.SITEID =#{siteId} and b1.SITEID=#{siteId}
+	    	  and b2.SITEID=#{siteId} and YXBZ = 1
+	</select>
+	
+	
+</mapper>

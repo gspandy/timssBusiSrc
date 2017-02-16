@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvWarehouseItemDao">
+	
+	<!-- 插入添加到仓库信息 -->
+	<insert id="insertInvWarehouseItem" parameterType="com.timss.inventory.bean.InvWarehouseItem">
+		insert into inv_warehouse_item 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="iwiid != null"> iwiid, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="invcateid != null"> invcateid, </if>
+	      <if test="manufacturer != null"> manufacturer, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="defBinid != null"> def_binid, </if>
+	      <if test="sparecode != null"> sparecode, </if>
+	      <if test="issafety != null"> ISSAFETY, </if>
+	      <if test="qtyEconomic != null"> QTY_ECONOMIC, </if>
+	      <if test="qtyLowInv != null"> QTY_LOWINV, </if>
+	      <if test="active != null"> active, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="iwiid != null"> #{iwiid,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	      <if test="manufacturer != null"> #{manufacturer,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="defBinid != null"> #{defBinid,jdbcType=VARCHAR}, </if>
+	      <if test="sparecode != null"> #{sparecode,jdbcType=VARCHAR}, </if>
+	      <if test="issafety != null"> #{issafety,jdbcType=VARCHAR}, </if>
+	      <if test="qtyEconomic != null"> #{qtyEconomic,jdbcType=NUMERIC}, </if>
+	      <if test="qtyLowInv != null"> #{qtyLowInv,jdbcType=NUMERIC}, </if>
+	      <if test="active != null"> #{active,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 查询仓库 -->
+	<select id="queryInvWarehouseItem" parameterType="java.util.Map" resultType="com.timss.inventory.vo.InvWarehouseItemVO">
+		select iwi.iwiid,
+			   ic.invcateid,
+			   ic.invcatename,
+			   iwi.sparecode,
+			   iwi.manufacturer,
+			   ib.binid as defBinid,
+			   ib.binname,
+			   iwi.warehouseid,
+			   iw.warehousename,
+			   iwi.itemid,
+			   iwi.active,
+			   iwi.qty_lowinv as qtyLowInv,
+			   iwi.issafety,
+			   ird.with_tax_price  as price,
+		       ird.actual_qty as qty,
+		       ird.can_use_qty as canUseQty   
+		from inv_warehouse_item iwi,
+			 inv_category ic,
+			 inv_bin ib,
+			 inv_warehouse iw,
+			 inv_realtime_data  ird
+		 where iwi.invcateid = ic.invcateid(+)
+		   and iwi.def_binid = ib.binid(+)
+		   and iwi.warehouseid = iw.warehouseid(+)
+		   and iwi.invcateid = ird.invcateid(+)
+		   and iwi.site_id = ird.site_id(+)
+		   and iwi.itemid = ird.itemid(+)
+			
+			<if test="itemid != null and itemid != ''">
+			  	and iwi.itemid=#{itemid} 
+			</if>
+			<if test="iwiid != null and iwiid != ''">
+			  	and iwi.iwiid=#{iwiid} 
+			</if>
+			<if test="invcateid != null and invcateid != ''">
+			  	and iwi.invcateid=#{invcateid} 
+			</if>
+			<if test="warehouseid != null and warehouseid != ''">
+			  	and iwi.warehouseid=#{warehouseid} 
+			</if>
+			
+			and iwi.site_id=#{siteid}
+		group by iwi.iwiid,ic.invcateid,ic.invcatename,iwi.sparecode,iwi.manufacturer,ib.binid,ib.binname,iwi.issafety,iw.warehousename,iwi.itemid,iwi.active,iwi.qty_lowinv,iwi.warehouseid,iwi.site_id,
+		  ird.with_tax_price,
+          ird.actual_qty,
+          ird.can_use_qty
+	</select>
+	
+	<!-- 通过物资类别查询是否已经绑定 -->
+	<select id="queryInvWarehouseItemCounter" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from inv_warehouse_item iwi where iwi.invcateid=#{categoryId}
+	</select>
+	
+	<!-- 更新中间表中的字段信息 -->
+	<update id="updateInvWarehouseItem" parameterType="com.timss.inventory.bean.InvWarehouseItem">
+		update inv_warehouse_item t 
+		<set>
+		  <if test="active != null and active != ''"> t.active=#{active,jdbcType=VARCHAR}, </if>
+		  <if test="invcateid != null and invcateid != ''"> t.invcateid=#{invcateid,jdbcType=VARCHAR}, </if>
+		  <if test="defBinid != null and defBinid != '' and defBinid != '-1'"> t.DEF_BINID=#{defBinid,jdbcType=VARCHAR}, </if>
+		  <if test="defBinid != null and defBinid != '' and defBinid == '-1'"> t.DEF_BINID=null, </if>
+		  <if test="issafety == 0"> t.qty_lowinv='',t.qty_economic='',</if>
+	      <if test="issafety != null and issafety != ''"> t.issafety=#{issafety,jdbcType=VARCHAR}, </if>
+	      <if test="issafety == 1 and qtyLowInv != null and qtyLowInv != ''"> t.qty_lowinv=#{qtyLowInv,jdbcType=NUMERIC}, </if>
+	      <if test="issafety == 1 and qtyEconomic != null and qtyEconomic != ''"> t.qty_economic=#{qtyEconomic,jdbcType=NUMERIC}, </if>
+	    </set>
+		where t.iwiid=#{iwiid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 更新物资安全库存 -->
+	<update id="updateSafeQty" parameterType="com.timss.inventory.bean.InvWarehouseItem">
+		update inv_warehouse_item t 
+		set t.qty_lowinv=#{qtyLowInv,jdbcType=NUMERIC} 
+		where t.itemid=#{itemid,jdbcType=VARCHAR} 
+			and t.invcateid=#{invcateid,jdbcType=VARCHAR} 
+			and t.warehouseid=#{warehouseid,jdbcType=VARCHAR} 
+			and t.site_id=#{siteId,jdbcType=VARCHAR}
+	</update>	
+</mapper>

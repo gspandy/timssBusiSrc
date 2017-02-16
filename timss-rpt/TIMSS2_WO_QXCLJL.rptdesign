@@ -1,0 +1,2267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="woBdzqxId" id="8">
+            <text-property name="promptText">ID</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">qpmgeksk024qury5</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="7">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledMetadataBidiFormatStr</name>
+                </ex-property>
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledContentBidiFormatStr</name>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@10.0.17.154:1521:itceam</property>
+            <property name="odaUser">timss2dev</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">YWJj</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/timss2dev</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Ds_Main" id="141">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="columnHints"/>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="paramName">woBdzqxId</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
+                    <property name="position">1</property>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DEFECT_CODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">MONTH_CODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">EQUIP_ID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">EQUIP_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">DEFECT_TIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">DEFECT_DES</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ONDUTY_USERID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ONDUTY_USERNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">DEFECT_SOLVEDES</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">DEFECT_SOLVETIME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">DEFECT_SOLVEUSERID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">DEFECT_SOLVEUSERNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">RUNNING_USERID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">RUNNING_USERNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">LEFTPROBLEM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">LEADER_INSTRUCTINS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">INSTRUCTIONS_USERID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">INSTRUCTIONS_USERNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ID</property>
+                    <property name="nativeName">ID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DEFECT_CODE</property>
+                    <property name="nativeName">DEFECT_CODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">MONTH_CODE</property>
+                    <property name="nativeName">MONTH_CODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">EQUIP_ID</property>
+                    <property name="nativeName">EQUIP_ID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">EQUIP_NAME</property>
+                    <property name="nativeName">EQUIP_NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">DEFECT_TIME</property>
+                    <property name="nativeName">DEFECT_TIME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">DEFECT_DES</property>
+                    <property name="nativeName">DEFECT_DES</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ONDUTY_USERID</property>
+                    <property name="nativeName">ONDUTY_USERID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ONDUTY_USERNAME</property>
+                    <property name="nativeName">ONDUTY_USERNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">DEFECT_SOLVEDES</property>
+                    <property name="nativeName">DEFECT_SOLVEDES</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">DEFECT_SOLVETIME</property>
+                    <property name="nativeName">DEFECT_SOLVETIME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">DEFECT_SOLVEUSERID</property>
+                    <property name="nativeName">DEFECT_SOLVEUSERID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">DEFECT_SOLVEUSERNAME</property>
+                    <property name="nativeName">DEFECT_SOLVEUSERNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">RUNNING_USERID</property>
+                    <property name="nativeName">RUNNING_USERID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">RUNNING_USERNAME</property>
+                    <property name="nativeName">RUNNING_USERNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">LEFTPROBLEM</property>
+                    <property name="nativeName">LEFTPROBLEM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">LEADER_INSTRUCTINS</property>
+                    <property name="nativeName">LEADER_INSTRUCTINS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">INSTRUCTIONS_USERID</property>
+                    <property name="nativeName">INSTRUCTIONS_USERID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">INSTRUCTIONS_USERNAME</property>
+                    <property name="nativeName">INSTRUCTIONS_USERNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select t.id,
+       t.defect_code, --文件编号
+       t.month_code,  --月度编号
+       t.equip_id, 
+       t.equip_name,  --设备名称
+       to_char(t.defect_time,'yyyy')||'年'||to_char(t.defect_time,'MM')||'月'||to_char(t.defect_time,'dd')||'日 '||to_char(t.defect_time,'hh24')||'时'||to_char(t.defect_time,'mi')||'分' as defect_time, --缺陷时间
+       t.defect_des,  ---缺陷情况
+       t.onduty_userid,   
+       u1.name onduty_userName,  --值班人员
+       t.defect_solvedes,   ---缺陷处理及消缺情况
+       to_char(t.defect_solvetime,'yyyy')||'年'||to_char(t.defect_solvetime,'MM')||'月'||to_char(t.defect_solvetime,'dd')||'日 '||to_char(t.defect_solvetime,'hh24')||'时'||to_char(t.defect_solvetime,'mi')||'分' as defect_solvetime,  --缺陷处理及消缺完成时间
+       t.defect_solveuserid,
+       u2.name defect_solveuserName,  --消缺人员
+       t.running_userid,
+       u3.name running_userName,  --运行人员
+       t.leftproblem,  --遗留问题
+       t.leader_instructins,   --领导批示
+       t.instructions_userid,  
+       u4.name instructions_userName  --上级领导签名
+       
+from WO_QX t
+     LEFT JOIN sec_user u1 ON u1.user_id=t.onduty_userid
+     LEFT JOIN sec_user u2 ON u2.user_id=t.defect_solveuserid
+     LEFT JOIN sec_user u3 ON u3.user_id=t.running_userid
+     LEFT JOIN sec_user u4 ON u4.user_id=t.instructions_userid 
+WHERE t.id=?
+]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>SAFE_CONTENT</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>200</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>SAFE_CONTENT</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SAFE_CONTENT</design:label>
+            <design:formattingHints>
+              <design:displaySize>200</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>SAFE_TYPE</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>38</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>SAFE_TYPE</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SAFE_TYPE</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>SAFE_ORDER</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>38</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>SAFE_ORDER</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SAFE_ORDER</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>EXECUTER</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>20</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>EXECUTER</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>EXECUTER</design:label>
+            <design:formattingHints>
+              <design:displaySize>20</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>REMOVER</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>20</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>REMOVER</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>REMOVER</design:label>
+            <design:formattingHints>
+              <design:displaySize>20</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <property name="rowFetchSize">1</property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="grid-column" id="2552">
+            <property name="width">22px</property>
+        </style>
+        <style name="chapTitle" id="2585">
+            <property name="fontSize">10.5pt</property>
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="rowHeight" id="2587">
+            <property name="height">26px</property>
+        </style>
+        <style name="staticText" id="2588">
+            <property name="fontSize">9pt</property>
+            <property name="paddingTop">1pt</property>
+            <property name="paddingLeft">4px</property>
+            <property name="paddingBottom">1pt</property>
+            <property name="paddingRight">4px</property>
+        </style>
+        <style name="staticTextSp" id="2590">
+            <property name="fontSize">9pt</property>
+        </style>
+        <style name="chooseStatus" id="2600">
+            <property name="height">12px</property>
+            <property name="width">12px</property>
+        </style>
+        <style name="licOption" id="2677">
+            <property name="width">70%</property>
+        </style>
+        <style name="addFileOption" id="2708">
+            <property name="width">85%</property>
+        </style>
+        <style name="cellStyle" id="2719">
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="cellStyleCenter" id="2824">
+            <property name="textAlign">center</property>
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="tickStyle" id="3147">
+            <property name="width">16px</property>
+        </style>
+        <style name="timeStyle" id="3148">
+            <property name="width">0.312in</property>
+        </style>
+        <style name="timeUnitStyle" id="3149">
+            <property name="width">0.208in</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="blank A4 portrait" id="2">
+            <property name="type">a4</property>
+            <property name="orientation">portrait</property>
+            <property name="leftMargin">0.75in</property>
+            <property name="rightMargin">0.75in</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="3339">
+            <property name="dataSet">Ds_Main</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">params["woBdzqxId"].value=='NaN'</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ID</property>
+                    <text-property name="displayName">ID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_CODE</property>
+                    <text-property name="displayName">DEFECT_CODE</text-property>
+                    <expression name="expression" type="javascript">"文件编号： "+(null==dataSetRow["DEFECT_CODE"]?"":dataSetRow["DEFECT_CODE"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">MONTH_CODE</property>
+                    <text-property name="displayName">MONTH_CODE</text-property>
+                    <expression name="expression" type="javascript">"月度编号： "+(null==dataSetRow["MONTH_CODE"]?"":dataSetRow["MONTH_CODE"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">EQUIP_ID</property>
+                    <text-property name="displayName">EQUIP_ID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["EQUIP_ID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">EQUIP_NAME</property>
+                    <text-property name="displayName">EQUIP_NAME</text-property>
+                    <expression name="expression" type="javascript">"设备名称： "+(null==dataSetRow["EQUIP_NAME"]?"":dataSetRow["EQUIP_NAME"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_TIME</property>
+                    <text-property name="displayName">DEFECT_TIME</text-property>
+                    <expression name="expression" type="javascript">"缺陷时间： "+(null==dataSetRow["DEFECT_TIME"]?"    年  月  日   时  分":dataSetRow["DEFECT_TIME"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_DES</property>
+                    <text-property name="displayName">DEFECT_DES</text-property>
+                    <expression name="expression" type="javascript">"缺陷情况： "+(null==dataSetRow["DEFECT_DES"]?"":dataSetRow["DEFECT_DES"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">ONDUTY_USERID</property>
+                    <text-property name="displayName">ONDUTY_USERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ONDUTY_USERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ONDUTY_USERNAME</property>
+                    <text-property name="displayName">ONDUTY_USERNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ONDUTY_USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVEDES</property>
+                    <text-property name="displayName">DEFECT_SOLVEDES</text-property>
+                    <expression name="expression" type="javascript">"缺陷处理及消缺情况： "+(null==dataSetRow["DEFECT_SOLVEDES"]?"":dataSetRow["DEFECT_SOLVEDES"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVETIME</property>
+                    <text-property name="displayName">DEFECT_SOLVETIME</text-property>
+                    <expression name="expression" type="javascript">"缺陷处理及消缺完成时间： "+(null==dataSetRow["DEFECT_SOLVETIME"]?"    年  月  日   时  分":dataSetRow["DEFECT_SOLVETIME"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVEUSERID</property>
+                    <text-property name="displayName">DEFECT_SOLVEUSERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DEFECT_SOLVEUSERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVEUSERNAME</property>
+                    <text-property name="displayName">DEFECT_SOLVEUSERNAME</text-property>
+                    <expression name="expression" type="javascript">"消缺人员： "+(null==dataSetRow["DEFECT_SOLVEUSERNAME"]?"":dataSetRow["DEFECT_SOLVEUSERNAME"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">RUNNING_USERID</property>
+                    <text-property name="displayName">RUNNING_USERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["RUNNING_USERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">RUNNING_USERNAME</property>
+                    <text-property name="displayName">RUNNING_USERNAME</text-property>
+                    <expression name="expression" type="javascript">"运行人员： "+dataSetRow["RUNNING_USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">LEFTPROBLEM</property>
+                    <text-property name="displayName">LEFTPROBLEM</text-property>
+                    <expression name="expression" type="javascript">"遗留问题： "+(null==dataSetRow["LEFTPROBLEM"]?"":dataSetRow["LEFTPROBLEM"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">LEADER_INSTRUCTINS</property>
+                    <text-property name="displayName">LEADER_INSTRUCTINS</text-property>
+                    <expression name="expression" type="javascript">"领导批示： "+(null==dataSetRow["LEADER_INSTRUCTINS"]?"":dataSetRow["LEADER_INSTRUCTINS"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">INSTRUCTIONS_USERID</property>
+                    <text-property name="displayName">INSTRUCTIONS_USERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["INSTRUCTIONS_USERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">INSTRUCTIONS_USERNAME</property>
+                    <text-property name="displayName">INSTRUCTIONS_USERNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["INSTRUCTIONS_USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">d1</property>
+                    <text-property name="displayName">d1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["INSTRUCTIONS_USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">d2</property>
+                    <text-property name="displayName">d2</text-property>
+                    <expression name="expression" type="javascript">"上级领导签名： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">d5</property>
+                    <text-property name="displayName">d5</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ONDUTY_USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">d6</property>
+                    <text-property name="displayName">d6</text-property>
+                    <expression name="expression" type="javascript">"值班人员： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">d3</property>
+                    <text-property name="displayName">d3</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["RUNNING_USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">d4</property>
+                    <text-property name="displayName">d4</text-property>
+                    <expression name="expression" type="javascript">"运行人员： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">tmp</property>
+                    <text-property name="displayName">tmp</text-property>
+                    <expression name="expression" type="javascript">null==dataSetRow["ONDUTY_USERNAME"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="3601">
+                <property name="width">5px</property>
+            </column>
+            <column id="3594">
+                <property name="width">5px</property>
+            </column>
+            <column id="3340"/>
+            <row id="3351">
+                <cell id="3595">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3588">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3352">
+                    <grid id="3354">
+                        <column id="3355"/>
+                        <column id="3356"/>
+                        <column id="3357"/>
+                        <row id="3358">
+                            <cell id="3359">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <grid id="3548">
+                                    <column id="3549"/>
+                                    <column id="3550"/>
+                                    <row id="3551">
+                                        <cell id="3552">
+                                            <label id="3353">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">bold</property>
+                                                <text-property name="text">石碑山风电场</text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="3553"/>
+                                    </row>
+                                </grid>
+                            </cell>
+                            <cell id="3361">
+                                <grid id="3512">
+                                    <column id="3514"/>
+                                    <row id="3515">
+                                        <cell id="3517">
+                                            <data id="3554">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">bold</property>
+                                                <property name="resultSetColumn">DEFECT_CODE</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3341">
+                <cell id="3596">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3589">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3342">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3363">
+                        <column id="3365">
+                            <property name="width">430px</property>
+                        </column>
+                        <column id="3366"/>
+                        <row id="3367">
+                            <cell id="3368">
+                                <property name="colSpan">1</property>
+                                <property name="rowSpan">1</property>
+                            </cell>
+                            <cell id="3370">
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">6pt</property>
+                                <grid id="3518">
+                                    <column id="3520"/>
+                                    <row id="3521">
+                                        <cell id="3523">
+                                            <data id="3555">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="resultSetColumn">MONTH_CODE</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                        <row id="3375">
+                            <cell id="3376">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">6pt</property>
+                                <label id="3389">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">24pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">缺陷处理记录</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3379">
+                            <cell id="3381">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <data id="3556">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">EQUIP_NAME</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3383">
+                            <cell id="3385">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <property name="paddingBottom">16pt</property>
+                                <data id="3557">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <structure name="dateTimeFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">yyyy-MM-dd HH:mm:ss</property>
+                                    </structure>
+                                    <property name="resultSetColumn">DEFECT_TIME</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3343">
+                <cell id="3597">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3590">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3344">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3392">
+                        <column id="3393">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="3394">
+                            <property name="width">322px</property>
+                        </column>
+                        <column id="3395"/>
+                        <row id="3406">
+                            <cell id="3407">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">64pt</property>
+                                <data id="3558">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_DES</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3400">
+                            <cell id="3401">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                            </cell>
+                            <cell id="3403">
+                                <property name="paddingBottom">16pt</property>
+                                <property name="textAlign">right</property>
+                                <grid id="3750">
+                                    <column id="3751"/>
+                                    <column id="3752">
+                                        <property name="width">80px</property>
+                                    </column>
+                                    <row id="3753">
+                                        <cell id="3754">
+                                            <data id="3774">
+                                                <property name="backgroundAttachment">scroll</property>
+                                                <property name="backgroundPositionX">0%</property>
+                                                <property name="backgroundPositionY">0%</property>
+                                                <property name="backgroundRepeat">repeat</property>
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">normal</property>
+                                                <property name="fontStyle">normal</property>
+                                                <property name="fontVariant">normal</property>
+                                                <property name="color">black</property>
+                                                <property name="textLineThrough">none</property>
+                                                <property name="textOverline">none</property>
+                                                <property name="textUnderline">none</property>
+                                                <property name="borderBottomColor">black</property>
+                                                <property name="borderBottomStyle">none</property>
+                                                <property name="borderBottomWidth">medium</property>
+                                                <property name="borderLeftColor">black</property>
+                                                <property name="borderLeftStyle">none</property>
+                                                <property name="borderLeftWidth">medium</property>
+                                                <property name="borderRightColor">black</property>
+                                                <property name="borderRightStyle">none</property>
+                                                <property name="borderRightWidth">medium</property>
+                                                <property name="borderTopColor">black</property>
+                                                <property name="borderTopStyle">none</property>
+                                                <property name="borderTopWidth">medium</property>
+                                                <property name="marginTop">0pt</property>
+                                                <property name="marginLeft">0pt</property>
+                                                <property name="marginBottom">0pt</property>
+                                                <property name="marginRight">0pt</property>
+                                                <property name="paddingTop">1pt</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="paddingBottom">1pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">right</property>
+                                                <property name="letterSpacing">normal</property>
+                                                <property name="lineHeight">normal</property>
+                                                <property name="orphans">2</property>
+                                                <property name="textTransform">none</property>
+                                                <property name="whiteSpace">normal</property>
+                                                <property name="widows">2</property>
+                                                <property name="wordSpacing">normal</property>
+                                                <property name="display">block</property>
+                                                <property name="pageBreakAfter">auto</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="pageBreakInside">auto</property>
+                                                <property name="showIfBlank">false</property>
+                                                <property name="canShrink">false</property>
+                                                <property name="overflow">hidden</property>
+                                                <property name="resultSetColumn">d6</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="3756">
+                                            <data id="3773">
+                                                <property name="backgroundAttachment">scroll</property>
+                                                <property name="backgroundPositionX">0%</property>
+                                                <property name="backgroundPositionY">0%</property>
+                                                <property name="backgroundRepeat">repeat</property>
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">normal</property>
+                                                <property name="fontStyle">normal</property>
+                                                <property name="fontVariant">normal</property>
+                                                <property name="color">black</property>
+                                                <property name="textLineThrough">none</property>
+                                                <property name="textOverline">none</property>
+                                                <property name="textUnderline">none</property>
+                                                <property name="borderBottomColor">black</property>
+                                                <property name="borderBottomStyle">none</property>
+                                                <property name="borderBottomWidth">medium</property>
+                                                <property name="borderLeftColor">black</property>
+                                                <property name="borderLeftStyle">none</property>
+                                                <property name="borderLeftWidth">medium</property>
+                                                <property name="borderRightColor">black</property>
+                                                <property name="borderRightStyle">none</property>
+                                                <property name="borderRightWidth">medium</property>
+                                                <property name="borderTopColor">black</property>
+                                                <property name="borderTopStyle">none</property>
+                                                <property name="borderTopWidth">medium</property>
+                                                <property name="marginTop">0pt</property>
+                                                <property name="marginLeft">0pt</property>
+                                                <property name="marginBottom">0pt</property>
+                                                <property name="marginRight">0pt</property>
+                                                <property name="paddingTop">1pt</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="paddingBottom">1pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">left</property>
+                                                <property name="letterSpacing">normal</property>
+                                                <property name="lineHeight">normal</property>
+                                                <property name="orphans">2</property>
+                                                <property name="textTransform">none</property>
+                                                <property name="whiteSpace">normal</property>
+                                                <property name="widows">2</property>
+                                                <property name="wordSpacing">normal</property>
+                                                <property name="display">block</property>
+                                                <property name="pageBreakAfter">auto</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="pageBreakInside">auto</property>
+                                                <property name="showIfBlank">false</property>
+                                                <property name="canShrink">false</property>
+                                                <property name="overflow">hidden</property>
+                                                <property name="resultSetColumn">d5</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3345">
+                <cell id="3598">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3591">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3346">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3418">
+                        <column id="3419">
+                            <property name="width">170px</property>
+                        </column>
+                        <column id="3420">
+                            <property name="width">231px</property>
+                        </column>
+                        <column id="3421"/>
+                        <row id="3427">
+                            <cell id="3428">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">64pt</property>
+                                <data id="3560">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_SOLVEDES</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3439">
+                            <cell id="3440">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <data id="3562">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_SOLVETIME</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3445">
+                            <cell id="3446">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <property name="paddingBottom">16pt</property>
+                                <property name="verticalAlign">middle</property>
+                                <data id="3563">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_SOLVEUSERNAME</property>
+                                </data>
+                            </cell>
+                            <cell id="3448">
+                                <property name="paddingTop">4pt</property>
+                                <grid id="3757">
+                                    <column id="3758"/>
+                                    <column id="3759">
+                                        <property name="width">80px</property>
+                                    </column>
+                                    <row id="3760">
+                                        <cell id="3761">
+                                            <data id="3776">
+                                                <property name="backgroundAttachment">scroll</property>
+                                                <property name="backgroundPositionX">0%</property>
+                                                <property name="backgroundPositionY">0%</property>
+                                                <property name="backgroundRepeat">repeat</property>
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">normal</property>
+                                                <property name="fontStyle">normal</property>
+                                                <property name="fontVariant">normal</property>
+                                                <property name="color">black</property>
+                                                <property name="textLineThrough">none</property>
+                                                <property name="textOverline">none</property>
+                                                <property name="textUnderline">none</property>
+                                                <property name="borderBottomColor">black</property>
+                                                <property name="borderBottomStyle">none</property>
+                                                <property name="borderBottomWidth">medium</property>
+                                                <property name="borderLeftColor">black</property>
+                                                <property name="borderLeftStyle">none</property>
+                                                <property name="borderLeftWidth">medium</property>
+                                                <property name="borderRightColor">black</property>
+                                                <property name="borderRightStyle">none</property>
+                                                <property name="borderRightWidth">medium</property>
+                                                <property name="borderTopColor">black</property>
+                                                <property name="borderTopStyle">none</property>
+                                                <property name="borderTopWidth">medium</property>
+                                                <property name="marginTop">0pt</property>
+                                                <property name="marginLeft">0pt</property>
+                                                <property name="marginBottom">0pt</property>
+                                                <property name="marginRight">0pt</property>
+                                                <property name="paddingTop">1pt</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="paddingBottom">1pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">right</property>
+                                                <property name="letterSpacing">normal</property>
+                                                <property name="lineHeight">normal</property>
+                                                <property name="orphans">2</property>
+                                                <property name="textTransform">none</property>
+                                                <property name="whiteSpace">normal</property>
+                                                <property name="widows">2</property>
+                                                <property name="wordSpacing">normal</property>
+                                                <property name="display">block</property>
+                                                <property name="pageBreakAfter">auto</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="pageBreakInside">auto</property>
+                                                <property name="showIfBlank">false</property>
+                                                <property name="canShrink">false</property>
+                                                <property name="overflow">hidden</property>
+                                                <property name="resultSetColumn">d4</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="3763">
+                                            <data id="3775">
+                                                <property name="backgroundAttachment">scroll</property>
+                                                <property name="backgroundPositionX">0%</property>
+                                                <property name="backgroundPositionY">0%</property>
+                                                <property name="backgroundRepeat">repeat</property>
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">normal</property>
+                                                <property name="fontStyle">normal</property>
+                                                <property name="fontVariant">normal</property>
+                                                <property name="color">black</property>
+                                                <property name="textLineThrough">none</property>
+                                                <property name="textOverline">none</property>
+                                                <property name="textUnderline">none</property>
+                                                <property name="borderBottomColor">black</property>
+                                                <property name="borderBottomStyle">none</property>
+                                                <property name="borderBottomWidth">medium</property>
+                                                <property name="borderLeftColor">black</property>
+                                                <property name="borderLeftStyle">none</property>
+                                                <property name="borderLeftWidth">medium</property>
+                                                <property name="borderRightColor">black</property>
+                                                <property name="borderRightStyle">none</property>
+                                                <property name="borderRightWidth">medium</property>
+                                                <property name="borderTopColor">black</property>
+                                                <property name="borderTopStyle">none</property>
+                                                <property name="borderTopWidth">medium</property>
+                                                <property name="marginTop">0pt</property>
+                                                <property name="marginLeft">0pt</property>
+                                                <property name="marginBottom">0pt</property>
+                                                <property name="marginRight">0pt</property>
+                                                <property name="paddingTop">1pt</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="paddingBottom">1pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">left</property>
+                                                <property name="letterSpacing">normal</property>
+                                                <property name="lineHeight">normal</property>
+                                                <property name="orphans">2</property>
+                                                <property name="textTransform">none</property>
+                                                <property name="whiteSpace">normal</property>
+                                                <property name="widows">2</property>
+                                                <property name="wordSpacing">normal</property>
+                                                <property name="display">block</property>
+                                                <property name="pageBreakAfter">auto</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="pageBreakInside">auto</property>
+                                                <property name="showIfBlank">false</property>
+                                                <property name="canShrink">false</property>
+                                                <property name="overflow">hidden</property>
+                                                <property name="resultSetColumn">d3</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3347">
+                <cell id="3599">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3592">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3348">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3450">
+                        <column id="3451">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="3452">
+                            <property name="width">322px</property>
+                        </column>
+                        <column id="3453"/>
+                        <row id="3454">
+                            <cell id="3455">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">80pt</property>
+                                <data id="3565">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">LEFTPROBLEM</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3349">
+                <cell id="3600">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3593">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3350">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3482">
+                        <column id="3483">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="3484">
+                            <property name="width">322px</property>
+                        </column>
+                        <column id="3485"/>
+                        <row id="3491">
+                            <cell id="3492">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">64pt</property>
+                                <data id="3566">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">LEADER_INSTRUCTINS</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3499">
+                            <cell id="3500"/>
+                            <cell id="3501"/>
+                            <cell id="3502">
+                                <property name="paddingBottom">16pt</property>
+                                <grid id="3764">
+                                    <column id="3765"/>
+                                    <column id="3766">
+                                        <property name="width">80px</property>
+                                    </column>
+                                    <row id="3767">
+                                        <cell id="3768">
+                                            <data id="3772">
+                                                <property name="backgroundAttachment">scroll</property>
+                                                <property name="backgroundPositionX">0%</property>
+                                                <property name="backgroundPositionY">0%</property>
+                                                <property name="backgroundRepeat">repeat</property>
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">normal</property>
+                                                <property name="fontStyle">normal</property>
+                                                <property name="fontVariant">normal</property>
+                                                <property name="color">black</property>
+                                                <property name="textLineThrough">none</property>
+                                                <property name="textOverline">none</property>
+                                                <property name="textUnderline">none</property>
+                                                <property name="borderBottomColor">black</property>
+                                                <property name="borderBottomStyle">none</property>
+                                                <property name="borderBottomWidth">medium</property>
+                                                <property name="borderLeftColor">black</property>
+                                                <property name="borderLeftStyle">none</property>
+                                                <property name="borderLeftWidth">medium</property>
+                                                <property name="borderRightColor">black</property>
+                                                <property name="borderRightStyle">none</property>
+                                                <property name="borderRightWidth">medium</property>
+                                                <property name="borderTopColor">black</property>
+                                                <property name="borderTopStyle">none</property>
+                                                <property name="borderTopWidth">medium</property>
+                                                <property name="marginTop">0pt</property>
+                                                <property name="marginLeft">0pt</property>
+                                                <property name="marginBottom">0pt</property>
+                                                <property name="marginRight">0pt</property>
+                                                <property name="paddingTop">1pt</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="paddingBottom">1pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">right</property>
+                                                <property name="letterSpacing">normal</property>
+                                                <property name="lineHeight">normal</property>
+                                                <property name="orphans">2</property>
+                                                <property name="textTransform">none</property>
+                                                <property name="whiteSpace">normal</property>
+                                                <property name="widows">2</property>
+                                                <property name="wordSpacing">normal</property>
+                                                <property name="display">block</property>
+                                                <property name="pageBreakAfter">auto</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="pageBreakInside">auto</property>
+                                                <property name="showIfBlank">false</property>
+                                                <property name="canShrink">false</property>
+                                                <property name="overflow">hidden</property>
+                                                <property name="resultSetColumn">d2</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="3770">
+                                            <data id="3771">
+                                                <property name="backgroundAttachment">scroll</property>
+                                                <property name="backgroundPositionX">0%</property>
+                                                <property name="backgroundPositionY">0%</property>
+                                                <property name="backgroundRepeat">repeat</property>
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">normal</property>
+                                                <property name="fontStyle">normal</property>
+                                                <property name="fontVariant">normal</property>
+                                                <property name="color">black</property>
+                                                <property name="textLineThrough">none</property>
+                                                <property name="textOverline">none</property>
+                                                <property name="textUnderline">none</property>
+                                                <property name="borderBottomColor">black</property>
+                                                <property name="borderBottomStyle">none</property>
+                                                <property name="borderBottomWidth">medium</property>
+                                                <property name="borderLeftColor">black</property>
+                                                <property name="borderLeftStyle">none</property>
+                                                <property name="borderLeftWidth">medium</property>
+                                                <property name="borderRightColor">black</property>
+                                                <property name="borderRightStyle">none</property>
+                                                <property name="borderRightWidth">medium</property>
+                                                <property name="borderTopColor">black</property>
+                                                <property name="borderTopStyle">none</property>
+                                                <property name="borderTopWidth">medium</property>
+                                                <property name="marginTop">0pt</property>
+                                                <property name="marginLeft">0pt</property>
+                                                <property name="marginBottom">0pt</property>
+                                                <property name="marginRight">0pt</property>
+                                                <property name="paddingTop">1pt</property>
+                                                <property name="paddingLeft">1pt</property>
+                                                <property name="paddingBottom">1pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">left</property>
+                                                <property name="letterSpacing">normal</property>
+                                                <property name="lineHeight">normal</property>
+                                                <property name="orphans">2</property>
+                                                <property name="textTransform">none</property>
+                                                <property name="whiteSpace">normal</property>
+                                                <property name="widows">2</property>
+                                                <property name="wordSpacing">normal</property>
+                                                <property name="display">block</property>
+                                                <property name="pageBreakAfter">auto</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="pageBreakInside">auto</property>
+                                                <property name="showIfBlank">false</property>
+                                                <property name="canShrink">false</property>
+                                                <property name="overflow">hidden</property>
+                                                <property name="resultSetColumn">d1</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid id="3620">
+            <property name="dataSet">Ds_Main</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">params["woBdzqxId"].value!='NaN'</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ID</property>
+                    <text-property name="displayName">ID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_CODE</property>
+                    <text-property name="displayName">DEFECT_CODE</text-property>
+                    <expression name="expression" type="javascript">"文件编号： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">MONTH_CODE</property>
+                    <text-property name="displayName">MONTH_CODE</text-property>
+                    <expression name="expression" type="javascript">"月度编号： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">EQUIP_ID</property>
+                    <text-property name="displayName">EQUIP_ID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["EQUIP_ID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">EQUIP_NAME</property>
+                    <text-property name="displayName">EQUIP_NAME</text-property>
+                    <expression name="expression" type="javascript">"设备名称： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_TIME</property>
+                    <text-property name="displayName">DEFECT_TIME</text-property>
+                    <expression name="expression" type="javascript">"缺陷时间： "+"    年  月  日   时  分"</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_DES</property>
+                    <text-property name="displayName">DEFECT_DES</text-property>
+                    <expression name="expression" type="javascript">"缺陷情况： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">ONDUTY_USERID</property>
+                    <text-property name="displayName">ONDUTY_USERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ONDUTY_USERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ONDUTY_USERNAME</property>
+                    <text-property name="displayName">ONDUTY_USERNAME</text-property>
+                    <expression name="expression" type="javascript">"值班人员："</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVEDES</property>
+                    <text-property name="displayName">DEFECT_SOLVEDES</text-property>
+                    <expression name="expression" type="javascript">"缺陷处理及消缺情况： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVETIME</property>
+                    <text-property name="displayName">DEFECT_SOLVETIME</text-property>
+                    <expression name="expression" type="javascript">"缺陷处理及消缺完成时间： "+"    年  月  日   时  分"</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVEUSERID</property>
+                    <text-property name="displayName">DEFECT_SOLVEUSERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DEFECT_SOLVEUSERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFECT_SOLVEUSERNAME</property>
+                    <text-property name="displayName">DEFECT_SOLVEUSERNAME</text-property>
+                    <expression name="expression" type="javascript">"消缺人员： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">RUNNING_USERID</property>
+                    <text-property name="displayName">RUNNING_USERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["RUNNING_USERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">RUNNING_USERNAME</property>
+                    <text-property name="displayName">RUNNING_USERNAME</text-property>
+                    <expression name="expression" type="javascript">"运行人员："</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">LEFTPROBLEM</property>
+                    <text-property name="displayName">LEFTPROBLEM</text-property>
+                    <expression name="expression" type="javascript">"遗留问题： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">LEADER_INSTRUCTINS</property>
+                    <text-property name="displayName">LEADER_INSTRUCTINS</text-property>
+                    <expression name="expression" type="javascript">"领导批示： "</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">INSTRUCTIONS_USERID</property>
+                    <text-property name="displayName">INSTRUCTIONS_USERID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["INSTRUCTIONS_USERID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">INSTRUCTIONS_USERNAME</property>
+                    <text-property name="displayName">INSTRUCTIONS_USERNAME</text-property>
+                    <expression name="expression" type="javascript">"上级领导签名："</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="3621">
+                <property name="width">5px</property>
+            </column>
+            <column id="3622">
+                <property name="width">5px</property>
+            </column>
+            <column id="3623"/>
+            <row id="3624">
+                <cell id="3625">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3626">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3627">
+                    <grid id="3628">
+                        <column id="3629"/>
+                        <column id="3630"/>
+                        <column id="3631"/>
+                        <row id="3632">
+                            <cell id="3633">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <grid id="3634">
+                                    <column id="3635"/>
+                                    <column id="3636"/>
+                                    <row id="3637">
+                                        <cell id="3638">
+                                            <label id="3639">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">bold</property>
+                                                <text-property name="text">石碑山风电场</text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="3640"/>
+                                    </row>
+                                </grid>
+                            </cell>
+                            <cell id="3641">
+                                <grid id="3642">
+                                    <column id="3643"/>
+                                    <row id="3644">
+                                        <cell id="3645">
+                                            <data id="3646">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="fontWeight">bold</property>
+                                                <property name="resultSetColumn">DEFECT_CODE</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3647">
+                <cell id="3648">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3649">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3650">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3651">
+                        <column id="3652">
+                            <property name="width">430px</property>
+                        </column>
+                        <column id="3653"/>
+                        <row id="3654">
+                            <cell id="3655">
+                                <property name="colSpan">1</property>
+                                <property name="rowSpan">1</property>
+                            </cell>
+                            <cell id="3656">
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">6pt</property>
+                                <grid id="3657">
+                                    <column id="3658"/>
+                                    <row id="3659">
+                                        <cell id="3660">
+                                            <data id="3661">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="resultSetColumn">MONTH_CODE</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                        <row id="3662">
+                            <cell id="3663">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">6pt</property>
+                                <label id="3664">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">24pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">缺陷处理记录</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3665">
+                            <cell id="3666">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <data id="3667">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">EQUIP_NAME</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3668">
+                            <cell id="3669">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <property name="paddingBottom">16pt</property>
+                                <data id="3670">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <structure name="dateTimeFormat">
+                                        <property name="category">Custom</property>
+                                        <property name="pattern">yyyy-MM-dd HH:mm:ss</property>
+                                    </structure>
+                                    <property name="resultSetColumn">DEFECT_TIME</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3671">
+                <cell id="3672">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3673">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3674">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3675">
+                        <column id="3676">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="3677">
+                            <property name="width">322px</property>
+                        </column>
+                        <column id="3678"/>
+                        <row id="3679">
+                            <cell id="3680">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">64pt</property>
+                                <data id="3681">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_DES</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3682">
+                            <cell id="3683">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                            </cell>
+                            <cell id="3684">
+                                <property name="paddingBottom">16pt</property>
+                                <property name="textAlign">right</property>
+                                <grid id="3685">
+                                    <column id="3686"/>
+                                    <column id="3687">
+                                        <property name="width">80px</property>
+                                    </column>
+                                    <row id="3688">
+                                        <cell id="3689">
+                                            <data id="3690">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="resultSetColumn">ONDUTY_USERNAME</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="3691"/>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3692">
+                <cell id="3693">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3694">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3695">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3696">
+                        <column id="3697">
+                            <property name="width">170px</property>
+                        </column>
+                        <column id="3698">
+                            <property name="width">231px</property>
+                        </column>
+                        <column id="3699"/>
+                        <row id="3700">
+                            <cell id="3701">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">64pt</property>
+                                <data id="3702">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_SOLVEDES</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3703">
+                            <cell id="3704">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <data id="3705">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_SOLVETIME</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3706">
+                            <cell id="3707">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">4pt</property>
+                                <property name="paddingBottom">16pt</property>
+                                <property name="verticalAlign">middle</property>
+                                <data id="3708">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">DEFECT_SOLVEUSERNAME</property>
+                                </data>
+                            </cell>
+                            <cell id="3709">
+                                <property name="paddingTop">4pt</property>
+                                <grid id="3710">
+                                    <column id="3711"/>
+                                    <column id="3712">
+                                        <property name="width">80px</property>
+                                    </column>
+                                    <row id="3713">
+                                        <cell id="3714">
+                                            <data id="3715">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">right</property>
+                                                <property name="resultSetColumn">RUNNING_USERNAME</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="3716"/>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3717">
+                <cell id="3718">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3719">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3720">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3721">
+                        <column id="3722">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="3723">
+                            <property name="width">322px</property>
+                        </column>
+                        <column id="3724"/>
+                        <row id="3725">
+                            <cell id="3726">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">80pt</property>
+                                <data id="3727">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">LEFTPROBLEM</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3728">
+                <cell id="3729">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                </cell>
+                <cell id="3730">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                </cell>
+                <cell id="3731">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <grid id="3732">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">params["woBdzqxId"].value!='NaN'</expression>
+                            </structure>
+                        </list-property>
+                        <column id="3733">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="3734">
+                            <property name="width">322px</property>
+                        </column>
+                        <column id="3735"/>
+                        <row id="3736">
+                            <cell id="3737">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingBottom">64pt</property>
+                                <data id="3738">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">10.5pt</property>
+                                    <property name="paddingLeft">1pt</property>
+                                    <property name="resultSetColumn">LEADER_INSTRUCTINS</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3739">
+                            <cell id="3740"/>
+                            <cell id="3741"/>
+                            <cell id="3742">
+                                <property name="paddingBottom">16pt</property>
+                                <grid id="3743">
+                                    <column id="3744"/>
+                                    <column id="3745">
+                                        <property name="width">80px</property>
+                                    </column>
+                                    <row id="3746">
+                                        <cell id="3747">
+                                            <data id="3748">
+                                                <property name="fontFamily">"宋体"</property>
+                                                <property name="fontSize">10.5pt</property>
+                                                <property name="paddingRight">1pt</property>
+                                                <property name="textAlign">right</property>
+                                                <property name="resultSetColumn">INSTRUCTIONS_USERNAME</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="3749"/>
+                                    </row>
+                                </grid>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+    </body>
+    <list-property name="images">
+        <structure>
+            <property name="name">yudeanlogo.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAALgAAAB2BAMAAACJ/0QwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+                YQUAAAAPUExURQAAAAAgQMAAAP8AAP///wuV4WwAAAAJcEhZcwAAIdQAACHUAdbbVnkAAAN2SURBVGje
+                7dgLbqMwEAZgI3EALPkCcXuCdA+Ak7n/mWob4mB7XqaqtNrFUkMK5MvwMyYkBn5xmAu/8Au/8NERbD3c
+                T/AKQ3CEN5zhuA22H0N4tXdTY7Cy3sdCHKicSh9MjwcZJ1I57v/4EvHDcWpS2ff/8v6D6hYUV6WStjx8
+                HGQseC6KVOLq5/1Ai3gpXUzF7UX7P9wJRXORUolFZ3kPm8GRXNhUXKH9DUZwK6aytcdGN52OXls6nE4F
+                XlHHUXUAiXe5EKnAO4/dHsQtmUra8KZvVom3uWCp1FX7pgE4PGCVHlM5Rp2mjT2PN6lAQ3/AEF7n0rfm
+                MRD/CYN4VXrXPEfa18UM441993Ukwzj+WdCexy2SanfQ4AGn60SK/WPcdWV7ZG8VDkjZz5r29jQeurLv
+                re2QSk7gfSL15RVvFuZ2ri7b9zaWihYPhxc8MdsRdYzgSNrtpZuInLvLLbt71EbvadR4ICLxlix8CMci
+                8W28gYqcvfl3WCS3rkh7Cu+b+2Bjhcv35zr7jdtzOGcXJ9CpcHhvf1q+cD3uexuZipZJhcbviN3PlsAV
+                TuKY3Rde2WoctTu8trtUCBzpE+ivIY3tdDhiu75wa8/gWH+3eLDdAA2Ozh0gvx3ShSP4E7PrwtEBCry3
+                vdXgToOjtiIVUOC4fa7wFsdtGUftBidsORWQ8X7S335SeIU/CFvECfuIk7aYCsg4aUuFg4xTJ1PEnYw/
+                SFtIhbYL/qRtyxcOMk4GLqUCMn6nbT4VkPEHY7OpgAJnAudScaDAOZv9hVKBs6GQqYh0xp+sTaWisBPO
+                hoKnopEz/mBtJBWlnPHW/tS/WHNCf21c+IX/xXjYvzm4vAzu9fvFfh1Iz16/fOfdxnAzxcfVzGaOy2WC
+                xcQRobw0Lu2RNoX8fJnHYlnSWmOgwiNU8NWk9w/5cRRfI5DKL/hkbaq14ItJ7x9xM44neIlYwed93fR6
+                1bS9/5IOZxBPuaSijnha98bnELcFY9PhjOJrfNnU4KvZY0lH4SDjzkzjeEpzTkeP46vJqyMecxnGEwM0
+                vmx/EY/pjOPry0UzN1vX5HSmcTxsce8tmdF3t4QNn8PW+ifxOFfsUvq79Pm64VPC19N4aGbmvswTOP4T
+                8oGdxbM27deUqVxb8vnI7eogT7ZB/DWWPNvPjn/rw+LCL/zC/wv8G3GbprhveV+kAAAAAElFTkSuQmCC
+</property>
+        </structure>
+        <structure>
+            <property name="name">blank.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKTWlD
+                Q1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVN3WJP3Fj7f92UPVkLY8LGXbIEAIiOsCMgQWaIQkgBh
+                hBASQMWFiApWFBURnEhVxILVCkidiOKgKLhnQYqIWotVXDjuH9yntX167+3t+9f7vOec5/zOec8PgBES
+                JpHmomoAOVKFPDrYH49PSMTJvYACFUjgBCAQ5svCZwXFAADwA3l4fnSwP/wBr28AAgBw1S4kEsfh/4O6
+                UCZXACCRAOAiEucLAZBSAMguVMgUAMgYALBTs2QKAJQAAGx5fEIiAKoNAOz0ST4FANipk9wXANiiHKkI
+                AI0BAJkoRyQCQLsAYFWBUiwCwMIAoKxAIi4EwK4BgFm2MkcCgL0FAHaOWJAPQGAAgJlCLMwAIDgCAEMe
+                E80DIEwDoDDSv+CpX3CFuEgBAMDLlc2XS9IzFLiV0Bp38vDg4iHiwmyxQmEXKRBmCeQinJebIxNI5wNM
+                zgwAABr50cH+OD+Q5+bk4eZm52zv9MWi/mvwbyI+IfHf/ryMAgQAEE7P79pf5eXWA3DHAbB1v2upWwDa
+                VgBo3/ldM9sJoFoK0Hr5i3k4/EAenqFQyDwdHAoLC+0lYqG9MOOLPv8z4W/gi372/EAe/tt68ABxmkCZ
+                rcCjg/1xYW52rlKO58sEQjFu9+cj/seFf/2OKdHiNLFcLBWK8ViJuFAiTcd5uVKRRCHJleIS6X8y8R+W
+                /QmTdw0ArIZPwE62B7XLbMB+7gECiw5Y0nYAQH7zLYwaC5EAEGc0Mnn3AACTv/mPQCsBAM2XpOMAALzo
+                GFyolBdMxggAAESggSqwQQcMwRSswA6cwR28wBcCYQZEQAwkwDwQQgbkgBwKoRiWQRlUwDrYBLWwAxqg
+                EZrhELTBMTgN5+ASXIHrcBcGYBiewhi8hgkEQcgIE2EhOogRYo7YIs4IF5mOBCJhSDSSgKQg6YgUUSLF
+                yHKkAqlCapFdSCPyLXIUOY1cQPqQ28ggMor8irxHMZSBslED1AJ1QLmoHxqKxqBz0XQ0D12AlqJr0Rq0
+                Hj2AtqKn0UvodXQAfYqOY4DRMQ5mjNlhXIyHRWCJWBomxxZj5Vg1Vo81Yx1YN3YVG8CeYe8IJAKLgBPs
+                CF6EEMJsgpCQR1hMWEOoJewjtBK6CFcJg4Qxwicik6hPtCV6EvnEeGI6sZBYRqwm7iEeIZ4lXicOE1+T
+                SCQOyZLkTgohJZAySQtJa0jbSC2kU6Q+0hBpnEwm65Btyd7kCLKArCCXkbeQD5BPkvvJw+S3FDrFiOJM
+                CaIkUqSUEko1ZT/lBKWfMkKZoKpRzame1AiqiDqfWkltoHZQL1OHqRM0dZolzZsWQ8ukLaPV0JppZ2n3
+                aC/pdLoJ3YMeRZfQl9Jr6Afp5+mD9HcMDYYNg8dIYigZaxl7GacYtxkvmUymBdOXmchUMNcyG5lnmA+Y
+                b1VYKvYqfBWRyhKVOpVWlX6V56pUVXNVP9V5qgtUq1UPq15WfaZGVbNQ46kJ1Bar1akdVbupNq7OUndS
+                j1DPUV+jvl/9gvpjDbKGhUaghkijVGO3xhmNIRbGMmXxWELWclYD6yxrmE1iW7L57Ex2Bfsbdi97TFND
+                c6pmrGaRZp3mcc0BDsax4PA52ZxKziHODc57LQMtPy2x1mqtZq1+rTfaetq+2mLtcu0W7eva73VwnUCd
+                LJ31Om0693UJuja6UbqFutt1z+o+02PreekJ9cr1Dund0Uf1bfSj9Rfq79bv0R83MDQINpAZbDE4Y/DM
+                kGPoa5hpuNHwhOGoEctoupHEaKPRSaMnuCbuh2fjNXgXPmasbxxirDTeZdxrPGFiaTLbpMSkxeS+Kc2U
+                a5pmutG003TMzMgs3KzYrMnsjjnVnGueYb7ZvNv8jYWlRZzFSos2i8eW2pZ8ywWWTZb3rJhWPlZ5VvVW
+                16xJ1lzrLOtt1ldsUBtXmwybOpvLtqitm63Edptt3xTiFI8p0in1U27aMez87ArsmuwG7Tn2YfYl9m32
+                zx3MHBId1jt0O3xydHXMdmxwvOuk4TTDqcSpw+lXZxtnoXOd8zUXpkuQyxKXdpcXU22niqdun3rLleUa
+                7rrStdP1o5u7m9yt2W3U3cw9xX2r+00umxvJXcM970H08PdY4nHM452nm6fC85DnL152Xlle+70eT7Oc
+                Jp7WMG3I28Rb4L3Le2A6Pj1l+s7pAz7GPgKfep+Hvqa+It89viN+1n6Zfgf8nvs7+sv9j/i/4XnyFvFO
+                BWABwQHlAb2BGoGzA2sDHwSZBKUHNQWNBbsGLww+FUIMCQ1ZH3KTb8AX8hv5YzPcZyya0RXKCJ0VWhv6
+                MMwmTB7WEY6GzwjfEH5vpvlM6cy2CIjgR2yIuB9pGZkX+X0UKSoyqi7qUbRTdHF09yzWrORZ+2e9jvGP
+                qYy5O9tqtnJ2Z6xqbFJsY+ybuIC4qriBeIf4RfGXEnQTJAntieTE2MQ9ieNzAudsmjOc5JpUlnRjruXc
+                orkX5unOy553PFk1WZB8OIWYEpeyP+WDIEJQLxhP5aduTR0T8oSbhU9FvqKNolGxt7hKPJLmnVaV9jjd
+                O31D+miGT0Z1xjMJT1IreZEZkrkj801WRNberM/ZcdktOZSclJyjUg1plrQr1zC3KLdPZisrkw3keeZt
+                yhuTh8r35CP5c/PbFWyFTNGjtFKuUA4WTC+oK3hbGFt4uEi9SFrUM99m/ur5IwuCFny9kLBQuLCz2Lh4
+                WfHgIr9FuxYji1MXdy4xXVK6ZHhp8NJ9y2jLspb9UOJYUlXyannc8o5Sg9KlpUMrglc0lamUycturvRa
+                uWMVYZVkVe9ql9VbVn8qF5VfrHCsqK74sEa45uJXTl/VfPV5bdra3kq3yu3rSOuk626s91m/r0q9akHV
+                0IbwDa0b8Y3lG19tSt50oXpq9Y7NtM3KzQM1YTXtW8y2rNvyoTaj9nqdf13LVv2tq7e+2Sba1r/dd3vz
+                DoMdFTve75TsvLUreFdrvUV99W7S7oLdjxpiG7q/5n7duEd3T8Wej3ulewf2Re/ranRvbNyvv7+yCW1S
+                No0eSDpw5ZuAb9qb7Zp3tXBaKg7CQeXBJ9+mfHvjUOihzsPcw83fmX+39QjrSHkr0jq/dawto22gPaG9
+                7+iMo50dXh1Hvrf/fu8x42N1xzWPV56gnSg98fnkgpPjp2Snnp1OPz3Umdx590z8mWtdUV29Z0PPnj8X
+                dO5Mt1/3yfPe549d8Lxw9CL3Ytslt0utPa49R35w/eFIr1tv62X3y+1XPK509E3rO9Hv03/6asDVc9f4
+                1y5dn3m978bsG7duJt0cuCW69fh29u0XdwruTNxdeo94r/y+2v3qB/oP6n+0/rFlwG3g+GDAYM/DWQ/v
+                DgmHnv6U/9OH4dJHzEfVI0YjjY+dHx8bDRq98mTOk+GnsqcTz8p+Vv9563Or59/94vtLz1j82PAL+YvP
+                v655qfNy76uprzrHI8cfvM55PfGm/K3O233vuO+638e9H5ko/ED+UPPR+mPHp9BP9z7nfP78L/eE8/sl
+                0p8zAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAABQSURBVHjazJGx
+                DQAxCMQMCmvQsP9S2QP4IjWvlHF7FhJ3Ymbuzszem4jIzBrIzIhYgKpOZ0QEUKC7J+lEygWvSufPnwoW
+                UFWTdyqQm1m+AQAvwjDK+3QDgQAAAABJRU5ErkJggg==
+</property>
+        </structure>
+        <structure>
+            <property name="name">tick.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKTWlD
+                Q1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVN3WJP3Fj7f92UPVkLY8LGXbIEAIiOsCMgQWaIQkgBh
+                hBASQMWFiApWFBURnEhVxILVCkidiOKgKLhnQYqIWotVXDjuH9yntX167+3t+9f7vOec5/zOec8PgBES
+                JpHmomoAOVKFPDrYH49PSMTJvYACFUjgBCAQ5svCZwXFAADwA3l4fnSwP/wBr28AAgBw1S4kEsfh/4O6
+                UCZXACCRAOAiEucLAZBSAMguVMgUAMgYALBTs2QKAJQAAGx5fEIiAKoNAOz0ST4FANipk9wXANiiHKkI
+                AI0BAJkoRyQCQLsAYFWBUiwCwMIAoKxAIi4EwK4BgFm2MkcCgL0FAHaOWJAPQGAAgJlCLMwAIDgCAEMe
+                E80DIEwDoDDSv+CpX3CFuEgBAMDLlc2XS9IzFLiV0Bp38vDg4iHiwmyxQmEXKRBmCeQinJebIxNI5wNM
+                zgwAABr50cH+OD+Q5+bk4eZm52zv9MWi/mvwbyI+IfHf/ryMAgQAEE7P79pf5eXWA3DHAbB1v2upWwDa
+                VgBo3/ldM9sJoFoK0Hr5i3k4/EAenqFQyDwdHAoLC+0lYqG9MOOLPv8z4W/gi372/EAe/tt68ABxmkCZ
+                rcCjg/1xYW52rlKO58sEQjFu9+cj/seFf/2OKdHiNLFcLBWK8ViJuFAiTcd5uVKRRCHJleIS6X8y8R+W
+                /QmTdw0ArIZPwE62B7XLbMB+7gECiw5Y0nYAQH7zLYwaC5EAEGc0Mnn3AACTv/mPQCsBAM2XpOMAALzo
+                GFyolBdMxggAAESggSqwQQcMwRSswA6cwR28wBcCYQZEQAwkwDwQQgbkgBwKoRiWQRlUwDrYBLWwAxqg
+                EZrhELTBMTgN5+ASXIHrcBcGYBiewhi8hgkEQcgIE2EhOogRYo7YIs4IF5mOBCJhSDSSgKQg6YgUUSLF
+                yHKkAqlCapFdSCPyLXIUOY1cQPqQ28ggMor8irxHMZSBslED1AJ1QLmoHxqKxqBz0XQ0D12AlqJr0Rq0
+                Hj2AtqKn0UvodXQAfYqOY4DRMQ5mjNlhXIyHRWCJWBomxxZj5Vg1Vo81Yx1YN3YVG8CeYe8IJAKLgBPs
+                CF6EEMJsgpCQR1hMWEOoJewjtBK6CFcJg4Qxwicik6hPtCV6EvnEeGI6sZBYRqwm7iEeIZ4lXicOE1+T
+                SCQOyZLkTgohJZAySQtJa0jbSC2kU6Q+0hBpnEwm65Btyd7kCLKArCCXkbeQD5BPkvvJw+S3FDrFiOJM
+                CaIkUqSUEko1ZT/lBKWfMkKZoKpRzame1AiqiDqfWkltoHZQL1OHqRM0dZolzZsWQ8ukLaPV0JppZ2n3
+                aC/pdLoJ3YMeRZfQl9Jr6Afp5+mD9HcMDYYNg8dIYigZaxl7GacYtxkvmUymBdOXmchUMNcyG5lnmA+Y
+                b1VYKvYqfBWRyhKVOpVWlX6V56pUVXNVP9V5qgtUq1UPq15WfaZGVbNQ46kJ1Bar1akdVbupNq7OUndS
+                j1DPUV+jvl/9gvpjDbKGhUaghkijVGO3xhmNIRbGMmXxWELWclYD6yxrmE1iW7L57Ex2Bfsbdi97TFND
+                c6pmrGaRZp3mcc0BDsax4PA52ZxKziHODc57LQMtPy2x1mqtZq1+rTfaetq+2mLtcu0W7eva73VwnUCd
+                LJ31Om0693UJuja6UbqFutt1z+o+02PreekJ9cr1Dund0Uf1bfSj9Rfq79bv0R83MDQINpAZbDE4Y/DM
+                kGPoa5hpuNHwhOGoEctoupHEaKPRSaMnuCbuh2fjNXgXPmasbxxirDTeZdxrPGFiaTLbpMSkxeS+Kc2U
+                a5pmutG003TMzMgs3KzYrMnsjjnVnGueYb7ZvNv8jYWlRZzFSos2i8eW2pZ8ywWWTZb3rJhWPlZ5VvVW
+                16xJ1lzrLOtt1ldsUBtXmwybOpvLtqitm63Edptt3xTiFI8p0in1U27aMez87ArsmuwG7Tn2YfYl9m32
+                zx3MHBId1jt0O3xydHXMdmxwvOuk4TTDqcSpw+lXZxtnoXOd8zUXpkuQyxKXdpcXU22niqdun3rLleUa
+                7rrStdP1o5u7m9yt2W3U3cw9xX2r+00umxvJXcM970H08PdY4nHM452nm6fC85DnL152Xlle+70eT7Oc
+                Jp7WMG3I28Rb4L3Le2A6Pj1l+s7pAz7GPgKfep+Hvqa+It89viN+1n6Zfgf8nvs7+sv9j/i/4XnyFvFO
+                BWABwQHlAb2BGoGzA2sDHwSZBKUHNQWNBbsGLww+FUIMCQ1ZH3KTb8AX8hv5YzPcZyya0RXKCJ0VWhv6
+                MMwmTB7WEY6GzwjfEH5vpvlM6cy2CIjgR2yIuB9pGZkX+X0UKSoyqi7qUbRTdHF09yzWrORZ+2e9jvGP
+                qYy5O9tqtnJ2Z6xqbFJsY+ybuIC4qriBeIf4RfGXEnQTJAntieTE2MQ9ieNzAudsmjOc5JpUlnRjruXc
+                orkX5unOy553PFk1WZB8OIWYEpeyP+WDIEJQLxhP5aduTR0T8oSbhU9FvqKNolGxt7hKPJLmnVaV9jjd
+                O31D+miGT0Z1xjMJT1IreZEZkrkj801WRNberM/ZcdktOZSclJyjUg1plrQr1zC3KLdPZisrkw3keeZt
+                yhuTh8r35CP5c/PbFWyFTNGjtFKuUA4WTC+oK3hbGFt4uEi9SFrUM99m/ur5IwuCFny9kLBQuLCz2Lh4
+                WfHgIr9FuxYji1MXdy4xXVK6ZHhp8NJ9y2jLspb9UOJYUlXyannc8o5Sg9KlpUMrglc0lamUycturvRa
+                uWMVYZVkVe9ql9VbVn8qF5VfrHCsqK74sEa45uJXTl/VfPV5bdra3kq3yu3rSOuk626s91m/r0q9akHV
+                0IbwDa0b8Y3lG19tSt50oXpq9Y7NtM3KzQM1YTXtW8y2rNvyoTaj9nqdf13LVv2tq7e+2Sba1r/dd3vz
+                DoMdFTve75TsvLUreFdrvUV99W7S7oLdjxpiG7q/5n7duEd3T8Wej3ulewf2Re/ranRvbNyvv7+yCW1S
+                No0eSDpw5ZuAb9qb7Zp3tXBaKg7CQeXBJ9+mfHvjUOihzsPcw83fmX+39QjrSHkr0jq/dawto22gPaG9
+                7+iMo50dXh1Hvrf/fu8x42N1xzWPV56gnSg98fnkgpPjp2Snnp1OPz3Umdx590z8mWtdUV29Z0PPnj8X
+                dO5Mt1/3yfPe549d8Lxw9CL3Ytslt0utPa49R35w/eFIr1tv62X3y+1XPK509E3rO9Hv03/6asDVc9f4
+                1y5dn3m978bsG7duJt0cuCW69fh29u0XdwruTNxdeo94r/y+2v3qB/oP6n+0/rFlwG3g+GDAYM/DWQ/v
+                DgmHnv6U/9OH4dJHzEfVI0YjjY+dHx8bDRq98mTOk+GnsqcTz8p+Vv9563Or59/94vtLz1j82PAL+YvP
+                v655qfNy76uprzrHI8cfvM55PfGm/K3O233vuO+638e9H5ko/ED+UPPR+mPHp9BP9z7nfP78L/eE8/sl
+                0p8zAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAD2SURBVHjabJCh
+                yoRAFIWvOwZZEWw+h6BtiyATTAarYDBMMWze4pPsvIQ+gdgUTFaNBsGgQWHwbvhFlt/90gmH73KPVFXV
+                sixwQZIkRVHmeR7HUdI0jVJ6LcmyXJalqqpN04Bt2/iLPM/f7zelFBFv+75fNZzzcRyDIBBCAMDt2siy
+                rGmaMAzXdUVEAADLshCRc17XNSL2fe+67jRNiDgMg+M4iHiYuq6LokgI8Xq9ns+nruvf7tufME1TQkiS
+                JNu2eZ73/9NzFcYYY6woih9znMn3fULI4/H43vM4dybDMOI4/hYQQg5T27amacIvhBD3+x0APgMAu7+B
+                LuC5fnoAAAAASUVORK5CYII=
+</property>
+        </structure>
+        <structure>
+            <property name="name">3.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAJEAAACcCAIAAADwJN6qAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKTWlD
+                Q1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVN3WJP3Fj7f92UPVkLY8LGXbIEAIiOsCMgQWaIQkgBh
+                hBASQMWFiApWFBURnEhVxILVCkidiOKgKLhnQYqIWotVXDjuH9yntX167+3t+9f7vOec5/zOec8PgBES
+                JpHmomoAOVKFPDrYH49PSMTJvYACFUjgBCAQ5svCZwXFAADwA3l4fnSwP/wBr28AAgBw1S4kEsfh/4O6
+                UCZXACCRAOAiEucLAZBSAMguVMgUAMgYALBTs2QKAJQAAGx5fEIiAKoNAOz0ST4FANipk9wXANiiHKkI
+                AI0BAJkoRyQCQLsAYFWBUiwCwMIAoKxAIi4EwK4BgFm2MkcCgL0FAHaOWJAPQGAAgJlCLMwAIDgCAEMe
+                E80DIEwDoDDSv+CpX3CFuEgBAMDLlc2XS9IzFLiV0Bp38vDg4iHiwmyxQmEXKRBmCeQinJebIxNI5wNM
+                zgwAABr50cH+OD+Q5+bk4eZm52zv9MWi/mvwbyI+IfHf/ryMAgQAEE7P79pf5eXWA3DHAbB1v2upWwDa
+                VgBo3/ldM9sJoFoK0Hr5i3k4/EAenqFQyDwdHAoLC+0lYqG9MOOLPv8z4W/gi372/EAe/tt68ABxmkCZ
+                rcCjg/1xYW52rlKO58sEQjFu9+cj/seFf/2OKdHiNLFcLBWK8ViJuFAiTcd5uVKRRCHJleIS6X8y8R+W
+                /QmTdw0ArIZPwE62B7XLbMB+7gECiw5Y0nYAQH7zLYwaC5EAEGc0Mnn3AACTv/mPQCsBAM2XpOMAALzo
+                GFyolBdMxggAAESggSqwQQcMwRSswA6cwR28wBcCYQZEQAwkwDwQQgbkgBwKoRiWQRlUwDrYBLWwAxqg
+                EZrhELTBMTgN5+ASXIHrcBcGYBiewhi8hgkEQcgIE2EhOogRYo7YIs4IF5mOBCJhSDSSgKQg6YgUUSLF
+                yHKkAqlCapFdSCPyLXIUOY1cQPqQ28ggMor8irxHMZSBslED1AJ1QLmoHxqKxqBz0XQ0D12AlqJr0Rq0
+                Hj2AtqKn0UvodXQAfYqOY4DRMQ5mjNlhXIyHRWCJWBomxxZj5Vg1Vo81Yx1YN3YVG8CeYe8IJAKLgBPs
+                CF6EEMJsgpCQR1hMWEOoJewjtBK6CFcJg4Qxwicik6hPtCV6EvnEeGI6sZBYRqwm7iEeIZ4lXicOE1+T
+                SCQOyZLkTgohJZAySQtJa0jbSC2kU6Q+0hBpnEwm65Btyd7kCLKArCCXkbeQD5BPkvvJw+S3FDrFiOJM
+                CaIkUqSUEko1ZT/lBKWfMkKZoKpRzame1AiqiDqfWkltoHZQL1OHqRM0dZolzZsWQ8ukLaPV0JppZ2n3
+                aC/pdLoJ3YMeRZfQl9Jr6Afp5+mD9HcMDYYNg8dIYigZaxl7GacYtxkvmUymBdOXmchUMNcyG5lnmA+Y
+                b1VYKvYqfBWRyhKVOpVWlX6V56pUVXNVP9V5qgtUq1UPq15WfaZGVbNQ46kJ1Bar1akdVbupNq7OUndS
+                j1DPUV+jvl/9gvpjDbKGhUaghkijVGO3xhmNIRbGMmXxWELWclYD6yxrmE1iW7L57Ex2Bfsbdi97TFND
+                c6pmrGaRZp3mcc0BDsax4PA52ZxKziHODc57LQMtPy2x1mqtZq1+rTfaetq+2mLtcu0W7eva73VwnUCd
+                LJ31Om0693UJuja6UbqFutt1z+o+02PreekJ9cr1Dund0Uf1bfSj9Rfq79bv0R83MDQINpAZbDE4Y/DM
+                kGPoa5hpuNHwhOGoEctoupHEaKPRSaMnuCbuh2fjNXgXPmasbxxirDTeZdxrPGFiaTLbpMSkxeS+Kc2U
+                a5pmutG003TMzMgs3KzYrMnsjjnVnGueYb7ZvNv8jYWlRZzFSos2i8eW2pZ8ywWWTZb3rJhWPlZ5VvVW
+                16xJ1lzrLOtt1ldsUBtXmwybOpvLtqitm63Edptt3xTiFI8p0in1U27aMez87ArsmuwG7Tn2YfYl9m32
+                zx3MHBId1jt0O3xydHXMdmxwvOuk4TTDqcSpw+lXZxtnoXOd8zUXpkuQyxKXdpcXU22niqdun3rLleUa
+                7rrStdP1o5u7m9yt2W3U3cw9xX2r+00umxvJXcM970H08PdY4nHM452nm6fC85DnL152Xlle+70eT7Oc
+                Jp7WMG3I28Rb4L3Le2A6Pj1l+s7pAz7GPgKfep+Hvqa+It89viN+1n6Zfgf8nvs7+sv9j/i/4XnyFvFO
+                BWABwQHlAb2BGoGzA2sDHwSZBKUHNQWNBbsGLww+FUIMCQ1ZH3KTb8AX8hv5YzPcZyya0RXKCJ0VWhv6
+                MMwmTB7WEY6GzwjfEH5vpvlM6cy2CIjgR2yIuB9pGZkX+X0UKSoyqi7qUbRTdHF09yzWrORZ+2e9jvGP
+                qYy5O9tqtnJ2Z6xqbFJsY+ybuIC4qriBeIf4RfGXEnQTJAntieTE2MQ9ieNzAudsmjOc5JpUlnRjruXc
+                orkX5unOy553PFk1WZB8OIWYEpeyP+WDIEJQLxhP5aduTR0T8oSbhU9FvqKNolGxt7hKPJLmnVaV9jjd
+                O31D+miGT0Z1xjMJT1IreZEZkrkj801WRNberM/ZcdktOZSclJyjUg1plrQr1zC3KLdPZisrkw3keeZt
+                yhuTh8r35CP5c/PbFWyFTNGjtFKuUA4WTC+oK3hbGFt4uEi9SFrUM99m/ur5IwuCFny9kLBQuLCz2Lh4
+                WfHgIr9FuxYji1MXdy4xXVK6ZHhp8NJ9y2jLspb9UOJYUlXyannc8o5Sg9KlpUMrglc0lamUycturvRa
+                uWMVYZVkVe9ql9VbVn8qF5VfrHCsqK74sEa45uJXTl/VfPV5bdra3kq3yu3rSOuk626s91m/r0q9akHV
+                0IbwDa0b8Y3lG19tSt50oXpq9Y7NtM3KzQM1YTXtW8y2rNvyoTaj9nqdf13LVv2tq7e+2Sba1r/dd3vz
+                DoMdFTve75TsvLUreFdrvUV99W7S7oLdjxpiG7q/5n7duEd3T8Wej3ulewf2Re/ranRvbNyvv7+yCW1S
+                No0eSDpw5ZuAb9qb7Zp3tXBaKg7CQeXBJ9+mfHvjUOihzsPcw83fmX+39QjrSHkr0jq/dawto22gPaG9
+                7+iMo50dXh1Hvrf/fu8x42N1xzWPV56gnSg98fnkgpPjp2Snnp1OPz3Umdx590z8mWtdUV29Z0PPnj8X
+                dO5Mt1/3yfPe549d8Lxw9CL3Ytslt0utPa49R35w/eFIr1tv62X3y+1XPK509E3rO9Hv03/6asDVc9f4
+                1y5dn3m978bsG7duJt0cuCW69fh29u0XdwruTNxdeo94r/y+2v3qB/oP6n+0/rFlwG3g+GDAYM/DWQ/v
+                DgmHnv6U/9OH4dJHzEfVI0YjjY+dHx8bDRq98mTOk+GnsqcTz8p+Vv9563Or59/94vtLz1j82PAL+YvP
+                v655qfNy76uprzrHI8cfvM55PfGm/K3O233vuO+638e9H5ko/ED+UPPR+mPHp9BP9z7nfP78L/eE8/sl
+                0p8zAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAzaSURBVHja7N1/
+                kFVneQfwDwQCEqAlP3QRFIiaxjrGDRIxP42TVLNriGTaNNOkM21JYZPqtJ1aUycWCWx/UDvTsVazrh1I
+                Yltt62ioxt3MaKvRJEKksE3ND4zEZALsEhMJPwMscPrHnbM9l7v37t2959x77u77nZ2du3fPec857/f9
+                Ps/zPuec95kcRVG0Kgq/m+j3pGhVpFtAE2FSFEWhF5oJHYLOgs4CstfZZB2hG5oK3UFnwZ8FBH8WEHQW
+                dBYQdBYQdBZ0FhB0FhB0FnQWEHQWEHQWdBYQdBYwkXU2QEvis8Sf6TY+hn3TPZmqMTnvhnENG+PP21kT
+                d9aosJHOMo331nZuvQ3QWSPuUw+o9qB9zGdF/OdW7hjT0N7CsjL/aqvtWkp378y497pNSVlnneyqdryM
+                fOhtLCm2Ra3DaWjFSMQvHW7HUcl0S/mrGNul5dqfDbBmrNeQvPgKHbe0Im2drC4+mXJYPhrZ1XJdtWFK
+                fv1ZL8sTHbSbbjayeDSiGUgotcB6d3lBDIx0Pm0j2ZiV2UclHaZkK+RasAnMpZUeVo6pkZ5YggMlhJWi
+                cnfPHc4SdpQ5XDP5s3RFtpVW+lg8pvFbENaQRV1b0edVo935JWa2u1hn7fWIG/Oqs37a2RpHIivKe5Q7
+                ynd3e7xjL3Nj1ntjBZcKpSnyQTnVWSEUHPIupxHWlRj13fSW56wl1lAy4GyrOb5vdB4klzpbXPG/pwlr
+                RAJKZVpqCftoqcL87ipxYB3pJVaaW2etKbXTF4tyS7FD6hrJV5Uz10PDpYPlbGIt2+sr3FzHjVVa0d3l
+                +7q1PBPdJe0srjrlsZGlXMwmWuivOoQZ53FjBXQV28n2il22OoOAVom77UzVPORXZ2M2/aWBYktVl5pC
+                cNhL/3BB7Go6qrCuedRZhWRjx5hcSO2Wc0t6cXwnS8pPmbvpjC9zaZYz65R1ljoBu2rbvb18oqtjNMFq
+                YSK4diRBr44tZ1sT6Sx1LC8/66oG5cL35SXdWtlQ/2OZYb20fJySpT8Lz4M0H8LzIM2XBwk6CzoLCDoL
+                CDoLOgsIOgsIOgs6Cwg6Cwg6CzoLCDoLCDoLOgsIOgsIOgv4f53F73mG383yO6xHHGxj4xAxyGT2cjbf
+                oo09nM8RZo0rziY364kf4CBd7OVGdvIOdnMzv+AmHucjvMjlPMf7GOBuDvHDoLN64iSf5TbeyZN8mtVs
+                5dKR9trLmXyHd/OX/BEPcCeTmRE4ywKP83au50ts5GOcxRk1NPgSP2GA/+RWXuNaJgXOUkEn1/JlVjGb
+                N6VtziMe5SjfZSHX8CamBs7G1pVfYi9XsJA3Zn/EYxzlTm7mHC7Kr+zyx9kpnuBuujiTc+p+AoO082V2
+                8t7AWWWc4ASX8Cj7WNDQk/kpf8HdHOFXA2fDWsJj3MyfsYi5uemeB3mBi3hLXexzM3H2Bfbwx5ydSwey
+                nqtpYWHgDIf5Q9Yzg7NyHKv9nBt4mDMnOGd9TOdpPtwMCZlTdDKP35+wnO3h25xXl/WG0sJ+jrGezkZa
+                hUZwFvEybWxmiibDSb7CpQxy4cTh7E+5gmW1JZ8ai028xG83JldZX84ivsolvJFpmhtHuITNDbjRU1/X
+                /xoP8/rmJwwz2MxD7B3HnG1hFZ/Pd0w/Ksyin1c5OS5t4w5mMMj5xhs28rPsl/tuAGdfZCa3GIc4xGH+
+                u36TluxtY8StXD1OCcNMjtNDNG509hSv0drMkX01OMEH+Od6pJIz5mw/v8ajeb/zmw6e5pfrcVMiS84i
+                7uUWppsQiHgv/575nb8s/dlRnmrC7NTYxz+PspVTTcrZST7KJycSZ4Xu/DavNKltHKSHG5rmAbQ0L/xO
+                1meY68lGZ6dYynsmHmGYyuJszWM2OvsZ0/P0WEedcYT3892ssv4ZcBZxNfexyMTFs8zh3Gbh7H84h/km
+                NPbwfp7JxDtkwNlneQsfMtGxn+Ocl/8YZD8tgTBwD19virjxFZ4JdIFP8K5MEsdp28b74ldLAiLa+Jf0
+                XzlIW2eHJkY6uCo5cB87c24btzC7MaXRc4rn+K+cczYrEFaMy7hwTIXr68RZxKe5PBBVjOf5RW45O0lb
+                StmageLPA2m3mRaqafND6QfS6d0p6WNHStP+NYlyVNvjEoylVve0CrgjYqhwWm9Jm4UqYOXW/SpXzXBN
+                FaXjT7A/9Yg0LQxE0Q9Hv1d/FK0q/mZ7FK1L/LkuirZX3dqqRLMbhjvW0Gb9ZXYs1+z2ioergONR9NdR
+                ukhPZ//KBcXfdFZdwCxZg20bS4qNT+twA39FQm1tIxmAftoS9amXF6u2Nz6HISSL6fWxtIa6j1M4wok0
+                LVp6c+onmTnSoxCltdMr85csFHgahoxnlSOjOzGSVsdkfJPVdLIswUqhnmBbyfZD518O5ezkfVzO23Lo
+                z77AR2pupDdRp26A3XTHRW3LjfR5rIx1M8T3AD0xqX1sG46Ab7KEPpbRH7ffx7xE1w8kRF8YQN1lhleF
+                kGRKylOq9Bq7NY2bnJvYFFdu72Flqq67oKehwVHgZhutXBxbyK7ix4F7Yv4GSggrRbm56es4mM+48R/4
+                O36pZpFtpZU+Flc3Q9+dsFfdsVuaz7KEiyoUcVyWqJNc8FhDfrFQZrqj2NUVhDVknNdWdJkVHN4ZKd9F
+                S4+zVbURhn7a2RpHIivKe8RkuePVZfzW0OehDm2Nv+mMFVy5um17vEEvcxMhzKZi8zjsoZtDZ+t5oIbd
+                N5YU6k4iqY9uehOcVYhTho0OellWouCC2SxUB98U935LTHkydm0bfaHVx5nFFTmcn30nigZHPxtLTssK
+                G6wr+deG0UzRKqMninoSn9fFp9RfvM2q+GfYed724b7pL3/QA1F0NJ/zs/t5ew1vGIxhAtQxyu3fxrNx
+                pFMQ37y4jnFv4suCkgr2sOAptxR7wa7hGq9QH/1TvIvfzaHOfhBFh2rQWVS1zjYMt81p6Yn+MlLeXnys
+                7SUbnHZ666pLf1S2BPuj6Hg+dfZ1ZnNRNtnxruK0YXtJqLaxxAsOTZnLSbmlZEbVWhJHpFLZfiW38YEc
+                xiC31PBIwcBIYf0dw/V4cpKwpSQWb6Ultp9rS7YfsoStiSjmjvImumOk4LACPpfyg47pcfYEP05Y7Qop
+                pY5R+oMRA85yXdkS+6rC9GBbzM3y4u1XJNJgXYmsWDIiraXUx5U8kiZt6XH2vuLGxmxVdo1m42SqMNnF
+                SVW1xZO/FRVzYIVz7qMr5qy9/Palw25xmTaP8v20HyhOzTM+GUUram6kPxGLJz38sDHFsN+nODGoMGEo
+                d5enFFuj6PqUj59eXv8Qz2UWgzQv9jAr5bV60ssRz2QtOwJLxdjAv6XcZKrPpO5gUS5WpcwLjvNE4m5O
+                7nSGI1wfiErgRT6Tfqup6myQA8wKUovxPd6Z82e/p3IXXwtcxXgok/fh037H4hj7eX2gi2d5jg+m33Da
+                71gMcgUnAmPsY08mDWfwnucBDkz4d3Pxt9yeySqqGaw18VW+MuEJO8mxJlq3AJs5l7dOYM7u4jdreJK1
+                3jrD07wwsUV2XYYrwmbD2e+xg8cmKme/wyCzs2o+s/WuHmYBCybe8kkvcBazM0wsZLl+Ywc3ct0E4+zj
+                XMaNGR4hS852MZWzJ9Jb8d/nDVyQrXXJcs3N+fxBFQ+MjjPD+FLm7iDj9YhP8S0uz2sxunTxeRbWYw2i
+                jFcxnUwfi5gz3oORAa7idfU4VF1qItzLHj45fgmLuIZ76lRdqy6c7eMoO1N9zyA/OMh6VtdvefO61PiZ
+                w1E21K/SQ/1wiqOcX9dKU3Wsf3aCX+eLvGEccfYAD9X2xGquOcOPOJfzmDkuCPsPfoU317vaYH1r1l3C
+                53h4XBjJfRzM8IZLbnRWwDN8nG80c/S/n8v40USo5zkUGe/ke7ybi5uQsL9hPr/RsAqXjatP/Q0u4kWu
+                bB62XuVePswc5jTsLBpXfv0GpnEPBzIvipMOfsIxTrKwkYQ1VGdDuItFaS/fkjqO8ed8kGsbfy454Ow4
+                h7iJB+uUrxsdjvJTbucHeQmacsBZISrZyiQ+wz/lJp58jUlczCNI/xHuJudsKFGykweZykcb6Wqd5CAd
+                3MalDaj03jycFXCYw9zOx3hP3e9xRwzwNV7mEzmtapk/zgr4OTNYwmZ28Y7sjzjII5zDnTyY/sJi4yLW
+                r4zzOIvHeJU/4Xn+ikFOZjA4TvJbHOHvuZAepuQ6R5NXnZ2GPWxhOvfzKV7mqppt4Aau4ybu53muzGXU
+                2sScJedJW3iRV5jKhUxjIdMrPnIS8TzTeYwFbOAaDnMVC5sv7dlsnA3hFQ7zFNPjWzw/5q3sZRF7eTNP
+                s4D/ZRFHuIBpzGceZ+fXLYxfzoYN0Asx+hnsYwZTOZNpefdPo8X/DQBtECsHUzT1NgAAAABJRU5ErkJg
+                gg==
+</property>
+        </structure>
+    </list-property>
+</report>

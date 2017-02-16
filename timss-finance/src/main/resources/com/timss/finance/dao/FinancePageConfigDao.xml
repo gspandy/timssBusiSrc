@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinancePageConfigDao">
+	<resultMap type="FinancePageConfig" id="financePageConfigMap">
+		<result column="SITEID" property="siteid" />
+		<result column="FLOW" property="flow" />
+		<result column="FLOWKEY" property="flowKey" />
+		<result column="REIMBURSE_TYPE" property="reimburseType" />
+		<result column="FORM_CONF" property="formConf" />
+		<result column="FORM_INFO_CONF" property="formInfoConf" />
+		<result column="DATAGRID_CONF" property="datagridConf" />
+		<result column="DG_DETAIL_CONF" property="dgDetailConf" />
+		<result column="DG_DILOG_HEIGHT" property="dilogHeight" />
+	</resultMap>
+	
+	<!--查询某类报销流程的所有配置信息-->
+	<select id="getFinPageConfByFlowType" resultMap="financePageConfigMap">
+		SELECT t.siteid,t.flow,t.flowkey,t.reimburse_type,t.form_conf,t.form_info_conf,
+				t.datagrid_conf,t.dg_detail_conf,DG_DILOG_HEIGHT
+		FROM fin_page_config t 
+		WHERE t.flow = #{flowType} AND t.siteid= #{siteid}
+	</select>
+	
+	<select id="getFinPageConf" resultMap="financePageConfigMap">
+		SELECT t.siteid,t.flow,t.flowkey,t.reimburse_type,t.form_conf,t.form_info_conf,
+				t.datagrid_conf,t.dg_detail_conf,DG_DILOG_HEIGHT
+		FROM fin_page_config t 
+		WHERE t.flow = #{flowType} and t.reimburse_type=#{finType} AND t.siteid= #{siteid}
+	</select>	
+</mapper> 

@@ -1,0 +1,148 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.timss.2.0</groupId>
+        <artifactId>timss-deps</artifactId>
+        <version>2.0-SNAPSHOT</version>
+        <relativePath>../timss-deps/pom.xml</relativePath>
+    </parent>
+    <artifactId>timss-facade</artifactId>
+    <version>${timss-facade.version}</version>
+    <packaging>jar</packaging>
+    <name>timss-facade</name>
+    <description>框架服务包：整合数据库、常用工具、AOP、前后端工具等。</description>
+    <dependencies>
+        <!-- TIMSS 默认的需要的包 -->
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_mvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_workflow</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.yudean.itc</groupId>
+                    <artifactId>itc_config</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_sysconf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.timss.2.0</groupId>
+            <artifactId>core-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_front</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_interface</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_webserviceclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_portal</artifactId>
+        </dependency>
+
+        <!-- 引用ITC工具包 -->
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_utility</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_support</artifactId>
+        </dependency>
+		<dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_dynamicform</artifactId>
+        </dependency>
+        
+        <!-- other tool -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+		</dependency>	
+		<dependency>
+            <groupId>com.yudean.itc</groupId>
+            <artifactId>itc_supplier</artifactId>
+    		<version>${ITC.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!--1. 统一各个模块的profile-->
+        <profile>
+            <id>dev</id>
+        </profile>
+        <!--2. 打包时候的依赖，不依赖任何其他的模块，只依赖默认的 -->
+        <profile>
+            <id>pkg</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/webapp</directory>
+                        <targetPath>META-INF/resources</targetPath>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target description="生成WEB-FRAGEMENT">
+                                        <echo>复制web.xml并替换文件字符串{web-app => web-fragment}</echo>
+                                        <copy file="src/main/webapp/WEB-INF/web.xml"
+                                              tofile="target/classes/META-INF/web-fragment.xml"
+                                              encoding="UTF-8">
+                                            <filterchain>
+                                                <tokenfilter>
+                                                    <replacestring from="web-app" to="web-fragment"/>
+                                                </tokenfilter>
+                                            </filterchain>
+                                        </copy>
+                                        <!--<replace file="target/classes/META-INF/web-fragment.xml">-->
+                                        <!--token="web-app"-->
+                                        <!--value="web-fragment"-->
+                                        <!--</replace>-->
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

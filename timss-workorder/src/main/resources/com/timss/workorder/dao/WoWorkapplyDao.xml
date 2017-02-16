@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoWorkapplyDao">
+
+	<resultMap type="Workapply" id="workapplyMap">
+		<id column="ID" property="id" />
+		<result column="CODE" property="workapplyCode" />
+		<result column="WOID" property="woId" />
+		<result column="WOCODE" property="woCode" />
+		<result column="NAME" property="name" />
+		<result column="WORK_COM" property="workCom" />
+		<result column="WORK_PRINCIPAL" property="workPrincipal" />
+		<result column="STARTTIME" property="startTime" />
+		<result column="ENDTIME" property="endTime" />
+		<result column="APPLICANT" property="applicant" />
+		<result column="APPLICANT_NAME" property="applicantName" />
+		<result column="CURR_HANDLER" property="currHandler" />
+		<result column="CURR_HANDLERNAME" property="currHandlerName" />
+		<result column="APPLY_TIME" property="applyTime" />
+		<result column="APPLY_STATUS" property="applyStatus" />
+		<result column="SAFE_PRINCIPAL" property="safePrincipal" />
+		<result column="WORK_CONDITION" property="workCondition" />
+		<result column="SAFE_ITEMS" property="safeItems" />
+		<result column="WORKFLOW_ID" property="workflowId" />
+		<result column="CHECK_LEVEL" property="checkLevel" />
+		<result column="CONDITIONCONFIRM_USER" property="conditionConfirmUser" />
+		<result column="SAFECONFIRM_USER" property="safeConfirmUser" />
+		<result column="SAFEINFORM_USER" property="safeInformUser" />
+		
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="DEL_FLAG" property="delFlag" />
+	
+	</resultMap>	
+	
+	  
+	<insert id="insertWorkapply"  parameterType="Workapply" >
+		insert into WO_WORKAPPLY(ID,CODE,WOID,WOCODE,NAME,WORK_COM,WORK_PRINCIPAL,SAFE_PRINCIPAL,STARTTIME,
+								ENDTIME,APPLICANT,CURR_HANDLER,CURR_HANDLERNAME,APPLY_TIME,APPLY_STATUS,WORK_CONDITION,
+								SAFE_ITEMS,WORKFLOW_ID,CHECK_LEVEL,CONDITIONCONFIRM_USER,SAFECONFIRM_USER,SAFEINFORM_USER,
+								CREATEUSER,CREATEDATE,SITEID,DEPTID,DEL_FLAG) 
+		values( #{id},
+				#{workapplyCode,jdbcType=VARCHAR},
+				#{woId,jdbcType=VARCHAR},
+				#{woCode,jdbcType=VARCHAR},
+				#{name,jdbcType=VARCHAR},
+				#{workCom,jdbcType=VARCHAR},
+				#{workPrincipal,jdbcType=VARCHAR},
+				#{safePrincipal,jdbcType=VARCHAR},
+				#{startTime,jdbcType=TIMESTAMP},
+				
+				#{endTime,jdbcType=TIMESTAMP},
+				#{applicant,jdbcType=VARCHAR},
+				#{currHandler,jdbcType=VARCHAR},
+				#{currHandlerName,jdbcType=VARCHAR},
+				#{applyTime,jdbcType=TIMESTAMP},
+				#{applyStatus,jdbcType=VARCHAR},
+				#{workCondition,jdbcType=VARCHAR},
+				
+				#{safeItems,jdbcType=VARCHAR},
+				#{workflowId,jdbcType=VARCHAR},
+				#{checkLevel,jdbcType=VARCHAR},
+				#{conditionConfirmUser,jdbcType=VARCHAR},
+				#{safeConfirmUser,jdbcType=VARCHAR},
+				#{safeInformUser,jdbcType=VARCHAR},
+				
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{delFlag,jdbcType=VARCHAR}
+				)
+	</insert>
+	
+	<update id="updateWorkapply" parameterType="Workapply">
+		update WO_WORKAPPLY 
+		set NAME=#{name,jdbcType=VARCHAR},
+			WOID=#{woId,jdbcType=VARCHAR},
+			WOCODE=#{woCode,jdbcType=VARCHAR},
+			WORK_COM=#{workCom,jdbcType=VARCHAR},
+			WORK_PRINCIPAL=#{workPrincipal,jdbcType=VARCHAR},
+			SAFE_PRINCIPAL=#{safePrincipal,jdbcType=VARCHAR},
+			STARTTIME=#{startTime,jdbcType=TIMESTAMP},
+			ENDTIME=#{endTime,jdbcType=TIMESTAMP},
+			WORK_CONDITION=#{workCondition,jdbcType=VARCHAR},
+			SAFE_ITEMS=#{safeItems,jdbcType=VARCHAR},
+			CHECK_LEVEL=#{checkLevel,jdbcType=VARCHAR},
+			CONDITIONCONFIRM_USER=#{conditionConfirmUser,jdbcType=VARCHAR},
+			SAFECONFIRM_USER=#{safeConfirmUser,jdbcType=VARCHAR},
+			<if test="safeInformUser != null">
+			 	SAFEINFORM_USER=#{safeInformUser,jdbcType=TIMESTAMP},
+			 </if>	
+			MODIFYUSER=#{modifyuser,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifydate,jdbcType=TIMESTAMP}
+		where ID=#{id} 
+	</update>
+	
+	 <update id="updateWoaplyStatus"  parameterType="HashMap">
+		update WO_WORKAPPLY 
+		set APPLY_STATUS = #{status}
+		where ID=#{woapplyId} 
+	</update>
+	
+	<update id="updateCurrHander"  parameterType="HashMap">
+		update WO_WORKAPPLY 
+		set CURR_HANDLER = #{currHandlerUser},
+			CURR_HANDLERNAME = #{currHandUserName}
+		where ID=#{woapplyId} 
+	</update>
+	
+	 <update id="updateWorkflowId"  parameterType="HashMap">
+		update WO_WORKAPPLY 
+		set WORKFLOW_ID = #{workflowId}
+		where ID=#{woapplyId} 
+	</update>
+	
+	<select id="queryWorkapplyById" parameterType="String" resultMap="workapplyMap">
+		select * 
+		from WO_WORKAPPLY 
+		where id= #{ id }
+	</select>
+	
+	<delete id="deleteWorkapply" parameterType="HashMap">
+		update WO_WORKAPPLY t
+		set t.DEL_FLAG = 'Y'
+		where ID = #{woapplyId} 
+	</delete>
+	<!-- 查询列表信息 -->
+	<select id="queryAllWorkapply" resultMap="workapplyMap">
+		select t.id,t.code,t.name,t.work_com,t.starttime,t.endtime,t.applicant, su.name APPLICANT_NAME, 
+				T.CURR_HANDLERNAME,T.APPLY_STATUS,t.createdate
+	    from WO_WORKAPPLY t,sec_user su
+	    where t.DEL_FLAG = 'N' AND T.APPLICANT= SU.USER_ID and t.apply_status != 'draft'
+		<if test="params.siteid != null">
+			and siteid = #{params.siteid}
+		</if>
+		order by t.createdate desc
+	</select>
+	
+	
+</mapper>

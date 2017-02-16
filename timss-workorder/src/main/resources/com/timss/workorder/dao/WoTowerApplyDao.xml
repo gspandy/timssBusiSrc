@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoTowerApplyDao">
+
+	<resultMap type="TowerApply" id="towerApplyMap">
+		<id column="ID" property="id" />
+		<result column="APPLYCODE" property="applyCode" />
+		<result column="APPLYCOMPANY" property="applyCompany" />
+		<result column="TOWERPEOPLE" property="towerPeople" />
+		<result column="CABINROOF" property="cabinRoof" />
+		<result column="WINDGUARDIAN" property="windGuardian" />
+		<result column="SAFETYTRAINER" property="safetyTrainer" />
+		<result column="SLIDEBLOCKTRAINER" property="slideBlockTrainer" />
+		<result column="CLIMBTRAINER" property="climbTrainer" />
+		<result column="APPLYREASON" property="applyReason" />
+		<result column="APPLICANTNO" property="applicantNo" />
+		<result column="APPLICANT" property="applicant" />
+		<result column="APPLYTIME" property="applyTime" />
+		<result column="APPLYSTATUS" property="applyStatus" />
+		<result column="CURRHANDLER" property="currHandler" />
+		<result column="CURRHANDLERNAME" property="currHandlerName" />
+		
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="CREATEUSERNAME" property="createuserName" />
+		<result column="MODIFYUSERNAME" property="modifyuserName" />
+		<result column="CREATEDATE" property="createDate" />
+		<result column="MODIFYDATE" property="modifyDate" />
+		
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="DELFLAG" property="delFlag" />
+	</resultMap>	
+	
+	<insert id="insertTowerApply"  parameterType="TowerApply" >
+		insert into WO_TOWERAPPLY(ID,APPLYCODE,APPLYCOMPANY,TOWERPEOPLE,CABINROOF,WINDGUARDIAN,SAFETYTRAINER,
+			SLIDEBLOCKTRAINER,CLIMBTRAINER,APPLYREASON,DEPTID,SITEID,DELFLAG,CREATEUSER,CREATEUSERNAME,CREATEDATE,WORKFLOWID,
+			APPLICANTNO,APPLICANT,APPLYTIME,CURRHANDLER,CURRHANDLERNAME,APPLYSTATUS) 
+		values( #{id},
+				#{applyCode,jdbcType=VARCHAR},
+				#{applyCompany,jdbcType=VARCHAR},
+				#{towerPeople,jdbcType=VARCHAR},
+				#{cabinRoof,jdbcType=VARCHAR},
+				#{windGuardian,jdbcType=VARCHAR},
+				#{safetyTrainer,jdbcType=VARCHAR},
+				#{slideBlockTrainer,jdbcType=VARCHAR},
+				#{climbTrainer,jdbcType=VARCHAR},
+				#{applyReason,jdbcType=VARCHAR},
+				
+				#{deptid,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{delFlag,jdbcType=VARCHAR},
+				#{createuser,jdbcType=VARCHAR},
+				#{createuserName,jdbcType=VARCHAR},
+				#{createDate,jdbcType=TIMESTAMP},
+				#{workflowId,jdbcType=VARCHAR},
+				
+				#{applicantNo,jdbcType=VARCHAR},
+				#{applicant,jdbcType=VARCHAR},
+				#{applyTime,jdbcType=TIMESTAMP},
+				#{currHandler,jdbcType=VARCHAR},
+				#{currHandlerName,jdbcType=VARCHAR},
+				#{applyStatus,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 查询列表信息 -->
+	<select id="queryAllTowerApply" resultMap="towerApplyMap">
+		select *
+		from WO_TOWERAPPLY t
+		where t.DELFLAG = 'N' and applyStatus!='draft' 
+		<if test="params.siteid != null">
+			and siteid = #{params.siteid}
+		</if>
+	</select>
+	
+	<select id="queryTowerApplyById" parameterType="String" resultMap="towerApplyMap">
+		select * 
+		from WO_TOWERAPPLY 
+		where id= #{ id }
+	</select>
+	
+	<update id="updateCurrHander"  parameterType="HashMap">
+		update WO_TOWERAPPLY 
+		set CURRHANDLER = #{currHandler},
+			CURRHANDLERNAME = #{currHandlerName}
+		where ID=#{towerApplyId} 
+	</update>
+	
+	<update id="updateWorkflowId"  parameterType="HashMap">
+		update WO_TOWERAPPLY 
+		set WORKFLOWID = #{workflowId}
+		where ID=#{towerApplyId} 
+	</update>
+	
+	<update id="updateTowerApply" parameterType="TowerApply">
+		update WO_TOWERAPPLY 
+		set APPLYCOMPANY=#{applyCompany,jdbcType=VARCHAR},
+			TOWERPEOPLE=#{towerPeople,jdbcType=VARCHAR},
+			CABINROOF=#{cabinRoof,jdbcType=VARCHAR},
+			WINDGUARDIAN=#{windGuardian,jdbcType=VARCHAR},
+			SAFETYTRAINER=#{safetyTrainer,jdbcType=VARCHAR},
+			SLIDEBLOCKTRAINER=#{slideBlockTrainer,jdbcType=VARCHAR},
+			
+			CLIMBTRAINER=#{climbTrainer,jdbcType=VARCHAR},
+			APPLYREASON=#{applyReason,jdbcType=VARCHAR},
+			
+			
+			MODIFYUSER=#{modifyuser,jdbcType=VARCHAR},
+			MODIFYUSERNAME=#{modifyuserName,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifyDate,jdbcType=TIMESTAMP}
+		where ID=#{id} 
+	</update>
+	
+	<delete id="deleteTowerApply" parameterType="HashMap">
+		update WO_TOWERAPPLY t
+		set t.DELFLAG = 'Y'
+		where ID = #{towerApplyId} 
+	</delete>
+	
+	<update id="updateTowerApplyStatus"  parameterType="HashMap">
+		update WO_TOWERAPPLY 
+		set APPLYSTATUS = #{status}
+		where ID=#{towerApplyId} 
+	</update>
+	
+</mapper>

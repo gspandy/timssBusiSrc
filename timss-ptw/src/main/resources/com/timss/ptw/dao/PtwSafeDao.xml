@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwSafeDao">
+	<select id="queryPtwSafeListByWtId" resultType="PtwSafe">
+		select *
+		from ptw_safe
+		where wtId = #{wtId} order by safeOrder
+	</select>
+	
+	<insert id="insertPtwSafe" parameterType="PtwSafe">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_SAFE.nextval from dual
+		</selectKey>
+		insert into ptw_safe(id,wtId,safeContent,safeType,safeOrder,executer,executerNo,remover,removerNo)
+		values (#{id},#{wtId},#{safeContent},#{safeType},#{safeOrder},
+		#{executer,jdbcType=VARCHAR},#{executerNo,jdbcType=VARCHAR},
+		#{remover,jdbcType=VARCHAR},#{removerNo,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="batchInsertPtwSafe" parameterType="java.util.List">
+		insert into ptw_safe(id,wtId,safeContent,safeType,safeOrder,executer,executerNo,remover,removerNo)
+	    select SEQ_PTW_SAFE.nextval,temp.* from(
+	        <foreach collection="list" item="item" index="index" separator="union all">
+	            select  #{item.wtId} wtId,#{item.safeContent} safeContent,#{item.safeType} safeType,#{item.safeOrder} safeOrder,
+				#{item.executer,jdbcType=VARCHAR} executer,#{item.executerNo,jdbcType=VARCHAR} executerNo,
+				#{item.remover,jdbcType=VARCHAR} remover,#{item.removerNo,jdbcType=VARCHAR} removerNo
+	            from dual
+	        </foreach>
+	    ) temp
+	</insert>
+	
+	<delete id="deletePtwSafeByWtId" parameterType="int">
+		delete from ptw_safe where wtId = #{wtId}
+	</delete>
+	
+	<update id="batchUpdatePtwSafeRemover" parameterType="PtwSafe">
+		begin  
+        <foreach collection="list" item="item" index="index"  separator=";">  
+        update ptw_safe
+        set removerNo = #{item.removerNo,jdbcType=VARCHAR},
+        	remover=#{item.remover,jdbcType=VARCHAR},
+        	remarks=#{item.remarks,jdbcType=VARCHAR}
+        where id=#{item.id} 
+        </foreach>  
+        ;end;
+	</update>
+</mapper> 

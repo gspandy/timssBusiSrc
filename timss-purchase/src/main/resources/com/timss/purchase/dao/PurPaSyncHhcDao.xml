@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.purchase.dao.PurPaSyncHhcDao">
+	<resultMap type="com.timss.purchase.bean.PurPaSyncHhc" id="PurPaSyncHhcMap">
+		<result property="hhcPano" column="hhc_pano"/>
+		<result property="timPano" column="tim_pano"/>
+	</resultMap>
+	
+	<!-- 查询映射表信息 -->
+	<select id="queryPurPaSyncHhcByMap" parameterType="java.util.Map" resultMap="PurPaSyncHhcMap">
+		select ppsh.hhc_pano,
+				ppsh.tim_pano,
+				ppsh.status,
+				ppsh.createdate, 
+				ppsh.createuser,
+				ppsh.modifydate,
+				ppsh.modifyuser,
+				ppsh.siteid
+		from pur_pa_sync_hhc ppsh 
+		where 1=1 
+ 		<if test="hhcPano != null and hhcPano != ''">
+		  	and ppsh.hhc_pano = '${hhcPano}' 
+		</if>
+		<if test="timPano != null and timPano != ''">
+		  	and ppsh.tim_pano = '${timPano}' 
+		</if>
+		<if test="status != null and status != ''">
+		  	and ppsh.status = '${status}' 
+		</if>
+		<if test="siteid != null and siteid != ''">
+		  	and ppsh.siteid = '${siteid}' 
+		</if>
+	</select>
+	
+	<!-- 插入中间表信息 -->
+	<insert id="insertPurPaSyncHhcInfo" parameterType="com.timss.purchase.bean.PurPaSyncHhc">
+		insert into pur_pa_sync_hhc
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="hhcPano != null"> hhc_pano, </if>
+	      <if test="timPano != null"> tim_pano, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="siteid != null"> siteid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="hhcPano != null">  #{siteid,jdbcType=VARCHAR} || #{hhcPano,jdbcType=VARCHAR}, </if>
+	      <if test="timPano != null"> #{timPano,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 根据发送商务网流水号查询本地采购申请物资是否已经采购 -->
+	<select id="queryPurBuisCala" parameterType="java.util.Map" resultType="com.timss.purchase.vo.PurBuisCalaVO">
+		select pa.repliednum as paItemnum,sum(iwoe.itemnum) as poItemnum,pa.itemid as itemId,pa.sheet_id as sheetId,pa.warehouseid,pa.invcateid  
+		from(
+			select iwpi.repliednum,iwpi.sheet_id,iwpi.itemid,iwpi.warehouseid,iwpi.invcateid
+			from pur_pa_sync_hhc pash,
+				 itceam_workflow_purchapply iwp,
+				 itceam_workflow_purchapplyitem iwpi 
+			where pash.tim_pano = iwp.sheetno 
+				and pash.siteid = iwp.siteid
+      			and iwp.sheet_id = iwpi.sheet_id 
+      			and iwpi.commitcommecnetwk = 0 
+      			and iwpi.status = 3
+      			and pash.hhc_pano = '${paBNo}' 
+      			and pash.siteid = '${paSiteid}' 
+      			and iwpi.itemid = '${paItemCode}'
+      			<if test="paWarehouseid != null and paWarehouseid != ''">
+				  	and iwpi.warehouseid = '${paWarehouseid}'
+				</if>
+				<if test="paInvcateid != null and paInvcateid != ''">
+				  	and iwpi.invcateid = '${paInvcateid}'
+				</if>
+      		group by iwpi.repliednum,iwpi.sheet_id,iwpi.itemid,iwpi.warehouseid,iwpi.invcateid
+      	) pa
+      	inner join itceam_workflow_orderitem_exc iwoe on pa.sheet_id = iwoe.apply_sheet_id 
+      													and pa.itemid = iwoe.itemid and pa.warehouseid = iwoe.warehouseid
+      	group by pa.repliednum,iwoe.itemnum,pa.itemid,pa.sheet_id,pa.warehouseid,pa.invcateid  
+	</select>
+</mapper>

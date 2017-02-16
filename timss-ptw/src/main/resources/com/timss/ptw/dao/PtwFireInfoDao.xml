@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwFireInfoDao">
+	<select id="queryPtwFireInfoByWtId" resultType="PtwFireInfo">
+		select f.*,t.wtNo as attachWtNo
+		from ptw_firewt f,ptw_info t
+		where f.wtId = #{wtId} and t.id = f.attachWtId and t.inuse = 1
+	</select>
+	
+	<select id="queryFireIdsByAttachWtId" resultType="int">
+		select id
+		from ptw_info
+		where id in (select wtid from ptw_firewt where attachwtid = #{attachWtId})
+		and inuse = '1'
+
+	</select>
+	
+	<insert id="insertPtwFireBaseInfo" parameterType="PtwFireInfo">
+		insert into ptw_firewt(wtId,attachWtId,fireUnit,fireWc,fireWpExec,fireWpExecNo,guardXmCo,guardXmCoNo)
+		values(#{wtId},#{attachWtId},#{fireUnit,jdbcType=VARCHAR},#{fireWc,jdbcType=VARCHAR},
+		#{fireWpExec,jdbcType=VARCHAR},#{fireWpExecNo,jdbcType=VARCHAR},
+		#{guardXmCo,jdbcType=VARCHAR},#{guardXmCoNo,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updatePtwFireBaseInfo" parameterType="PtwFireInfo">
+		update ptw_firewt
+		<set>
+			<if test="fireUnit != null">
+				fireUnit = #{fireUnit},
+			</if>
+			<if test="fireWc != null">
+				fireWc = #{fireWc},
+			</if>
+			<if test="fireWpExec != null">
+				fireWpExec = #{fireWpExec},
+				fireWpExecNo = #{fireWpExecNo,jdbcType=VARCHAR},
+			</if>
+			<if test="guardXmCo != null">
+				guardXmCo = #{guardXmCo},
+			</if>
+			<if test="guardXmCoNo != null">
+				guardXmCoNo = #{guardXmCoNo},
+			</if>
+			<if test="cfmGuardXf != null">
+				cfmGuardXf = #{cfmGuardXf},
+				cfmGuardXfTime = #{cfmGuardXfTime},
+			</if>
+			<if test="cfmGuardXfNo != null">
+				cfmGuardXfNo = #{cfmGuardXfNo},
+			</if>
+			wtId=#{wtId}
+		</set>
+		where wtId=#{wtId}
+	</update>
+	
+	<update id="updatePtwFirePic" parameterType="PtwFireInfo">
+		update ptw_firewt
+		<set>
+			<if test="fireWorkPic != null">
+				fireWorkPic = #{fireWorkPic,jdbcType=VARCHAR},
+			</if>
+			wtId=#{wtId}
+		</set>
+		where wtId=#{wtId}
+	</update>
+	
+	<update id="updatePtwFireFlowApprInfo" parameterType="PtwFireInfo">
+		update ptw_firewt
+		<set>
+			<if test="appvCj != null">
+				appvCj = #{appvCj},
+				appvCjNo = #{appvCjNo},
+				appvCjTime = #{appvCjTime},
+			</if>
+			<if test="appvBm != null">
+				appvBm = #{appvBm},
+				appvBmNo = #{appvBmNo},
+				appvBmTime = #{appvBmTime},
+			</if>
+			<if test="appvAj != null">
+				appvAj = #{appvAj},
+				appvAjNo = #{appvAjNo},
+				appvAjTime = #{appvAjTime},
+			</if>
+			<if test="appvXf != null">
+				appvXf = #{appvXf},
+				appvXfNo = #{appvXfNo},
+				appvXfTime = #{appvXfTime},
+			</if>
+			<if test="appvSecuCo != null">
+				appvSecuCo = #{appvSecuCo},
+				appvSecuCoNo = #{appvSecuCoNo},
+				appvSecuCoTime = #{appvSecuCoTime},
+			</if>
+			wtId=#{wtId}
+		</set>
+		where wtId=#{wtId}
+	</update>
+	
+	<update id="updatePtwFireFlowConfirmInfo" parameterType="PtwFireInfo">
+		update ptw_firewt
+		<set>
+			<if test="cfmAppr != null">
+				cfmAppr = #{cfmAppr},
+				cfmApprNo = #{cfmApprNo},
+				cfmApprTime = #{cfmApprTime},
+			</if>
+			<if test="cfmWpic != null">
+				cfmWpic = #{cfmWpic},
+				cfmWpicNo = #{cfmWpicNo},
+				cfmWpicTime = #{cfmWpicTime},
+			</if>
+			<if test="cfmGuardXf != null">
+				cfmGuardXf = #{cfmGuardXf},
+				cfmGuardXfTime = #{cfmGuardXfTime}
+			</if>
+			<if test="cfmGuardXfNo != null">
+				cfmGuardXfNo = #{cfmGuardXfNo},
+			</if>
+			<if test="licWpExec != null">
+				licWpExec = #{licWpExec},
+				licWpExecNo = #{licWpExecNo},
+				licWpExecTime = #{licWpExecTime},
+			</if>
+			<if test="licSecu != null">
+				licSecu = #{licSecu},
+				licSecuNo = #{licSecuNo},
+				licSecuTime = #{licSecuTime},
+			</if>
+			<if test="licPicAj != null">
+				licPicAj = #{licPicAj},
+				licPicAjNo = #{licPicAjNo},
+				licPicAjTime = #{licPicAjTime},
+			</if>
+			<if test="licPicCj != null">
+				licPicCj = #{licPicCj},
+				licPicCjNo = #{licPicCjNo},
+				licPicCjTime = #{licPicCjTime},
+			</if>
+			wtId=#{wtId}
+		</set>
+		where wtId=#{wtId}
+	</update>
+	<update id="updatePtwFireFlowFinInfo" parameterType="PtwFireInfo">
+		update ptw_firewt
+		<set>
+			<if test="finGuardXf != null">
+				finGuardXf = #{finGuardXf},
+				finGuardXfNo = #{finGuardXfNo},
+				finGuardXfTime = #{finGuardXfTime},
+			</if>
+			<if test="finExec != null">
+				finExec = #{finExec},
+				finExecNo = #{finExecNo},
+				finExecTime = #{finExecTime},
+			</if>
+			<if test="finAppr != null">
+				finAppr = #{finAppr},
+				finApprNo = #{finApprNo},
+				finApprTime = #{finApprTime},
+			</if>
+			<if test="cfmGuardXf != null">
+				finWpic = #{finWpic},
+				finWpicNo = #{finWpicNo},
+				finWpicTime = #{finWpicTime},
+			</if>
+			wtId=#{wtId}
+		</set>
+		where wtId=#{wtId}
+	</update>
+	
+	<update id="updatePtwFireAuditInfo">
+		update ptw_firewt
+		set ${idColumn} = #{userId}, ${nameColumn} = #{userName}, ${timeColumn} = #{date}
+		where wtId = #{wtId}
+	</update>
+	
+</mapper> 

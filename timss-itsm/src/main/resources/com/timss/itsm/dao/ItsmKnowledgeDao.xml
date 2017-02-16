@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmKnowledgeDao">
+
+	<resultMap type="ItsmKnowledge" id="itsmknowledgeMap">
+		<id column="ID" property="id" />
+		<result column="KLCODE" property="knowledgeCode" />
+		<result column="KLNAME" property="name" />
+		<result column="KLSOURCE" property="source" />
+		<result column="KLTYPE" property="typeId" />
+		<result column="EVENT_WOCODE" property="eventWoCode" />
+		<result column="PROBLEM_WOCODE" property="problemWoCode" />
+		<result column="KEYWORDS" property="keywords" />
+		<result column="TROUBLE_DES" property="troubleDescription" />
+		<result column="SOLUTION_DES" property="solutionDescription" />
+		<result column="AUDITUSER" property="auditUser" />
+		<result column="AUDITDATE" property="auditDate" />
+		<result column="WORKFLOWID" property="workflowId" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEUSERNAME" property="createuserName" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+		<result column="STATUS" property="currStatus" />
+		<result column="CURR_HANDLERUSERID" property="currHandlerUserId" />
+		<result column="CURR_HANDLERUSERNAME" property="currHandlerUserName" />
+		
+		<result column="AUDITUSERNAME" property="auditUserName" />
+		<result  column="KL_TYPENAME" property="typeName" />
+	</resultMap>	
+     
+
+	<insert id="insertItsmKnowledge">
+			INSERT INTO ITSM_KNOWLEDGE(ID,KLCODE,KLNAME,KLSOURCE,KLTYPE,EVENT_WOCODE,PROBLEM_WOCODE,STATUS,
+									KEYWORDS,TROUBLE_DES,SOLUTION_DES,WORKFLOWID,CREATEUSER,CREATEDATE,SITEID,YXBZ) 
+			values( #{id},
+					#{knowledgeCode,jdbcType=VARCHAR},
+					#{name,jdbcType=VARCHAR},
+					#{source,jdbcType=VARCHAR},
+					#{typeId,jdbcType=TIMESTAMP},
+					#{eventWoCode,jdbcType=TIMESTAMP},
+					#{problemWoCode,jdbcType=NUMERIC},
+					#{currStatus,jdbcType=NUMERIC},
+					
+					#{keywords,jdbcType=VARCHAR},
+					#{troubleDescription,jdbcType=VARCHAR},
+					#{solutionDescription,jdbcType=VARCHAR},
+					#{workflowId,jdbcType=VARCHAR},
+					#{createuser,jdbcType=VARCHAR},
+					#{createdate,jdbcType=VARCHAR},
+					#{siteid,jdbcType=VARCHAR},
+					#{yxbz,jdbcType=NUMERIC}) 
+	</insert>
+	<!-- 删除某条知识 -->
+	<update id="deleteItsmKnowLedge" parameterType="int" >
+		UPDATE ITSM_KNOWLEDGE T
+		SET T.YXBZ = 0
+		where t.ID = #{id} 
+	</update>
+	<!-- 更新知识基本信息 -->
+	<update id="updateItsmKnowledge" parameterType="ItsmKnowledge">
+		update ITSM_KNOWLEDGE  
+			set KLNAME=#{name,jdbcType=VARCHAR},
+				KLSOURCE=#{source,jdbcType=VARCHAR},
+				KLTYPE=#{typeId,jdbcType=VARCHAR},
+				KEYWORDS=#{keywords,jdbcType=VARCHAR},
+				TROUBLE_DES=#{troubleDescription,jdbcType=VARCHAR},
+				SOLUTION_DES=#{solutionDescription,jdbcType=VARCHAR},
+				STATUS =#{currStatus,jdbcType=VARCHAR},
+				AUDITUSER=#{auditUser,jdbcType=VARCHAR},
+				<if test="problemWoCode != null">
+				 	PROBLEM_WOCODE=#{problemWoCode,jdbcType=VARCHAR},
+				</if>
+				<if test="eventWoCode != null">
+				 	EVENT_WOCODE=#{eventWoCode,jdbcType=VARCHAR},
+				</if>
+				AUDITDATE=#{auditDate,jdbcType=TIMESTAMP}
+		where id=#{id} 
+	</update>
+
+	<update id="updateItsmKnowledgeStatus" parameterType="HashMap">
+		update ITSM_KNOWLEDGE  
+		set STATUS=#{klStatus,jdbcType=VARCHAR}
+		where id=#{id} 
+	</update>
+
+	<update id="updateKlCurrHandlerUser" parameterType="HashMap">
+		update ITSM_KNOWLEDGE  
+		set CURR_HANDLERUSERID=#{currHandlerUserId,jdbcType=VARCHAR},
+			CURR_HANDLERUSERNAME=#{currHandlerUserName,jdbcType=VARCHAR}
+		where id=#{id} 
+	</update>
+
+
+	<update id="clearklCurrHandlerUser" parameterType="int">
+		update ITSM_KNOWLEDGE  
+		set CURR_HANDLERUSERID=null,
+			CURR_HANDLERUSERNAME=null
+		where id=#{id} 
+	</update>
+	
+	
+	<!-- 查询某条知识 -->
+	<select id="queryItsmKnowledgeById" parameterType="int" resultMap="itsmknowledgeMap" >
+	      SELECT T.ID,KLCODE,KLNAME,KLSOURCE,KLTYPE,itf.name KL_TYPENAME,EVENT_WOCODE,PROBLEM_WOCODE,AUDITUSER,AUDITDATE,
+	            T.KEYWORDS,TROUBLE_DES,SOLUTION_DES,WORKFLOWID,T.SITEID,T.YXBZ,T.STATUS,
+	            T.CREATEUSER,T.CREATEDATE,U.NAME CREATEUSERNAME
+	      FROM ITSM_KNOWLEDGE T,itsm_faulttype itf, sec_user u
+	      WHERE T.ID = #{id} AND t.kltype=itf.id AND U.USER_ID= T.CREATEUSER
+	</select>
+	
+	
+	<select id="queryItsmKnowledgeList" resultMap="itsmknowledgeMap" >
+		SELECT t.ID,KLCODE,KLNAME,KLSOURCE,KLTYPE,itf.name KL_typeName,AUDITUSER,u.name AUDITUSERNAME,
+	           t.KEYWORDS,TROUBLE_DES,SOLUTION_DES,T.STATUS,T.CURR_HANDLERUSERNAME,U2.NAME CREATEUSERNAME,
+	           T.CURR_HANDLERUSERID,T.CREATEDATE
+	      FROM ITSM_KNOWLEDGE T left join sec_user u on t.audituser = u.user_id ,
+	            sec_user u2,itsm_faulttype itf
+	      WHERE t.YXBZ = 1 AND t.kltype=itf.id AND T.CREATEUSER = U2.USER_ID
+	</select>
+	  
+	  
+	  <select id="getNextKLId" resultType="int" >
+		select SEQ_ITSM_PARAMSCONF.nextval id from dual
+	</select>
+</mapper>

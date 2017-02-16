@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.WoQxDao">
+
+	<resultMap type="WoQx" id="woQxMap">
+		<id column="ID" property="id" />
+		<result column="DEFECT_CODE" property="defectCode" />
+		<result column="MONTH_CODE" property="monthCode" />
+		<result column="EQUIP_ID" property="equipId" />
+		<result column="EQUIP_NAME" property="equipName" />
+		<result column="DEFECT_TIME" property="defectTime" />
+		<result column="DEFECT_DES" property="defectDes" />
+		<result column="ONDUTY_USERID" property="onDutyUserId" />
+		
+		<result column="DEFECT_SOLVEDES" property="defectSolveDes" />
+		<result column="DEFECT_SOLVETIME" property="defectSolveTime" />
+		<result column="DEFECT_SOLVEUSERID" property="defectSolveUserId" />
+		<result column="RUNNING_USERID" property="runningUserId" />
+		<result column="LEFTPROBLEM" property="leftProblem" />
+		
+		<result column="LEADER_INSTRUCTINS" property="leaderInstructions" />
+		<result column="INSTRUCTIONS_USERID" property="instructionsUserId" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="MODIFYUSER" property="modifyuser" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="MODIFYDATE" property="modifydate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+		
+		<result column="ONDUTY_USERNAME" property="onDutyUserName" />
+		<result column="DEFECT_SOLVEUSERNAME" property="defectSolveUserName" />
+		<result column="RUNNING_USERNAME" property="runningUserName" />
+		<result column="INSTRUCTIONS_USERNAME" property="instructionsUserName" />
+	</resultMap>
+	<resultMap type="WoQxVo" id="woQxVoMap">
+		<result column="WO_CODE" property="workOrder" />
+		<result column="EQUIPNAME" property="equipName" />
+		<result column="WO_SPEC_CODE" property="woSepcCode" />
+		<result column="WO_SPEC_CODE_NAME" property="woSepcCodeName" />
+		<result column="DESCRIPTION" property="description" />
+		<result column="BEGIN_TIME" property="beginTime" />
+		<result column="END_TIME" property="endTime" />
+		<result column="CURR_WINDSPEED" property="currWindSpeed" />
+		<result column="USED_TIME" property="usedTime" />
+		<result column="LOSE_ELECTRICPOWER" property="loseElecticPower" />
+		<result column="CREATEUSER" property="createUser" />
+		<result column="FILLUSER" property="defectSolveUser" />
+		<result column="FAULTCONFRIMUSER" property="faultConfirmUser" />
+	</resultMap>	
+	<insert id="insertWoQx" >
+		insert into WO_QX(ID,DEFECT_CODE,MONTH_CODE,EQUIP_ID,EQUIP_NAME,DEFECT_TIME,DEFECT_DES,ONDUTY_USERID,
+							DEFECT_SOLVEDES,DEFECT_SOLVETIME,DEFECT_SOLVEUSERID,RUNNING_USERID,LEFTPROBLEM,
+							LEADER_INSTRUCTINS,INSTRUCTIONS_USERID,CREATEUSER,CREATEDATE,SITEID,DEPTID,YXBZ) 
+		values( #{id,jdbcType=VARCHAR},
+				#{defectCode,jdbcType=VARCHAR},
+				#{monthCode,jdbcType=VARCHAR},
+				#{equipId,jdbcType=VARCHAR},
+				#{equipName,jdbcType=VARCHAR},
+				#{defectTime,jdbcType=TIMESTAMP},
+				#{defectDes,jdbcType=VARCHAR},
+				#{onDutyUserId,jdbcType=VARCHAR},
+				
+				#{defectSolveDes,jdbcType=VARCHAR},
+				#{defectSolveTime,jdbcType=TIMESTAMP},
+				#{defectSolveUserId,jdbcType=VARCHAR},
+				#{runningUserId,jdbcType=VARCHAR},
+				#{leftProblem,jdbcType=VARCHAR},
+				
+				#{leaderInstructions,jdbcType=VARCHAR},
+				#{instructionsUserId,jdbcType=VARCHAR},
+				#{createuser,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC}) 
+	</insert>
+	
+	
+	
+ 	<update id="updateWoQx" parameterType="WoQx">
+		UPDATE WO_QX
+		set DEFECT_CODE=#{defectCode,jdbcType=VARCHAR},
+			MONTH_CODE=#{monthCode,jdbcType=VARCHAR},
+			EQUIP_ID=#{equipId,jdbcType=VARCHAR},
+			EQUIP_NAME=#{equipName,jdbcType=VARCHAR},
+			DEFECT_TIME=#{defectTime,jdbcType=TIMESTAMP},
+			DEFECT_DES=#{defectDes,jdbcType=VARCHAR},
+			ONDUTY_USERID=#{onDutyUserId,jdbcType=VARCHAR},
+			
+			DEFECT_SOLVEDES=#{defectSolveDes,jdbcType=VARCHAR},
+			DEFECT_SOLVETIME=#{defectSolveTime,jdbcType=TIMESTAMP},
+			DEFECT_SOLVEUSERID=#{defectSolveUserId,jdbcType=VARCHAR},
+			RUNNING_USERID=#{runningUserId,jdbcType=VARCHAR},
+			LEFTPROBLEM=#{leftProblem,jdbcType=VARCHAR},
+			
+			LEADER_INSTRUCTINS=#{leaderInstructions,jdbcType=VARCHAR},
+			INSTRUCTIONS_USERID=#{instructionsUserId,jdbcType=VARCHAR},
+			MODIFYUSER=#{modifyuser,jdbcType=VARCHAR},
+			
+			MODIFYDATE=#{modifydate,jdbcType=TIMESTAMP}
+		where ID=#{id} 
+	</update> 
+	 
+	 
+	<select id="queryWoQxById" parameterType="String" resultMap="woQxMap">
+		select * from WO_QX where id= #{ id }
+	</select>
+	
+	<update id="deleteWoQxById" parameterType="String">
+		update WO_QX t 
+		set t.yxbz=0
+		where t.id= #{id}
+	</update>
+	
+	
+	<!-- 查询标准作业方案 -->
+	<select id="queryAllWoQx" resultMap="woQxMap" >
+		select T.ID,T.DEFECT_CODE,T.MONTH_CODE,T.EQUIP_ID,T.EQUIP_NAME,T.DEFECT_DES,T.DEFECT_TIME,
+				T.ONDUTY_USERID, U1.NAME ONDUTY_USERNAME,T.RUNNING_USERID, U4.NAME RUNNING_USERNAME,
+				T.DEFECT_SOLVEUSERID, U2.NAME DEFECT_SOLVEUSERNAME,T.INSTRUCTIONS_USERID, 
+				U3.NAME INSTRUCTIONS_USERNAME,T.MODIFYDATE
+		from WO_QX t LEFT JOIN SEC_USER U1 ON T.ONDUTY_USERID=U1.USER_ID
+		     LEFT JOIN SEC_USER U2 ON T.DEFECT_SOLVEUSERID = U2.USER_ID
+		     LEFT JOIN SEC_USER U3 ON T.INSTRUCTIONS_USERID=U3.USER_ID
+		     LEFT JOIN SEC_USER U4 ON T.RUNNING_USERID= U4.USER_ID
+	 	WHERE YXBZ=1
+	 		<if test="params.siteid != null">
+				and siteid = #{params.siteid}
+			</if> 
+			<if test="params.selectTreeId != null">
+				and t.EQUIP_ID in (select aat.assetid from ast_asset aat start with aat.assetid = #{params.selectTreeId}
+									connect by prior assetid = aat.parentid)
+			</if> 
+	</select>
+	
+	
+	<select id="queryQxByAssetId" parameterType="HashMap" resultMap="woQxMap" >
+		select T.ID,T.DEFECT_CODE,T.MONTH_CODE,T.EQUIP_ID,T.EQUIP_NAME,T.DEFECT_DES,T.DEFECT_TIME,
+				T.ONDUTY_USERID, U1.NAME ONDUTY_USERNAME,T.RUNNING_USERID, U4.NAME RUNNING_USERNAME,
+				T.DEFECT_SOLVEUSERID, U2.NAME DEFECT_SOLVEUSERNAME,T.INSTRUCTIONS_USERID, 
+				U3.NAME INSTRUCTIONS_USERNAME,T.MODIFYDATE
+		from WO_QX t LEFT JOIN SEC_USER U1 ON T.ONDUTY_USERID=U1.USER_ID
+		     LEFT JOIN SEC_USER U2 ON T.DEFECT_SOLVEUSERID = U2.USER_ID
+		     LEFT JOIN SEC_USER U3 ON T.INSTRUCTIONS_USERID=U3.USER_ID
+		     LEFT JOIN SEC_USER U4 ON T.RUNNING_USERID= U4.USER_ID
+	 	WHERE t.YXBZ=1 and t.EQUIP_ID =#{assetId}
+				and t.SITEID = #{siteid}
+	</select>
+	<select id="queryWoQxVoStat" resultMap="woQxVoMap" >
+		SELECT T.WO_CODE,
+		       T.EQUIPNAME,
+		       T.FAULT_TYPE_ID AS WO_SPEC_CODE_NAME,
+		       T.DESCRIPTION,
+		       T.BEGIN_TIME,
+		       T.END_TIME,
+		       T.CURR_WINDSPEED,
+		       TO_NUMBER(T.END_TIME-T.BEGIN_TIME)*24 AS USED_TIME,
+		       T.LOSE_ELECTRICPOWER,
+		       U1.NAME AS CREATEUSER,
+		       DECODE(T.WO_COMMIT_HANDLE_STYLE,'REPAIR_NOW',U2.NAME,'MAINTAIN',U2.NAME,'') AS FILLUSER,
+		       U3.NAME AS FAULTCONFRIMUSER
+		FROM WO_WORKORDER T
+		LEFT JOIN WO_PRIORITY P ON T.PRIORITY_ID = P.ID AND P.SITEID = #{params.siteid}
+		LEFT JOIN SEC_USER U1 ON U1.USER_ID = T.CREATEUSER
+		LEFT JOIN SEC_USER U2 ON U2.USER_ID = T.ENDREPORTUSER 
+		LEFT JOIN SEC_USER U3 ON U3.USER_ID = T.FAULTCONFRIMUSER 
+		where T.SITEID = #{params.siteid} AND T.YXBZ=1
+	 	<if test="params.woYear != null">
+			AND (to_char(T.CREATEDATE,'yyyy') = #{params.woYear})
+		</if> 
+		<if test="params.woMonth != null">
+			AND (to_char(T.CREATEDATE,'MM') = #{params.woMonth})
+		</if>
+		<if test="params.woWindStation != null and params.woWindStation != 'all'.toString()">
+			AND t.WO_WIND_STATION = #{params.woWindStation}
+		</if> 
+	</select>
+	
+</mapper>

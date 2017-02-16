@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.BidResultDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+    
+	
+	
+	<resultMap type="com.timss.pms.vo.BidResultVo" id="bidResultVoMap">
+		<id property="bidResultId" column="bid_result_id"/>
+		<result property="bidId" column="bid_id"/>
+		
+		<result property="name" column="name"/>
+		<result property="projectId" column="project_id"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="code" column="code"/>
+		<result property="budget" column="budget"/>
+		<result property="type" column="type"/>
+		<result property="attach" column="attach"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+		<result property="supplier" column="supplier"/>
+		<result property="supplierId" column="supplier_id"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		
+		<result property="projectName" column="project_name"/>
+		
+		
+		<result property="supplier2Name" column="supplier2_name"/>
+		<result property="supplie2Id" column="supplie2_id"/>
+		<result property="flowId" column="flow_id"/>
+		<result property="processInstId" column="process_inst_id"/>
+		<result property="flowStatus" column="flow_status"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.BidResultDtlVo" id="bidResultDtlVoMap">
+		<id property="bidResultId" column="bid_result_id"/>
+		<result property="bidId" column="bid_id"/>
+		<result property="name" column="name"/>
+		<result property="projectId" column="project_id"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="code" column="code"/>
+		<result property="budget" column="budget"/>
+		<result property="type" column="type"/>
+		<result property="attach" column="attach"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+		<result property="supplier" column="supplier"/>
+		<result property="supplierId" column="supplier_id"/>
+		<result property="createUser" column="create_user"/>
+		<result property="createTime" column="create_time"/>
+		
+		<result property="projectName" column="project_name"/>
+		<result property="supplier2Name" column="supplier2_name"/>
+		<result property="supplie2Id" column="supplie2_id"/>
+		<result property="flowId" column="flow_id"/>
+		<result property="processInstId" column="process_inst_id"/>
+		<result property="flowStatus" column="flow_status"/>
+
+	</resultMap>
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		bid_id,name,project_id,del_flag,code,budget,type,attach,status,command,supplier,bid_result_id,
+		supplier_id,project_name,supplier2_name,supplier2_id,flow_id,process_inst_id
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+	<sql id="columnVoDtl">
+		<include refid="columnVo"/>
+	</sql>
+
+<insert id="insertBidResult" parameterType="com.timss.pms.bean.BidResult">
+    <selectKey resultType="int" keyProperty="bidResultId" order="BEFORE">
+        select SEQ_PMS_BID.nextval from dual
+    </selectKey>
+    insert into Tim_Pms_BID_Result(<include refid="columnBasic"/>,create_time,create_user,siteid) 
+    values (#{bidId,jdbcType=NUMERIC},#{name,jdbcType=VARCHAR},#{projectId,jdbcType=NUMERIC},0,#{code,jdbcType=VARCHAR},
+    #{budget,jdbcType=NUMERIC},#{type,jdbcType=VARCHAR},#{attach,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR}
+    ,#{command,jdbcType=VARCHAR},#{supplier,jdbcType=VARCHAR},#{bidResultId},#{supplierId,jdbcType=VARCHAR},
+    #{projectName,jdbcType=VARCHAR},#{supplier2Name,jdbcType=VARCHAR},#{supplier2Id,jdbcType=VARCHAR},#{flowId,jdbcType=VARCHAR},
+    #{processInstId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+    #{createUser,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR})
+</insert>
+<update id="updateBidResult">
+	update tim_pms_bid_result t
+	set  bid_id=#{bidId,jdbcType=NUMERIC},name=#{name,jdbcType=VARCHAR},project_id=#{projectId,jdbcType=NUMERIC},
+	code=#{code,jdbcType=VARCHAR},budget=#{budget,jdbcType=NUMERIC},
+	type=#{type,jdbcType=VARCHAR},attach=#{attach,jdbcType=VARCHAR},
+	status=#{status,jdbcType=VARCHAR},command=#{command,jdbcType=VARCHAR},
+	supplier=#{supplier,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=TIMESTAMP},
+    update_user=#{updateUser,jdbcType=VARCHAR},siteId=#{siteid,jdbcType=VARCHAR},supplier_id=#{supplierId,jdbcType=VARCHAR},
+    project_name= #{projectName,jdbcType=VARCHAR},supplier2_name=#{supplier2Name,jdbcType=VARCHAR},
+    supplier2_id=#{supplier2Id,jdbcType=VARCHAR}
+    <if test="flowId != null and flowId != '' ">
+			 ,flow_id = #{flowId}
+    </if>
+    <if test="processInstId != null and processInstId != '' ">
+			 ,process_inst_id = #{processInstId}
+    </if>
+    where bid_result_id=#{bidResultId}
+</update>
+
+
+<select id="queryBidResultList" resultMap="bidResultVoMap">
+	select t.bid_id,t.name,t.project_id,t.del_flag,t.code,t.budget,t.type,t.attach,t.status,
+	t.command,t.supplier,t.bid_result_id,t.siteid,t.supplier_id,p.project_name,wf.id as flowId,
+	t.supplier2_name,t.supplier2_id,t.flow_status
+	from Tim_Pms_Bid_Result t
+	left join Tim_Pms_Project p on t.project_id=p.id
+	left join Tim_PMS_workflow_business wf on wf.business_id='bidResult_' || t.bid_result_id
+	where t.del_flag=0 and t.status!='voided'
+</select>
+<select id="queryBidResultListAndFilter" resultMap="bidResultVoMap">
+	select t.bid_id,t.name,t.project_id,t.del_flag,t.code,t.budget,t.type,t.attach,t.status,
+	t.command,t.supplier,t.bid_result_id,t.siteid,t.supplier_id,p.project_name,wf.id as flowId,
+	t.supplier2_name,t.supplier2_id,t.flow_status
+	from Tim_Pms_Bid_Result t
+	left join Tim_Pms_Project p on t.project_id=p.id
+	left join Tim_PMS_workflow_business wf on wf.business_id='bidResult_' || t.bid_result_id
+	where t.del_flag=0 
+</select>
+
+<select id="queryBidResultListByProjectId" resultMap="bidResultVoMap">
+	select <include refid="columnVo" />
+	from Tim_Pms_Bid_Result t
+	where t.project_id=#{projectId} and t.del_flag=0 and t.status!='voided'
+</select>
+<!-- 对重名字段进行重命名，防止奇怪的问题 -->
+<select id="queryBidResultById" resultMap="bidResultDtlVoMap">
+	select <include refid="columnVo" />,create_time,create_user,siteid
+	from Tim_Pms_Bid_Result t
+	where t.bid_result_id=#{id} and t.del_flag=0
+</select>
+
+<delete id="deleteBidResult" >
+    delete from Tim_Pms_Bid_Result where bid_result_id=#{id}
+</delete>
+
+
+<update id="updateByPrimaryKeySelective">
+    update TIM_PMS_BID_RESULT
+    <set>
+      <if test="bidId != null">
+        BID_ID = #{bidId,jdbcType=DECIMAL},
+      </if>
+      <if test="attach != null">
+        ATTACH = #{attach,jdbcType=OTHER},
+      </if>
+      <if test="command != null">
+        COMMAND = #{command,jdbcType=OTHER},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=OTHER},
+      </if>
+      <if test="delFlag != null">
+        DEL_FLAG = #{delFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="siteid != null">
+        SITEID = #{siteid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null">
+        DEPTID = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=DATE},
+      </if>
+      <if test="projectId != null">
+        PROJECT_ID = #{projectId,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="budget != null">
+        BUDGET = #{budget,jdbcType=DECIMAL},
+      </if>
+      <if test="supplier != null">
+        SUPPLIER = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null">
+        SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier2Name != null">
+        SUPPLIER2_NAME = #{supplier2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier2Id != null">
+        SUPPLIER2_ID = #{supplier2Id,jdbcType=VARCHAR},
+      </if>
+      <if test="flowId != null">
+        FLOW_ID = #{flowId,jdbcType=VARCHAR},
+      </if>
+      <if test="processInstId != null">
+        PROCESS_INST_ID = #{processInstId,jdbcType=VARCHAR},
+      </if>
+      <if test="flowStatus != null">
+        FLOW_STATUS = #{flowStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where BID_RESULT_ID = #{bidResultId}
+  </update>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>

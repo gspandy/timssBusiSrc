@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatTransferDao">
+	<resultMap type="com.timss.inventory.bean.InvMatTransfer" id="InvMatTransferMap">
+		<result property="imtId" column="IMTID"/>
+		<result property="imtCode" column="IMTCODE"/>
+		<result property="name" column="NAME"/>
+		<result property="status" column="STATUS"/>
+		<result property="instanceId" column="INSTANCEID"/>
+		<result property="taskId" column="TASKID"/>
+		<result property="wareHouseFromId" column="WAREHOUSE_FROM_ID"/>
+		<result property="wareHouseFromName" column="WAREHOUSE_FROM_NAME"/>		
+		<result property="wareHouseToId" column="WAREHOUSE_TO_ID"/>
+		<result property="wareHouseToName" column="WAREHOUSE_TO_NAME"/>					
+		<result property="remark" column="REMARK"/>
+		<result property="deleted" column="DELETED"/>
+		<result property="createuser" column="CREATEUSER"/>
+		<result property="createdate" column="CREATEDATE"/>
+		<result property="modifyuser" column="MODIFYUSER"/>
+		<result property="modifydate" column="MODIFYDATE"/>
+		<result property="siteid" column="SITEID"/>
+		<result property="deptid" column="DEPTID"/>		
+	</resultMap>
+	
+	<!-- 申请列表-->
+	<select id="queryMatTransferList" resultMap="InvMatTransferMap">
+        select t.* from inv_mat_transfer t 
+        where t.deleted='0' and t.siteid = #{params.siteid} 
+		<if test="params.imtCode != null and params.imtCode != ''">
+		  	and t.imtcode like '%'||'${params.imtCode}'||'%' 
+		</if>
+		<if test="params.status != null and params.status != ''">
+		  	and t.status like '%'||'${params.status}'||'%' 
+		</if>		
+	</select>
+	
+	<!-- 根据ID查询申请-->
+	<select id="queryInvMatTransferById" parameterType="java.util.Map" resultMap="InvMatTransferMap">
+		select t.* from inv_mat_transfer t 
+	    where t.deleted = '0' and t.imtid=#{imtId}
+	</select>
+
+	<!-- 根据CODE查询申请-->
+	<select id="queryInvMatTransferByCode" parameterType="java.util.Map" resultMap="InvMatTransferMap">
+		select t.* from inv_mat_transfer t 
+	    where t.deleted = '0' and t.imtcode=#{imtCode}
+	</select>
+	
+	<!-- 插入申请 -->
+	<insert id="insertInvMatTransfer" parameterType="com.timss.inventory.bean.InvMatTransfer">
+		insert into inv_mat_transfer
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtId != null"> imtid, </if>
+	      <if test="imtCode != null"> imtcode, </if>
+	      <if test="name != null"> name, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="instanceId != null"> instanceid, </if>
+	      <if test="taskId != null"> taskid, </if>
+	      <if test="wareHouseFromId != null"> warehouse_from_id, </if>
+	      <if test="wareHouseFromName != null"> warehouse_from_name, </if>
+	      <if test="wareHouseToId != null"> warehouse_to_id, </if>
+	      <if test="wareHouseToName != null"> warehouse_to_name, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="deleted != null"> deleted, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteid != null"> siteid, </if>
+	      <if test="deptid != null"> deptid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtId != null"> #{imtId,jdbcType=VARCHAR}, </if>
+	      <if test="imtCode != null"> #{imtCode,jdbcType=VARCHAR}, </if>
+	      <if test="name != null"> #{name,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="instanceId != null"> #{instanceId,jdbcType=VARCHAR}, </if>
+	      <if test="taskId != null"> #{taskId,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseFromId != null"> #{wareHouseFromId,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseFromName != null"> #{wareHouseFromName,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseToId != null"> #{wareHouseToId,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseToName != null"> #{wareHouseToName,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="deleted != null"> #{deleted,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>	      
+	    </trim>
+	</insert>
+	
+	<!-- 更新申请 -->
+	<update id="updateInvMatTransfer" parameterType="com.timss.inventory.bean.InvMatTransfer">
+		update inv_mat_transfer t 
+		<set>
+	      <if test="name != null"> t.name=#{name,jdbcType=VARCHAR}, </if>
+	      <if test="status != null"> t.status=#{status,jdbcType=VARCHAR}, </if>
+	      <if test="instanceId != null"> t.instanceid=#{instanceId,jdbcType=VARCHAR}, </if>
+	      <if test="taskId != null"> t.taskid=#{taskId,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseFromId != null"> t.warehouse_from_id=#{wareHouseFromId,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseFromName != null"> t.warehouse_from_name=#{wareHouseFromName,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseToId != null"> t.warehouse_to_id=#{wareHouseToId,jdbcType=VARCHAR}, </if>
+	      <if test="wareHouseToName != null"> t.warehouse_to_name=#{wareHouseToName,jdbcType=VARCHAR}, </if>
+	      <if test="remark != null"> t.remark=#{remark,jdbcType=VARCHAR}, </if>
+	      <if test="deleted != null"> t.deleted=#{deleted,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>	      
+	    </set>
+		where t.imtid=#{imtId,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 删除申请 -->
+	<delete id="deleteInvMatTransfer">
+		delete from inv_mat_transfer t where t.imtid = #{imtId}
+	</delete>
+</mapper> 

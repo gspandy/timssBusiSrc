@@ -1,0 +1,14 @@
+#noSearchResult>span,
+#noSearchResult1>span,
+#noSearchResult2>span {
+	margin: 0 auto;
+	width: 200px;
+	display: block;
+	font-size: 12px;
+	margin-top: 10px;
+}
+
+.ctrl-label {
+	font-size:12px;
+	line-height:30px;
+}

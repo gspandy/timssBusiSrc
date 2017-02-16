@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatReturnsDetailDao">
+	<resultMap type="com.timss.inventory.vo.InvMatReturnsDetailVO" id="InvMatReturnsDetailVOMap">
+		<result property="curReturnQty" column="cur_return_qty"/>
+		<result property="returnQty" column="return_qty"/>
+		<result property="assetQty" column="asset_qty"/>
+		<result property="siteid" column="site_id"/>
+		<result property="purchorderId" column="purchorder_id"/>
+		<result property="purchorderNo" column="purchorder_no"/>
+		<result property="purchorderType" column="purchorder_type"/>
+		<result property="purchorderName" column="purchorder_name"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="tax" column="tax"/>
+	</resultMap>
+
+	<!-- 删除物资退换货的主表信息 -->
+	<delete id="deleteMatReturnsDetailByImrsdid">
+		delete from inv_mat_returns_detail a where a.imrsdid=#{params.imrsdid}
+	</delete>
+	
+	<!-- 删除物资退换货的主表信息 -->
+	<delete id="deleteMatReturnsDetailByImrsid">
+		delete from inv_mat_returns_detail a where a.imrsid=#{params.imrsid}
+	</delete>
+	
+	<!-- 查询表单中列表 -->
+	<select id="queryMatReturnsDetailList" resultMap="InvMatReturnsDetailVOMap">
+		select t.itemcode,t.itemid,t.itemname,t.cusmodel,t.imtno,
+		       t.cur_return_qty,t.return_qty,t.unitid,t.unitname,t.warehouseid,t.warehousename,
+		       t.binid,t.binname,t.price,t.imtdid,
+		       t.purchorder_id,t.purchorder_name,t.purchorder_no,t.purchorder_type
+		  from (select a.*,
+		               iwp.sheet_id as purchorder_id, iwp.sheetname as purchorder_name, iwp.sheetno as purchorder_no, be.enum_val as purchorder_type
+		          from (select ii.itemcode, ii.itemid, ii.itemname, ii.cusmodel,
+		                       imrd.imtno, imrd.cur_return_qty, imrd.return_qty,
+		                       e.unitid as unitid, e.unitname as unitname,
+		                       f.warehouseid as warehouseid, f.warehousename as warehousename,
+		                       g.binid as binid, g.binname as binname,
+		                       imtd.price as price, imtd.imtdid as imtdid
+		                  from inv_mat_returns_detail imrd,
+		                       INV_MAT_TRAN_REC    imtd,
+		                       inv_item               ii,
+		                       inv_unit      e,
+		                       inv_warehouse f,
+		                       inv_bin       g
+		                 where imrd.imtdid = imtd.imtdid and imrd.site_id = imtd.site_id
+		                   and imtd.itemid = ii.itemid and imtd.site_id = ii.site_id
+		                   and imtd.warehouseid = f.warehouseid and imtd.site_id = f.site_id
+		                   and imtd.binid = g.binid and imtd.site_id = g.site_id
+		                   and ii.unit1 = e.unitid and ii.site_id = e.site_id
+		                   and imrd.site_id = '${params.siteid}'
+		                   and imrd.imrsid = '${params.imrsid}') a,
+		               inv_mat_tran imt,
+		               INV_MAT_TRAN_REC imtd,
+		               inv_mat_map imm,
+		               itceam_workflow_purchorder iwp,
+		               b_enum be
+		         where a.imtno = imt.sheetno and a.itemcode = imm.itemcode
+		           and imt.imtid = imtd.imtid and imt.site_id = imtd.site_id
+		           and imtd.imtdid = imm.imtdid and imm.outterid = iwp.sheet_id and imtd.site_id = iwp.siteid
+		           and be.ecat_code = 'ITEMORDER_TYPE' and be.enum_code = iwp.sheet_i_type and be.siteid = iwp.siteid) t
+		 where 1 = 1
+		  <if test="params.imtno != null and params.imtno != ''">
+		  		and t.imtno like '%'||'${params.imtno}'||'%'
+		  </if>
+		  <if test="params.purchorderNo != null and params.purchorderNo != ''">
+		  		and t.purchorder_no like '%'||'${params.purchorderNo}'||'%'
+		  </if>
+		  <if test="params.itemcode != null and params.itemcode != ''">
+		  		and t.itemcode like '%'||'${params.itemcode}'||'%'
+		  </if>
+		  <if test="params.itemname != null and params.itemname != ''">
+		  		and t.itemname like '%'||'${params.itemname}'||'%'
+		  </if>
+	      <if test="params.cusmodel != null and params.cusmodel != ''">
+		  		and t.cusmodel like '%'||'${params.cusmodel}'||'%'
+		  </if>
+	      <if test="params.curReturnQty != null and params.curReturnQty != ''">
+		  		and t.cur_return_qty like '%'||'${params.curReturnQty}'||'%'
+		  </if>
+	</select>
+	
+	<!-- 查看接收物资 -->
+	<select id="queryMatDetailList" resultMap="InvMatReturnsDetailVOMap">
+		select * from (
+          select ii.itemcode,
+		            ii.itemid,
+		            ii.itemname,
+		            ii.cusmodel,
+		            imtd.imtdid as imtdid,
+		            imt.sheetno as imtno,
+		            imtd.in_qty-(case when sum(imrd.return_qty) is null then 0 else sum(imrd.return_qty) end) as cur_return_qty,
+		            e.unitid as unitid,
+		            e.unitname as unitname,
+		            f.warehouseid as warehouseid,
+		            f.warehousename as warehousename,
+		            g.binid as binid,
+		            g.binname as binname,
+		            round(sum(imtd1.price*imtd1.in_qty)/case when sum(imtd1.in_qty) = 0 then 1 else sum(imtd1.in_qty) end,2) as price,
+		            iwp.sheet_id as purchorder_id,
+		            iwp.sheetno as purchorder_no,
+		            iwp.sheetname as purchorder_name,
+		            be.enum_val as purchorder_type
+            from INV_MAT_TRAN_REC imtd 
+            	left join inv_mat_tran imt on imt.imtid = imtd.imtid and imt.site_id = imtd.site_id
+                left join inv_mat_returns_detail imrd on imtd.imtdid = imrd.imtdid and imtd.site_id = imrd.site_id,
+                   INV_MAT_TRAN_REC imtd1, 
+                   itceam_workflow_purchorder iwp,
+                   inv_item ii,
+                   inv_mat_map imm,
+                   inv_unit e,
+                   inv_warehouse f,
+                   inv_bin g,
+                   b_enum be
+            where  imtd.itemid = ii.itemid 
+            		and imtd.site_id = ii.site_id
+                    and imtd.imtdid = imm.imtdid 
+                    and imm.tran_type = 'receivingmaterial'
+                    and imm.outterid = iwp.sheet_id
+                    and imtd1.itemid = ii.itemid 
+                    and imtd1.site_id = ii.site_id 
+                    and imtd1.in_qty<![CDATA[>]]>0
+                    and ii.unit1 = e.unitid 
+                    and ii.site_id = e.site_id
+                    and imtd.warehouseid = f.warehouseid 
+                    and imtd.site_id = f.site_id
+                    and imtd.binid = g.binid 
+                    and imtd.site_id = g.site_id
+                    and be.ecat_code = 'ITEMORDER_TYPE' 
+                    and be.enum_code = iwp.sheet_i_type 
+                    and be.siteid = iwp.siteid
+                    and imtd.site_id ='${params.siteid}' 
+            group by ii.itemcode,
+			            ii.itemid,
+			            ii.itemname,
+			            ii.cusmodel,
+			            imtd.imtdid,
+			            imt.sheetno,
+			            imtd.in_qty,
+			            e.unitid,
+			            e.unitname,
+			            f.warehouseid,
+			            f.warehousename,
+			            g.binid,
+			            g.binname,
+			            iwp.sheet_id,
+			            iwp.sheetno,
+			            iwp.sheetname,
+			            be.enum_val
+          ) t       
+          where <![CDATA[t.cur_return_qty > 0]]>
+			  <if test="params.imtno != null and params.imtno != ''">
+			  		and t.imtno like '%'||'${params.imtno}'||'%'
+			  </if>
+			  <if test="params.purchorderNo != null and params.purchorderNo != ''">
+			  		and t.outter_no like '%'||'${params.purchorderNo}'||'%'
+			  </if>
+			  <if test="params.itemcode != null and params.itemcode != ''">
+			  		and t.itemcode like '%'||'${params.itemcode}'||'%'
+			  </if>
+			  <if test="params.itemname != null and params.itemname != ''">
+			  		and t.itemname like '%'||'${params.itemname}'||'%'
+			  </if>
+		      <if test="params.cusmodel != null and params.cusmodel != ''">
+			  		and t.cusmodel like '%'||'${params.cusmodel}'||'%'
+			  </if>
+		      <if test="params.curReturnQty != null and params.curReturnQty != ''">
+			  		and t.cur_return_qty like '%'||'${params.curReturnQty}'||'%'
+			  </if>
+			   and not exists(select 1 
+			   				  from inv_mat_returns_detail imrd 
+			   				  where imrd.cur_return_qty = imrd.return_qty 
+			   				  	and imrd.site_id = '${params.siteid}' 
+			   				  	and imrd.imtdid = t.imtdid)
+	</select>
+	
+	
+	<insert id="insertInvMatReturnsDetail" parameterType="com.timss.inventory.bean.InvMatReturnsDetail">
+		insert into inv_mat_returns_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imrsdid != null"> imrsdid, </if>
+	      <if test="imtdid != null"> imtdid, </if>
+	      <if test="imtno != null"> imtno, </if>
+	      <if test="curReturnQty != null"> cur_return_qty, </if>
+	      <if test="returnQty != null"> return_qty, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="siteid != null"> site_id, </if>
+	      <if test="imrsid != null"> imrsid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imrsdid != null"> #{imrsdid,jdbcType=VARCHAR}, </if>
+	      <if test="imtdid != null"> #{imtdid,jdbcType=VARCHAR}, </if>
+	      <if test="imtno != null"> #{imtno,jdbcType=VARCHAR}, </if>
+	      <if test="curReturnQty != null"> #{curReturnQty,jdbcType=NUMERIC}, </if>
+	      <if test="returnQty != null"> #{returnQty,jdbcType=NUMERIC}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	      <if test="imrsid != null"> #{imrsid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<update id="updateInvMatReturnsDetail"  parameterType="com.timss.inventory.bean.InvMatReturnsDetail">
+		update inv_mat_returns_detail t 
+		<set>
+	      <if test="imtdid != null and imtdid != ''"> t.imtdid=#{imtdid,jdbcType=VARCHAR}, </if>
+	      <if test="imtno != null and imtno != ''"> t.imtno=#{imtno,jdbcType=VARCHAR}, </if>
+	      <if test="curReturnQty != null and curReturnQty != ''"> t.cur_return_qty=#{curReturnQty,jdbcType=NUMERIC}, </if>
+	      <if test="returnQty != null and returnQty != ''"> t.return_qty=#{returnQty,jdbcType=NUMERIC}, </if>
+	    </set>
+		where t.imrsdid=#{imrsdid,jdbcType=VARCHAR} and t.site_id=#{siteid,jdbcType=VARCHAR}
+	</update>
+	<!-- 已切换 -->
+	<select id="queryMatDetailListByImtid" resultType="com.timss.inventory.vo.InvItemVO">
+		SELECT ee.pura_id as puraId,ww.imrsno,ww.imtdid,ww.imrsreason,ww.itemid,ww.itemcode,ww.itemname,ww.cusmodel,ww.returnQty,ww.unitname,ww.unit1,ww.warehouse,ww.warehouseid,ww.bin
+		FROM INV_MAT_TRAN_REC ee,
+			(select  t.imrsno,t.imtdid,t.imrsreason,t.itemid,t.itemcode,t.itemname,t.cusmodel,t.return_qty returnQty,t.unitname,t.unit1,t.warehousename warehouse,t.warehouseid,ib.binname bin
+				from (select b.imrsno,c.imtdid,b.remark imrsreason,d.itemid,d.itemcode,d.itemname,d.cusmodel,c.return_qty,f.unitname, f.unitid as unit1,g.warehousename,e.warehouseid,e.binid,b.site_id
+				    from  inv_mat_returns b,
+				              inv_mat_returns_detail c,
+				              inv_item d,
+				              INV_MAT_TRAN_REC e,
+				              inv_unit f,
+				              inv_warehouse g
+				    where  b.imrsid = c.imrsid and b.site_id = c.site_id 
+				          and c.imtdid = e.imtdid and c.site_id = e.site_id
+				         and e.itemid = d.itemid and e.site_id = d.site_id
+				         and d.unit1 = f.unitid and d.site_id = f.site_id
+				         and e.warehouseid = g.warehouseid and e.site_id = g.site_id
+				          and b.imtid = '${params.imtid}'  and b.site_id = '${params.siteid}' 
+				          <if test="params.imrsid != null and params.imrsid != ''"> 
+					 		AND C.IMRSID = '${params.imrsid}'
+					 	</if>) t left join inv_bin ib on t.binid = ib.binid and t.site_id = ib.site_id) ww
+	 	WHERE ee.imtdid=ww.imtdid					
+	</select>
+	
+	<!-- 查询退库单页面明细 (已切换)-->
+	<select id="queryRefundingDetailI" parameterType="java.util.Map" resultMap="InvMatReturnsDetailVOMap">
+		WITH temptable AS (SELECT II.ITEMID,II.ITEMCODE,II.ITEMNAME, II.CUSMODEL,
+		       IMR.SITE_ID, IU.UNITID, IU.UNITNAME,IMRD.IMADID,IMTD.WAREHOUSEID, IMTD.BINID,
+		       IMRD.OUTSTOCKQTY,IMTD.INVCATEID,imtd.CREATEDATE       
+		  FROM INV_MAT_RECIPIENTS        IMR,
+		       INV_MAT_RECIPIENTS_DETAIL IMRD,
+		       INV_ITEM                  II,
+		       INV_UNIT                  IU,
+		       INV_MAT_TRAN_REC       IMTD,
+		       INV_MAT_TRAN              IMT
+		 WHERE IMR.IMRID = IMRD.IMRID
+		   AND IMR.SITE_ID = IMRD.SITE_ID
+		   AND IMRD.ITEMID = II.ITEMID
+		   AND IMRD.SITE_ID = II.SITE_ID
+		   AND IMTD.IMTID = IMT.IMTID
+		   AND IMTD.SITE_ID = IMT.SITE_ID
+		   AND IMRD.ITEMID = IMTD.ITEMID
+		   and imrd.invcateid = imtd.invcateid
+		   AND IMR.SHEETNO = IMT.SHEETNO
+		   AND II.UNIT1 = IU.UNITID
+		   AND II.SITE_ID = IU.SITE_ID
+		   AND IMRD.WAREHOUSEID = IMTD.WAREHOUSEID
+		   AND IMR.IMAID = #{imaid}
+		   AND IMR.SITE_ID = #{siteId}  
+		   ORDER BY imtd.createdate DESC)
+		SELECT T.ITEMID,T.ITEMCODE,T.ITEMNAME, T.CUSMODEL,
+		       SUM(T.OUTSTOCKQTY) AS OUTQTY,
+		       NVL(TT.RETURN_QTY, 0) AS RETURN_QTY,
+		       NVL(TTT.ASSET_QTY, 0) AS ASSET_QTY,
+		       T.UNITID, T.UNITNAME, T.IMADID,IW.WAREHOUSEID,IW.WAREHOUSENAME, IB.BINID,IB.BINNAME,T.INVCATEID
+		  FROM (SELECT tt.ITEMID,tt.ITEMCODE,tt.ITEMNAME, tt.CUSMODEL,tt.SITE_ID, tt.UNITID, tt.UNITNAME,
+				       tt.IMADID,tt.WAREHOUSEID, tt.BINID,tt.INVCATEID,
+				       SUM(tt.OUTSTOCKQTY) AS OUTSTOCKQTY        
+			   FROM temptable tt
+			  GROUP BY tt.ITEMID, tt.ITEMCODE,tt.ITEMNAME,tt.CUSMODEL, tt.SITE_ID, tt.UNITID,tt.UNITNAME,tt.IMADID,
+			          tt.WAREHOUSEID,tt.BINID,tt.invcateid) T
+		  LEFT JOIN (SELECT IMRSD.IMTDID,
+		                    IMRSD.SITE_ID,
+		                    SUM(IMRSD.RETURN_QTY) AS RETURN_QTY
+		               FROM INV_MAT_RETURNS_DETAIL IMRSD, INV_MAT_RETURNS IMRS
+		              WHERE IMRSD.IMRSID = IMRS.IMRSID
+		                AND IMRSD.SITE_ID = IMRS.SITE_ID
+		                <if test="imrsno != null and imrsno != ''"> 
+		                    AND IMRS.IMRSNO=#{imrsno} 
+		               </if>
+		              GROUP BY IMRSD.IMTDID, IMRSD.SITE_ID) TT ON T.IMADID = TT.IMTDID
+		                                                      AND T.SITE_ID = TT.SITE_ID
+		  LEFT JOIN (SELECT COUNT(*) AS ASSET_QTY, T.IMADID, T.SITE_ID
+                     FROM AST_ASSET_APPLY T GROUP BY T.IMADID, T.SITE_ID) TTT ON T.IMADID = TTT.IMADID                                                      
+		  INNER JOIN INV_WAREHOUSE IW ON T.WAREHOUSEID = IW.WAREHOUSEID
+		                            AND T.SITE_ID = IW.SITE_ID
+		  LEFT JOIN INV_BIN IB ON T.BINID = IB.BINID
+		                      AND T.SITE_ID = IB.SITE_ID
+		 GROUP BY T.ITEMID,T.ITEMCODE, T.ITEMNAME,T.CUSMODEL,
+		          TT.RETURN_QTY,T.UNITID,T.UNITNAME,IW.WAREHOUSEID,IW.WAREHOUSENAME,
+		          IB.BINID,IB.BINNAME,T.IMADID,t.invcateid, TTT.ASSET_QTY     		
+	</select>
+	
+	<!-- 判断是否符合显示按钮要求 -->
+	<select id="queryRefundingBtnIsHide" parameterType="java.util.Map" resultType="java.lang.String">
+		  SELECT CASE WHEN T.COUNTER >0 THEN 'N' ELSE 'Y' END AS STATUS 
+	      FROM(
+	        SELECT NVL(T.OUTQTY,0) - NVL(T1.REQTY,0) AS COUNTER
+			FROM INV_MAT_APPLY IMA,
+				(SELECT IMAD.IMAID,SUM(IMRD.OUTSTOCKQTY) AS OUTQTY
+				 FROM INV_MAT_APPLY_DETAIL IMAD,
+				 	  INV_MAT_RECIPIENTS_DETAIL IMRD 
+				 WHERE IMAD.IMADID = IMRD.IMADID 
+				 		AND IMAD.SITE_ID = IMRD.SITE_ID
+				 GROUP BY IMAD.IMAID) T,
+				 
+				(SELECT IMAD.IMAID,SUM(IMRSD.RETURN_QTY)  AS REQTY
+				 FROM INV_MAT_APPLY_DETAIL IMAD,
+				 	  INV_MAT_RETURNS_DETAIL IMRSD 
+				 WHERE IMAD.IMADID = IMRSD.IMTDID 
+				 		AND IMAD.SITE_ID = IMRSD.SITE_ID
+				 GROUP BY IMAD.IMAID) T1
+			WHERE T.IMAID = IMA.IMAID 
+				AND T1.IMAID = IMA.IMAID(+)
+				AND IMA.IMAID ='${imaid}'
+				AND IMA.SITE_ID = '${siteId}'
+	      ) T
+	</select>
+</mapper> 

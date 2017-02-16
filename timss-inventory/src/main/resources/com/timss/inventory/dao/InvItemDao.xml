@@ -1,0 +1,953 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvItemDao">
+	<resultMap type="com.timss.inventory.vo.InvItemVO" id="InvItemVOMap">
+		<result property="siteId" column="site_id"/>
+		<result property="qtyUnit1" column="qty_unit1"/>
+		<result property="qtyUnit2" column="qty_unit2"/>
+		<result property="qtyStock" column="qty_stock"/>
+		<result property="cateId" column="cate_id"/>
+		<result property="cateName" column="cate_name"/>
+		<result property="totalQty" column="total_qty"/>
+		<result property="prepareQty" column="prepare_qty"/>
+		<result property="lateInPrice" column="late_in_price"/>
+		<result property="lateInQty" column="late_in_qty"/>
+		<result property="blgEquip" column="blg_equip"/>
+		<result property="secQty" column="sec_qty"/>
+		<result property="lateInDate" column="late_in_date"/>
+		<result property="issafety" column="ISSAFETY"/>
+		<result property="qtyEconomic" column="QTY_ECONOMIC"/>
+		<result property="qtyLowInv" column="QTY_LOWINV"/>
+		<result property="cateType" column="invcate"/>
+		<result property="puraId" column="puraId"/>
+		<result property="nowqty" column="nowqty"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+	</resultMap>
+
+	<!-- 查詢物資列表 -->
+	<select id="queryItemsList" resultMap="InvItemVOMap">
+       	<if test="params.opentype != 'new'">
+       		select * from (
+      			select m.site_id||'_'||m.itemid||'_'||m.warehouseid||'_'||m.invcateid as listId,
+      					 m.itemid,
+      					 m.itemcode,
+      					 m.itemname,
+      					 m.cusmodel,
+      					 m.unit1,
+      					 m.unitname,
+      					 m.warehouseid,
+      					 m.binid,
+      					 m.bin,
+      					 m.warehouse,
+      					 m.site_id,
+      					 m.isspare,
+               	 		sum(m.price) as price,
+               	 		sum(m.no_tax_price) as no_tax_price,
+               	 		sum(m.last_in_price) as late_in_price,
+               	 		round(avg(m.stockqty), 2) as stockqty,
+               			round(avg(m.nowqty), 2) as nowqty,
+               	 		m.invcateid,
+               	 		m.invcate,
+               	 		m.qty_lowinv,
+               	 		case when '${params.cateId}' is null or '${params.cateId}' = '' then m.invcateid else '${params.cateId}' end as cateId,
+               	 		m.invcateid as cateId2
+			           <if test="params.embbed != null">
+			             ,m.sparecode,m.manufacturer 
+			           </if>
+        		from(
+              		select t.itemid,
+							t.itemcode,
+							t.itemname,
+							t.cusmodel,
+							t.isspare,
+                   		 	ird.actual_qty as stockqty,
+                       		ird.can_use_qty as nowqty,
+                   		 	t.unit1,
+                   		 	t.unitname,
+                   		 	t.unit2,
+                   		 	ird.with_tax_price as price,
+                   		 	ird.no_tax_price,
+                   		 	ird.last_in_price,
+                   		 	t.warehouseid,
+                   		 	t.binid,
+                   		 	t.bin,
+                   		 	t.warehouse,
+                   		 	t.invcateid,
+                   		 	ic.invcatename as invcate,
+                   		 	t.site_id,
+                   		 	t.qty_lowinv
+		                <if test="params.embbed != null">
+		                	,t.sparecode
+		                	,t.manufacturer 
+		                </if> 
+              		from (
+              			select ii.itemid,
+              		  		 	ii.itemcode,
+              		  		 	ii.itemname,
+              		  		 	ii.cusmodel,
+              		  		 	ii.isspare,
+                         		(sum(imtd.in_qty)-sum(imtd.out_qty)) as stockqty,
+                         		ii.unit1,
+                         		iu.unitname as unitname,
+                         		iu.unitname as unit2,
+                         		iwi.warehouseid,
+                         		ib.binid,
+                         		ib.binname as bin,
+                         		iw.warehousename as warehouse,
+                         		iwi.invcateid,
+                         		ii.site_id,
+                         		iwi.qty_lowinv 
+			                   <if test="params.embbed != null">
+			                    ,iwi.sparecode
+			                    ,iwi.manufacturer 
+			                   </if>  
+                  		from inv_item ii 
+                       		left join inv_unit iu on iu.unitid = ii.unit1 and iu.site_id = ii.site_id
+                       		left join inv_mat_tran_rec imtd on ii.itemid = imtd.itemid and ii.site_id = imtd.site_id
+                       		left join inv_warehouse_item iwi on ii.itemid = iwi.itemid and ii.site_id = iwi.site_id<!--  and imtd.warehouseid = iwi.warehouseid -->
+                       		left join inv_warehouse iw on iwi.warehouseid = iw.warehouseid and iwi.site_id = iw.site_id
+                       		left join inv_bin ib on iwi.def_binid = ib.binid and iwi.site_id = ib.site_id
+                       		<!-- 当有采购申请id条件时，按采购申请查询 -->
+                       		<if test="params.purapplyid != null and params.purapplyid != ''">
+                       		left join itceam_workflow_purapplyitem iwpi on iwpi.sheet_id = #{params.purapplyid}
+                       		and iwpi.itemid = ii.itemcode
+                       		and iwpi.invcateid = iwi.invcateid
+                       		</if>
+                  		where 1=1 and ii.site_id = #{params.siteId} 
+		              		<if test="params.warehouseid != null and params.warehouseid != ''">
+								and iwi.warehouseid = #{params.warehouseid}
+							</if>
+		              		<if test="params.ishis != 2">
+		                  		and ii.ishis = #{params.ishis}
+		              		</if>  
+		              		<if test="params.active != null and params.active != ''">
+			                    and iwi.active = #{params.active}
+		                    </if>  
+		              		
+							
+							<if test="params.itemcode != null and params.itemcode != ''">
+								and instr(ii.itemcode,#{params.itemcode})<![CDATA[>]]>0 
+							</if>
+							<if test="params.itemname != null and params.itemname != ''">
+								and instr(ii.itemname,#{params.itemname})<![CDATA[>]]>0 
+							</if>
+							<if test="params.cusmodel != null and params.cusmodel != ''">
+								and instr(ii.cusmodel,#{params.cusmodel})<![CDATA[>]]>0  
+							</if>
+							<if test="params.unitname != null and params.unitname != ''">
+								and instr(iu.unitname,#{params.unitname})<![CDATA[>]]>0  
+							</if>
+							<if test="params.bin != null and params.bin != ''">
+								and instr(ib.binname,#{params.bin})<![CDATA[>]]>0  
+							</if>
+							<if test="params.warehouse != null and params.warehouse != ''">
+								and instr(iw.warehousename,#{params.warehouse})<![CDATA[>]]>0  
+							</if>
+							<if test="params.isspare != null and params.isspare != ''">
+								and ii.isspare = #{params.isspare}
+							</if>
+							<if test="params.qtyLowInv != null and params.qtyLowInv != ''">
+								and instr(iwi.qty_lowinv,#{params.qtyLowInv})<![CDATA[>]]>0  
+							</if>
+                  		group by ii.itemid, ii.itemcode, ii.itemname, ii.cusmodel, ii.isspare,ii.unit1, iu.unitname,
+                       			 iwi.warehouseid, ib.binid, ib.binname, iw.warehousename, iwi.invcateid,
+                       			 ii.site_id, iwi.qty_lowinv 
+			               		<if test="params.embbed != null">
+			                  		,iwi.sparecode
+			                  		,iwi.manufacturer 
+			               		</if> 
+                 	) t 
+                 	left join inv_realtime_data ird
+                    	on ird.itemid = t.itemid
+                   		and ird.invcateid = t.invcateid
+                   		and ird.site_id = t.site_id
+                 	left join inv_category ic on ic.invcateid = t.invcateid and ic.site_id = t.site_id
+                 	where 1=1
+                 	<if test="params.cateId != null and params.cateId != ''">
+              			and t.invcateid in 
+			                  (
+			                   	select ic.parentid as invcateid
+								from inv_category ic 
+								where ic.site_id = #{params.siteId} and ic.status = 'ACTIVE' 
+								start with ic.invcateid = #{params.cateId}
+								connect by prior ic.parentid = ic.invcateid
+								union all
+								select ic.invcateid 
+								from inv_category ic 
+								where ic.site_id = #{params.siteId} and ic.status = 'ACTIVE' 
+								start with ic.invcateid = #{params.cateId}
+								connect by prior  ic.invcateid = ic.parentid
+			                  )
+            		</if>
+                	group by t.itemid, t.itemcode, t.itemname, t.cusmodel, t.isspare,  ird.actual_qty, ird.can_use_qty,
+                          t.unit1, t.unitname, t.unit2, ird.with_tax_price, ird.no_tax_price,ird.last_in_price,t.warehouseid, t.binid, t.bin, 
+                          t.warehouse, t.invcateid, ic.invcatename, t.site_id, t.qty_lowinv
+                        <if test="params.embbed != null">
+		                	,t.sparecode
+		                	,t.manufacturer 
+		                </if>
+          		) m 
+          		where 1=1 
+          		<if test="params.cateType != null and params.cateType != ''">
+         	 		and instr(m.invcate,#{params.cateType})<![CDATA[>]]>0
+        		</if>
+          		group by m.itemid,m.itemcode,m.itemname,m.cusmodel,m.unit1,m.unitname,m.warehouseid,m.binid,m.bin,m.warehouse,
+          				 m.site_id,m.isspare,m.qty_lowinv,m.invcateid,m.invcate
+        		<if test="params.embbed != null">
+            		,m.sparecode,m.manufacturer 
+         		</if>
+        	) m1 where 1=1
+    		
+			<if test="params.stockqty != null and params.stockqty != ''">
+			  	and instr(m1.stockqty,#{params.stockqty})<![CDATA[>]]>0  
+			</if> 
+
+			<if test="params.nowqty != null and params.nowqty != ''">
+			  	and instr(m1.nowqty,#{params.nowqty})<![CDATA[>]]>0  
+			</if> 
+						
+			<if test="params.price != null and params.price != ''">
+			  	and instr(m1.price,#{params.price})<![CDATA[>]]>0  
+			</if>
+			
+			<if test="params.noTaxPrice != null and params.noTaxPrice != ''">
+			  	and instr(m1.no_tax_price,#{params.noTaxPrice})<![CDATA[>]]>0  
+			</if>		
+				
+			<if test="params.opentype != 'new'">
+				and m1.warehouseid is not null
+			</if>
+			
+			<if test="params.invmatapply != null">
+				and m1.nowqty<![CDATA[>]]>0
+			</if>
+			
+       	</if>
+        <if test="params.opentype == 'new'">
+        	select ii.itemid,
+        			ii.itemcode,
+        			ii.itemname,
+        			ii.cusmodel,
+        			iu.unitname
+			from inv_item ii left join inv_unit iu on ii.unit1 = iu.unitid and ii.site_id = iu.site_id
+			where ii.site_id = #{params.siteId} 
+        	<if test="params.itemcode != null and params.itemcode != ''">
+			  	and instr(ii.itemcode,#{params.itemcode})<![CDATA[>]]>0 
+			</if>
+			<if test="params.itemname != null and params.itemname != ''">
+			  	and instr(ii.itemname,#{params.itemname})<![CDATA[>]]>0 
+			</if>
+			<if test="params.cusmodel != null and params.cusmodel != ''">
+			  	and instr(ii.cusmodel,#{params.cusmodel})<![CDATA[>]]>0  
+			</if>
+			<if test="params.unitname != null and params.unitname != ''">
+			  	and instr(iu.unitname,#{params.unitname})<![CDATA[>]]>0  
+			</if>
+        </if>	
+	</select>
+	
+	<!-- 通过id查询site -->
+	<select id="querySiteById" resultType="java.util.Map">
+		select a.site_id,a.site_name from sec_site a where a.site_id=#{siteId} 
+	</select>
+	
+	<!-- 查询InvItem详细信息 -->
+	<select id="queryInvItemDetail" parameterType="java.util.Map" resultMap="InvItemVOMap">
+		select 
+			m.itemcode,m.itemname,m.cusmodel,m.ISSAFETY,
+			FORMATNUM2(nvl(m.QTY_ECONOMIC,0)) as QTY_ECONOMIC,
+			FORMATNUM2(nvl(m.QTY_LOWINV,0)) as QTY_LOWINV,
+			m.unit1,
+			FORMATNUM2(nvl(m.price,0)) as price,
+			FORMATNUM2(nvl(m.total_qty,0)) as total_qty,
+			FORMATNUM2(nvl(m.nowqty,0)) as nowqty,
+			m.prepare_qty,
+			FORMATNUM2(nvl(m.late_in_price,0)) as late_in_price, 
+			FORMATNUM2(nvl(m.late_in_qty,0)) as late_in_qty,
+			m.late_in_date,
+			m.blg_equip,
+			m.cate_name as cate_name,m.manufacturer,m.sparecode,m.unit2,
+			m.sec_qty 
+		from (
+			select ii.itemcode,ii.itemname,ii.cusmodel,nvl(iwi.ISSAFETY,0) as ISSAFETY,iwi.QTY_ECONOMIC,iwi.QTY_LOWINV,
+			        (select iu.unitname from inv_unit iu where iu.unitid = ii.unit1 and iu.site_id = ii.site_id) as unit1,
+			        ird.with_tax_price as price,
+                    ird.actual_qty as total_qty,
+                    ird.can_use_qty as nowqty,
+                    ird.last_in_price as late_in_price,
+                    ird.last_in_time as late_in_date,
+                    ird.last_in_qty as late_in_qty,
+			        '0' as prepare_qty,
+			        '' as blg_equip,
+			        (select ic.invcatename 
+			          from inv_category ic 
+			          where ic.invcateid = iwi.invcateid) as cate_name,
+			        iwi.manufacturer,iwi.sparecode,ii.unit2,'' as sec_qty
+			from inv_item ii, inv_warehouse_item iwi,inv_realtime_data ird
+		    where ii.itemid = iwi.itemid(+) 
+		        and ii.site_id = iwi.site_id(+)
+		        and iwi.itemid = ird.itemid(+)
+           		and iwi.site_id = ird.site_id(+)
+           		and iwi.invcateid = ird.invcateid(+) 
+		        and ii.itemcode = #{itemCode} 
+		        and ii.site_id = #{siteId}
+		        <if test="cateId != null and cateId != ''">
+				  	and iwi.invcateid = #{cateId} 
+				</if>
+				<if test="wareId != null and wareId != ''">
+				  	and iwi.warehouseid = #{wareId} 
+				</if>
+		    ) m 
+        	
+	</select>
+	
+	<!-- 根据选定的采购申请查询InvItem详细信息 -->
+	<select id="queryInvItemDetailWithPurApply" parameterType="java.util.Map" resultMap="InvItemVOMap">
+		select 
+			m.invcateid,m.itemcode,m.itemname,m.cusmodel,m.ISSAFETY,
+			nvl(m.QTY_ECONOMIC,0) as QTY_ECONOMIC,
+			nvl(m.QTY_LOWINV,0) as QTY_LOWINV,
+			m.unit1,
+			nvl(m.price,0) as price,
+			nvl(m.total_qty,0) as total_qty,
+			nvl(m.nowqty,0) as nowqty,
+			m.prepare_qty,
+			nvl(m.late_in_price,0) as late_in_price, 
+			nvl(m.late_in_qty,0) as late_in_qty,
+			m.late_in_date,
+			m.blg_equip,
+			m.cate_name as cate_name,m.manufacturer,m.sparecode,m.unit2,
+			m.sec_qty 
+		from (
+			select iwi.invcateid,ii.itemcode,ii.itemname,ii.cusmodel,nvl(iwi.ISSAFETY,0) as ISSAFETY,iwi.QTY_ECONOMIC,iwi.QTY_LOWINV,
+			        (select iu.unitname from inv_unit iu where iu.unitid = ii.unit1 and iu.site_id = ii.site_id) as unit1,
+			        ird.with_tax_price as price,
+                    ird.actual_qty as total_qty,
+                    ird.can_use_qty as nowqty,
+                    ird.last_in_price as late_in_price,
+                    ird.last_in_time as late_in_date,
+                    ird.last_in_qty as late_in_qty,
+			        '0' as prepare_qty,
+			        '' as blg_equip,
+			        (select ic.invcatename 
+			          from inv_category ic 
+			          where ic.invcateid = iwi.invcateid) as cate_name,
+			        iwi.manufacturer,iwi.sparecode,ii.unit2,'' as sec_qty
+			from inv_item ii, inv_warehouse_item iwi,inv_realtime_data ird,itceam_workflow_purchapplyitem iwpi
+		    where ii.itemid = iwi.itemid(+) 
+		        and ii.site_id = iwi.site_id(+)
+		        and iwi.itemid = ird.itemid(+)
+           		and iwi.site_id = ird.site_id(+)
+           		and iwi.invcateid = ird.invcateid(+) 
+		        and ii.itemcode = iwpi.itemid
+		        and iwi.invcateid = iwpi.invcateid
+		        and ii.site_id = iwp.siteid
+		        and ii.site_id = #{siteId}
+				<if test="sheetId != null and sheetId != ''">
+				  	and iwpi.sheet_id = #{sheetId} 
+				</if>
+		    ) m 
+        	
+	</select>
+	
+	<!-- 查询详细主项目信息 -->
+	<select id="queryInvMainItemDetail" parameterType="java.util.Map" resultMap="InvItemVOMap">
+		select a.*,b.unitname as unitname 
+    	from inv_item a left join inv_unit b on b.unitid = a.unit1 and b.site_id = a.site_id
+    	where a.site_id=#{siteId} and itemid=#{itemId} 
+	</select>
+	
+	<!-- 直接通过id查询inv_item -->
+	<select id="queryInvItemByItemid" resultType="com.timss.inventory.bean.InvItem">
+		select * from inv_item ii where ii.itemid=#{params.itemId} order by ii.itemcode asc
+	</select>
+	
+	<!-- 更新主项目信息 -->
+	<update id="updateInvItemInfo" parameterType="com.timss.inventory.bean.InvItem">
+		update inv_item t 
+		<set>
+	      <if test="itemname != null"> t.itemname=#{itemname}, </if>
+	      <if test="cusmodel != null"> t.cusmodel=#{cusmodel}, </if>
+	      <if test="isspare != null"> t.isspare=#{isspare}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate}, </if>
+	      <if test="img != null"> t.img=#{img}, </if>
+	      <if test="qtyUnit1 != null"> t.qty_unit1=#{qtyUnit1}, </if>
+	      <if test="qtyUnit2 != null"> t.qty_unit2=#{qtyUnit2}, </if>
+	      <if test="qtyUnit3 != null"> t.qty_unit3=#{qtyUnit3}, </if>
+	      <if test="qtyUnit4 != null"> t.qty_unit4=#{qtyUnit4}, </if>
+	      <if test="qtyUnit5 != null"> t.qty_unit5=#{qtyUnit5}, </if>
+	      <if test="unit1 != null"> t.unit1=#{unit1}, </if>
+	      <if test="unit2 != null"> t.unit2=#{unit2}, </if>
+	      <if test="unit3 != null"> t.unit3=#{unit3}, </if>
+	      <if test="unit4 != null"> t.unit4=#{unit4}, </if>
+	      <if test="unit5 != null"> t.unit5=#{unit5}, </if>
+	      <if test="attr1 != null"> t.attr1=#{attr1}, </if>
+	      <if test="attr2 != null"> t.attr2=#{attr2}, </if>
+	      <if test="attr3 != null"> t.attr3=#{attr3}, </if>
+	      <if test="attr4 != null"> t.attr4=#{attr4}, </if>
+	      <if test="attr5 != null"> t.attr5=#{attr5}, </if>
+	      <if test="attr6 != null"> t.attr6=#{attr6}, </if>
+	      <if test="attr7 != null"> t.attr7=#{attr7}, </if>
+	      <if test="attr8 != null"> t.attr8=#{attr8}, </if>
+	      <if test="attr9 != null"> t.attr9=#{attr9}, </if>
+	      <if test="attr10 != null"> t.attr10=#{attr10}, </if>
+	    </set>
+		where t.itemid=#{itemid}
+	</update>
+	
+	<!-- 插入主项目信息 -->
+	<insert id="insertInvItemInfo" parameterType="com.timss.inventory.bean.InvItem">
+		insert into inv_item 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="itemcode != null"> itemcode, </if>
+	      <if test="itemname != null"> itemname, </if>
+	      <if test="cusmodel != null"> cusmodel, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="isspare != null"> isspare, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="img != null"> img, </if>
+	      <if test="unit1 != null"> unit1, </if>
+	      <if test="unit2 != null"> unit2, </if>
+	      <if test="unit3 != null"> unit3, </if>
+	      <if test="unit4 != null"> unit4, </if>
+	      <if test="unit5 != null"> unit5, </if>
+	      <if test="qtyUnit1 != null"> qty_unit1, </if>
+	      <if test="qtyUnit2 != null"> qty_unit2, </if>
+	      <if test="qtyUnit3 != null"> qty_unit3, </if>
+	      <if test="qtyUnit4 != null"> qty_unit4, </if>
+	      <if test="qtyUnit5 != null"> qty_unit5, </if>
+	      <if test="attr1 != null"> attr1, </if>
+	      <if test="attr2 != null"> attr2, </if>
+	      <if test="attr3 != null"> attr3, </if>
+	      <if test="attr4 != null"> attr4, </if>
+	      <if test="attr5 != null"> attr5, </if>
+	      <if test="attr6 != null"> attr6, </if>
+	      <if test="attr7 != null"> attr7, </if>
+	      <if test="attr8 != null"> attr8, </if>
+	      <if test="attr9 != null"> attr9, </if>
+	      <if test="attr10 != null"> attr10, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="itemcode != null"> #{itemcode,jdbcType=VARCHAR}, </if>
+	      <if test="itemname != null"> #{itemname,jdbcType=VARCHAR}, </if>
+	      <if test="cusmodel != null"> #{cusmodel,jdbcType=VARCHAR}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="isspare != null"> #{isspare,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="img != null"> #{img,jdbcType=VARCHAR}, </if>
+	      <if test="unit1 != null"> #{unit1,jdbcType=VARCHAR}, </if>
+	      <if test="unit2 != null"> #{unit2,jdbcType=VARCHAR}, </if>
+	      <if test="unit3 != null"> #{unit3,jdbcType=VARCHAR}, </if>
+	      <if test="unit4 != null"> #{unit4,jdbcType=VARCHAR}, </if>
+	      <if test="unit5 != null"> #{unit5,jdbcType=VARCHAR}, </if>
+	      <if test="qtyUnit1 != null"> #{qtyUnit1,jdbcType=NUMERIC}, </if>
+	      <if test="qtyUnit2 != null"> #{qtyUnit2,jdbcType=NUMERIC}, </if>
+	      <if test="qtyUnit3 != null"> #{qtyUnit3,jdbcType=NUMERIC}, </if>
+	      <if test="qtyUnit4 != null"> #{qtyUnit4,jdbcType=NUMERIC}, </if>
+	      <if test="qtyUnit5 != null"> #{qtyUnit5,jdbcType=NUMERIC}, </if>
+	      <if test="attr1 != null"> #{attr1,jdbcType=VARCHAR}, </if>
+	      <if test="attr2 != null"> #{attr2,jdbcType=VARCHAR}, </if>
+	      <if test="attr3 != null"> #{attr3,jdbcType=VARCHAR}, </if>
+	      <if test="attr4 != null"> #{attr4,jdbcType=VARCHAR}, </if>
+	      <if test="attr5 != null"> #{attr5,jdbcType=VARCHAR}, </if>
+	      <if test="attr6 != null"> #{attr6,jdbcType=VARCHAR}, </if>
+	      <if test="attr7 != null"> #{attr7,jdbcType=VARCHAR}, </if>
+	      <if test="attr8 != null"> #{attr8,jdbcType=VARCHAR}, </if>
+	      <if test="attr9 != null"> #{attr9,jdbcType=VARCHAR}, </if>
+	      <if test="attr10 != null"> #{attr10,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 查询到货物品 -->
+	<select id="queryArrivalItem" resultMap="InvItemVOMap">
+		select * from (
+		      select m.itemid,
+		                  m.itemcode,
+		                  m.itemname,
+		                  m.cusmodel, 
+		                  iu.unitid as unit1,
+		                  iu.unitname as unitname,
+		                  nvl(m.itemnum,0) as itemnum,
+		                  nvl(t.stockqty,0) as stockqty,
+		                  nvl(t1.laststockqty,0) as laststockqty,
+		                  m.price,
+		                  m.binid,
+		                  m.bin,
+		                  m.outterid,
+		                  iw.warehousename as warehouse ,
+		                  iw.warehouseid,
+		                  m.sheetno as purorderno,
+		                  m.projectAscription,
+		                  m.apply_sheet_id as puraId,
+		                  m.tax,
+		                  m.invcateid,
+		                  m.no_tax_price
+		          from(
+		                select ii.itemid,
+		                            ii.itemcode,
+		                            ii.itemname,
+		                            ii.cusmodel,
+		                            ii.unit1,
+		                            iwpi.itemnum, 
+		                            nvl(avg(iwpi.cost),0) as price,
+		                            nvl(avg(iwpi.price),0) as no_tax_price,
+		                            ib.binid,
+		                            ib.binname as bin,
+		                            iwpi.sheet_id as outterid,
+		                            iwi.warehouseid,
+		                            iwp.sheetno,
+		                            ii.site_id,
+		                            iwpa.projectAscription,
+		                            iwpi.apply_sheet_id,
+		                            (iwpi.tax_rate / 100) as tax,
+		                            iwpi.invcateid
+		                  from inv_item ii, 
+		                       inv_warehouse_item iwi, 
+		                       itceam_workflow_orderitem_exc iwpi,
+		                       (select iwpa.sheet_id,be.enum_val as projectAscription from itceam_workflow_purchapply iwpa left join b_enum be on iwpa.project_ascription = be.enum_code  and be.ecat_code = 'PUR_PROJECT_ARP' and be.siteid = iwpa.siteid) iwpa,
+		                       itceam_workflow_purchorder iwp,
+		                       inv_bin ib
+		                  where iwp.sheet_id = iwpi.sheet_id(+) 
+		                        and iwpi.itemid = ii.itemcode(+) 
+		                        and ii.itemid = iwi.itemid(+) 
+		                        and iwi.def_binid = ib.binid(+)
+		                        and iwpi.apply_sheet_id = iwpa.sheet_id 
+		                        and iwpi.invcateid = iwi.invcateid
+		                        and iwp.sheetno in (${params.pruorderno})
+		                        <if test="params.warehouseid != null and params.warehouseid != ''">
+				                	and iwi.warehouseid=#{params.warehouseid} 
+				                </if>
+		                        and ii.site_id=#{params.siteId} 
+		                  group by ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,ii.unit1,iwp.sheetno,
+		                           iwpi.itemnum,ib.binid,ib.binname,iwpi.sheet_id,iwi.warehouseid,ii.site_id,iwpa.projectAscription,iwpi.apply_sheet_id,iwpi.tax_rate,iwpi.invcateid,iwpi.price
+		              ) m 
+		              left join  inv_warehouse iw on iw.warehouseid = m.warehouseid and iw.site_id = m.site_id
+		              left join inv_unit iu on iu.unitid = m.unit1 and iu.site_id = m.site_id
+		              left join (select sum(imtd.in_qty) - sum(imtd.out_qty) as stockqty ,
+		                                ii.itemcode,
+		                                imtd.pura_id
+		                              from inv_mat_tran_rec imtd,
+		                                   inv_item ii 
+		                              where imtd.itemid = ii.itemid(+)  
+		                              group by ii.itemcode,imtd.pura_id
+		                        )  t on t.itemcode = m.itemid and t.pura_id = m.apply_sheet_id
+		              left join (select sum(imtd1.in_qty) - nvl(sum(return_qty),0) as laststockqty,
+                                        imm.itemcode,
+                                        imm.outterid,
+                                        imtd1.warehouseid,
+                                        imtd1.pura_id
+		                              from inv_mat_tran_rec imtd1,  
+	                                        inv_mat_map     imm,
+	                                        (select t.imtdid, nvl(sum(t.return_qty),0) as return_qty 
+	                                         from inv_mat_returns_detail t 
+	                                         group by t.imtdid) imrsd
+		                              where imtd1.imtdid = imm.imtdid
+                                          and imtd1.imtdid = imrsd.imtdid(+) 
+                                          and imm.itemcode is not null
+		                              group by imm.itemcode, imm.outterid,imtd1.warehouseid,imtd1.pura_id
+		                             ) t1 on  t1.itemcode =m.itemcode and t1.outterid =  m.outterid and t1.warehouseid = m.warehouseid and t1.pura_id = m.apply_sheet_id
+		              ) m 
+		              where 1=1 and m.itemnum <![CDATA[>]]> m.laststockqty
+		    <if test="params.itemid != null and params.itemid != ''">
+			  	and instr(m.itemid,'${params.itemid}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.itemcode != null and params.itemcode != ''">
+			  	and instr(m.itemcode,'${params.itemcode}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.itemname != null and params.itemname != ''">
+			  	and instr(m.itemname,'${params.itemname}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.cusmodel != null and params.cusmodel != ''">
+			  	and instr(m.cusmodel,'${params.cusmodel}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.unit1 != null and params.unit1 != ''">
+			  	and instr(m.unit1,'${params.unit1}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.price != null and params.price != ''">
+			  	and instr(m.price,'${params.price}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.itemnum != null and params.itemnum != ''">
+			  	and instr(m.itemnum,'${params.itemnum}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.stockqty != null and params.stockqty != ''">
+			  	and instr(m.stockqty,'${params.stockqty}')<![CDATA[>]]>0  
+			</if>
+			<if test="params.bin != null and params.bin != ''">
+			  	and instr(m.bin,'${params.bin}')<![CDATA[>]]>0  
+			</if>
+		order by m.itemcode asc
+	</select>
+	
+	<!-- 查询物资详细信息 -->
+	<select id="queryItemInfo" parameterType="java.util.Map" resultMap="InvItemVOMap">
+		 select ii.itemid,
+		        ii.itemcode,
+		        ii.itemname,
+		        replace(ii.cusmodel, chr(10), '') as cusmodel,
+		        iu.unitname as unit1,
+		        iw.warehouseid as warehouseid,
+		        iw.warehousename as warehouse,
+		        ib.binid,
+		        ib.binname as bin,
+		        iwi.manufacturer,
+		        ii.site_id,
+		        ic.invcateid,
+		        ic.invcateid as cate_id,
+		        ic.invcatename as cate_name,
+		        ird.last_in_time as late_in_date,
+		        ird.actual_qty as qtyStock,
+		        ird.can_use_qty as bestockqty,
+		        ird.last_in_qty as late_in_qty,
+		        ird.last_in_price as late_in_price,
+		        ird.with_tax_price as price,
+		        sum(imtr.in_qty) as stockqty
+		   from inv_item           ii,
+		   		inv_unit		   iu,
+		        inv_warehouse_item iwi,
+		        inv_warehouse      iw,
+		        inv_bin            ib,
+		        inv_category       ic,
+		        inv_realtime_data  ird,
+		        inv_mat_tran_rec   imtr
+		  where ii.itemid = iwi.itemid(+)
+		  	and ii.unit1 = iu.unitid(+)
+		    and iwi.warehouseid = iw.warehouseid(+)
+		    and iwi.def_binid = ib.binid(+)
+		    and iwi.invcateid = ic.invcateid(+)
+		    and iwi.itemid = ird.itemid(+)
+		    and iwi.invcateid = ird.invcateid
+		    and iwi.site_id = ird.site_id
+		    and iwi.invcateid = imtr.invcateid(+)
+		    and iwi.itemid = imtr.itemid(+)
+   			and iwi.warehouseid = imtr.warehouseid(+)
+		    and ii.site_id = #{siteid}
+		    <if test="itemcode != null and itemcode != ''">
+                and ii.itemcode = #{itemcode}
+            </if>
+            <if test="itemid != null and itemid != ''">
+                and ii.itemid = #{itemid}
+            </if>
+            <if test="cateid != null and cateid != ''">
+                and iwi.invcateid = #{cateid}
+            </if>
+            <if test="warehouseid != null and warehouseid != ''">
+                and iwi.warehouseid = #{warehouseid}
+            </if>  
+		  group by ii.itemid,
+		           ii.itemcode,
+		           ii.itemname,
+		           ii.cusmodel,
+		           iu.unitname,
+		           iw.warehouseid,
+		           iw.warehousename,
+		           ib.binid,
+		           ib.binname,
+		           iwi.manufacturer,
+		           ii.site_id,
+		           ic.invcateid,
+		           ic.invcateid,
+		           ic.invcatename,
+		           ird.last_in_time,
+		           ird.actual_qty,
+		           ird.can_use_qty,
+		           ird.last_in_qty,
+		           ird.last_in_price,
+		           ird.with_tax_price
+		  order by ii.itemcode asc
+	</select>
+	
+	<select id="queryInvItemSafetyStock" resultMap="InvItemVOMap">
+		select o.itemid,
+               o.itemcode,
+               o.itemname,
+               o.cusmodel,
+               o.qtyLowInv,
+               o.price,
+               o.qtyStock,
+               case
+                 when o.itemnum is null then
+                  0
+                 else
+                  o.itemnum
+               end as itemnum,
+               o.qtyEconomic,
+               o.unitname,
+               o.cateId2,
+               o.warehouseid,
+               o.warehouse,
+               o.cate_name,
+               o.binid
+		  from (
+		  	select ii.itemid,
+                       ii.itemcode,
+                       ii.itemname,
+                       ii.cusmodel,
+                       nvl(iwi.qty_lowinv, 0) as qtyLowInv,
+                       ird.with_tax_price as price,
+                       case
+                         when t.num is null then
+                          (select sum(e.repliednum) as num
+                             from itceam_workflow_purchapplyitem e,
+                                  itceam_workflow_purchapply     iwp
+                            where <![CDATA[e.status > 0 and e.status < 6]]>
+                              and e.sheet_id = iwp.sheet_id
+                              and e.warehouseid = iwi.warehouseid
+                              and iwp.siteid = #{params.siteid}
+                              and e.itemid = ii.itemcode)
+                         else
+                          t.num
+                       end as itemnum,
+                       nvl(ird.can_use_qty, 0) as qtyStock,
+                       nvl(iwi.qty_economic, 0) as qtyEconomic,
+                       u.unitname,
+                       iwi.invcateid as cateId2,
+                       iwi.warehouseid,
+                       iw.warehousename as warehouse,
+                       ic.invcatename as cate_name,
+                       iwi.def_binid as binid
+                  from inv_item ii
+                  left join inv_unit u
+                    on u.unitid = ii.unit1
+                  left join inv_warehouse_item iwi
+                    on ii.itemid = iwi.itemid
+                   and ii.site_id = iwi.site_id
+                  left join inv_warehouse iw
+                    on iw.warehouseid = iwi.warehouseid
+                  left join inv_category ic
+                    on ic.invcateid = iwi.invcateid
+                  left join inv_realtime_data ird
+                    on iwi.itemid = ird.itemid
+                   and iwi.site_id = ird.site_id
+                   and iwi.invcateid = ird.invcateid
+                  left join (select t.itemid, t.warehouseid, t.num as num
+                              from (select t.itemid,
+                                           t.warehouseid,
+                                           sum(t.repliednum) as num
+                                      from itceam_workflow_purchapplyitem t,
+                                           itceam_workflow_purchapply     iwp
+                                     where <![CDATA[t.status > 0 and t.status < 6]]>
+                                       and t.sheet_id = iwp.sheet_id
+                                       and iwp.siteid = #{params.siteid}
+                                     group by t.itemid, t.warehouseid) t) t
+                    on t.itemid = ii.itemcode
+                   and t.warehouseid = iwi.warehouseid
+                 where iwi.active = 'Y'
+                   and iwi.issafety = '1'
+                    and ii.site_id = #{params.siteid}
+				<if test="params.iteminfo != null and params.iteminfo != ''">
+		            and (instr(ii.itemcode,#{params.iteminfo})<![CDATA[>]]>0 or instr(ii.itemname,#{params.iteminfo})<![CDATA[>]]>0)
+		        </if>
+		  ) o where 1=1 
+		  <if test="params.searchType == 'notEnough'">
+				  	and <![CDATA[o.qtystock < o.qtylowinv]]>
+		 </if>
+		 order by (o.qtystock - o.qtylowinv) asc
+	</select>
+	 
+	<select id="queryInvItemSafetyStockNum" resultType="Integer">
+		select count(1)
+		from(<!-- 查询开启安全库存的物资的信息和当前库存 -->
+		    select i.itemid,nvl(iwi.qty_lowinv,0) as lowqty,nvl(d.left_qty,0) as leftqty
+		    from inv_item i
+		    left join (
+		          select b.itemcode as itemid, (sum(a.in_qty)-sum(a.out_qty)) - nvl((select sum(imad.qty_apply - decode(imrd.outstockqty,null,0,imrd.outstockqty)) as qty
+																				from inv_mat_apply_detail imad
+																		 	    inner join inv_warehouse_item iwi2 on iwi2.itemid = imad.itemid and iwi2.site_id = imad.site_id and imad.warehouseid = iwi2.warehouseid     
+																			    inner join inv_mat_apply ima on ima.imaid = imad.imaid and ima.site_id = imad.site_id 
+																			    left join (select imrd.imadid,imrd.site_id,sum(imrd.outstockqty) as outstockqty,imrd.warehouseid
+						               												 		from inv_mat_recipients_detail imrd
+						               												 		where imrd.isled = 'Y'
+						               														group by imrd.imadid,imrd.site_id,imrd.warehouseid)  imrd 
+						               													on imrd.imadid = imad.imadid and imrd.site_id = imad.site_id and imrd.warehouseid = iwi2.warehouseid
+																				where imad.itemid = b.itemid and imad.site_id = b.site_id 
+																				and imad.warehouseid = a.warehouseid	
+																				and instr(ima.imaid,'IMAI')>0 and ima.status = 'collect_supplies'),0) as left_qty,
+																				a.warehouseid
+                              from inv_mat_tran_rec a, inv_item b
+                             where a.itemid = b.itemid
+                               and a.site_id = b.site_id
+                               and a.site_id = #{params.siteid}
+                             group by b.itemcode,b.itemid,b.site_id,a.warehouseid
+		    	) d on d.itemid = i.itemcode,inv_warehouse_item iwi 
+		    where i.itemid = iwi.itemid 
+		    	and d.warehouseid = iwi.warehouseid
+		    	and i.site_id = iwi.site_id 
+		    	and i.site_id=#{value} 
+		    	and iwi.issafety='1'
+		)i
+		where i.leftqty&lt;i.lowqty<!-- 过滤低于安全库存的物资 -->
+	</select>
+	
+	<update id="batchUpdateInvItemHistory" parameterType="Map">
+	UPDATE INV_ITEM SET ISHIS = #{ isHis } WHERE ITEMCODE in 
+	<foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+		#{ item }
+	</foreach>
+	</update>
+	
+	<select id="queryIsBusyInvItem" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) as numbers 
+		from V_INV_ISBUSYINVITEM vii 
+		where vii.siteid = #{siteId}
+		  and vii.itemcode = #{itemCode}
+		  and vii.sheetno in(
+          		select hal.flowno 
+          		from hop_main_list hal 
+          		where (hal.classtype = 'Processed' or hal.classtype = 'Draft') 
+            	  and (hal.flowno like 'PA%' or hal.flowno like 'PO%' or hal.flowno like 'SA%' or hal.flowno like 'ISTI%') 
+            	  and hal.siteid = #{siteId} 
+          group by hal.flowno)
+	</select>
+	
+	
+	<select id="queryCurItemNum" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select nvl(sum(actual_qty),-1) from inv_realtime_data ird where ird.itemcode=#{itemCode} and ird.site_id=#{siteId}
+	</select>
+	
+	<!-- 安全库存查询时判断是否取消提醒
+	<select id="queryHomePageNotice" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from hop_main_list a where a.extcode = #{processId}
+	</select> -->
+	
+	<!-- 查询当前安全库存给首页展示 -->
+	<select id="querySafetyStockNow" parameterType="java.lang.String" resultType="com.timss.inventory.vo.InvSafetyStockVO">
+	    select t.itemname,
+	           case when t.cusmodel is null then ' ' else t.cusmodel end as cusmodel,
+	           round(t.stockqty,2) as stockqty,
+	           round(t.qty_lowinv,2) as lowinv,
+	           t.unitname as unit
+	      from (
+	          select a.itemname,
+	               a.cusmodel, 
+	               (sum(b.in_qty) - sum(b.out_qty)) - nvl((select sum(imad.qty_apply - decode(imrd.outstockqty,null,0,imrd.outstockqty)) as qty
+													  from inv_mat_apply_detail imad
+												 	  inner join inv_warehouse_item iwi2 on iwi2.itemid = imad.itemid and iwi2.site_id = imad.site_id and imad.warehouseid = iwi2.warehouseid     
+													  inner join inv_mat_apply ima on ima.imaid = imad.imaid and ima.site_id = imad.site_id 
+													  left join (select imrd.imadid,imrd.site_id,sum(imrd.outstockqty) as outstockqty,imrd.warehouseid
+               												 		from inv_mat_recipients_detail imrd
+               												 		where imrd.isled = 'Y'
+               														group by imrd.imadid,imrd.site_id,imrd.warehouseid) imrd 
+               													on imrd.imadid = imad.imadid and imrd.site_id = imad.site_id and imrd.warehouseid = iwi2.warehouseid
+													where imad.itemid = a.itemid and imad.site_id = a.site_id 
+													and imad.warehouseid = iwi.warehouseid 
+													and instr(ima.imaid,'IMAI')>0 and ima.status = 'collect_supplies'),0) as stockqty,
+	               iwi.qty_lowinv,
+	               iu.unitname 
+	          from inv_item a,
+	          	   inv_warehouse_item iwi,
+	               inv_unit iu,
+	               inv_mat_tran_rec b 
+	          where a.itemid = b.itemid
+	          	and a.itemid = iwi.itemid 
+	          	and a.site_id = iwi.site_id 
+	            and a.site_id = b.site_id 
+	            and a.unit1 = iu.unitid
+	            and a.ishis = 0 
+	            and a.site_id = #{siteId} 
+	            and iwi.active = 'Y'
+	            and iwi.issafety = 1
+	            and b.warehouseid = iwi.warehouseid
+	          group by a.itemid,a.site_id,a.itemname,a.cusmodel,iwi.qty_lowinv,iu.unitname,iwi.warehouseid 
+	      ) t 
+	    where <![CDATA[t.stockqty<t.qty_lowinv]]>
+	    order by t.qty_lowinv desc
+	</select>
+	
+	<!-- 物资单表全查询 -->
+	<select id="queryInvItem" parameterType="com.timss.inventory.vo.InvItemVO" resultType="com.timss.inventory.bean.InvItem">
+		select * 
+		from inv_item ii,inv_warehouse_item iwi 
+		where ii.itemid = iwi.itemid 
+			and ii.site_id = iwi.site_id
+			and ii.site_id = '${siteId}'
+		<if test="itemname != null and itemname != ''">
+            and ii.itemname = '${itemname}'
+        </if>
+        <if test="cusmodel != null and cusmodel != ''">
+            and ii.cusmodel = '${cusmodel}'
+        </if>
+        <if test="cateId != null and cateId != ''">
+            and iwi.invcateid = '${cateId}'
+        </if>
+	</select>
+	
+	<select id="queryImaidByImtId" resultType="java.lang.String">
+		select distinct a.imaid from
+		inv_mat_apply a ,inv_mat_apply_detail ad,inv_mat_tran t,inv_mat_tran_rec td
+		,inv_mat_mapping m
+		where a.imaid = ad.imaid and t.imtid = td.imtid
+		and m.imtdid = td.imtdid and m.outterid = ad.imadid
+		and t.imtid = #{imtId}
+		order by t.imtid asc
+	</select>
+	<select id="queryImridByImtId" resultType="java.lang.String">
+		select distinct(imr.imrid) from inv_mat_tran t
+		left join inv_mat_recipients imr on t.sheetno = imr.sheetno and t.site_id = imr.site_id
+		where imtid = #{imtId}
+	</select>	
+    <select id="queryIstidByImtId" resultType="java.lang.String">
+	    select distinct s.istid from
+		inv_stocktaking s,inv_stocktaking_detail sd,inv_mat_tran t,inv_mat_tran_rec td
+		,inv_mat_mapping m
+		where s.istid = sd.istid and t.imtid = td.imtid
+		and m.imtdid = td.imtdid and m.outterid = sd.istdid
+		and t.imtid = #{imtId}
+		order by t.imtid asc
+    </select>
+    <select id="queryInacidByImtId" resultType="java.lang.String">
+	    select distinct ac.inac_id from
+		inv_mat_accept ac,inv_mat_tran t
+		where ac.imt_id = t.imtid
+		and t.imtid = #{imtId}
+		order by t.imtid asc
+    </select>
+    <select id="queryImrsidByImtId" resultType="java.lang.String">
+	    select distinct r.imrsid from
+		inv_mat_returns r,inv_mat_tran t
+		where 1=1
+		<if test="type == 'strippermaterials'">
+			and r.imtid =t.imtid
+		</if>
+		<if test="type == 'materialsrefunding'">
+			and r.imrsno = t.sheetno
+		</if>
+		and t.imtid = #{imtId}
+		order by t.imtid asc
+    </select>
+    <select id="queryImtidByImtId" resultType="java.lang.String">
+	    select distinct imtr.imtid from 
+		inv_mat_transfer imtr ,inv_mat_transfer_detail imtrd,
+		inv_mat_mapping m,
+		inv_mat_tran_rec imtd,inv_mat_tran imt
+		where imtr.imtid = imtrd.imtid
+		and m.outterid = imtrd.imtdid
+		and m.imtdid = imtd.imtdid
+		and imtd.imtid = imt.imtid
+		and imt.imtid = #{imtId}
+	</select>
+	
+	<!-- 查询仓库 -->
+	<select id="queryInvCategory" parameterType="java.util.Map" resultType="com.timss.inventory.vo.InvItemVO">
+		select iwi.warehouseid, iwi.invcateid as cateId, ic.invcatename as cateType, ib.binid, ib.binname as bin
+		  from inv_warehouse_item iwi, inv_category ic, inv_item ii, inv_bin ib
+		 where iwi.itemid = ii.itemid(+)
+		   and iwi.invcateid = ic.invcateid(+)
+		   and iwi.def_binid = ib.binid(+)
+		   and iwi.active = 'Y'
+			<if test="itemcode != null and itemcode != ''">
+			  	and ii.itemcode=#{itemcode} 
+			</if>
+			<if test="warehouseid != null and warehouseid != ''">
+			  	and iwi.warehouseid=#{warehouseid} 
+			</if>
+		group by iwi.warehouseid, iwi.invcateid, ic.invcatename, ib.binid, ib.binname
+	</select>
+</mapper> 

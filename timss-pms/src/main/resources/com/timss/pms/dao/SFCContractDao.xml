@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.SFCContractDao">
+
+	
+	 <resultMap type="com.timss.pms.vo.ContractVo" id="contractVoMap">
+		<id property="id" column="id"/>
+		<result property="contractCode" column="contract_code"/>
+		<result property="projectId" column="project_id"/>
+		<result property="name" column="name"/>
+		<result property="type" column="type"/>
+		<result property="firstParty" column="first_party"/>
+		<result property="firstPartyId" column="first_party_id"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="fpPhone" column="fp_phone"/>
+		<result property="secondPartyId" column="second_party_id"/>
+		<result property="secondParty" column="second_party"/>
+		
+		<result property="spLeader" column="sp_leader"/>
+		<result property="spPhone" column="sp_phone"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="totalSum" column="total_sum"/>
+		<result property="signTime" column="sign_time"/>
+		
+		<result property="command" column="command"/>
+		<result property="attach" column="attach"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/> 
+		<result property="statusApp" column="status_app"/>
+		<result property="createUser" column="create_user" />
+		<result property="createTime" column="create_time" />
+		<result property="siteid" column="siteid" />
+		<result property="bidId" column="bid_id" />
+		
+		<result property="projectName" column="project_name"/>
+		<result property="contractCategory" column="contract_category"/>
+		<result property="tipNo" column="TIPNO"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.ContractDtlVo" id="contractDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="contractCode" column="contract_code"/>
+		<result property="projectId" column="project_id"/>
+		<result property="name" column="name"/>
+		<result property="type" column="type"/>
+		<result property="firstParty" column="first_party"/>
+		<result property="firstPartyId" column="first_party_id"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="fpPhone" column="fp_phone"/>
+		<result property="secondParty" column="second_party"/>
+		<result property="secondPartyId" column="second_party_id"/>
+		<result property="spLeader" column="sp_leader"/>
+		<result property="spPhone" column="sp_phone"/>
+		<result property="fpLeader" column="fp_leader"/>
+		<result property="totalSum" column="total_sum"/>
+		<result property="signTime" column="sign_time"/>
+		
+		<result property="command" column="command"/>
+		<result property="attach" column="attach"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="status" column="status"/> 
+		<result property="statusApp" column="status_app"/>
+		<result property="createTime" column="create_time" />
+		<result property="siteid" column="siteid" />
+		<result property="bidId" column="bid_id" />
+		<result property="contractCategory" column="contract_category"/>
+		<result property="tipNo" column="TIPNO"/>
+		<result property="createuser" column="CREATEUSERNAME" />
+		<result property="createUser" column="CREATE_USER" />
+		
+	</resultMap>
+
+
+<select id="queryContractList" resultMap="contractVoMap">
+	select t.id,t.contract_code,t.project_id,t.name,t.type,t.first_party,t.fp_leader,t.fp_phone,t.second_party,
+	t.sp_leader,t.sp_phone,t.total_sum,t.sign_time,t.first_party_id,t.second_party_id,t.command,t.attach,t.del_flag,
+	t.status,t.bid_id,t.siteid,t.status_app,t.contract_category,t.project_name projectName,t.bid_name bidName,t.belong_to belongTo,t.flow_status flowStatus
+	from Tim_Pms_Contract t
+	where t.del_flag=0 and t.status <![CDATA[<>]]> 'voided'
+</select>
+<select id="queryContractListAndFilter" resultMap="contractVoMap">
+	select t.id,t.contract_code,t.project_id,t.name,t.type,t.first_party,t.fp_leader,t.fp_phone,t.second_party,
+	t.sp_leader,t.sp_phone,t.total_sum,t.sign_time,t.first_party_id,t.second_party_id,t.command,t.attach,t.del_flag,
+	t.status,t.bid_id,t.siteid,t.status_app,t.contract_category,t.tipNo,t.project_name projectName,t.bid_name bidName,t.belong_to belongTo,t.flow_status flowStatus
+	from Tim_Pms_Contract t
+	where t.del_flag=0 
+</select>
+
+<select id="queryContractById" resultMap="contractDtlVoMap">
+	select t.id,t.contract_code,t.project_id,t.name,t.type,t.first_party,t.fp_leader,t.fp_phone,t.second_party,t.sp_leader,t.sp_phone,t.total_sum,t.sign_time,
+		t.command,t.first_party_id,t.second_party_id,t.attach,t.del_flag,t.status,t.create_user,t.create_time,t.siteid,t.bid_id
+		,t.status_app,t.contract_category,t.TIPNO,t.project_name projectName,t.bid_name bidName,t.belong_to belongTo,t.process_inst_id processInstId,t.flow_status flowStatus 
+	from Tim_Pms_Contract t 
+	where t.id=#{id}
+</select>
+
+<select id="selectByCodeAndSiteid"  resultType="int">
+    select count(t.id)
+    from Tim_Pms_Contract t
+    where t.del_flag='0' and t.siteid=#{siteid} and t.contract_code=#{contractCode} and t.status != 'voided'
+</select>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>
+

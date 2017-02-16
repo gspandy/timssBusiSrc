@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwStandardDao">
+	<resultMap type="PtwStandardBean" id="sptwInfoMap">
+		<result column="WTNO" property="wtNo" />
+		<result column="WTTYPEID" property="wtTypeId" />
+		<result column="EQNAME" property="eqName" />
+		<result column="WORKCONTENT" property="workContent" />
+		<result column="CREATEUSERNAME" property="createUserName" />
+		<result column="APPROVEUSERNAME" property="approveUserName" />
+		<result column="FLOWSTATUS" property="flowStatus" />
+	</resultMap>
+	<sql id="ptwStandardBeanField">
+		id, sheetNo,WtTypeId, WtNo, eqNo, eqName, workContent, workPlace, 
+		version, isCheck, checkDate, beginTime, endTime,instantId, flowStatus, 
+		isExpire, isCancel, inUse, createuserName, createuser,createdate,
+		modifyuserName, modifyuser, modifydate, approveUserName, approveUser, approveDate ,deptId, siteId
+	</sql>
+	
+	<sql id="ptwStdSafeBeanField">
+		id,wtId, SAFECONTENT, SAFETYPE, SAFEORDER, EXECUTERNO, EXECUTER, REMOVER, REMOVERNO
+	</sql>
+	
+	<select id="queryPtwStandardBySearch" resultType="PtwStandardBean" >
+		select <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO WHERE 
+		SITEID = #{ params.siteId } AND inUse = #{ params.inUse } 
+		AND isExpire = #{ params.isExpire } and flowStatus != #{ params.flowStatus,jdbcType=VARCHAR }
+		<if test="params.isCancel != null">
+			AND isCancel = #{ params.isCancel } 
+		</if>
+		<if test="params.WtNo != null and params.WtNo != ''">
+			and WtNo like '%${ params.wtNo }%'
+		</if>
+		<if test="params.eqName != null  and params.eqName != ''">
+			and eqName like '%${ params.eqName }%'
+		</if>
+		<if test="params.workContent != null  and params.workContent != ''">
+			and workContent like '%${ params.workContent }%'
+		</if>
+		<if test="params.createUserName != null  and params.createUserName != ''">
+			and createUserName like '%${ params.createUserName }%'
+		</if>
+		<if test="params.approveUserName != null  and params.approveUserName != ''">
+			and approveUserName like '%${ params.approveUserName }%'
+		</if>
+		<if test="params.status != null  and params.status != '' and params.status !='null' ">
+			and flowStatus = #{ params.status }
+		</if> 
+	</select>
+	
+	<select id="queryFinishPtwStandardBySearch" resultType="PtwStandardBean" >
+		select <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO T WHERE 
+		SITEID = #{ params.siteId } AND inUse = #{ params.inUse }
+		 AND isExpire = #{ params.isExpire } and flowStatus = #{ params.flowStatus,jdbcType=VARCHAR }
+		<if test="params.isCancel != null">
+			AND isCancel = #{ params.isCancel } 
+		</if>
+		<if test="params.WtNo != null and params.WtNo != ''">
+			and WtNo like '%${ params.wtNo }%'
+		</if>
+		<if test="params.sptwType != null  and params.sptwType != ''">
+			and WTTYPEID = #{ params.sptwType } 
+		</if>
+		<if test="params.eqName != null  and params.eqName != ''">
+			and eqName like '%${ params.eqName }%'
+		</if>
+		<if test="params.workContent != null  and params.workContent != ''">
+			and workContent like '%${ params.workContent }%'
+		</if>
+		<if test="params.createUserName != null  and params.createUserName != ''">
+			and createUserName like '%${ params.createUserName }%'
+		</if>
+		<if test="params.approveUserName != null  and params.approveUserName != ''">
+			and approveUserName like '%${ params.approveUserName }%'
+		</if>
+		<if test="params.onRunning != null">
+			AND t.begintime <![CDATA[<]]> #{ params.nowTime } AND t.endtime <![CDATA[>=]]>#{ params.nowTime }
+		</if>
+	</select>
+	
+	
+	<select id="queryPtwStandardBySiteId" resultType="PtwStandardBean">
+		select <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO WHERE 
+		SITEID = #{ params.siteId } AND inUse = #{ params.inUse } 
+		AND isExpire = #{ params.isExpire } and flowStatus != #{ params.flowStatus,jdbcType=VARCHAR }
+		<if test="params.isCancel != null">
+			AND isCancel = #{ params.isCancel } 
+		</if>
+	</select>
+	
+	<select id="querySptoInfoByMultiCode" resultType="PtwStandardBean">
+		select <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO 
+		WHERE  SITEID = #{ params.siteid } AND FLOWSTATUS LIKE '%_flow_std_status_4'
+				<if test="params.sptwCode != null">
+					AND UPPER(WTNO) LIKE '%'||UPPER(#{params.sptwCode})||'%'
+				</if> 	
+				<if test="params.isCancel != null">
+					AND isCancel = #{ params.isCancel }
+				</if> 	 
+				<if test="params.inUse != null">
+					AND inUse = #{ params.inUse } 
+				</if> 	
+				<if test="params.isExpire != null">
+					AND isExpire = #{ params.isExpire } 
+				</if> 	
+	</select>
+	
+	<select id="queryFinishPtwStandardBySiteId" resultType="PtwStandardBean">
+		select <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO T
+		WHERE SITEID = #{ params.siteId } AND isCancel = #{ params.isCancel } 
+				<if test="params.sptwType != null  and params.sptwType != ''">
+					and WTTYPEID = #{ params.sptwType } 
+				</if>
+				<if test="params.onRunning != null">
+					AND t.begintime <![CDATA[<]]> #{ params.nowTime } AND t.endtime <![CDATA[>=]]>#{ params.nowTime }
+				</if>
+				AND inUse = #{ params.inUse } AND isExpire = #{ params.isExpire } and flowStatus = #{ params.flowStatus,jdbcType=VARCHAR }
+	</select>
+	
+	<select id="queryPtwStandardByEqId" resultType="PtwStandardBean">
+		select <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO 
+		WHERE 	SITEID = #{ params.siteId,jdbcType=VARCHAR } AND isCancel = #{ params.isCancel } 
+				<if test="params.sptwType != null  and params.sptwType != ''">
+					and WTTYPEID = #{ params.sptwType } 
+				</if>
+				AND inUse = #{ params.inUse } AND isExpire = #{ params.isExpire } and flowStatus != #{ params.flowStatus,jdbcType=VARCHAR }
+				AND eqNo in (	SELECT A.ASSETID FROM AST_ASSET A  start with A.ASSETID= #{ params.eqId,jdbcType=VARCHAR }
+				connect by prior A.ASSETID= A.parentId  )
+	</select>
+	
+	<select id="queryFinishPtwStandardByEqId" resultType="PtwStandardBean">
+		select <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO T 
+		WHERE  SITEID = #{ params.siteId,jdbcType=VARCHAR } AND 
+				isCancel = #{ params.isCancel } AND 
+				inUse = #{ params.inUse } AND 
+				isExpire = #{ params.isExpire } AND  
+				flowStatus = #{ params.flowStatus,jdbcType=VARCHAR } AND 
+				eqNo in (	SELECT A.ASSETID 
+							FROM AST_ASSET A  start with A.ASSETID= #{ params.eqId,jdbcType=VARCHAR }
+							connect by prior A.ASSETID= A.parentId  )
+				<if test="params.onRunning != null">
+					AND t.begintime <![CDATA[<]]> #{ params.nowTime } AND t.endtime <![CDATA[>=]]>#{ params.nowTime }
+				</if>
+	</select>
+	
+	<select id="querySptwInfoListByCode" resultType="PtwStandardBean">
+		SELECT <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO T
+		WHERE isCancel = 1 AND inUse = 1
+			<if test="id != null">
+				and t.id <![CDATA[<>]]> #{id}
+			</if> 	
+			AND T.SITEID = #{siteid} 
+			AND T.WTNO = #{wtNo}
+			AND T.FLOWSTATUS <![CDATA[<>]]> 'swf_flow_std_status_0'	
+		order by t.version desc
+	</select>
+		
+	<update id="updateValidTime">
+		UPDATE PTW_STD_INFO
+		SET BEGINTIME = #{beginTime,jdbcType=TIMESTAMP},
+			ENDTIME = #{endTime,jdbcType=TIMESTAMP}
+		WHERE ID=#{id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="invalidateOtherSameCodeSptw">
+		UPDATE PTW_STD_INFO t
+		SET t.ENDTIME =  #{ nowTime },
+			t.modifydate =  #{ nowTime },
+			t.modifyuser = #{userId,jdbcType=VARCHAR},
+			t.isExpire = 0
+		WHERE T.FLOWSTATUS = LOWER(#{siteId})||'_flow_std_status_4' AND inUse = 1 AND isExpire = 1 and isCancel = 1 
+			AND T.SITEID = #{siteId} AND T.WTNO = #{wtNo}
+			AND t.id <![CDATA[<>]]> #{id}  
+			AND t.begintime <![CDATA[<]]> #{nowTime }
+			AND t.endtime <![CDATA[>=]]>#{nowTime }		
+	</update>
+	
+	<update id="updatePtwStandard" parameterType="PtwStandardBean">
+		UPDATE PTW_STD_INFO 
+		SET WtTypeId = #{ wtTypeId ,jdbcType=VARCHAR },
+			beginTime= #{ beginTime,jdbcType=TIMESTAMP },
+			endTime= #{ endTime,jdbcType=TIMESTAMP },
+			eqNo= #{ eqNo,jdbcType=VARCHAR  },
+			eqName= #{ eqName ,jdbcType=VARCHAR },
+			workContent= #{ workContent ,jdbcType=VARCHAR },
+			workPlace= #{ workPlace,jdbcType=VARCHAR  },
+			modifyuserName= #{ modifyUserName,jdbcType=VARCHAR  },
+			modifyuser= #{ modifyuser,jdbcType=VARCHAR  }, 
+			modifydate= #{ modifydate,jdbcType=TIMESTAMP }
+		WHERE id = #{ id }
+	</update>
+	
+	<update id="updatePtwStandardStatus" parameterType="PtwStandardBean">
+		UPDATE PTW_STD_INFO SET 
+		modifyuserName= #{ modifyUserName,jdbcType=VARCHAR  },
+		modifyuser= #{ modifyuser,jdbcType=VARCHAR  }, modifydate= #{ modifydate,jdbcType=TIMESTAMP }
+		<if test="beginTime != null">
+			,beginTime= #{ beginTime,jdbcType=TIMESTAMP  }
+		</if>
+		<if test="endTime != null">
+			,endTime= #{ endTime,jdbcType=TIMESTAMP  }
+		</if>
+		<if test="instantId != null">
+			,instantId= #{ instantId,jdbcType=VARCHAR  }
+		</if>
+		<if test="flowStatus != null">
+			,flowStatus= #{ flowStatus,jdbcType=VARCHAR  }
+		</if>
+		<if test="approveUserName != null">
+			,approveUserName= #{ approveUserName,jdbcType=VARCHAR  }
+		</if>
+		<if test="approveUser != null">
+			,approveUser= #{ approveUser,jdbcType=VARCHAR  }
+		</if>
+		<if test="approveDate != null">
+			,approveDate= #{ approveDate,jdbcType=TIMESTAMP  }
+		</if>
+		<if test="version &gt; 0 ">
+			,version= #{ version,jdbcType=INTEGER }
+		</if>
+		WHERE id = #{ id }
+	</update>
+	
+	<update id="deletePtwStandardBaseInfo" parameterType="Map">
+		UPDATE PTW_STD_INFO SET 
+		modifyuserName= #{ modifyUserName,jdbcType=VARCHAR  },
+		modifyuser= #{ modifyUser,jdbcType=VARCHAR  }, modifydate= #{ modifyDate,jdbcType=TIMESTAMP }
+		<if test="inUse != null">
+			,inUse= #{ inUse,jdbcType=INTEGER  }
+		</if>
+		<if test="isCancel != null">
+			,isCancel= #{ isCancel,jdbcType=INTEGER },cancelDate= #{ cancelDate,jdbcType=TIMESTAMP },
+			cancerUser= #{ cancerUser,jdbcType=VARCHAR },cancelUserName= #{ cancelUserName,jdbcType=VARCHAR }
+		</if>
+		<if test="isExpire != null">
+			,isExpire= #{ isExpire,jdbcType=INTEGER  }
+		</if>
+		<if test="flowStatus != null">
+			,flowStatus= #{ flowStatus,jdbcType=VARCHAR  }
+		</if>
+		WHERE id = #{ id }
+	</update>
+	
+	<delete id="deletePtwStdSafeByWtId" parameterType="String">
+		DELETE FROM PTW_STD_SAFE WHERE wtId = #{ id }
+	</delete>
+	
+	<insert id="insertBacthPtwStdSafe" parameterType="java.util.List">
+		insert into  PTW_STD_SAFE( id,wtId, SAFECONTENT, SAFETYPE,  SAFEORDER ) 
+		select temp.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			select  #{item.id,jdbcType=VARCHAR } id , #{item.wtId,jdbcType=VARCHAR} wtId , 
+			#{item.safeContent,jdbcType=VARCHAR} SAFECONTENT , #{item.safeType,jdbcType=VARCHAR} SAFETYPE, 
+			#{item.safeOrder,jdbcType=INTEGER } SAFEORDER
+			from dual
+		</foreach>
+		) temp		
+	</insert>
+	
+	<insert id="insertPtwStdBaseInfo" parameterType="PtwStandardBean" >
+		insert into PTW_STD_INFO( 
+			id, WtTypeId, WtNo, eqNo, 
+			sheetNo,beginTime,endTime,
+			eqName, workContent, workPlace, 
+			isCheck, checkDate, isExpire,
+			isCancel, inUse, createuserName, createuser,
+			createDate, deptId, siteId, flowStatus ) 
+		values(
+			#{ id,jdbcType=VARCHAR }, #{ wtTypeId,jdbcType=VARCHAR },#{ wtNo,jdbcType=VARCHAR },#{ eqNo,jdbcType=VARCHAR },
+			#{ sheetNo,jdbcType=VARCHAR },#{ beginTime,jdbcType=TIMESTAMP },#{ endTime,jdbcType=TIMESTAMP },
+			#{ eqName,jdbcType=VARCHAR }, #{ workContent,jdbcType=VARCHAR },#{ workPlace,jdbcType=VARCHAR },
+			#{ isCheck,jdbcType=INTEGER },#{ checkDate,jdbcType=TIMESTAMP },#{ isExpire,jdbcType=INTEGER },
+			#{ isCancel,jdbcType=INTEGER }, #{ inUse,jdbcType=INTEGER },#{ createUserName,jdbcType=VARCHAR },#{ createuser,jdbcType=VARCHAR },
+			#{ createdate,jdbcType=TIMESTAMP },#{ deptid,jdbcType=VARCHAR },#{ siteid,jdbcType=VARCHAR },#{ flowStatus,jdbcType=VARCHAR }
+		)
+	</insert>
+	
+	<select id="queryPtwStandardById" parameterType="String" resultType="PtwStandardBean" >
+		SELECT <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO WHERE 
+		ID = #{ id }
+	</select>
+	
+	<select id="queryPtwStdSafeByWtId" parameterType="String" resultType="PtwStdSafeBean" >
+		SELECT <include refid="ptwStdSafeBeanField"></include>
+		FROM PTW_STD_SAFE WHERE 
+		wtId = #{ id } ORDER BY SAFEORDER ASC
+	</select>
+	
+	<select id="getMaxVersionByCode" resultType="java.lang.Integer">
+		SELECT NVL(MAX(nvl(T.VERSION,0)),0)
+		FROM PTW_STD_INFO T
+		WHERE T.WTNO = #{wtNo} and t.siteid=#{siteid}
+	</select>
+	
+	
+	<select id="querySameCodeSptwListByCode" resultMap="sptwInfoMap">
+		SELECT  <include refid="ptwStandardBeanField"></include>
+		FROM PTW_STD_INFO T
+		WHERE  isCancel = 1 AND inUse = 1
+				<if test="params.id != null">
+					and t.id <![CDATA[<>]]> #{params.id}
+				</if> 
+				AND T.SITEID = #{params.siteid} 
+				AND T.WTNO = #{params.wtNo}	
+		order by t.version desc
+	</select>
+	
+</mapper> 

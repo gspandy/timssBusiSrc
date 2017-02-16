@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.PayplanDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+    
+
+     <resultMap type="com.timss.pms.vo.PayplanVo" id="payplanVoMap">
+		<id property="id" column="id"/>
+		<result property="contractId" column="contract_id"/>
+		<result property="payType" column="pay_type"/>
+		<result property="paySum" column="pay_sum"/>
+		<result property="percent" column="percent"/>
+		<result property="needchecked" column="needchecked"/>
+		<result property="payStatus" column="pay_status"/>
+		<result property="checkStatus" column="check_status"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+	</resultMap>
+
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,contract_id,pay_type,pay_sum,percent,nvl(needchecked,1) as needchecked,check_status,pay_status,siteid,create_time,create_user
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+
+<insert id="insertPayplanList" >
+    	INSERT INTO TIM_PMS_PAYPLAN(ID,CONTRACT_ID,PAY_TYPE,PAY_SUM,PERCENT,NEEDCHECKED,CHECK_STATUS,PAY_STATUS,SITEID,CREATE_TIME,CREATE_USER)
+    	SELECT SEQ_PMS_PAYPLAN.NEXTVAL,TEMP.* FROM(
+        <foreach collection="list" item="item" index="index" separator="union all">
+            SELECT  #{item.contractId,jdbcType=NUMERIC},#{item.payType,jdbcType=VARCHAR},#{item.paySum,jdbcType=NUMERIC}
+       			 ,#{item.percent,jdbcType=NUMERIC},#{item.needchecked,jdbcType=VARCHAR},#{item.checkStatus,jdbcType=VARCHAR},
+       			 #{item.payStatus,jdbcType=VARCHAR},#{item.siteid,jdbcType=VARCHAR},
+       			 #{item.createTime,jdbcType=TIMESTAMP},#{item.createUser,jdbcType=VARCHAR}
+            FROM DUAL
+        </foreach>
+        ) TEMP
+</insert>
+
+<select id="queryPayplanListByContractId" resultMap="payplanVoMap">
+	select <include refid="columnBasic" />
+	from Tim_Pms_Payplan t
+	where t.contract_id=#{id} 
+</select>
+
+<select id="queryPayplanById" resultMap="payplanVoMap">
+	select <include refid="columnBasic" />
+	from Tim_Pms_Payplan t
+	where t.id=#{id} 
+</select>
+
+<update id="updatePayplanCheckStatus">
+	update Tim_Pms_Payplan t
+	set check_status=#{checkStatus}
+	where t.id=#{id}
+</update>
+
+
+<update id="updatePayplan">
+	update Tim_Pms_Payplan t
+	set pay_type=#{payType,jdbcType=VARCHAR},pay_sum=#{paySum,jdbcType=NUMERIC},percent=#{percent,jdbcType=NUMERIC},
+		needchecked=#{needchecked,jdbcType=NUMERIC}
+	where t.id=#{id}
+</update>
+<update id="updatePayplanPayStatus">
+	update Tim_Pms_Payplan t
+	set pay_status=#{payStatus}
+	where t.id=#{id}
+</update>
+
+<delete id="deletePayplanByContractId">
+	delete Tim_Pms_Payplan t
+	where t.contract_id=#{contractId}
+</delete>
+
+<delete id="deletePayplanById">
+	delete Tim_Pms_Payplan t
+	where t.id=#{id}
+</delete>
+</mapper>

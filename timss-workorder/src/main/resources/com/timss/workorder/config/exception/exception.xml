@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 系统容错框架配置文件 -->
+<!-- 
+	class 为异常类，当业务层或控制层跑出class定义的异常后，view层会返回所定义的数据
+	default表示未定义的异常采用的通用处理。
+	所有的jar包都已在config/exception/exception.xml文件中定义自己的异常控制
+ -->
+<exceptions>
+	<exception name="timssRunException" class="com.timss.framework.exception.TimssRunException">
+		<page>\framework\exception\timssRunException.jsp</page>
+		<data>
+			<flag>-100001</flag>
+			<msg>系统运行错误</msg>
+		</data>
+	</exception>
+</exceptions>

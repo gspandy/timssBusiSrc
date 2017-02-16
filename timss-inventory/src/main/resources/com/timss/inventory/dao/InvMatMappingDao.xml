@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatMappingDao">
+	<!-- 插入映射表记录 -->
+	<insert id="insertInvMatMapping" parameterType="com.timss.inventory.bean.InvMatMapping">
+		insert into inv_mat_mapping 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> imtdid, </if>
+	      <if test="outterid != null"> outterid, </if>
+	      <if test="tranType != null"> tran_type, </if>
+	      <if test="itemcode != null"> itemcode, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtdid != null"> #{imtdid,jdbcType=VARCHAR}, </if>
+	      <if test="outterid != null"> #{outterid,jdbcType=VARCHAR}, </if>
+	      <if test="tranType != null"> #{tranType,jdbcType=VARCHAR}, </if>
+	      <if test="itemcode != null"> #{itemcode,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 通过imtdid删除映射信息 -->
+	<delete id="deleteMatMappingByImtdid">
+		delete from inv_mat_mapping imm where imm.imtdid=#{params.imtdid}
+	</delete>
+	
+
+
+
+
+	<!-- *********************以下查询都指向了新的流水表***************************** -->
+	<!-- 查询映射表信息 -->
+	<select id="queryInvMatMappingInfo" parameterType="java.util.Map" resultType="com.timss.inventory.bean.InvMatMapping">
+		select * from inv_mat_map imm where imm.outterid=#{outterid} and imm.tran_type=#{type}
+	</select>
+	
+	<!-- 根据外部信息查询映射表中是否存在记录 -->
+	<select id="queryInvMatMappingByOutterInfo" parameterType="java.util.Map" resultType="com.timss.inventory.bean.InvMatMapping">
+		select imm.imtdid,imm.outterid,imm.tran_type 
+		from inv_mat_map imm 
+		where imm.outterid=#{outterId} and imm.tran_type=#{type}
+	</select>
+</mapper>

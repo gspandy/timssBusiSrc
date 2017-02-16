@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwIsolationAreaMethodDao">
+	<insert id="insertPtwIsolationAreaMethod">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_MORE.nextval from dual
+		</selectKey>
+		insert into PTW_ISOLATION_AREA_Method
+		  (id,areaId,methodId)
+		values
+		  (#{id},#{areaId},#{methodId})
+	</insert>
+	
+	<delete id="deleteIslAreaMethodByIslAreaId" parameterType="int" >
+		delete from PTW_ISOLATION_AREA_METHOD where areaId = #{ id }
+	</delete>
+	
+	<select id="queryIsolationMethodList" parameterType="String" resultType="IsMethodPointVo">
+		select * from ( select temp.*, a.assetName POINTNAME from ( SELECT p.id id, p.METHODID STDMETHODID, p.POINTNO POINTNO, m.METHOD METHODNAME 
+		FROM PTW_ISOLATION_POINT_METHOD p 
+		LEFT JOIN PTW_ISOLATION_METHOD_DEFINE m ON p.METHODID = m.id ) temp LEFT JOIN AST_ASSET a on temp.POINTNO = a.assetid ) t where 1 = 1 
+		and t.id in ( select methodId FROM PTW_ISOLATION_AREA_Method where areaId = #{ areaId } )
+	</select>
+</mapper> 

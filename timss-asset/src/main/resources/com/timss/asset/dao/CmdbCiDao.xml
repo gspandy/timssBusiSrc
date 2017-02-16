@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.asset.dao.CmdbCiDao">
+
+	<sql id="cmdbPubCiBeanFields">
+		id, name, ciType, subType, status,
+		responUserId, responUserName, eqId, description, unitId, 
+		unitName, supplierId, supplier, connectUser, connectPhone, isDelete, 
+		deptId, siteId, createUser, createUserName, createDate,
+		modifyUserName, modifyUser, modifyDate,
+		aportId, aportName, bportId, bportName, engineRoomId, engineRoomName, cabinetId, cabinetName
+	</sql>
+	
+	<sql id="cmdbRelationBeanFields" >
+		id, upCiId, upCiType, upCiName, downCiId, downCiType,
+		downCiName, name, isDelete, 
+		deptId, siteId, createUser, createUserName, createDate,
+		modifyUserName, modifyUser, modifyDate		
+	</sql>
+
+    <select id="queryCmdbPubCiBySiteId" resultType="CmdbPubCiBean">
+		SELECT id, name, ciType,  ( select c.paramval from cmdb_params c where c.id = p.subtype ) subtype,
+		( select c.paramval from cmdb_params c where c.id = p.status ) status,
+		responUserId, responUserName, eqId, description, 
+		unitId, 
+		unitName, supplierId, supplier, connectUser, connectPhone, isDelete, 
+		deptId, siteId, createUser, createUserName, createDate,
+		modifyUserName, modifyUser, modifyDate,
+		aportId, aportName, bportId, bportName, engineRoomId, engineRoomName, cabinetId, cabinetName
+		FROM CMDB_PUB_CI P 
+		WHERE P.siteId=#{params.siteId, jdbcType=VARCHAR} 
+		AND P.isDelete = #{ params.isDelete, jdbcType=VARCHAR }
+    </select>
+    
+    <select id="queryCmdbPubCiByCiTypeAndSubType" resultType="CmdbPubCiBean">
+		SELECT id, name, ciType,  ( select c.paramval from cmdb_params c where c.id = p.subtype ) subtype,
+		( select c.paramval from cmdb_params c where c.id = p.status ) status,
+		responUserId, responUserName, eqId, description, 
+		unitId, 
+		unitName, supplierId, supplier, connectUser, connectPhone, isDelete, 
+		deptId, siteId, createUser, createUserName, createDate,
+		modifyUserName, modifyUser, modifyDate,
+		aportId, aportName, bportId, bportName, engineRoomId, engineRoomName, cabinetId, cabinetName
+		FROM CMDB_PUB_CI p 
+		WHERE p.siteId=#{params.siteId, jdbcType=VARCHAR} 
+		AND p.isDelete = #{ params.isDelete, jdbcType=VARCHAR }
+		and p.subtype=( select c.id from cmdb_params c where c.paramtype = 'CMDB_PARAM_1' and c.citype=#{ params.ciType, jdbcType=VARCHAR } and c.paramval=#{ params.subTypeName, jdbcType=VARCHAR } )
+    </select>
+    
+    <select id="queryCmdbPubCiById" parameterType="String" resultType="CmdbPubCiBean">
+		SELECT <include refid="cmdbPubCiBeanFields"></include>
+		FROM CMDB_PUB_CI P 
+		WHERE P.id = #{ id, jdbcType = VARCHAR }
+    </select>
+    
+    <select id="queryCheckCmdbCiName" parameterType="Map" resultType="CmdbPubCiBean">
+		SELECT <include refid="cmdbPubCiBeanFields"></include>
+		FROM CMDB_PUB_CI P 
+		WHERE P.siteId = #{ siteId, jdbcType = VARCHAR } AND P.NAME = #{name, jdbcType=VARCHAR }
+		AND P.isDelete = #{ isDelete, jdbcType = VARCHAR }
+		<if test="id != null and id != '' ">
+			and id != #{ id, jdbcType=VARCHAR }
+		</if>
+    </select>
+    
+    <insert id="insertCmdbPubCiBean" parameterType="CmdbPubCiBean">
+    	INSERT INTO CMDB_PUB_CI(
+    	id, name, ciType, subType, status,
+		responUserId, responUserName, eqId, description, unitId, 
+		unitName, supplierId, supplier, connectUser, connectPhone, isDelete, 
+		deptId, siteId, createUser, createUserName, createDate,
+		aportId, aportName, bportId, bportName, engineRoomId, engineRoomName,cabinetId,cabinetName
+		 )
+		VALUES( #{ id, jdbcType = VARCHAR }, #{ name, jdbcType = VARCHAR }, #{ ciType, jdbcType = VARCHAR }, 
+		#{subType, jdbcType = VARCHAR }, #{ status, jdbcType = VARCHAR }, #{ responUserId, jdbcType = VARCHAR }, 
+		#{ responUserName, jdbcType = VARCHAR }, #{ eqId, jdbcType = VARCHAR }, #{ description, jdbcType = VARCHAR },
+		#{ unitId, jdbcType = VARCHAR }, #{ unitName, jdbcType = VARCHAR }, #{ supplierId, jdbcType = VARCHAR }, #{ supplier, jdbcType = VARCHAR },
+		#{ connectUser, jdbcType = VARCHAR }, #{ connectPhone, jdbcType = VARCHAR }, #{ isDelete, jdbcType = VARCHAR }, 
+		#{ deptid, jdbcType = VARCHAR }, #{ siteid, jdbcType = VARCHAR }, #{ createuser, jdbcType = VARCHAR }, 
+		#{ createUserName, jdbcType = VARCHAR }, #{ createdate, jdbcType = TIMESTAMP },
+		#{aportId, jdbcType=VARCHAR}, #{ aportName, jdbcType=VARCHAR}, #{ bportId, jdbcType=VARCHAR},
+		#{ bportName, jdbcType=VARCHAR},#{ engineRoomId, jdbcType=VARCHAR}, #{ engineRoomName, jdbcType=VARCHAR},
+		#{ cabinetId, jdbcType=VARCHAR}, #{ cabinetName, jdbcType=VARCHAR}
+		)
+    </insert>
+    
+    <update id="updateCmdbPubCiBean" parameterType="CmdbPubCiBean">
+    	UPDATE CMDB_PUB_CI SET  name = #{ name, jdbcType = VARCHAR }, ciType = #{ ciType, jdbcType = VARCHAR },
+    	subType = #{ subType, jdbcType = VARCHAR }, status = #{ status, jdbcType = VARCHAR }, 
+    	responUserId = #{ responUserId, jdbcType = VARCHAR }, responUserName = #{ responUserName, jdbcType = VARCHAR }, 
+		eqId = #{ eqId, jdbcType = VARCHAR }, description = #{ description, jdbcType = VARCHAR }, 
+		unitId = #{ unitId, jdbcType = VARCHAR }, unitName = #{ unitName, jdbcType = VARCHAR }, supplierId = #{ supplierId, jdbcType = VARCHAR },
+		supplier = #{ supplier, jdbcType = VARCHAR }, connectUser = #{ connectUser, jdbcType = VARCHAR }, 
+		connectPhone = #{ connectPhone, jdbcType = VARCHAR }, modifyUserName = #{ modifyUserName, jdbcType = VARCHAR }, 
+		modifyUser = #{ modifyuser, jdbcType = VARCHAR }, modifyDate = #{ modifydate, jdbcType = TIMESTAMP },
+		aportId = #{aportId, jdbcType=VARCHAR}, aportName = #{ aportName, jdbcType=VARCHAR},
+		bportId = #{ bportId, jdbcType=VARCHAR}, bportName = #{ bportName, jdbcType=VARCHAR},
+		engineRoomId = #{ engineRoomId, jdbcType=VARCHAR}, engineRoomName = #{ engineRoomName, jdbcType=VARCHAR},
+		cabinetId = #{ cabinetId, jdbcType=VARCHAR}, cabinetName = #{ cabinetName, jdbcType=VARCHAR}
+		WHERE ID= #{ id, jdbcType = VARCHAR }
+    </update>
+    
+    <update id="deleteCmdbPubCiById" parameterType="CmdbPubCiBean">
+    	UPDATE CMDB_PUB_CI SET isDelete=#{ isDelete, jdbcType = VARCHAR },modifyUserName=#{ modifyUserName, jdbcType = VARCHAR },
+		modifyuser=#{ modifyuser, jdbcType = VARCHAR },modifydate=#{ modifydate, jdbcType = TIMESTAMP }
+		WHERE ID= #{ id, jdbcType = VARCHAR }
+    </update>
+    
+    <select id="queryCiRelation" resultType="CmdbRelationBean">
+    	<!-- SELECT TEMP.* FROM ( SELECT <include refid="cmdbRelationBeanFields"></include>
+    	FROM CMDB_RELATION C WHERE ( upCiId = #{ params.ciId, jdbcType=VARCHAR } OR downCiId = #{ params.ciId, jdbcType=VARCHAR } ) 
+    	AND C.ISDELETE = #{ params.isDelete, jdbcType=VARCHAR } ) TEMP 
+    	WHERE TEMP.upCiId IN ( SELECT P.ID FROM CMDB_PUB_CI  P WHERE P.ISDELETE = #{ params.isDelete, jdbcType=VARCHAR } )
+    	AND TEMP.downCiId IN ( SELECT P.ID FROM CMDB_PUB_CI  P WHERE P.ISDELETE = #{ params.isDelete, jdbcType=VARCHAR } ) -->
+    	select temp.id, temp.upciid, temp.upCiName,  temp.upCiType, temp.downciid, ci.name downCiName, ci.citype downCiType  from ( 
+			select t.id, t.upciid, p.name upCiName, p.citype upCiType,  t.downciid from (
+			 select c.id, c.upciid , c.downciid from CMDB_RELATION C  where ( C.upCiId = #{ params.ciId, jdbcType=VARCHAR }
+			 OR C.downCiId =#{ params.ciId, jdbcType=VARCHAR } ) 
+    	AND C.ISDELETE =  #{ params.isDelete, jdbcType=VARCHAR } ) T 
+    	inner join ( select * from CMDB_PUB_CI where ISDELETE =  #{ params.isDelete, jdbcType=VARCHAR } ) P on t.upciid = p.id ) temp
+			inner join ( select * from CMDB_PUB_CI where ISDELETE =  #{ params.isDelete, jdbcType=VARCHAR } ) CI on temp.downciid = CI.id
+    	
+    </select>
+    
+     <select id="queryHintCmdbRelationByName"  parameterType="Map" resultType="CmdbPubCiBean" >
+     	SELECT <include refid="cmdbPubCiBeanFields"></include>
+		FROM CMDB_PUB_CI P 
+		WHERE P.id != #{ ciId, jdbcType = VARCHAR } AND P.isDelete=#{ isDelete, jdbcType = VARCHAR }
+		<if test="kw != null and kw != '' ">
+			and P.name like #{kw, jdbcType = VARCHAR }
+		</if>
+		<if test="ciType != null and ciType != '' ">
+			and P.ciType = #{ciType, jdbcType = VARCHAR }
+		</if>
+		and rownum&lt;=20 order by P.name 
+     </select>
+     
+     <insert id="insertCmdbRelationBean" parameterType="CmdbRelationBean">
+     	INSERT INTO CMDB_RELATION( id, upCiId, upCiType, upCiName, downCiId, downCiType,
+		downCiName, name, isDelete, 
+		deptId, siteId, createUser, createUserName, createDate
+		) VALUES(
+			 #{ id, jdbcType = VARCHAR }, #{ upCiId, jdbcType = VARCHAR }, #{ upCiType, jdbcType = VARCHAR },
+			 #{ upCiName, jdbcType = VARCHAR }, #{ downCiId, jdbcType = VARCHAR }, #{ downCiType, jdbcType = VARCHAR }, 
+			 #{ downCiName, jdbcType = VARCHAR }, #{ name, jdbcType = VARCHAR }, #{ isDelete, jdbcType = VARCHAR }, 
+			 #{ deptid, jdbcType = VARCHAR }, #{ siteid, jdbcType = VARCHAR }, #{ createuser, jdbcType = VARCHAR }, 
+			 #{ createUserName, jdbcType = VARCHAR }, #{ createdate, jdbcType = TIMESTAMP }
+		)
+     </insert>
+     
+     <update id="updateCmdbRelationBean" parameterType="CmdbRelationBean" >
+     	UPDATE CMDB_RELATION SET upCiId = #{ upCiId, jdbcType = VARCHAR }, 
+     	upCiType = #{ upCiType, jdbcType = VARCHAR }, upCiName = #{ upCiName, jdbcType = VARCHAR }, 
+     	downCiId = #{ downCiId, jdbcType = VARCHAR }, downCiType = #{ downCiType, jdbcType = VARCHAR }, 
+     	downCiName = #{ downCiName, jdbcType = VARCHAR }, name = #{ name, jdbcType = VARCHAR }, 
+		modifyUserName = #{ modifyUserName, jdbcType = VARCHAR }, modifyuser = #{ modifyuser, jdbcType = VARCHAR },
+		modifydate = #{ modifydate, jdbcType = TIMESTAMP } where  id = #{id, jdbcType = VARCHAR }
+     </update>
+     
+     <select id="queryCmdbRelationIsExist" parameterType="Map" resultType="int">
+     	SELECT COUNT(*) FROM CMDB_RELATION C WHERE ( ( C.upCiId = #{ upCiId, jdbcType = VARCHAR }
+     	AND C.downCiId = #{ downCiId, jdbcType = VARCHAR } ) OR
+     	( C.downCiId = #{ upCiId, jdbcType = VARCHAR }
+     	AND C.upCiId = #{ downCiId, jdbcType = VARCHAR } ) ) AND C.isDelete=#{ isDelete, jdbcType = VARCHAR }
+     	
+     </select>
+     
+     <update id="deleteCmdbRelationById" parameterType="CmdbRelationBean">
+    	UPDATE CMDB_RELATION SET isDelete=#{ isDelete, jdbcType = VARCHAR },modifyUserName=#{ modifyUserName, jdbcType = VARCHAR },
+		modifyuser=#{ modifyuser, jdbcType = VARCHAR },modifydate=#{ modifydate, jdbcType = TIMESTAMP }
+		WHERE ID= #{ id, jdbcType = VARCHAR }
+    </update>
+     
+     <select id="queryCmdbRelationById" parameterType="String" resultType="CmdbRelationBean">
+     <!-- SELECT <include refid="cmdbRelationBeanFields"></include>
+    	FROM CMDB_RELATION C WHERE C.ID = #{ id, jdbcType = VARCHAR } -->
+    	select temp.id, temp.upciid, temp.upCiName,  temp.upCiType, temp.downciid, ci.name downCiName, ci.citype downCiType  from ( 
+			select t.id, t.upciid, p.name upCiName, p.citype upCiType,  t.downciid from (
+			 select c.id, c.upciid , c.downciid from CMDB_RELATION C  where c.id = #{ id, jdbcType = VARCHAR } ) T 
+			inner join CMDB_PUB_CI P on t.upciid = p.id ) temp
+			inner join CMDB_PUB_CI CI on temp.downciid = CI.id
+     </select>
+     
+</mapper>

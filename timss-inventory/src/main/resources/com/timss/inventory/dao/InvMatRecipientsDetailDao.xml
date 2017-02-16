@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatRecipientsDetailDao">
+	<resultMap type="com.timss.inventory.bean.InvMatRecipientsDetail" id="InvMatRecipientsDetailMap">
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="qtyApply" column="qty_apply"/>
+		<result property="siteId" column="site_id"/>
+	</resultMap>
+	
+	<!-- 插入领用情况详细信息 -->
+	<insert id="insertInvMatRecipientsDetail" parameterType="com.timss.inventory.bean.InvMatRecipientsDetail">
+		insert into inv_mat_recipients_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imrdid != null"> imrdid, </if>
+	      <if test="imrid != null"> imrid, </if>
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="outstockqty != null"> outstockqty, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="qtyApply != null"> qty_apply, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="binid != null"> binid, </if>
+	      <if test="imadid != null"> imadid, </if>
+	      <if test="isled != null"> isled, </if>
+	      <if test="invcateid != null"> invcateid, </if>
+	      <if test="price != null"> price, </if>
+	      <if test="noTaxPrice != null"> no_tax_price, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imrdid != null"> #{imrdid,jdbcType=VARCHAR}, </if>
+	      <if test="imrid != null"> #{imrid,jdbcType=VARCHAR}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="outstockqty != null"> #{outstockqty,jdbcType=NUMERIC}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="qtyApply != null"> #{qtyApply,jdbcType=NUMERIC}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="binid != null"> #{binid,jdbcType=VARCHAR}, </if>
+	      <if test="imadid != null"> #{imadid,jdbcType=VARCHAR}, </if>
+	      <if test="isled != null"> #{isled,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> #{price,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPrice != null"> #{noTaxPrice,jdbcType=NUMERIC}, </if>
+	    </trim>
+	</insert>
+	
+	<update id="updateInvMatRecipientsDetail" parameterType="com.timss.inventory.bean.InvMatRecipientsDetail">
+		update inv_mat_recipients_detail t
+		<set>
+	      <if test="outstockqty != null"> t.outstockqty=#{outstockqty,jdbcType=NUMERIC}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="qtyApply != null"> t.qty_apply=#{qtyApply,jdbcType=NUMERIC}, </if>
+	      <if test="isled != null"> t.isled=#{isled,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> t.price=#{price,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPrice != null"> t.no_tax_price=#{noTaxPrice,jdbcType=NUMERIC}, </if>
+	    </set>
+		where t.imrdid=#{imrdid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 通过imrid查询详细信息 -->
+	<select id="queryinvMatRecipientsDetailByImaId" parameterType="java.util.Map" resultMap="InvMatRecipientsDetailMap">
+		select * 
+		from inv_mat_recipients_detail imrd 
+		where imrd.site_id=#{siteId} and imrd.imrid in (
+			select imr.imrid from inv_mat_recipients imr where imr.imaid = #{imaId} and imr.site_id = #{siteId}
+			)
+	</select>
+	
+	<select id="queryIMRDQtyByImaId" parameterType="java.util.Map" resultMap="InvMatRecipientsDetailMap">
+		select imrd.itemid,imrd.qty_apply,sum(imrd.outstockqty) as outstockqty, imrd.invcateid 
+	    from inv_mat_recipients_detail imrd 
+	    where imrd.site_id=#{siteId} and imrd.imrid in (
+	      select imr.imrid from inv_mat_recipients imr where imr.imaid = #{imaId} and imr.site_id = #{siteId}
+	      ) and imrd.isled = 'Y'
+	    group by imrd.itemid,imrd.qty_apply,imrd.invcateid 
+	</select>
+
+	<!-- 根据发料单ID删除发料子表记录 -->
+	<delete id="deleteInvMatRecipientsDetail">
+		delete from inv_mat_recipients_detail t where t.imrid=#{imrId} and t.site_id=#{siteId}
+	</delete>		
+</mapper> 

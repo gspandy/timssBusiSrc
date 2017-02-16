@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.ProjectDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+    <resultMap type="com.timss.pms.bean.Project" id="projectMap">
+		<id property="id" column="id"/>
+		<result property="iseasy" column="iseasy"/>
+		<result property="pyear" column="pyear"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="ptype" column="ptype"/>
+		<result property="planId" column="plan_id"/>
+		<result property="projectCode" column="project_code"/>
+		<result property="projectName" column="project_name"/>
+		<result property="isRs" column="is_rs"/>
+		<result property="property" column="property"/>
+		<result property="applyBudget" column="apply_budget"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="businessLeader" column="business_leader"/>
+		<result property="projectLeader" column="project_Leader"/>
+		<result property="command" column="command"/>
+		<result property="status" column="status"/>
+		<result property="attach" column="attach"/>
+		<result property="siteid" column="siteid"/>
+		
+		<result property="companyId" column="company_id"/>
+		<result property="bidCompName" column="bid_comp_name"/>
+		<result property="bidCompId" column="bid_comp_id"/>
+		
+		<result property="contractingMode" column="contracting_mode"/>
+		<result property="contractAward" column="contract_award"/>
+		<result property="projectExplain" column="project_explain" />
+	</resultMap>
+	
+	<resultMap type="com.timss.pms.vo.ProjectVo" id="projectVoMap">
+		<id property="id" column="id"/>
+		<result property="iseasy" column="iseasy"/>
+		<result property="pyear" column="pyear"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="ptype" column="ptype"/>
+		<result property="planId" column="plan_id"/>
+		<result property="projectCode" column="project_code"/>
+		<result property="projectName" column="project_name"/>
+		<result property="isRs" column="is_rs"/>
+		<result property="property" column="property"/>
+		<result property="applyBudget" column="apply_budget"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="businessLeader" column="business_leader"/>
+		<result property="projectLeader" column="project_Leader"/>
+		<result property="command" column="command"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		<result property="paySum" column="paySum"/>
+		
+		<result property="typeName" column="typeName"/>
+		<result property="attach" column="attach"/>
+		<result property="flowid" column="flowid"/>
+		
+		<result property="companyId" column="company_id"/>
+		<result property="bidCompName" column="bid_comp_name"/>
+		<result property="bidCompId" column="bid_comp_id"/>
+		
+		<result property="contractingMode" column="contracting_mode"/>
+		<result property="contractAward" column="contract_award"/>
+		<result property="projectExplain" column="project_explain" />
+	</resultMap>
+	<resultMap type="com.timss.pms.vo.ProjectDtlVo" id="projectDtlVoMap">
+		<id property="id" column="id"/>
+		<result property="iseasy" column="iseasy"/>
+		<result property="pyear" column="pyear"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="ptype" column="ptype"/>
+		<result property="planId" column="plan_id"/>
+		<result property="projectCode" column="project_code"/>
+		<result property="projectName" column="project_name"/>
+		<result property="isRs" column="is_rs"/>
+		<result property="property" column="property"/>
+		<result property="applyBudget" column="apply_budget"/>
+		<result property="customManager" column="custom_manager"/>
+		<result property="businessLeader" column="business_leader"/>
+		<result property="projectLeader" column="project_Leader"/>
+		<result property="command" column="command"/>
+		<result property="status" column="status"/>
+		<result property="siteid" column="siteid"/>
+		
+		<result property="typeName" column="typeName"/>
+		
+		<result property="planName" column="planName" />
+		<result property="attach" column="attach"/>
+		<result property="createUser" column="create_user" />
+		<result property="createTime" column="create_time" />
+		
+		<result property="companyId" column="company_id"/>
+		<result property="bidCompName" column="bid_comp_name"/>
+		<result property="bidCompId" column="bid_comp_id"/>
+		
+		<result property="contractingMode" column="contracting_mode"/>
+		<result property="contractAward" column="contract_award"/>
+		<result property="projectExplain" column="project_explain" />
+	</resultMap>
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,pyear,start_time,end_time,ptype,plan_id,project_code,
+		project_name,is_rs,property,apply_budget,custom_manager,business_leader,project_leader,command,del_flag,status,attach
+		,company_id,bid_comp_name,bid_comp_id,contracting_mode,contract_award,project_explain
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+	
+	<sql id="columnDtlVo">
+		<include refid="columnVo"/>,plan.plan_name planName
+	</sql>
+
+<insert id="insertProject" parameterType="com.timss.pms.bean.Project">
+    <selectKey resultType="int" keyProperty="id" order="BEFORE">
+        select SEQ_PMS_PROJECT.nextval from dual
+    </selectKey>
+    insert into Tim_Pms_Project(<include refid="columnBasic"/>,create_time,create_user,siteid ,flowNo) 
+    values (#{id},#{pyear,jdbcType=VARCHAR},#{startTime,jdbcType=TIMESTAMP},#{endTime,jdbcType=TIMESTAMP},#{ptype,jdbcType=VARCHAR},#{planId,jdbcType=VARCHAR},#{projectCode,jdbcType=VARCHAR},#{
+		projectName,jdbcType=VARCHAR},#{isRs,jdbcType=BOOLEAN},#{property,jdbcType=VARCHAR},#{applyBudget,jdbcType=NUMERIC},#{customManager,jdbcType=VARCHAR},#{businessLeader,jdbcType=VARCHAR}
+		,#{projectLeader,jdbcType=VARCHAR},#{command,jdbcType=VARCHAR},0,#{status,jdbcType=VARCHAR},#{attach,jdbcType=VARCHAR}
+		,#{companyId,jdbcType=VARCHAR},#{bidCompName,jdbcType=VARCHAR},#{bidCompId,jdbcType=VARCHAR},
+		#{contractingMode,jdbcType=VARCHAR},#{contractAward,jdbcType=VARCHAR},#{projectExplain,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+    #{createUser,jdbcType=VARCHAR},#{siteid,jdbcType=VARCHAR},#{flowNo,jdbcType=VARCHAR})
+</insert>
+
+<update id="updateProject" parameterType="com.timss.pms.bean.Project">
+    update Tim_Pms_Project set pyear=#{pyear,jdbcType=VARCHAR},start_time=#{startTime,jdbcType=TIMESTAMP},end_time=#{endTime,jdbcType=TIMESTAMP},
+             ptype=#{ptype,jdbcType=VARCHAR},plan_id=#{planId,jdbcType=VARCHAR},project_code=#{projectCode,jdbcType=VARCHAR},
+             project_name=#{projectName,jdbcType=VARCHAR},is_rs=#{isRs,jdbcType=BOOLEAN},property=#{property,jdbcType=VARCHAR},
+             apply_budget=#{applyBudget,jdbcType=NUMERIC},custom_manager=#{customManager,jdbcType=VARCHAR},
+             business_leader=#{businessLeader,jdbcType=VARCHAR},project_leader=#{projectLeader,jdbcType=VARCHAR},
+             command=#{command,jdbcType=VARCHAR},status=#{status,jdbcType=VARCHAR},attach=#{attach,jdbcType=VARCHAR},
+             update_time=#{updateTime,jdbcType=TIMESTAMP},update_user=#{updateUser,jdbcType=VARCHAR}
+             ,company_id=#{companyId,jdbcType=VARCHAR},bid_comp_name=#{bidCompName,jdbcType=VARCHAR}
+             ,bid_comp_id=#{bidCompId,jdbcType=VARCHAR},
+             contracting_mode=#{contractingMode,jdbcType=VARCHAR},contract_award=#{contractAward,jdbcType=VARCHAR},
+             project_explain=#{projectExplain,jdbcType=VARCHAR}
+     where id=#{id}
+</update>
+
+<select id="queryProjectList"  resultMap="projectVoMap">
+    select  t.id,t.pyear,t.start_time,t.end_time,t.ptype,t.plan_id,t.project_code ,
+       t.project_name,t.property,t.apply_budget,t.custom_manager,t.business_leader,t.project_leader,t.status,
+       t.siteid,wf.id as flowid,t.company_id,
+		t.bid_comp_id,t.bid_comp_name,t.contracting_mode,t.contract_award,t.flowNo
+    from Tim_Pms_Project t
+    left join Tim_PMS_workflow_business wf on wf.business_id='project_' || t.id
+    where t.del_flag='0' and t.status!='voided'
+</select>
+
+<select id="queryProjectListAndFilter"  resultMap="projectVoMap">
+    select  t.id,t.pyear,t.start_time,t.end_time,t.ptype,t.plan_id,t.project_code ,
+       t.project_name,t.property,t.apply_budget,t.custom_manager,t.business_leader,t.project_leader,t.status,
+       t.siteid,wf.id as flowid,t.company_id,
+		t.bid_comp_id,t.bid_comp_name,t.contracting_mode,t.contract_award,b.enum_val as company_name,
+		to_char(t.start_time,'yyyy-MM-dd')||'~'||to_char(t.end_time,'yyyy-MM-dd') as timeArrange,
+		decode(t.property,'income','收入','成本') as propertyName,
+		B1.enum_val as statusName,t.flowNo
+    from Tim_Pms_Project t
+    left join Tim_PMS_workflow_business wf on wf.business_id='project_' || t.id
+    LEFT JOIN B_ENUM B1 ON B1.ECAT_CODE = 'PMS_STATUS' AND B1.ENUM_CODE = T.STATUS AND B1.SITEID = T.SITEID
+    LEFT JOIN B_ENUM B ON B.ECAT_CODE = 'PMS_PROJECT_SUBCOMP' AND B.ENUM_CODE = T.COMPANY_ID AND B.SITEID=T.SITEID
+    where t.del_flag='0' 
+</select>
+
+<select id="queryProjectListByPlanId"  resultMap="projectVoMap">
+    select <include refid="columnVo"/> ,t.siteid,t.flowNo
+    from Tim_Pms_Project t
+    where t.del_flag='0' and t.plan_id=#{planId} and t.status!='voided'
+    
+</select>
+
+<select id="queryProjectPaySumById"  resultType="double">
+    select  sum(pay.actualpay)
+    from Tim_Pms_Project t    
+    left join Tim_Pms_Contract con on con.project_id=t.id     
+    left join Tim_Pms_Pay pay on pay.contract_id=con.id and pay.status='approved'   
+    where t.del_flag='0'  and t.id=#{projectId}
+    group by t.id
+</select>
+
+<select id="selectByCodeAndSiteid"  resultType="int">
+    select count(t.id)
+    from Tim_Pms_Project t
+    where t.del_flag='0' and t.siteid=#{siteid} and t.project_code=#{projectCode} and t.status!='voided'
+</select>
+<select id="queryProjectById"  resultMap="projectDtlVoMap">
+    select t.id,t.pyear,t.start_time,t.end_time,t.ptype,t.plan_id,t.project_code,t.create_time,t.create_user,
+		t.project_name,t.is_rs,t.property,t.apply_budget,t.custom_manager,t.business_leader,
+		t.project_leader,t.command,t.del_flag,t.status,t.attach,plan.plan_name planName,t.company_id,
+		t.bid_comp_id,t.bid_comp_name,t.contracting_mode,t.contract_award,t.project_explain,t.flowNo
+    from Tim_Pms_Project t
+    left join Tim_Pms_Plan plan on plan.id=t.plan_id
+    where t.del_flag='0' and t.id=#{id}
+</select>
+
+<select id="selectByNameAndSiteid"  resultType="int">
+    select count(t.id)
+    from Tim_Pms_Project t
+    where t.del_flag='0' and t.siteid=#{siteid} and t.project_name=#{projectName} and t.status!='voided'
+</select>
+<delete id="deleteProject" parameterType="int">
+    delete from Tim_Pms_Project t where id=#{id}
+</delete>
+
+<select id="queryProjectDetailByYear" resultMap="projectVoMap">
+	select  t.pyear,t.property,sum(pay.actualpay) as paySum,sum(t.apply_budget) as applyBudget
+    from Tim_Pms_Project t    
+    left join Tim_Pms_Contract con on con.project_id=t.id and con.status='approved'    
+    left join Tim_Pms_Pay pay on pay.contract_id=con.id and pay.status='approved'   
+    where t.del_flag='0'  and t.pyear=#{pyear} and t.status='approved' and t.siteid=#{siteid}
+    group by t.pyear,t.property
+</select>
+<select id="queryProjectListWithCodePrefix" resultMap="projectVoMap">
+    select  t.id,t.pyear,t.start_time,t.end_time,t.ptype,t.plan_id,t.project_code ,
+       t.project_name,t.property,t.apply_budget,t.custom_manager,t.business_leader,t.project_leader,t.status,
+       t.siteid,t.company_id,
+		t.bid_comp_id,t.bid_comp_name,t.contracting_mode,t.contract_award,b.enum_val as company_name
+    from Tim_Pms_Project t
+    LEFT JOIN B_ENUM B ON B.ECAT_CODE = 'PMS_PROJECT_SUBCOMP' AND B.ENUM_CODE = T.COMPANY_ID AND B.SITEID=T.SITEID
+    where t.del_flag='0' and t.status!='voided'
+    <if test="prefix !=null and prefix != ''">
+    	and t.project_code like #{prefix}||'%'
+    </if>
+    order by t.project_code asc
+</select>
+<select id="queryProjectListWithFlowNoPrefix" resultMap="projectVoMap">
+    select  t.id,t.pyear,t.start_time,t.end_time,t.ptype,t.plan_id,t.project_code ,
+       t.project_name,t.property,t.apply_budget,t.custom_manager,t.business_leader,t.project_leader,t.status,
+       t.siteid,t.company_id,
+		t.bid_comp_id,t.bid_comp_name,t.contracting_mode,t.contract_award,b.enum_val as company_name,t.flowNo
+    from Tim_Pms_Project t
+    LEFT JOIN B_ENUM B ON B.ECAT_CODE = 'PMS_PROJECT_SUBCOMP' AND B.ENUM_CODE = T.COMPANY_ID AND B.SITEID=T.SITEID
+    where t.del_flag='0' and t.status!='voided'
+    <if test="prefix !=null and prefix != ''">
+    	and t.flowno like #{prefix}||'%'
+    </if>
+    order by t.flowno asc
+</select>
+<select id="selectByFlowNoAndSiteid"  resultType="int">
+    select count(t.id)
+    from Tim_Pms_Project t
+    where t.del_flag='0' and t.siteid=#{siteid} and t.flowno=#{flowNo} and t.status!='voided'
+</select>
+<!-- 当使用该Mybatis与Spring整合的时候，该文件必须和相应的Mapper接口文件同名，并在同一路径下 -->
+</mapper>

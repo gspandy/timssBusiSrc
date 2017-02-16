@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.workorder.dao.JPPreHazardDao">
+
+
+	<resultMap type="JPPreHazard" id="preHazardMap">
+		<id column="ID" property="id" />
+		<result column="JP_ID" property="jobPlanID" />
+		<result column="HAZARD_ID" property="hazardId" />
+		<result column="PRECAUTION_ID" property="precautionId" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+	</resultMap>	
+	   
+	
+	<insert id="insertJPPreHazard">
+		insert into wo_jp_prehazard(ID,JP_ID,PRECAUTION_ID,HAZARD_ID,SITEID,DEPTID) 
+		values(	#{id},
+				#{jobPlanID,jdbcType=NUMERIC},
+				#{precautionId,jdbcType=NUMERIC},
+				#{hazardId,jdbcType=NUMERIC},
+				#{siteid,jdbcType=VARCHAR},
+				#{deptid,jdbcType=VARCHAR}) 
+	</insert>
+	
+	<select id="queryJPPreHazardByJPId" parameterType="int" resultMap="preHazardMap">
+		select * from wo_jp_prehazard t
+		where t.JP_ID = #{jpId}
+	</select>
+	
+	<delete id="deleteJPPreHazardByJPId" parameterType="int" >
+		delete from wo_jp_prehazard t
+		where t.JP_ID = #{jpId}
+	</delete>
+	 
+	 <delete id="deleteJPPreHazardById" parameterType="int" >
+		delete from wo_jp_prehazard t
+		where t.ID = #{preHazardId}
+	</delete>
+	
+	<select id="queryJPPreHazardById" parameterType="int" resultMap="preHazardMap">
+		select * from wo_jp_prehazard where id= #{id}
+	</select>
+	
+	
+</mapper>

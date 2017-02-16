@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvBinDao">
+
+	<!-- 通过物资类别查询所有对应的货柜 -->
+	<select id="queryBinByCategory" parameterType="java.util.Map" resultType="com.timss.inventory.bean.InvBin">
+		select ib.* 
+		from inv_bin ib,inv_category ic 
+		where ib.warehouseid = ic.warehouseid(+) 
+			and ib.site_id = ic.site_id(+)
+      		and ic.invcateid=#{categoryId} 
+      	order by ib.binname asc
+	</select>
+	
+	<select id="queryBinListBySiteId" resultType="InvBin">
+		select t.binid, t.binname, t.warehouseid, t.descriptions, t.active, w.warehousename
+		from inv_bin t
+		left join inv_warehouse w on w.warehouseid=t.warehouseid
+		where t.site_id=#{params.siteId}
+	</select>
+	
+	<select id="queryBinDetail" resultType="InvBin">
+		select t.binid, t.binname, t.warehouseid, t.descriptions, t.active, w.warehousename
+		from inv_bin t
+		left join inv_warehouse w on w.warehouseid=t.warehouseid
+		where t.binid=#{binid}
+	</select>
+	
+	<insert id="insertBinInfo" parameterType="InvBin" >
+    	insert into inv_bin (binid, binname, warehouseid, descriptions, active, site_id)
+    	values (#{binid,jdbcType=VARCHAR},
+    	#{binname,jdbcType=VARCHAR},
+    	#{warehouseid,jdbcType=VARCHAR},
+    	#{descriptions,jdbcType=VARCHAR},
+    	#{active,jdbcType=VARCHAR},
+    	#{siteId,jdbcType=VARCHAR})
+    </insert>
+    
+	<update id="updateBinInfo" parameterType="InvBin">
+    	update inv_bin set 
+    		binname = #{binname,jdbcType=VARCHAR}, 
+    		warehouseid = #{warehouseid,jdbcType=VARCHAR}, 
+    		active = #{active,jdbcType=VARCHAR}, 
+    		descriptions = #{descriptions,jdbcType=VARCHAR}
+    	where binid = #{binid}
+    </update>
+    
+	<delete id="deleteBin">
+    	delete from inv_bin where binid = #{binid}
+    </delete>
+	
+	<select id='queryBinByNameAndWarehouseId' resultType="InvBin">
+        select binid, binname, warehouseid, descriptions, active
+		from inv_bin t
+        where t.binname=#{binname} and t.warehouseid=#{warehouseid}      
+    </select>
+    
+    <select id='queryBinByWarehouseId' resultType="InvBin">
+        select binid, binname, warehouseid, descriptions, active
+		from inv_bin t
+        where t.warehouseid=#{warehouseid} and t.active='Y'     
+    </select>
+</mapper>

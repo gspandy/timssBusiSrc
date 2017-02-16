@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwIslMethodDefineDao">
+
+
+	<select id="queryPtwIsLMethDefList" resultType="PtwIsLMethodDefine">
+		select *
+		from ptw_isolation_method_define
+		where yxbz = 1
+		order by id asc
+	</select>
+
+	<select id="queryPtwIsLMethDefById" resultType="PtwIsLMethodDefine">
+		select *
+		from ptw_isolation_method_define
+		where id = #{id} 
+	</select>
+	
+	<insert id="insertPtwIsLMethDef">
+		<selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select SEQ_PTW_MORE.nextval from dual
+		</selectKey>
+		insert into ptw_isolation_method_define
+		  (id,no,method,siteid,deptid,createuser,modifyuser,
+		  createdate,modifydate,yxbz)
+		values
+		  (#{id},
+		  #{no,jdbcType=VARCHAR},
+		  #{method,jdbcType=VARCHAR},
+		  #{siteid,jdbcType=VARCHAR},
+		  #{deptid,jdbcType=VARCHAR},
+		  #{createuser,jdbcType=VARCHAR},
+		  #{modifyuser,jdbcType=VARCHAR},
+		  #{createdate,jdbcType=TIMESTAMP},
+		  #{modifydate,jdbcType=TIMESTAMP},
+		  #{yxbz,jdbcType=NUMERIC})
+	</insert>
+	
+	<update id="updatePtwIsLMethDef">
+		update ptw_isolation_method_define
+		set no = #{no},
+			method = #{method},
+			modifyuser = #{modifyuser},
+			modifydate = #{modifydate}
+		where id = #{id}
+	</update>
+	
+	<update id="deletePtwIsLMethDefById">
+		update ptw_isolation_method_define
+		set yxbz = 0
+		where id = #{id}
+	</update>
+	
+	
+	<select id="queryPtwIsLMethDefByNo" parameterType="HashMap" resultType="int">
+		select count(*)
+		from ptw_isolation_method_define
+		where yxbz = 1 and siteId = #{siteId} and no = #{no}
+	</select>
+	
+	<select id="queryIsMethodBySiteId"  resultType="IsMethodPointVo">
+		select * from ( select temp.*, a.assetName POINTNAME from ( 
+		SELECT p.id id, p.METHODID STDMETHODID, p.POINTNO POINTNO, m.METHOD METHODNAME 
+		FROM ( SELECT * FROM PTW_ISOLATION_POINT_METHOD where SITEID  = '${ params.siteId }') p 
+		LEFT JOIN PTW_ISOLATION_METHOD_DEFINE m ON p.METHODID = m.id ) temp 
+		LEFT JOIN AST_ASSET a on temp.POINTNO = a.assetid ) t WHERE 1 = 1
+		<if test="params.pointNo != null and params.pointNo != ''">
+		and t.pointNo like '%${params.pointNo }%'
+		</if>
+		<if test="params.pointName != null and params.pointName != ''">
+		and t.POINTNAME like '%${params.pointName }%'
+		</if>
+		<if test="params.methodName != null and params.methodName!= ''">
+		and t.METHODNAME like '%${params.methodName }%'
+		</if>
+		<if test="params.stdMethodId != null and params.stdMethodId!= ''">
+		and t.stdMethodId like '%${params.stdMethodId }%'
+		</if>
+	</select>
+	
+	
+</mapper> 

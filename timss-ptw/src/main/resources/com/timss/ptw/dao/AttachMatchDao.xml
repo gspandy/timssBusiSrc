@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.ptw.dao.AttachMatchDao">
+
+	<resultMap type="PtoAttachment" id="AttachmentMap">
+		<id column="ID" property="id" />
+		<result column="TYPE" property="type" />
+		<result column="ATTACH_ID" property="attachId" />
+		<result column="LOAD_PHASE" property="loadPhase" />
+		<result column="LOAD_TIME" property="loadTime" />
+		<result column="LOAD_USER" property="loadUser" />
+		<result column="DELETE_USER" property="deleteUser" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEL_FLAG" property="delFlag" />
+	</resultMap>	
+	
+	<insert id="insertAttachMatch" >
+		INSERT INTO PTO_ATTACH(ID,TYPE,ATTACH_ID,LOAD_PHASE,LOAD_TIME,LOAD_USER,SITEID,DEL_FLAG) 
+		VALUES( #{id},
+				#{type,jdbcType=VARCHAR},
+				#{attachId,jdbcType=VARCHAR},
+				#{loadPhase,jdbcType=VARCHAR},
+				#{loadTime,jdbcType=TIMESTAMP},
+				#{loadUser,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{delFlag,jdbcType=VARCHAR}
+				) 
+	</insert>
+	
+	<select id="queryAttachMatchById" parameterType="HashMap" resultMap="AttachmentMap">
+		SELECT * 
+		FROM PTO_ATTACH T 
+		WHERE T.ID= #{ id } AND T.TYPE = #{type} and T.DEL_FLAG='N'
+		<if test="loadPhase != null">
+	        AND  LOAD_PHASE=#{loadPhase}
+	    </if>
+	     ORDER BY T.LOAD_TIME ASC
+	</select>
+
+	
+	<!-- 删除附件-->
+	<update id="deleteAttachMatch" parameterType="HashMap">
+		UPDATE PTO_ATTACH T
+		SET  DEL_FLAG= 'Y' , T.DELETE_USER=#{deleteUser}
+		WHERE ID=#{id} AND TYPE=#{type}
+				<if test="attachId != null">
+			        AND ATTACH_ID=#{attachId}
+			    </if>
+	</update>
+</mapper>

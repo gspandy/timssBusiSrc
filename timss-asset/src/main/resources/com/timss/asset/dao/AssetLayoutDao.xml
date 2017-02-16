@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.asset.dao.AssetLayoutDao">
+
+	<select id="queryAllByAssetId" resultType="AssetLayoutBean">
+select c.asset_config_id as layoutId,c.asset_id as assetId,c.field_name as type,c.field_value as value,
+c.create_user as createuser,c.create_date as createdate,c.modify_user as modifyuser,c.modify_date as modifydate,c.site_id as siteid
+from ast_config c
+where c.asset_id=#{assetId}
+order by c.asset_config_id
+    </select>
+	
+	<insert id="batchInsert">
+		insert into ast_config(
+			asset_config_id, asset_id, field_name,field_value, 
+			create_user, create_date, site_id
+		) 
+		select SEQ_AST_CONFIG.nextval,temp.* from (
+		<foreach collection="itemList" item="item" index="index" separator="union all">
+			select 
+				#{ assetId, jdbcType=VARCHAR }, #{ item.type, jdbcType=VARCHAR }, #{ item.value, jdbcType=VARCHAR },
+				#{ createUser, jdbcType=VARCHAR},sysdate,#{ siteId, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+		) temp
+	</insert>
+	
+	<update id="batchUpdate" parameterType="java.util.List">
+		<foreach collection="itemList" item="item" index="index" open="begin" close=";end;" separator=";">
+			update ast_config
+			<set> 
+				field_name=#{ item.type, jdbcType=VARCHAR },
+				field_value=#{ item.value, jdbcType=VARCHAR },
+				modify_user=#{ modifyUser, jdbcType=VARCHAR},
+				modify_date=sysdate
+			</set>	
+			where asset_config_id=#{item.layoutId, jdbcType=NUMERIC}
+		</foreach>
+	</update>
+	
+	<delete id="batchDelete" parameterType="java.util.List" >
+		delete from ast_config where asset_config_id in 
+		<foreach collection="itemList" item="item" index="index" open="(" close=")" separator=",">
+		#{item.layoutId,jdbcType=NUMERIC}
+		</foreach>
+	</delete>
+</mapper>

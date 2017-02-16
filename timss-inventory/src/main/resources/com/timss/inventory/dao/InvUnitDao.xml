@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvUnitDao">
+	<resultMap type="com.timss.inventory.bean.InvUnit" id="InvUnitMap">
+		<result property="siteId" column="site_id"/>
+	</resultMap>
+
+	<select id="queryUnitListBySiteId" resultType="InvUnit">
+		select unitid, unitname, descriptions, active, unitcode
+		from inv_unit
+		where site_id=#{params.siteId} 
+		<if test="params.active == 'Y'.toString()">
+         	and active = #{params.active}
+        </if>
+	</select>
+	
+	<select id="queryUnitDetail" resultType="InvUnit">
+		select unitid, unitname, descriptions, active, unitcode
+		from inv_unit 
+		where unitid=#{id} and site_id=#{siteId}
+	</select>
+	
+	<select id="queryUnitByUnitname" resultType="InvUnit" parameterType="InvUnit">
+		select unitid, unitname, descriptions, active, unitcode
+		from inv_unit 
+		where unitname=#{unitname} and site_id=#{siteId}
+	</select>
+	
+	<insert id="insertUnitInfo" parameterType="InvUnit" >
+    	insert into inv_unit (unitid, unitname, descriptions, active, site_id, unitcode)
+    	values (#{unitid,jdbcType=VARCHAR},
+    	#{unitname,jdbcType=VARCHAR},
+    	#{descriptions,jdbcType=VARCHAR},
+    	#{active,jdbcType=VARCHAR},
+    	#{siteId,jdbcType=VARCHAR},
+    	#{unitcode,jdbcType=VARCHAR})
+    </insert>
+    
+	<update id="updateUnitInfo" parameterType="InvUnit">
+    	update inv_unit set 
+    		unitname = #{unitname,jdbcType=VARCHAR}, 
+    		active = #{active,jdbcType=VARCHAR}, 
+    		descriptions = #{descriptions,jdbcType=VARCHAR}, 
+    		unitcode = #{unitcode,jdbcType=VARCHAR}
+    	where unitid = #{unitid} and site_id = #{siteId,jdbcType=VARCHAR}
+    </update>
+    
+	<update id="updateUnitState">
+    	update inv_unit set 
+    		active = #{state}
+    	where unitid = #{id} and site_id=#{siteId}
+    </update>
+    
+	<delete id="deleteUnit">
+    	delete from inv_unit where unitid = #{id} and site_id=#{siteId}
+    </delete>
+	
+	<select id='queryUnitByCodeAndSiteId' resultType="InvUnit">
+        select unitid, unitname, descriptions, active, unitcode
+		from inv_unit 
+        where site_id=#{siteId} and unitcode=#{code}      
+    </select>
+</mapper> 

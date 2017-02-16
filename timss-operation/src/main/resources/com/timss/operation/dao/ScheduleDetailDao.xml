@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.operation.dao.ScheduleDetailDao">
+
+	<!--说明：#{}内的参数，需要与传入的Rules中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称 -->
+	<select id="getRuleDatagridByUuid" parameterType="String" resultType="CalendarVo">
+		SELECT
+		RD.DAYTIME dayTime, RD.DUTYID dutyId ,RD.SHIFTID shiftId,RD.RULESID rulesId,RD.NAME name, RD.UUID uuid,RD.STATIONID stationId,
+		D.NAME dutyName,C.NAME shiftName, D.SORTTYPE sortType 
+		FROM OPR_RULES_DETAIL RD
+		LEFT JOIN opr_duty D ON RD.DUTYID = D.ID and d.del_ind!='Y' and d.isactive!='N' 
+		LEFT JOIN opr_shift C ON RD.SHIFTID = C.ID and c.del_ind!='Y' and c.isactive!='N' 
+		where RD.UUID = #{ uuid }
+		ORDER BY RD.DAYTIME, D.SORTTYPE
+	</select>
+
+	<select id="getDutyColumnsByUuid" parameterType="String" resultType="int">
+		select COUNT(*) period FROM OPR_RULES_DETAIL where
+		UUID = #{ uuid } and daytime = 1
+	</select>
+	
+	<!-- 批量操作 -->
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into  opr_schedule_detail( id,dateTime, dutyId, shiftId,  stationId, uuid, startFlag ) 
+		select seq_opr_schedule_detail.nextval, temp.* from (
+			<foreach collection="list" item="item" index="index" separator="union all">
+				 select  #{item.dateTime } dateTime , #{item.dutyId} dutyId , #{item.shiftId} shiftId , #{item.stationId} stationId, 
+				 #{item.uuid} uuid, #{item.startFlag } startFlag
+				from dual
+			</foreach>
+		) temp
+	</insert>
+	
+	<insert id="insertScheduleDetail" parameterType="CalendarVo">
+		<!--Oracle中返回自增主键到Rules中的方法 -->
+		 <selectKey resultType="int" keyProperty="id" order="BEFORE">
+			select seq_opr_schedule_detail.nextval from dual
+		</selectKey> 
+		insert into opr_schedule_detail( id, dateTime, dutyId, shiftId,  stationId,uuid )
+		values(#{id}, #{dateTime}, #{dutyId}, #{shiftId},#{stationId}, #{uuid})
+	</insert>
+
+	<select id="queryDetailByScheduleId" resultType="ScheduleDetail">
+		select sd.id id, sd.datetime dateTime, sd.dutyid dutyId, sd.shiftId shiftId,sd.stationId stationId, d.siteId,
+			sd.UUID uuid,sd.STARTFLAG startFlag
+		from opr_schedule_detail sd
+		left join opr_duty d on d.id=sd.dutyId
+		where sd.id=#{scheduleId}
+	</select>
+	
+	<select id="getCalendarByDSD" parameterType="CalendarPageVo" resultType="CalendarVo">
+		select sd.id id, sd.datetime dateTime, sd.dutyid dutyId, sd.shiftId shiftId,sd.stationId stationId,
+		d.name dutyName, 
+		s.name shiftName, s.type shiftType, s.startTime, s.longTime ,
+		dp.name deptName
+		from ( 
+			select * from opr_schedule_detail 
+			where stationid = #{ stationId }
+			and datetime BETWEEN #{ startDate,jdbcType=TIMESTAMP } and #{ endDate,jdbcType=TIMESTAMP }
+			<if test="dutyId!=null and dutyId!=0">
+			 	and dutyId = #{ dutyId }
+			</if>
+			<if test="shiftId!=null and shiftId!=0">
+			 	and shiftId = #{ shiftId }
+			</if>
+		) sd 
+		left join OPR_DUTY d on sd.dutyId = d.id
+		left join OPR_SHIFT s on sd.shiftId = s.id
+		left join opr_dept dp on dp.deptid=sd.stationId
+	</select>
+	
+	<select id="getSameDayCalendarVoById" parameterType="int" resultType="CalendarVo">
+		select sd.id id, sd.datetime dateTime, sd.dutyid dutyId, sd.shiftId shiftId,sd.stationId stationId,
+		d.name dutyName, s.name shiftName, s.type shiftType, s.startTime, s.longTime
+		from 
+		( select * from opr_schedule_detail where stationId in 
+		(select stationId from opr_schedule_detail where id = #{ scheduleId }) 
+		and dateTime in 
+		(select dateTime from opr_schedule_detail where id = #{ scheduleId })
+		) sd 
+		left join OPR_DUTY d on sd.dutyId = d.id
+		left join OPR_SHIFT s on sd.shiftId = s.id
+	</select>
+	
+	<update id="updateCalendar" parameterType="CalendarVo">
+		update opr_schedule_detail set shiftId = #{ shiftId }, uuid = #{ uuid } where id= #{ id }
+	</update>
+	
+	<update id="updateStationCalendar" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+			update opr_schedule_detail 
+			<set> 
+			shiftId = #{ item.shiftId }, uuid = #{ item.uuid }
+			</set> 
+			where stationId = #{ item.stationId } and dateTime = #{ item.dateTime } and dutyId = #{ item.dutyId }
+		</foreach>
+	</update>
+
+	<select id="queryYearCalendarRules" parameterType="HashMap" resultType="CalendarVo">
+		SELECT UUID FROM OPR_SCHEDULE_DETAIL WHERE
+		STATIONID = #{stationId}  AND DATETIME BETWEEN #{yearFristDay} AND #{yearLastDay} 
+		GROUP BY UUID
+	</select>
+	
+	<select id="queryFristCalendar"  resultType="CalendarVo">
+		 SELECT * from OPR_SCHEDULE_DETAIL WHERE uuid = #{params.uuid} and STATIONID = #{params.stationId}
+		 AND DATETIME BETWEEN #{params.yearFristDay} AND #{params.yearLastDay}    
+	</select>
+	
+	<select id="queryLastCalendar" resultType="CalendarVo">
+		SELECT * from OPR_SCHEDULE_DETAIL WHERE UUID = #{params.uuid}  and STATIONID = #{params.stationId}
+		AND DATETIME BETWEEN #{params.yearFristDay} AND #{params.yearLastDay}  
+	</select>
+	
+	<select id="queryScheduleDetailByRulesHistory" parameterType="RulesHistory" resultType="CalendarVo">
+		SELECT * from OPR_SCHEDULE_DETAIL WHERE STATIONID = #{stationId}
+		AND DATETIME BETWEEN #{startTime} AND #{endTime}  
+	</select>
+	
+	<delete id="deleteScheduleDetail" parameterType="RulesHistory" >
+		delete from OPR_SCHEDULE_DETAIL WHERE  STATIONID = #{stationId}
+		AND DATETIME BETWEEN #{startTime} AND #{endTime}  
+	</delete>
+	
+	<select id="querySchedulePersonByScheduleId" parameterType="Integer" resultType="PersonJobs">
+		select distinct p.userId,su.name userName,p.is_present isPresent 
+		from opr_SCHEDULE_person p
+		inner join sec_user su on su.user_id = p.userId
+		where p.SCHEDULEID= #{ scheduleId }
+		<if test="isPresent!=null and isPresent!=''">
+		 	and p.is_present=#{isPresent}
+		</if>
+	</select>
+	
+	<insert id="insertSchedulePersonFromScheduleDutyAndUserIds">
+		INSERT INTO opr_SCHEDULE_person(SCHEDULEID, USERID )  
+select s.id SCHEDULEID,s.userid USERID
+from(
+	select sd.id,sd.dutyid,dp.userid,sp.scheduleid isExist
+	from (
+		select sd.*
+		from opr_schedule_detail sd
+		inner join opr_duty d on d.id=sd.dutyid
+		where 1=1
+		<if test="siteId!=null and siteId!=''">
+		 	and d.siteid=#{siteId}
+		</if>
+		<if test="scheduleIds!=null and scheduleIds.length>0">
+		 	and sd.id in 
+		 	<foreach item="item" collection="scheduleIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="dutyIds!=null and dutyIds.length>0">
+		 	and sd.dutyid in 
+		 	<foreach item="item" collection="dutyIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="stationId!=null and stationId!=''">
+		 	and sd.stationId=#{stationId}
+		</if>
+		<if test="uuid!=null and uuid!=''">
+		 	and sd.uuid=#{uuid}
+		</if>
+		<if test="startDate!=null and startDate!=''">
+		 	and sd.datetime &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null and endDate!=''">
+		 	and sd.datetime &lt;= #{endDate}
+		</if>
+	)sd
+	<choose>
+	<when test="userIds!=null and userIds.length>0">
+		left join (
+		<foreach collection="userIds" item="userId" index="index" separator="union all">
+			select #{userId} USERID 
+			from dual
+		</foreach>
+		) dp on 1=1
+	</when>
+	<otherwise>
+		left join opr_duty_person dp on dp.dutyid=sd.dutyid
+	</otherwise>
+	</choose>	
+	left join opr_schedule_person sp on sp.scheduleid=sd.id and sp.userid=dp.userid
+)s
+where s.isExist is null and s.userid is not null
+	</insert>
+	
+	<update id="updateSchedulePersonIsPresent">
+		update opr_SCHEDULE_person
+		set is_present=#{isPresent,jdbcType=VARCHAR}
+		where scheduleid=#{scheduleId}
+		<if test="userIds != null and userIds.length>0 ">
+		 	and USERID in 
+			<foreach item="item" collection="userIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+	
+	<delete id="deleteSchedulePersonFromScheduleDutyAndUserIds">
+		DELETE FROM opr_SCHEDULE_person p 
+		where exists (
+			select 1
+			from opr_schedule_detail sd
+			inner join opr_duty d on d.id=sd.dutyid
+			where p.scheduleid=sd.id 
+			<if test="siteId!=null and siteId!=''">
+			 	and d.siteid=#{siteId}
+			</if>
+			<if test="scheduleIds!=null and scheduleIds.length>0">
+			 	and sd.id in 
+			 	<foreach item="item" collection="scheduleIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="dutyIds!=null and dutyIds.length>0">
+			 	and sd.dutyid in 
+			 	<foreach item="item" collection="dutyIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="stationId!=null and stationId!=''">
+			 	and sd.stationId=#{stationId}
+			</if>
+			<if test="uuid!=null and uuid!=''">
+			 	and sd.uuid=#{uuid}
+			</if>
+			<if test="startDate!=null and startDate!=''">
+			 	and sd.datetime &gt;= #{startDate}
+			</if>
+			<if test="endDate!=null and endDate!=''">
+			 	and sd.datetime &lt;= #{endDate}
+			</if>
+		)
+		<if test="userIds != null and userIds.length>0 ">
+		 	and USERID in 
+			<foreach item="item" collection="userIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+	<select id="querySchedulePersonAndShiftBySiteAndTime" resultType="DutyPersonShiftVo">
+select concat(to_char(sd.datetime,'YYYY-MM-DD'),concat('_',sp.userid)) flag,sp.userid userId,
+d.id dutyId,d.name dutyName,d.siteId,
+sd.datetime,sd.id scheduleId,
+s.id shiftId,s.name shiftName,s.starttime,s.longtime,s.type shiftType
+from opr_schedule_person sp
+left join opr_schedule_detail sd on sd.id=sp.scheduleid 
+left join opr_duty d on sd.dutyid=d.id
+left join opr_shift s on s.id=sd.shiftid
+where 1=1
+		<if test="siteId != null  and siteId != '' ">
+		 	and d.siteid=#{siteId,jdbcType=VARCHAR}
+		</if>
+		<if test="userIds != null and userIds.length>0 ">
+		 	and sp.userid in 
+			<foreach item="item" collection="userIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startDate != null  and startDate != '' ">
+		 	and to_char(sd.datetime,'YYYY-MM-DD') &gt;= substr(#{ startDate,jdbcType=VARCHAR },0,10) 
+		</if>
+		<if test="endDate != null  and endDate != '' ">
+		 	and to_char(sd.datetime,'YYYY-MM-DD') &lt;= substr(#{ endDate,jdbcType=VARCHAR },0,10)
+		</if>
+	</select>
+</mapper> 

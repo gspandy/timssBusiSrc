@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatApplyDetailDao">
+	<resultMap type="com.timss.inventory.bean.InvMatApplyDetail" id="InvMatApplyDetailMap">
+		<result property="qtyApply" column="qty_apply"/>
+		<result property="siteId" column="site_id"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvMatApplyDetailVO" id="InvMatApplyDetailVOMap">
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="totalNoTaxPrice" column="total_no_tax_price"/>
+		<result property="qtyApply" column="qty_apply"/>
+		<result property="siteId" column="site_id"/>
+		<result property="unitCode1" column="unitcode1"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.inventory.vo.InvMatApplyToWorkOrder" id="IMA2WOMap">
+		<result property="qtyApply" column="qty_apply"/>
+		<result property="woSheetno" column="wo_sheetno"/>
+		<result property="outQty" column="out_qty"/>
+		<result property="refundQty" column="refund_qty"/>
+		<result property="applyType" column="apply_type"/>
+	</resultMap>
+	
+	<resultMap type="com.timss.asset.bean.AssetBean" id="AssetBeanMap">
+		<result property="assetId" column="assetid"/>
+		<result property="assetCode" column="assetcode"/>
+		<result property="createuser" column="createuser"/>
+		<result property="createdate" column="createdate"/>
+	</resultMap>
+
+	<resultMap type="com.timss.inventory.vo.InvMatRecipientsDetailVO" id="InvMatRecipientsDetailVOMap">
+		<result property="imrdid" column="imrdid"/>
+		<result property="outstockqty" column="outstockqty"/>
+		<result property="createdate" column="createdate"/>
+		<result property="sheetno" column="sheetno"/>
+	</resultMap>
+
+	<!-- 查询列表信息 -->
+	<select id="queryMatApplyDetailList" resultMap="InvMatApplyDetailVOMap">
+		select t.itemid,t.itemcode,t.itemname,t.cusmodel,t.qty_apply,iu.unitname as unit1,
+				t.imadid,t.warehouseid,t.invcateid,ic.invcatename as invcate,iwi.def_binid as binid,
+       			ird.actual_qty as stockqty,
+       			ird.can_use_qty as nowqty,
+           		round(nvl(t.price,0),4) as price,
+           		round(nvl(t.no_tax_price,0),4) as no_tax_price,
+           		round(nvl(t.totalprice,0),4) as totalprice,
+           		round(nvl(t.total_no_tax_price,0),4) as total_no_tax_price,
+           		nvl(ins.outqty,0) as outqty,
+           		case when t.qty_apply - ins.outqty = 0 then imat1.enum_val 
+                     when t.qty_apply - ins.outqty > 0 then imat3.enum_val 
+                     else imat2.enum_val end as status,
+                     t.warehouse
+		from(
+	        select ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,ii.unit1,ii.site_id,
+			        avg(imad.price) as price,
+			        avg(imad.no_tax_price) as no_tax_price,
+			        (imad.qty_apply * avg(imad.price)) as totalprice,
+			        (imad.qty_apply * avg(imad.no_tax_price)) as total_no_tax_price,
+			        imad.qty_apply,imad.imadid,imad.warehouseid as warehouseid,
+			        imad.invcateid,
+			        iw.warehousename as warehouse
+        	from inv_mat_apply_detail imad, 
+       			 inv_item ii,
+       			 inv_warehouse iw
+        	where imad.itemid = ii.itemid(+) 
+            	and imad.imaid=#{params.imaid} 
+		        and imad.site_id=#{params.siteId} 
+		        and imad.warehouseid = iw.warehouseid and imad.site_id = iw.site_id 
+	              <if test="params.codes != null and params.codes != ''">
+	                  and ii.itemcode in(${params.itemcode}) 
+	              </if>
+        	group by ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,imad.qty_apply,ii.unit1,
+        			imad.imadid,ii.site_id,imad.warehouseid,imad.invcateid,iw.warehousename
+    	) t
+    	left join inv_realtime_data ird on t.itemid = ird.itemid and t.site_id = ird.site_id and t.invcateid = ird.invcateid
+    	left join inv_category ic on ic.invcateid = t.invcateid
+  		left join inv_unit iu on iu.unitid = t.unit1 and iu.site_id = t.site_id
+  		left join (select sum(imtd.out_qty) as outqty,
+  						  imm.outterid
+                	from inv_mat_map imm,inv_mat_tran_rec imtd 
+                	where imm.imtdid = imtd.imtdid(+) and imm.tran_type = 'pickingmaterials'
+        			group by imm.outterid) ins on ins.outterid = t.imadid
+  		left join inv_warehouse_item iwi on iwi.itemid = t.itemid and iwi.site_id = t.site_id and iwi.warehouseid =t.warehouseid and t.invcateid = iwi.invcateid,
+  		(select a.enum_val from b_enum a where a.ecat_code = 'INV_MAT_APPLY_TYPE' and a.enum_code = '1') imat1,
+    	(select a.enum_val from b_enum a where a.ecat_code = 'INV_MAT_APPLY_TYPE' and a.enum_code = '2') imat2,
+    	(select a.enum_val from b_enum a where a.ecat_code = 'INV_MAT_APPLY_TYPE' and a.enum_code = '3') imat3
+		order by t.itemid desc
+	</select>
+	
+	<!-- 弹出窗口中列表数据 -->
+	<select id="queryConsumingList" resultMap="InvMatApplyDetailVOMap">
+		select t.itemid,t.itemcode,t.itemname,t.cusmodel,t.stockqty,
+				'0' as precollarqty,round(t.price,2) as price, round(t.no_tax_price,2) as no_tax_price,
+				t.site_id, iu.unitname as unit1,t.outqty,t.warehouseid 
+		from(
+			select ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,
+					(sum(imtd.in_qty) - sum(imtd.out_qty)) as stockqty,
+					round(sum(imtd.price*imtd.in_qty)/case when sum(imtd.in_qty) = 0 then 1 else sum(imtd.in_qty) end,2) as price,
+					round(sum(imtd.no_tax_price*imtd.in_qty)/case when sum(imtd.in_qty) = 0 then 1 else sum(imtd.in_qty) end,2) as no_tax_price,
+					imtd.site_id,
+					ii.unit1,
+					sum(imtd.out_qty) as outqty,
+					imtd.warehouseid 
+			from inv_mat_tran_rec imtd, inv_item ii
+			where imtd.itemid = ii.itemid(+)
+			group by ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,imtd.site_id,ii.unit1
+		) t 
+		left join inv_unit iu on iu.unitid = t.unit1 and iu.site_id = t.site_id
+		where t.stockqty>0 and t.site_id=#{params.siteId} 
+			<if test="params.itemcode != null and params.itemcode != ''">
+			  	and t.itemcode like '%'||'${params.itemcode}'||'%' 
+			</if>
+			<if test="params.itemname != null and params.itemname != ''">
+			  	and t.itemname like '%'||'${params.itemname}'||'%' 
+			</if>
+			<if test="params.cusmodel != null and params.cusmodel != ''">
+			  	and t.cusmodel like '%'||'${params.cusmodel}'||'%' 
+			</if>
+			<if test="params.stockqty != null and params.stockqty != ''">
+			  	and t.stockqty like '%'||'${params.stockqty}'||'%' 
+			</if>
+			<if test="params.precollarqty != null and params.precollarqty != ''">
+			  	and t.precollarqty like '%'||'${params.precollarqty}'||'%' 
+			</if>
+			<if test="params.price != null and params.price != ''">
+			  	and t.price like '%'||'${params.price}'||'%' 
+			</if>
+			<if test="params.noTaxPrice != null and params.noTaxPrice != ''">
+			  	and t.no_tax_price like '%'||'${params.noTaxPrice}'||'%' 
+			</if>			
+			<if test="params.unit1 != null and params.unit1 != ''">
+			  	and iu.unitname like '%'||'${params.unit1}'||'%' 
+			</if>
+		order by t.itemid asc
+	</select>
+	
+	<!-- 根据imaid删除明细表信息 -->
+	<delete id="deleteInvMatApplyDetailByImaId">
+		delete from inv_mat_apply_detail imad where imad.imaid=#{params.imaid}
+	</delete>
+	
+	<!-- 插入领料明细信息 -->
+	<insert id="insertInvMatApplyDetail" parameterType="com.timss.inventory.bean.InvMatApplyDetail">
+		insert into inv_mat_apply_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imadid != null"> imadid, </if>
+	      <if test="imaid != null"> imaid, </if>
+	      <if test="itemid != null"> itemid, </if>
+	      <if test="qtyApply != null"> qty_apply, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="price != null"> price, </if>
+	      <if test="noTaxPrice != null"> no_tax_price, </if>
+	      <if test="stockqty != null"> stockqty, </if>
+	      <if test="status != null"> status, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="invcateid != null"> invcateid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imadid != null"> #{imadid,jdbcType=VARCHAR}, </if>
+	      <if test="imaid != null"> #{imaid,jdbcType=VARCHAR}, </if>
+	      <if test="itemid != null"> #{itemid,jdbcType=VARCHAR}, </if>
+	      <if test="qtyApply != null"> #{qtyApply,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="price != null"> #{price,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPrice != null"> #{noTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="stockqty != null"> #{stockqty,jdbcType=NUMERIC}, </if>
+	      <if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="invcateid != null"> #{invcateid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 更新详细信息 -->
+	<update id="updateInvMatApplyDetail" parameterType="com.timss.inventory.bean.InvMatApplyDetail">
+		update inv_mat_apply_detail t 
+		<set>
+	      <if test="qtyApply != null"> t.qty_apply=#{qtyApply,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="price != null"> t.price=#{price,jdbcType=NUMERIC}, </if>
+	      <if test="noTaxPrice != null"> t.no_tax_price=#{noTaxPrice,jdbcType=NUMERIC}, </if>
+	      <if test="stockqty != null"> t.stockqty=#{stockqty,jdbcType=NUMERIC}, </if>
+	      <if test="status != null"> t.status=#{status,jdbcType=VARCHAR}, </if>
+	    </set>
+		where t.imadid=#{imadid,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 当环节是物资接收环节的时候查询 -->
+	<select id="queryMatApplyDetailCSList" resultMap="InvMatApplyDetailVOMap">
+	  select m.itemid,
+		       m.itemcode,
+		       m.itemname,
+		       m.cusmodel,
+		       m.qty_apply,
+		       m.stockqty,
+		       m.unit1,
+		       m.unitcode1,
+		       m.price,
+		       m.totalprice,
+		       m.no_tax_price,
+		       m.total_no_tax_price,		       
+		       m.outqty,
+		       m.warehouseid,
+		       m.invcateid,
+		       m.invcatename as invcate,
+		       m.warehouse,
+		       m.waitqty,
+		       m.lotno,
+		       m.imadid,
+		       m.bin,
+		       m.binid,
+		       case when <![CDATA[ m.stockqty < m.waitqty]]> then m.stockqty else m.waitqty end as outstockqty,
+		       case when m.qty_apply - m.outqty = 0 then imat1.enum_val  
+		                when m.qty_apply - m.waitqty = 0 then imat2.enum_val
+		                when <![CDATA[ (m.outqty>0 and m.waitqty>0) or (m.outqty <> m.qty_apply and  m.waitqty=0 and m.outqty>0)]]> then imat3.enum_val
+		                when <![CDATA[m.outqty=0 and m.waitqty < m.qty_apply]]> then imat4.enum_val
+		                else '' end as status
+	  from(        
+	    select t1.itemid,
+		         t1.itemcode,
+		         t1.itemname,
+		         t1.cusmodel,
+		         t1.qty_apply,
+		         t1.stockqty,
+		         t1.unit1,
+		         t1.unitcode1,
+		         t1.price,
+		         t1.totalprice,
+		         t1.no_tax_price,
+		         t1.total_no_tax_price,		         
+		         t1.outqty,
+		         t1.warehouseid,
+		         t1.invcateid,
+		         t1.invcatename,
+		         t1.warehouse,
+		         case when <![CDATA[(t1.qty_apply-t1.outqty-t1.outsqty)<0]]> then (t1.qty_apply-t1.outqty) else (t1.qty_apply-t1.outqty-t1.outsqty) end as waitqty,
+		         t1.lotno,
+		         t1.imadid,
+		         t1.bin,
+		         t1.binid
+	     from (    
+	          select t.itemid,
+		             t.itemcode,
+		             t.itemname,
+		             t.cusmodel,
+		             t.warehouseid,
+		             t.invcateid,
+		             ic.invcatename,
+		             iu.unitname as unit1,
+		             t.unit1 as unitcode1,
+		             t.warehouse,
+		             '1' as lotno,
+		             t.imadid,
+		             tt1.binname as bin,
+		             iwi.def_binid as binid,
+		             nvl(t.stockqty,0) as stockqty,
+		             nvl(t.price,0) as price,
+		             nvl(t.totalprice,0) as totalprice,
+		             nvl(t.no_tax_price,0) as no_tax_price,
+		             nvl(t.total_no_tax_price,0) as total_no_tax_price,		             
+		             nvl(tt2.outqty,0) as outqty,
+		             nvl(t.qty_apply,0) as qty_apply,
+		             nvl(tt3.outsqty,0) as outsqty
+	            from(
+	                     select imad.imadid,
+					              ii.itemid,
+					              ii.itemcode,
+					              ii.itemname,
+					              ii.cusmodel,
+					              imad.qty_apply,
+					              ii.unit1,
+					              avg(imad.price) as price,
+					              (imad.qty_apply * avg(imad.price)) as totalprice,
+					              avg(imad.no_tax_price) as no_tax_price,
+					              (imad.qty_apply * avg(imad.no_tax_price)) as total_no_tax_price,
+					              imad.warehouseid,
+					              imad.invcateid,
+					              iw.warehousename as warehouse,
+					              (sum(imtd.in_qty) - sum(imtd.out_qty)) as stockqty,
+					              ii.site_id         
+					      from inv_mat_apply_detail imad, 
+					            inv_item ii, 
+					            inv_warehouse_item iwi, 
+					            inv_warehouse iw, 
+					            inv_mat_tran_rec imtd
+					      where imad.itemid = ii.itemid(+) 
+					      		and imad.warehouseid = iwi.warehouseid
+			                    and ii.itemid = imtd.itemid
+			                    and imtd.warehouseid = imad.warehouseid
+					            and ii.itemid = iwi.itemid(+) 
+					            and iwi.warehouseid = iw.warehouseid(+)
+					            and imad.imaid=#{params.imaid}
+					            and imad.site_id=#{params.siteId}
+					      group by imad.imadid,
+					               ii.itemid,
+					               ii.itemcode,
+					               ii.itemname,
+					               ii.cusmodel,
+					               imad.qty_apply,
+					               ii.unit1,
+					               imad.warehouseid,
+					               imad.invcateid,
+					               iw.warehousename,
+					               ii.site_id
+	            ) t 
+	            left join inv_category ic on ic.invcateid = t.invcateid
+	         	left join inv_unit iu on iu.unitid = t.unit1 and iu.site_id = t.site_id
+	         	left join inv_warehouse_item iwi on iwi.itemid = t.itemid and iwi.invcateid = t.invcateid
+	         	left join  (select ib.binname,iwi.itemid,iwi.invcateid 
+                      from inv_bin ib,
+                          inv_warehouse_item iwi 
+                      where ib.binid = iwi.def_binid(+)) tt1 on tt1.itemid = t.itemid and t.invcateid = tt1.invcateid
+	         	left join (select sum(imtd.out_qty) as outqty,imm.outterid 
+	              			from inv_mat_map imm,
+	                 			 inv_mat_tran_rec imtd 
+	              			where imm.imtdid = imtd.imtdid(+) 
+	                			and imm.tran_type = 'pickingmaterials' 
+	              			group by imm.outterid) tt2 on tt2.outterid = t.imadid
+	         	left join (select sum(imrd.outstockqty) as outsqty,imrd.imadid
+	              			from inv_mat_recipients_detail imrd 
+	              			where imrd.site_id = #{params.siteId} 
+	                			and imrd.isled = 'N'
+	              			group by imrd.imadid) tt3 on tt3.imadid = t.imadid
+	         	order by t.itemid desc
+	    	) t1 
+	  ) m,
+	  (select a.enum_val from b_enum a where a.ecat_code = 'INV_MAT_APPLY_TYPE' and a.enum_code = '1') imat1,
+	  (select a.enum_val from b_enum a where a.ecat_code = 'INV_MAT_APPLY_TYPE' and a.enum_code = '2') imat2,
+	  (select a.enum_val from b_enum a where a.ecat_code = 'INV_MAT_APPLY_TYPE' and a.enum_code = '3') imat3,
+	  (select a.enum_val from b_enum a where a.ecat_code = 'INV_MAT_APPLY_TYPE' and a.enum_code = '4') imat4  
+	  where 1=1
+	   <if test="params.embed == 1">
+	      <![CDATA[m.waitqty <> 0]]>
+	  </if>  
+	</select>
+	
+	<!-- 通过列表生成物资领料 -->
+	<select id="queryItemInfoToMatApply" parameterType="java.util.Map" resultMap="InvMatApplyDetailVOMap">
+		select ii.itemid,
+		     ii.itemcode,
+		     ii.itemname,
+		     ii.cusmodel,
+		     '1' as qty_apply,
+		     (sum(imtd.in_qty)-sum(imtd.out_qty)) as stockqty,
+		     iu.unitname as unit1,
+		     round(imtd.price,2) as price,
+		     round(sum(imtd.price*imtd.in_qty)/case when sum(imtd.in_qty) = 0 then 1 else sum(imtd.in_qty) end,2) as totalprice,'0' as outqty,'' as outqtytemp,'0' as outstockqty,
+		     round(imtd.no_tax_price,2) as no_tax_price,
+		     round(sum(imtd.no_tax_price*imtd.in_qty)/case when sum(imtd.in_qty) = 0 then 1 else sum(imtd.in_qty) end,2) as total_no_tax_price,'0' as outqty,'' as outqtytemp,'0' as outstockqty,
+		     imtd.warehouseid 
+		from inv_item ii
+		left join inv_unit iu on iu.unitid = ii.unit1 and iu.site_id = ii.site_id,
+		   inv_mat_tran_rec imtd 
+		where ii.itemid = imtd.itemid and ii.site_id = imtd.site_id
+		    and ii.itemcode in ('${codes}')
+		group by ii.itemid,ii.itemcode,ii.itemname,ii.cusmodel,iu.unitname,ii.site_id,imtd.warehouseid
+		order by ii.itemid desc	
+	</select>
+	
+	<!-- 查询今年内至今为止同部门的人员所有申请单总金额 -->
+	<select id="queryApplyBudget" parameterType="java.util.Map" resultType="java.lang.Double">
+		select case when sum(imad.qty_apply * imad.price) is null then 0 else sum(imad.qty_apply * imad.price) end
+	    from inv_mat_apply_detail imad,inv_mat_apply ima
+	    where imad.imaid = ima.imaid 
+	       and imad.site_id = #{siteId} 
+	       and to_char(imad.createdate, 'yyyy-mm') between to_char(sysdate,'yyyy')||'-01' and #{nowMonth} 
+	       and ima.status = 'approval_complete'
+	       and ima.apply_type = 'office_supplies'  
+	       and imad.createuser in (${userIds})
+	</select>
+	
+	<!-- 通过woid查询领用申请信息 -->
+	<select id="queryMatApplyByWoId" resultMap="IMA2WOMap">
+		select v.itemid,
+	            v.itemcode,
+	            v.itemname,
+	            v.cusmodel,
+	            v.unit1,
+	           sum(v.qty_apply) as qty_apply,
+	           sum(v.out_qty) as out_qty,
+	           '0' as refund_qty,
+	           v.warehousename,
+	           v.invcatename 
+	      from (
+	           select c.itemid,
+	                       c.itemcode,
+	                       c.itemname,
+	                       c.cusmodel, 
+	                       iu.unitname as unit1,
+	                       sum(b.qty_apply) as qty_apply,
+	                       dd.out_qty,
+	                       e.warehousename,
+	                       f.invcatename
+	              from inv_outter_mapping a, 
+	                       inv_mat_apply_detail b
+	                       left join 
+	                       (select nvl(sum(e.out_qty),0) as out_qty ,d.outterid
+	                        from inv_mat_tran_rec e, inv_mat_map d 
+	                        where e.imtdid = d.imtdid 
+	                        group by d.outterid) dd on dd.outterid = b.imadid, 
+	                       inv_item c left join inv_unit iu on iu.unitid = c.unit1 and iu.site_id = c.site_id,
+	                       inv_warehouse_item d,
+	                       inv_warehouse e,
+	                       inv_category f 
+	             where a.outter_id = #{params.woSheetno} 
+	               and a.siteid = #{params.siteId}
+	               and a.apply_type = #{params.applyType}
+	               and a.inv_id = b.imaid 
+	               and c.itemid = d.itemid and c.site_id = d.site_id
+	               and d.warehouseid = e.warehouseid and d.site_id = e.site_id
+	               and d.invcateid = f.invcateid and d.site_id = f.site_id
+	               and b.itemid = c.itemid
+	               and b.warehouseid = d.warehouseid
+	             group by c.itemid, c.itemcode, c.itemname, c.cusmodel, iu.unitname,dd.out_qty,e.warehousename,f.invcatename
+	            ) v
+	     group by v.itemid, v.itemcode, v.itemname, v.cusmodel, v.unit1,v.warehousename,v.invcatename 
+	</select>
+	
+	<!-- 通过imaid查询领料详情-->
+	<select id="queryApplyDetailList" resultMap="InvMatApplyDetailVOMap">
+		select * from inv_mat_apply_detail imad where imad.imaid=#{params.imaid}
+	</select>
+	
+	<!-- 通过imadid查询领料单物资详情-->
+	<select id="queryInvMatApplyDetailByImadId" resultMap="InvMatApplyDetailVOMap">
+		select * from inv_mat_apply_detail imad where imad.imadid=#{params.imadId}
+	</select>
+		
+	<!-- 查询领料单详情某个物资的资产化次数-->
+	<select id="queryMatApplyDetailSendTotal" resultType="java.lang.Integer" >
+		select nvl(sum(t.outstockqty),0)
+			from inv_mat_recipients_detail t
+			where t.isled = 'Y'
+			and t.imadid = #{params.imadId}
+	</select>	
+	
+	<!-- 查询领料单详情某个物资相关联的资产-->
+	<select id="queryRelateAssetByImadId" resultMap="AssetBeanMap" >
+		select t.assetid, t.createdate,u.name as createuser,t.assetcode from ast_asset t
+			left join sec_user u on t.createdby = u.user_id
+		where t.imadid = #{params.imadId}
+		order by t.createdate asc
+	</select>
+	
+	<!-- 查询领料单详情某个物资相关联的发料单-->
+	<select id="queryRelateRecipientsByImadId" resultMap="InvMatRecipientsDetailVOMap" >
+	    select imrd.imrdid as imrdid,imrd.createdate as createdate, imrd.outstockqty as outstockqty, imr.sheetno as sheetno
+	    from inv_mat_recipients_detail imrd
+	    left join inv_mat_recipients imr on imrd.imrid = imr.imrid 
+		where imrd.imadid = #{params.imadId}
+		and imrd.isled = 'Y'
+		order by imrd.createdate asc
+	</select>		
+</mapper> 

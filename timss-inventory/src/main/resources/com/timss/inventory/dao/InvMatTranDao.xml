@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatTranDao">
+	<resultMap type="com.timss.inventory.vo.InvMatTranVO" id="InvMatTranVOMap">
+		<result property="tranType" column="tran_type"/>
+		<result property="siteId" column="site_id"/>
+		<result property="totalPrice" column="total_price"/>
+		<result property="tranTypeName" column="tran_type_name"/>
+		<result property="warehouseName" column="warehouse_name"/>
+	</resultMap>
+	
+	<!-- 根据id查询交易信息主表 -->
+	<select id="queryInvMatTranById" resultType="com.timss.inventory.bean.InvMatTran">
+		select * from inv_mat_tran imt where imt.imtid =#{params.imtid} order by imt.imtid desc
+	</select>
+	
+	<!-- 查询物资接收列表 -->
+	<select id="queryMatTranList" resultMap="InvMatTranVOMap">
+		select * from(
+			select i.imtid,i.sheetno,i.tranTypeName,i.createdate,i.operuser,i.warehousename,round(sum(i.price),2) as total_price,i.remark 
+			from(
+				select imt.imtid,imt.sheetno, be.enum_val as trantypename,to_char(imt.createdate,'yyyy-MM-dd') as createdate,
+		             nvl(su.name, imt.operuser) as operuser,
+		             iw.warehousename as warehousename,
+		             (imtd.price * imtd.in_qty) as price,imt.remark
+		        from inv_mat_tran imt
+		             	left join inv_warehouse iw on iw.warehouseid = imt.warehouseid
+		             	left join b_enum be on imt.tran_type = be.enum_code and be.ecat_code = 'INV_OPERATION_TYPE'
+		            	left join sec_user su on imt.operuser = su.user_id
+		           		left join inv_mat_tran_rec imtd on imt.imtid = imtd.imtid 
+		      	where imt.site_id = #{params.siteId} and imt.tran_type = 'receivingmaterial'
+				) i 
+			group by i.imtid,i.sheetno,i.tranTypeName,i.createdate,i.operuser,i.warehousename,i.remark
+		) t
+		where 1=1 and <![CDATA[t.total_price>0]]>
+		<if test="params.sheetno != null and params.sheetno != ''">
+		  	and t.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.tranTypeName != null and params.tranTypeName != ''">
+		  	and t.trantypename like '%'||'${params.tranTypeName}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and t.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.operuser != null and params.operuser != ''">
+		  	and t.operuser like '%'||'${params.operuser}'||'%' 
+		</if>
+		<if test="params.warehouseName != null and params.warehouseName != ''">
+		  	and t.warehousename like '%'||'${params.warehouseName}'||'%' 
+		</if>
+		<if test="params.totalPrice != null and params.totalPrice != ''">
+		  	and t.total_price like '%'||'${params.totalPrice}'||'%' 
+		</if>
+		<if test="params.remark != null and params.remark != ''">
+		  	and t.remark like '%'||'${params.remark}'||'%' 
+		</if>
+		order by t.imtid desc
+	</select>
+	
+	<!-- 查询物资接收表单 -->
+	<select id="queryMatTranForm" parameterType="java.util.Map" resultType="com.timss.inventory.vo.InvMatTranVO">
+		select t.sheetno,t.trantype,t.createdate,wmsys.wm_concat(t.purorderno) as pruorderno, wmsys.wm_concat(t.purordername) as pruordername, t.warehouseid,
+           t.warehousename,t.checkuser,t.operuser,t.lotno,t.remark,t.totalprice as totalprice,
+           t.checkusername,t.operusername,t.processinstid,t.applyTypeName  
+    	from(
+      		select t.sheetno,
+      				t.trantype,
+      				t.createdate,
+      				t.purorderno,
+      				t.purordername,
+      				t.warehouseid,
+      				t.warehousename,
+      				t.checkuser,
+                 	t.operuser,
+                 	t.lotno,
+                 	t.remark,
+                 	t1.price as totalprice,
+                   	nvl(t.checkusername,t.checkuser) as checkusername,
+                   	nvl(t.operusername,t.operuser) as operusername,
+                   	t.processinstid,
+                   	t.applyTypeName 
+            from(
+              	select imt.sheetno,
+                   'receivingmaterial' as trantype,
+                   to_char(imt.createdate,'yyyy-MM-dd') as createdate,
+                   iwp.sheetno as purorderno,
+                   iwp.sheetname as purordername,
+                   iwp.sheetname,
+                   iw.warehouseid,
+                   iw.warehousename,
+                   imt.checkuser,
+                   a.name as checkusername, 
+                   imt.imtid,
+                   imt.operuser,
+                   a1.name as operusername, 
+                   imt.lotno,
+                   imt.remark,
+                   imt.processinstid,
+                   be.enum_val as applyTypeName 
+                from inv_mat_tran imt
+                     inner join inv_mat_tran_rec imtd on imt.imtid = imtd.imtid
+                     inner join  inv_mat_map imm on imtd.imtdid = imm.imtdid and imm.tran_type='receivingmaterial'
+                     left join sec_user a on a.user_id = imt.checkuser
+                     left join sec_user a1 on a1.user_id = imt.operuser
+                     inner join itceam_workflow_purchorder iwp on imm.outterid = iwp.sheet_id
+                     inner join b_enum be on iwp.sheet_i_type = be.enum_code and be.ecat_code = 'ITEMORDER_TYPE' and be.siteid = iwp.siteid
+                     left join  inv_warehouse iw on imt.warehouseid = iw.warehouseid
+                where imt.site_id=#{siteId} and imt.imtid=#{imtid}
+            	) t 
+      		inner join (select sum(imtd.in_qty*imtd.price) as price,imtd.imtid 
+                         	from inv_mat_tran_rec imtd 
+            				group by imtd.imtid) t1 on t1.imtid = t.imtid
+            group by t.sheetno,t.trantype,t.createdate,t.purorderno,t.purordername,t.warehouseid,t.warehousename,
+              			t.checkuser,t.operuser,t.lotno,t.remark,t.processinstid,t1.price,t.checkusername,t.operusername,t.applyTypeName
+              
+        ) t
+     	group by t.sheetno,t.trantype,t.createdate,t.warehouseid,t.warehousename,t.checkuser,
+         		 t.operuser,t.lotno,t.remark,t.checkusername,t.operusername,t.processinstid,t.totalprice,t.applyTypeName  
+        order by t.sheetno desc       
+	</select>
+	
+	<!-- 获取采购单号列表方法 -->
+	<select id="queryPurOrderList" resultType="com.timss.inventory.vo.MTPurOrderVO">
+		select * from(
+			select t.sheetno,t.sheetname, ivci.name as companyname,formatdatetime(t.dhdate) as dhdate,
+				nvl(sum(t.applyqty),0) as applyqty,
+				nvl(sum(t2.stockqty),0) as stockqty,
+				t.applytypename,
+                b.applyuser,
+                b.applyuserid
+      		from (
+				select iwp.sheetno,
+			            iwp.sheetname,
+			            iwp.dhdate,
+			            iwp.company_no,
+			            iwp.siteid,
+			            iwp.sheet_id,
+			            iwpi.itemid,
+			            sum(iwpi.itemnum) as applyqty,
+			            be.enum_val as applytypename
+			    from itceam_workflow_purchorder iwp
+			    	left join b_enum be on iwp.sheet_i_type = be.enum_code and be.ecat_code = 'ITEMORDER_TYPE' and be.siteid = iwp.siteid
+			        inner join itceam_workflow_orderitem_exc iwpi on iwp.sheet_id = iwpi.sheet_id
+			    where iwp.status='1' and iwp.siteid=#{params.siteId}
+			    group by iwp.sheetno,
+			            iwp.sheetname,
+			            iwp.dhdate,
+			            iwp.company_no,
+			            iwp.siteid,
+			            iwp.sheet_id,
+			            iwpi.itemid,
+			            be.enum_val
+        	) t 
+			left join sup_base_info ivci on ivci.code = t.company_no and ivci.siteid = t.siteid 
+			left join (
+                         select imm.outterid,
+                                imm.itemcode,
+                                nvl(sum(imtd.in_qty)-nvl(sum(imrd.return_qty),0),0) as stockqty
+                         from inv_mat_map imm,
+                              inv_mat_tran_rec imtd 
+                              left join inv_mat_returns_detail imrd on imtd.imtdid = imrd.imtdid
+                         where imm.imtdid = imtd.imtdid 
+                         group by imm.outterid,imm.itemcode
+                     ) t2 on t2.outterid = t.sheet_id and t2.itemcode = t.itemid
+             inner join (
+                    select a.apply_sheet_id,a.sheet_id,u.name as applyuser,u.user_id as applyuserid
+                      from itceam_workflow_purchapply pa
+                      left join sec_user u on pa.createaccount = u.user_id
+                     inner join (select min(iwpi2.apply_sheet_id) as apply_sheet_id,
+                                        iwpi2.sheet_id
+                                   from itceam_workflow_orderitem_exc iwpi2
+                                  group by iwpi2.sheet_id) a on pa.sheet_id = a.apply_sheet_id
+                    ) b on t.sheet_id = b.sheet_id
+        	group by t.sheetno,t.sheetname,ivci.name,t.dhdate,t.applytypename, b.applyuser, b.applyuserid) m
+	    where <![CDATA[m.applyqty > m.stockqty]]> 
+	    <if test="params.sheetno != null and params.sheetno != ''">
+		  	and m.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.sheetname != null and params.sheetname != ''">
+		  	and m.sheetname like '%'||'${params.sheetname}'||'%' 
+		</if>
+		<if test="params.companyname != null and params.companyname != ''">
+		  	and m.companyname like '%'||'${params.companyname}'||'%' 
+		</if>
+		<if test="params.dhdate != null and params.dhdate != ''">
+		  	and m.dhdate like '%'||'${params.dhdate}'||'%' 
+		</if>
+		order by m.sheetno desc
+	</select>
+	
+	<!-- 更新交易表信息 -->
+	<update id="updateMatTran" parameterType="com.timss.inventory.bean.InvMatTran">
+		update inv_mat_tran t 
+		<set>
+	      <if test="tranType != null"> t.tran_type=#{tranType,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> t.warehouseid=#{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="operuser != null"> t.operuser=#{operuser,jdbcType=VARCHAR}, </if>
+	      <if test="checkuser != null"> t.checkuser=#{checkuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifyuser != null"> t.modifyuser=#{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> t.modifydate=#{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="remark != null"> t.remark=#{remark,jdbcType=VARCHAR}, </if>
+	      <if test="lotno != null"> t.lotno=#{lotno,jdbcType=NUMERIC}, </if>
+	      <if test="siteId != null"> t.site_id=#{siteId,jdbcType=VARCHAR}, </if>
+	    </set>
+		where t.imtid=#{imtid}
+	</update>
+	
+	<!-- 插入交易表 -->
+	<insert id="insertInvMatTran" parameterType="com.timss.inventory.bean.InvMatTran">
+		insert into inv_mat_tran 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtid != null"> imtid, </if>
+	      <if test="sheetno != null"> sheetno, </if>
+	      <if test="tranType != null"> tran_type, </if>
+	      <if test="warehouseid != null"> warehouseid, </if>
+	      <if test="operuser != null"> operuser, </if>
+	      <if test="checkuser != null"> checkuser, </if>
+	      <if test="createuser != null"> createuser, </if>
+	      <if test="createdate != null"> createdate, </if>
+	      <if test="modifyuser != null"> modifyuser, </if>
+	      <if test="modifydate != null"> modifydate, </if>
+	      <if test="remark != null"> remark, </if>
+	      <if test="lotno != null"> lotno, </if>
+	      <if test="siteId != null"> site_id, </if>
+	      <if test="processinstid != null"> processinstid, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtid != null"> #{imtid,jdbcType=VARCHAR}, </if>
+	      <if test="sheetno != null"> #{sheetno,jdbcType=VARCHAR}, </if>
+	      <if test="tranType != null"> #{tranType,jdbcType=VARCHAR}, </if>
+	      <if test="warehouseid != null"> #{warehouseid,jdbcType=VARCHAR}, </if>
+	      <if test="operuser != null"> #{operuser,jdbcType=VARCHAR}, </if>
+	      <if test="checkuser != null"> #{checkuser,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="modifyuser != null"> #{modifyuser,jdbcType=VARCHAR}, </if>
+	      <if test="modifydate != null"> #{modifydate,jdbcType=TIMESTAMP}, </if>
+	      <if test="remark != null"> #{remark,jdbcType=VARCHAR}, </if>
+	      <if test="lotno != null"> #{lotno,jdbcType=NUMERIC}, </if>
+	      <if test="siteId != null"> #{siteId,jdbcType=VARCHAR}, </if>
+	      <if test="processinstid != null"> #{processinstid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+	
+	<!-- 获取用户信息 -->
+	<select id="getUserHint" parameterType="java.util.Map" resultType="java.util.Map">
+		 select a.user_id as id,a.name as name 
+		 from sec_user a 
+		 where a.user_id in (
+			select d.user_id 
+			from sec_organization_user d 
+			where d.org_code in (
+    			select b.org_code 
+    			from sec_organization b,sec_site_organization c 
+    			where c.site_id = '${siteId}' and b.org_code like c.org_code||'%'
+    			)
+    	 )
+    	 and a.name like '${keyWord}%' and <![CDATA[rownum<11]]> order by a.name asc
+	</select>
+	
+	<!-- 根据id删除物资接收记录 -->
+	<delete id="deleteInvMatTranById">
+		delete from inv_mat_tran imt where imt.imtid=#{params.imtid}
+	</delete>
+	
+	<!-- 快速查询 -->
+	<select id="quickSearch" resultMap="InvMatTranVOMap">
+		select * from(
+			select t.imtid,t.sheetno,t.trantypename,t.createdate, t.operuser, t.warehousename,
+       				sum(imtd.price * imtd.in_qty) as total_price, t.remark 
+			from(
+      			select t.imtid,t.sheetno,(select be.enum_val from b_enum be where t.tran_type = be.enum_code and be.ecat_code = 'INV_OPERATION_TYPE') as trantypename,t.createdate,
+             			(select su.name from sec_user su where t.operuser = su.user_id) as operuser,
+             			(select iw.warehousename from inv_warehouse iw where iw.warehouseid = t.warehouseid) as warehousename,t.remark
+      			from (
+          			select imt.imtid,imt.sheetno,imt.tran_type,to_char(imt.createdate,'yyyy-MM-dd') as createdate,imt.operuser,imt.warehouseid,imt.remark,ii.itemname as srhfield
+          			from inv_mat_tran_rec imtd,inv_mat_tran imt,inv_mat_map imm,inv_item ii
+         			where imtd.imtdid = imm.imtdid and imtd.imtid = imt.imtid
+                			and imtd.site_id = ii.site_id and imtd.itemid = ii.itemid
+                			and imtd.site_id = '${params.siteid}'
+          			group by imt.imtid,imt.sheetno,imt.tran_type,imt.createdate,imt.operuser,imt.warehouseid,imt.remark,ii.itemname
+          			
+          			union all
+          			
+          			select imt.imtid,imt.sheetno,imt.tran_type,to_char(imt.createdate,'yyyy-MM-dd') as createdate,imt.operuser,imt.warehouseid,imt.remark,ii.cusmodel as srhfield
+          			from inv_mat_tran_rec imtd,inv_mat_tran imt,inv_mat_map imm,inv_item ii
+          			where imtd.imtdid = imm.imtdid and imtd.imtid = imt.imtid
+                			and imtd.site_id = ii.site_id and imtd.itemid = ii.itemid
+                			and imtd.site_id = '${params.siteid}'
+          			group by imt.imtid,imt.sheetno,imt.tran_type,imt.createdate,imt.operuser,imt.warehouseid,imt.remark,ii.cusmodel     
+          			
+          			union all
+          			
+          			select imt.imtid,imt.sheetno,imt.tran_type,to_char(imt.createdate,'yyyy-MM-dd') as createdate,imt.operuser,imt.warehouseid,imt.remark,iwp.sheetno as srhfield 
+          			from inv_mat_tran_rec imtd,inv_mat_tran imt,inv_mat_map imm,itceam_workflow_purchorder iwp
+          			where imtd.imtdid = imm.imtdid and imtd.imtid = imt.imtid
+                			and imm.outterid = iwp.sheet_id
+                			and imtd.site_id = '${params.siteid}' 
+          			group by imt.imtid,imt.sheetno,imt.tran_type,imt.createdate,imt.operuser,imt.warehouseid,imt.remark,iwp.sheetno
+          		) t 
+          		where 1=1 and t.tran_type = 'receivingmaterial' 
+	          	  <if test="params.schfield != null and params.schfield != ''">
+						and t.srhfield like '%'||'${params.schfield}'||'%' 
+				  </if>
+		          <if test="params.sheetno != null and params.sheetno != ''">
+		              and t.sheetno like '%'||'${params.sheetno}'||'%' 
+		          </if>
+		          <if test="params.tranTypeName != null and params.tranTypeName != ''">
+		              and t.trantypename like '%'||'${params.tranTypeName}'||'%' 
+		          </if>
+		          <if test="params.createdate != null and params.createdate != ''">
+		              and t.createdate like '%'||'${params.createdate}'||'%' 
+		          </if>
+		          <if test="params.operuser != null and params.operuser != ''">
+		              and t.operuser like '%'||'${params.operuser}'||'%' 
+		          </if>
+		          <if test="params.warehouseName != null and params.warehouseName != ''">
+		              and t.warehousename like '%'||'${params.warehouseName}'||'%' 
+		          </if>
+		          <if test="params.remark != null and params.remark != ''">
+		              and t.remark like '%'||'${params.remark}'||'%' 
+		          </if>         
+      			group by t.imtid,t.sheetno,t.tran_type,t.createdate,t.operuser,t.warehouseid,t.remark
+    		) t,inv_mat_tran_rec imtd 
+			where t.imtid = imtd.imtid 
+			group by t.imtid,t.sheetno,t.trantypename,t.createdate, t.operuser, t.warehousename, t.remark
+		) m 
+		where m.sheetno not like '%RS%'  
+      	<if test="params.totalPrice != null and params.totalPrice != ''">
+        	and m.total_price like '%'||'${params.totalPrice}'||'%' 
+        </if>      
+	</select>
+	
+	<!-- 物资入库列表查询 -->
+	<select id="queryInMatTran" resultMap="InvMatTranVOMap">
+		<!-- select * 
+		from (
+			select t.imtid,t.sheetno, 
+			       (select be.enum_val 
+			        from b_enum be 
+			        where be.ecat_code = 'INV_OPERATION_TYPE' 
+			        	and be.siteid = t.site_id 
+			        	and be.enum_code = t.tran_type) as tran_type_name,t.createdate,
+			       (select su.name 
+			        from sec_user su 
+			        where su.user_id = t.operuser) as operuser,
+			       (select iw.warehousename 
+			        from inv_warehouse iw 
+			        where iw.warehouseid = t.warehouseid 
+			        	and iw.site_id = t.site_id) as warehouse_name,
+			       t.total_price,
+			       t.site_id,t.remark,t.tran_type
+			from (
+				select imt.imtid,imt.sheetno,imt.tran_type,imt.site_id,to_char(imt.createdate,'yyyy-MM-dd') as createdate,imt.operuser,imtd.warehouseid,sum(imtd.price) as total_price,imt.remark 
+				from inv_mat_tran imt,inv_mat_tran_detail imtd
+				where imt.imtid = imtd.imtid(+)
+					and imtd.in_qty>0 and <![CDATA[imt.tran_type <>'storagematerials']]>
+				group by imt.imtid,imt.sheetno,imt.tran_type,imt.site_id,imt.createdate,imt.operuser,imtd.warehouseid,imt.remark
+				) t
+		) m where 1=1 and m.site_id=#{params.siteId}
+		<if test="params.sheetno != null and params.sheetno != ''">
+		  	and m.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.tranTypeName != null and params.tranTypeName != ''">
+		  	and m.tran_type_name like '%'||'${params.tranTypeName}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and m.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.operuser != null and params.operuser != ''">
+		  	and m.operuser like '%'||'${params.operuser}'||'%' 
+		</if>
+		<if test="params.warehouseName != null and params.warehouseName != ''">
+		  	and m.warehouse_name like '%'||'${params.warehouseName}'||'%' 
+		</if>
+		<if test="params.totalPrice != null and params.totalPrice != ''">
+		  	and m.total_price like '%'||'${params.totalPrice}'||'%' 
+		</if> -->
+		  select *
+		  from (
+		  		select 
+             		case when t.tran_type = 'receivingmaterial' then t.imtid
+                  		 when t.tran_type = 'materialsrefunding' then 
+                    		(select imrs.imrsid from inv_mat_returns imrs where imrs.imrsno = t.sheetno and imrs.site_id = t.site_id and imrs.oper_type='refund')
+                  		 when t.tran_type = 'materialscounting' then 
+                     		(select ist.istid from inv_stocktaking ist where ist.sheetno = t.sheetno and ist.site_id = t.site_id)
+              			 when t.tran_type = 'shiftmaterialsIn' then
+                    		(select imtf.imtid from inv_mat_transfer imtf where imtf.imtcode = t.sheetno and imtf.siteid = t.site_id)
+                    	 when t.tran_type = 'acceptancematerial' then
+                    		(select imat.inac_id from inv_mat_accept imat where imat.inac_no = t.sheetno and imat.siteid = t.site_id)   
+                    	 when t.tran_type = 'returnasset' then 
+                    	 	t.imtid
+                  		 end as imtid,
+					case when t.tran_type = 'returnasset' then
+	                   		(select a.assetcode from ast_asset a where a.assetid = t.sheetno)
+	                else '' end as outsheetno,                  	
+               		t.sheetno,
+               		be.enum_val as tran_type_name,
+               		t.createdate,
+               		su.name as operuser,
+               		iw.warehousename as warehouse_name,
+               		t.total_price,
+               		t.site_id,
+               		t.remark,
+               		t.tran_type,
+               		t.createdatefororder
+            	from (
+					select imt.imtid,
+                         imt.sheetno,
+                         imt.tran_type,
+                         imt.site_id,
+                         to_char(imt.createdate, 'yyyy-MM-dd') as createdate,
+                         imt.createdate as createdatefororder,
+                         imt.operuser,
+                         imtd.warehouseid,
+                         sum(imtd.price*imtd.in_qty) as total_price,
+                         imt.remark
+                  	from inv_mat_tran imt
+						inner join inv_mat_tran_rec imtd on imt.imtid = imtd.imtid
+                  	where <![CDATA[imtd.in_qty > 0]]> and <![CDATA[imt.tran_type <> 'storagematerials']]> and <![CDATA[imt.tran_type <> 'adjustprice']]>
+                  	group by imt.imtid, imt.sheetno, imt.tran_type, imt.site_id, imt.createdate, imt.operuser,
+                           imtd.warehouseid, imt.remark) t
+				left join b_enum be on be.ecat_code = 'INV_OPERATION_TYPE' and be.enum_code = t.tran_type
+				left join sec_user su on su.user_id = t.operuser
+				left join inv_warehouse iw on iw.warehouseid = t.warehouseid and iw.site_id = t.site_id
+		     ) m where 1 = 1 and m.site_id = #{params.siteId}
+		<if test="params.sheetno != null and params.sheetno != ''">
+		  	and m.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.tranTypeName != null and params.tranTypeName != ''">
+		  	and m.tran_type_name like '%'||'${params.tranTypeName}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and m.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.operuser != null and params.operuser != ''">
+		  	and m.operuser like '%'||'${params.operuser}'||'%' 
+		</if>
+		<if test="params.warehouseName != null and params.warehouseName != ''">
+		  	and m.warehouse_name like '%'||'${params.warehouseName}'||'%' 
+		</if>
+		<if test="params.totalPrice != null and params.totalPrice != ''">
+		  	and m.total_price like '%'||'${params.totalPrice}'||'%' 
+		</if>
+	</select>
+	
+	<!-- 物资出库列表查询 -->
+	<select id="queryOutMatTran" resultMap="InvMatTranVOMap">
+		<!-- select t.imaid as imtid,t.sheetno,
+	         (select be.enum_val 
+	              from b_enum be 
+	              where be.ecat_code = 'INV_OPERATION_TYPE' and be.enum_code = t.tran_type) as tran_type_name,
+	               t.createdate,
+	               (select su.name 
+	            from sec_user su 
+	            where su.user_id = t.operuser) as operuser,
+	               (select iw.warehousename 
+	            from inv_warehouse iw 
+	            where iw.warehouseid = t.warehouseid and iw.site_id = t.site_id) as warehouse_name,
+	           t.outsheetno,t.total_price,t.site_id,t.outsheetname,t.tran_type 
+	    from (
+	      select ima.imaid,imt.sheetno,imt.tran_type,to_char(imt.createdate,'yyyy-MM-dd') as createdate,
+	           imt.operuser,imtd.warehouseid,ima.sheetno as outsheetno,
+	           sum(imtd.price) as total_price,imt.site_id,ima.sheetname as outsheetname 
+	      from inv_mat_tran imt,
+	         inv_mat_tran_detail imtd,
+	         inv_mat_mapping imm,
+	         inv_mat_apply_detail imad,
+	         inv_mat_apply ima 
+	      where imt.imtid = imtd.imtid(+) and 
+	          imtd.imtdid = imm.imtdid and 
+	          imm.outterid = imad.imadid and 
+	          imad.imaid = ima.imaid and 
+	          imtd.out_qty>0 
+	      group by ima.imaid,imt.sheetno,imt.tran_type,imt.createdate,imt.operuser,
+	           imtd.warehouseid,ima.sheetno,imt.site_id,ima.sheetname) t
+	    where 1=1 and t.site_id=#{params.siteId}
+		<if test="params.sheetno != null and params.sheetno != ''">
+		  	and t.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.tranTypeName != null and params.tranTypeName != ''">
+		  	and t.tran_type_name like '%'||'${params.tranTypeName}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and t.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.operuser != null and params.operuser != ''">
+		  	and t.operuser like '%'||'${params.operuser}'||'%' 
+		</if>
+		<if test="params.warehouseName != null and params.warehouseName != ''">
+		  	and t.warehouse_name like '%'||'${params.warehouseName}'||'%' 
+		</if>
+		<if test="params.outsheetno != null and params.outsheetno != ''">
+		  	and t.outsheetno like '%'||'${params.outsheetno}'||'%' 
+		</if>
+		<if test="params.totalPrice != null and params.totalPrice != ''">
+		  	and t.total_price like '%'||'${params.totalPrice}'||'%' 
+		</if> -->
+		
+		select *
+		  from (select 
+			       case when t.tran_type = 'pickingmaterials' then 
+			       			(select imrp.imrid from inv_mat_recipients imrp where imrp.sheetno = t.sheetno and imrp.site_id = t.site_id)
+			            when t.tran_type = 'strippermaterials' then 
+			            	(select imrs.imrsid from inv_mat_returns imrs where imrs.imrsno = t.sheetno and imrs.site_id = t.site_id and imrs.oper_type='returns')
+			            when t.tran_type = 'shiftmaterialsOut' then
+                    		(select imtf.imtid from inv_mat_transfer imtf where imtf.imtcode = t.sheetno and imtf.siteid = t.site_id)
+                    	when t.tran_type = 'materialscounting' then 
+                     		(select ist.istid from inv_stocktaking ist where ist.sheetno = t.sheetno and ist.site_id = t.site_id)
+			            end as imtid,
+		            t.sheetno,
+               		be.enum_val as tran_type_name,
+               		t.createdate,
+               		t.createdatefororder,
+               		su.name as operuser,
+               		iw.warehousename as warehouse_name,
+               		t.total_price,
+               		t.site_id,
+               		t.remark,
+               		t.tran_type
+            	from (
+					select imt.imtid,
+                         imt.sheetno,
+                         imt.tran_type,
+                         imt.site_id,
+                         to_char(imt.createdate, 'yyyy-MM-dd') as createdate,
+                         imt.createdate as createdatefororder,
+                         imt.operuser,
+                         imtd.warehouseid,
+                         sum(imtd.price*imtd.out_qty) as total_price,
+                         imt.remark
+                  	from inv_mat_tran imt
+						inner join inv_mat_tran_rec imtd on imt.imtid = imtd.imtid
+                  	where <![CDATA[imtd.out_qty > 0]]> and <![CDATA[imt.tran_type <> 'storagematerials']]> and <![CDATA[imt.tran_type <> 'adjustprice']]>
+                  	group by imt.imtid, imt.sheetno, imt.tran_type, imt.site_id, imt.createdate, imt.operuser,
+                           imtd.warehouseid, imt.remark) t
+				left join b_enum be on be.ecat_code = 'INV_OPERATION_TYPE' and be.enum_code = t.tran_type
+				left join sec_user su on su.user_id = t.operuser
+				left join inv_warehouse iw on iw.warehouseid = t.warehouseid and iw.site_id = t.site_id
+		     ) m where 1 = 1 and m.site_id = #{params.siteId}
+		<if test="params.sheetno != null and params.sheetno != ''">
+		  	and m.sheetno like '%'||'${params.sheetno}'||'%' 
+		</if>
+		<if test="params.tranTypeName != null and params.tranTypeName != ''">
+		  	and m.tran_type_name like '%'||'${params.tranTypeName}'||'%' 
+		</if>
+		<if test="params.createdate != null and params.createdate != ''">
+		  	and m.createdate like '%'||'${params.createdate}'||'%' 
+		</if>
+		<if test="params.operuser != null and params.operuser != ''">
+		  	and m.operuser like '%'||'${params.operuser}'||'%' 
+		</if>
+		<if test="params.warehouseName != null and params.warehouseName != ''">
+		  	and m.warehouse_name like '%'||'${params.warehouseName}'||'%' 
+		</if>
+		<if test="params.totalPrice != null and params.totalPrice != ''">
+		  	and m.total_price like '%'||'${params.totalPrice}'||'%' 
+		</if>
+	</select>
+	
+	<!-- 通过sheetNo查询 -->
+	<select id="queryInvMatTranBySheetNo" parameterType="java.lang.String" resultType="com.timss.inventory.bean.InvMatTran">
+		select imt.imtid, imt.sheetno, imt.tran_type, imt.warehouseid, imt.operuser,
+		       imt.checkuser, imt.createuser, imt.createdate, imt.modifyuser,
+		       imt.modifydate, imt.remark, imt.lotno, imt.site_id, imt.processinstid
+		  from inv_mat_tran imt
+		 where imt.sheetno = #{sheetNo}
+	</select>
+	
+	<!-- 通过sheetNo查询 (带其他参数)-->
+	<select id="queryInvMatTranBySheetNoAndParam" resultType="com.timss.inventory.bean.InvMatTran">
+		select imt.imtid, imt.sheetno, imt.tran_type, imt.warehouseid, imt.operuser,
+		       imt.checkuser, imt.createuser, imt.createdate, imt.modifyuser,
+		       imt.modifydate, imt.remark, imt.lotno, imt.site_id, imt.processinstid
+		  from inv_mat_tran imt
+		 where imt.sheetno = #{sheetNo}  
+		 <if test="paramMap.tranType != null and paramMap.tranType != ''">
+		  	and imt.tran_type ='${paramMap.tranType}' 
+		</if>
+	</select>
+</mapper>

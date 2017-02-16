@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.inventory.dao.InvMatTranLogDao">
+	<resultMap type="com.timss.inventory.bean.InvMatTranLog" id="InvMatTranLogMap">
+		<result property="imtlId" column="IMTLID"/>
+		<result property="imtdId" column="IMTDID"/>
+		<result property="fromImtdId" column="FROM_IMTDID"/>
+		<result property="tranQty" column="TRAN_QTY"/>
+		<result property="tranCategory" column="TRAN_CATEGORY"/>
+		<result property="createuser" column="CREATEUSER"/>
+		<result property="createdate" column="CREATEDATE"/>
+		<result property="siteid" column="SITE_ID"/>
+	</resultMap>
+
+	<resultMap type="com.timss.inventory.vo.InvMatTranRecVO" id="InvMatTranRecVOMap">
+		<result property="siteId" column="site_id"/>
+		<result property="inQty" column="in_qty"/>
+		<result property="inUnitid" column="in_unitid"/>
+		<result property="outQty" column="out_qty"/>
+		<result property="outUnitid" column="out_unitid"/>
+		<result property="puraId" column="pura_id"/>
+		<result property="price" column="price"/>
+		<result property="tax" column="tax"/>
+		<result property="noTaxPrice" column="no_tax_price"/>
+		<result property="canOutQty" column="can_out_qty"/>
+		<result property="priceFlag" column="price_flag"/>
+		<result property="outterId" column="outterid"/>
+		<result property="tranType" column="tran_type"/>
+		<result property="tranQty" column="tran_qty"/>
+	</resultMap>
+		
+	<!-- 查询出库来源批次对应关系表 -->
+	<select id="queryInvMatTranLogList" resultMap="InvMatTranLogMap">
+        select t.* from inv_mat_tran_log t 
+        where t.site_id = #{params.siteid} 
+        <if test="params.imtdId != null and params.imtdId != ''">
+		  	and t.imtdId like '%'||'${params.imtdId}'||'%' 
+		</if>
+	</select>
+	
+	<!-- 查询关联的批次（含合同信息和采购申请信息） -->
+	<select id="queryRelateTranRecByLog" resultMap="InvMatTranRecVOMap">
+		select imtl.tran_qty,
+		       imtr.imtdid,
+		       imtr.imtid,
+		       imtr.itemid,
+		       imtr.warehouseid,
+		       imtr.binid,
+		       imtr.lotno,
+		       imtr.remark,
+		       imtr.in_qty,
+		       imtr.in_unitid,
+		       imtr.out_qty,
+		       imtr.out_unitid,
+		       imtr.createuser,
+		       imtr.createdate,
+		       imtr.modifyuser,
+		       imtr.modifydate,
+		       imtr.site_id,
+		       imtr.price,
+		       imtr.itemcode,
+		       imtr.isrmbrs,
+		       imtr.pura_id as pura_id,
+		       imtr.no_tax_price,
+		       imtr.tax,
+		       imtr.can_out_qty,
+		       imtr.invcateid,
+		       imtr.price_flag,
+		       imm.outterid as outterid,
+		       imm.tran_type as tran_type
+		  	from inv_mat_tran_log imtl
+		  	left join inv_mat_tran_rec imtr on imtl.from_imtdid = imtr.imtdid
+		  	left join inv_mat_map imm on imtr.imtdid = imm.imtdid
+		  	where imtl.imtdid = #{params.imtdId} 
+        	and imtl.site_id = #{params.siteId} 
+	</select>	
+	
+	<!-- 插入出库来源批次对应关系记录 -->
+	<insert id="insertInvMatTranLog" parameterType="com.timss.inventory.bean.InvMatTranLog">
+		insert into inv_mat_tran_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	      <if test="imtlId != null"> IMTLID, </if>
+	      <if test="imtdId != null"> IMTDID, </if>
+	      <if test="fromImtdId != null"> FROM_IMTDID, </if>
+	      <if test="tranQty != null"> TRAN_QTY, </if>
+	      <if test="tranCategory != null"> TRAN_CATEGORY, </if>
+	      <if test="createuser != null"> CREATEUSER, </if>
+	      <if test="createdate != null"> CREATEDATE, </if>	      
+	      <if test="siteid != null"> SITE_ID, </if>
+	    </trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	      <if test="imtlId != null"> #{imtlId,jdbcType=VARCHAR}, </if>
+	      <if test="imtdId != null"> #{imtdId,jdbcType=VARCHAR}, </if>
+	      <if test="fromImtdId != null"> #{fromImtdId,jdbcType=VARCHAR}, </if>
+	      <if test="tranQty != null"> #{tranQty,jdbcType=NUMERIC}, </if>
+	      <if test="tranCategory != null"> #{tranCategory,jdbcType=VARCHAR}, </if>
+	      <if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+	      <if test="createdate != null"> #{createdate,jdbcType=TIMESTAMP}, </if>
+	      <if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+	    </trim>
+	</insert>
+</mapper> 

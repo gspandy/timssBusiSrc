@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="timss-inventory"
+  id="myeclipse.1402622015587"
+  context-root="/timss-inventory"
+  j2ee-spec="6.0"
+  archive="timss-inventory.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

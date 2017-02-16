@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.finance.dao.FinanceAttachMatchDao">
+	 
+	<!-- 在resultMap中设置为指定的ID，然后即可将数据库中的column名称转换为bean中的属性。名字一样的可以不写在result中。 -->
+	<resultMap type="FinanceAttachMatch" id="FinanceAttachMatchMap">
+		<result property="fid" column="fid"/>
+		<result property="attachid" column="attachid"/>
+	</resultMap>
+	
+	<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		fid,attachid
+	</sql>
+	
+	<select id="queryFinanceAttachMatchByFid"  resultType="FinanceAttachMatch">
+		select <include refid="columnBasic"/> 
+		from FIN_ATTACH_MATCH
+		where  fid = #{params.fid}
+		</select>
+		
+	<!-- 如果要往表中插入空数据，则需要设置jdbcType -->
+ 	<insert id="insertFinanceAttachMatch" parameterType="FinanceAttachMatch">
+		insert into FIN_ATTACH_MATCH
+		(
+		fid,attachid
+		) 
+		values
+		(
+		#{fid,jdbcType=VARCHAR}, #{attachid,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	
+	<delete id = "deleteFinanceAttachMatch" >
+             delete from FIN_ATTACH_MATCH where fid = #{fid}
+     	 </delete>
+     	 
+</mapper> 

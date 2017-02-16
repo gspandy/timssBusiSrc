@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.ptw.dao.PtwPtoUserInfoDao">
+	<resultMap type="PtwPtoUserInfoConfig" id="ptwPtoUserInfoConfigMap">
+		<id column="ID" property="id" />
+		<result column="TYPE" property="type" />
+		<result column="STEP" property="step" />
+		<result column="STEPNAME" property="stepName" />
+		<result column="CATEGORY" property="category" />
+		<result column="BEGINDATE" property="beginDate" />
+		<result column="ENDDATE" property="endDate" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEL_FLAG" property="delFlag" />
+	</resultMap>
+	<resultMap type="PtwPtoStepInfo" id="ptwPtoStepInfoMap">
+		<id column="ID" property="id" />
+		<result column="TYPE" property="type" />
+		<result column="CATEGORY" property="category" />
+		<result column="STEP" property="step" />
+		<result column="STEPNAME" property="stepName" />
+	</resultMap>
+	<select id="queryUserInfoConfig" resultMap="ptwPtoUserInfoConfigMap">
+		SELECT
+		T.ID,S.CATEGORY,T.STEP,S.TYPE,T.BEGINDATE,T.ENDDATE,S.SITEID,T.DEL_FLAG,S.STEPNAME
+		FROM
+		PTWPTO_CONFIG T LEFT JOIN PTWPTO_STEPINFO S ON T.STEP = S.ID
+		WHERE
+		T.DEL_FLAG = 'N' AND S.SITEID = #{params.loginSiteid}
+		<if test="params.stepName != null">
+			AND S.STEPNAME = #{params.stepName}
+		</if>
+	</select>
+	<select id="isUserInfoConfigConflict" resultMap="ptwPtoUserInfoConfigMap">
+		SELECT
+		T.ID,S.CATEGORY,T.STEP,S.TYPE,T.BEGINDATE,T.ENDDATE,S.SITEID,T.DEL_FLAG
+		FROM
+		PTWPTO_CONFIG T LEFT JOIN PTWPTO_STEPINFO S ON T.STEP = S.ID
+		WHERE
+		T.DEL_FLAG = 'N'
+		<if test="null != step and '' != step ">
+			AND T.STEP = #{step}
+		</if>
+		<if test="null != category and '' != category">
+			AND S.CATEGORY = #{category}
+		</if>
+		<if test="null != type and '' != type">
+			AND S.TYPE = #{type}
+		</if>
+		<if test="null != siteid and '' != siteid">
+			AND S.SITEID = #{siteid}
+		</if>
+		<if test="id != null and '' != id ">
+			AND T.ID != #{id}
+		</if>
+		<if test="beginDate != null and endDate != null">
+			AND( T.BEGINDATE <![CDATA[<=]]> #{beginDate} 
+			AND T.ENDDATE <![CDATA[>=]]> #{beginDate}
+			OR T.BEGINDATE <![CDATA[<=]]> #{endDate} 
+			AND T.ENDDATE <![CDATA[>=]]> #{endDate})
+		</if>
+	</select>
+	<select id="queryUserInfoConfigById" resultMap="ptwPtoUserInfoConfigMap">
+		SELECT
+		T.ID,S.CATEGORY,T.STEP,S.TYPE,T.BEGINDATE,T.ENDDATE,S.SITEID,T.DEL_FLAG
+		FROM
+		PTWPTO_CONFIG T LEFT JOIN PTWPTO_STEPINFO S ON T.STEP = S.ID
+		WHERE
+		T.DEL_FLAG = 'N'
+		AND T.ID=#{id}
+	</select>
+	<select id="queryUserInfoListByConfigId" resultType="String">
+		SELECT T.USERID
+		FROM PTWPTO_SELECTOR T
+		WHERE T.CONFIGID = #{id}
+	</select>
+	<select id="queryStepInfo" resultMap="ptwPtoStepInfoMap">
+		SELECT T.ID,T.CATEGORY,T.TYPE,T.STEPNAME,T.STEP
+		FROM PTWPTO_STEPINFO T
+		WHERE 1=1  
+		<if test="null != siteid">
+			AND T.SITEID = #{siteid}
+		</if> 
+		<if test="null != type">
+			AND T.TYPE = #{type}
+		</if>
+		<if test="null != category">
+			AND T.CATEGORY = #{category}
+		</if>
+	</select>
+	<select id="queryRelatedOrgListStartWithOrgCode"  resultType="String">
+		SELECT T.ORG_CODE 
+		FROM SEC_ORGANIZATION T 
+		START WITH T.ORG_CODE = #{id}
+		CONNECT BY PRIOR ORG_CODE = T.PARENT_CODE 
+	</select>
+	<select id="queryRelatedOrgListEndWithOrgCode"  resultType="String">
+		SELECT T.ORG_CODE 
+		FROM SEC_ORGANIZATION T 
+		START WITH T.ORG_CODE = #{id}
+		CONNECT BY PRIOR PARENT_CODE = T.ORG_CODE 
+	</select>
+	<select id="queryOrgCodeWithSiteId" resultType="String">
+		SELECT T.ORG_CODE 
+		FROM SEC_SITE_ORGANIZATION T 
+		WHERE T.SITE_ID = #{id}
+	</select>
+	<insert id="insertUserInfoConfig" parameterType="com.timss.ptw.bean.PtwPtoUserInfoConfig">
+		INSERT INTO
+		PTWPTO_CONFIG (ID,STEP,BEGINDATE,ENDDATE,DEL_FLAG)
+		VALUES(
+		#{id},
+		#{step,jdbcType=VARCHAR},
+		#{beginDate,jdbcType=TIMESTAMP},
+		#{endDate,jdbcType=TIMESTAMP},
+		#{delFlag,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertUserInfo" parameterType="com.timss.ptw.bean.PtwPtoUserInfo">
+		INSERT INTO
+		PTWPTO_SELECTOR (CONFIGID,USERID)
+		VALUES(
+		#{configId,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="updateUserInfoConfig">
+		UPDATE PTWPTO_CONFIG
+		<set>
+			<foreach item="item" index="index" collection="params">
+				<if test="item=='step'"> STEP = #{config.step,jdbcType=VARCHAR},</if>
+				<if test="item=='beginDate'"> BEGINDATE = #{config.beginDate,jdbcType=TIMESTAMP},</if>
+				<if test="item=='endDate'"> ENDDATE = #{config.endDate,jdbcType=TIMESTAMP},</if>
+				<if test="item=='delFlag'"> DEL_FLAG = #{config.delFlag,jdbcType=VARCHAR},</if>
+			</foreach>
+		</set>
+		WHERE ID=#{config.id}
+	</update>
+	<delete id="deleteUserInfo">
+		DELETE FROM PTWPTO_SELECTOR
+		WHERE CONFIGID = #{configId}
+	</delete>
+</mapper>

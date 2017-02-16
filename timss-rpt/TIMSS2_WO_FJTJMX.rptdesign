@@ -1,0 +1,1311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">11</property>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">11</property>
+        </structure>
+        <structure>
+            <property name="name">rowFetchSize</property>
+            <property name="id">11</property>
+        </structure>
+    </list-property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="year" id="8">
+            <property name="valueType">static</property>
+            <property name="dataType">integer</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">2014</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="month" id="9">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">01</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="workteamCnName" id="166">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">甲</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="someWTWindSum" id="239">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">0</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="workteamStopTime" id="240">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">0.00</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="workteamRate" id="241">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">0</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="printNum" id="264">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="10">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledMetadataBidiFormatStr</name>
+                </ex-property>
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledContentBidiFormatStr</name>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@10.0.17.154:1521:itceam</property>
+            <property name="odaUser">timss2dev</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">YWJj</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/timss2dev</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="DS_1" id="11">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">EQUIPNAME_NO</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">EQUIPNAME_NO</text-property>
+                    <text-property name="heading">EQUIPNAME_NO</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">WORK_DESCRIPTION</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">WORK_DESCRIPTION</text-property>
+                    <text-property name="heading">WORK_DESCRIPTION</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">DISCOVER_DATE</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">DISCOVER_DATE</text-property>
+                    <text-property name="heading">DISCOVER_DATE</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">YX_NAME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">YX_NAME</text-property>
+                    <text-property name="heading">YX_NAME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">APPROVESTOP_TIME</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">APPROVESTOP_TIME</text-property>
+                    <text-property name="heading">APPROVESTOP_TIME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">REAL_FINISH_TIME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">REAL_FINISH_TIME</text-property>
+                    <text-property name="heading">REAL_FINISH_TIME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">STOP_LASTTIME</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">STOP_LASTTIME</text-property>
+                    <text-property name="heading">STOP_LASTTIME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">YS_NAME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">YS_NAME</text-property>
+                    <text-property name="heading">YS_NAME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">XQ_NAME</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">XQ_NAME</text-property>
+                    <text-property name="heading">XQ_NAME</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">REMARKS</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">REMARKS</text-property>
+                    <text-property name="heading">REMARKS</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">EQUIPNAME_NO</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">WORK_DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DISCOVER_DATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">YX_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">APPROVESTOP_TIME</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">REAL_FINISH_TIME</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">STOP_LASTTIME</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">YS_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">XQ_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">REMARKS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <method name="beforeOpen"><![CDATA[    var printnum = params["printNum"].value;  
+    if (printnum !=null &amp;&amp; "" != printnum) {  
+        this.queryText += " where t.printnum = "+printnum+" order by t.discover_time desc";  
+    } else{
+    	this.queryText += " order by t.discover_time desc";  
+    } ]]></method>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">EQUIPNAME_NO</property>
+                    <property name="nativeName">EQUIPNAME_NO</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">WORK_DESCRIPTION</property>
+                    <property name="nativeName">WORK_DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DISCOVER_DATE</property>
+                    <property name="nativeName">DISCOVER_DATE</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">YX_NAME</property>
+                    <property name="nativeName">YX_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">APPROVESTOP_TIME</property>
+                    <property name="nativeName">APPROVESTOP_TIME</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">2</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">REAL_FINISH_TIME</property>
+                    <property name="nativeName">REAL_FINISH_TIME</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">STOP_LASTTIME</property>
+                    <property name="nativeName">STOP_LASTTIME</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">2</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">YS_NAME</property>
+                    <property name="nativeName">YS_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">XQ_NAME</property>
+                    <property name="nativeName">XQ_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">REMARKS</property>
+                    <property name="nativeName">REMARKS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select equipname_code as equipname_no, 
+       description as work_description, 
+       discover_time as discover_date, 
+       faultconfrimuser as yx_name, 
+       approvestop_time as approvestop_time, 
+       end_time as real_finish_time, 
+       faultstoptime as stop_lasttime,
+       endreportuser as ys_name,
+       acceptanceuser as xq_name, 
+       remarks as remarks
+from wo_wostatis_temp t 
+]]></xml-property>
+            <property name="rowFetchSize">10</property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="dateStyle" id="194">
+            <property name="width">110px</property>
+        </style>
+        <style name="timeStyle" id="195">
+            <property name="width">40px</property>
+        </style>
+        <style name="simpleStyle" id="196">
+            <property name="width">100px</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+            <property name="height">210mm</property>
+            <property name="width">447mm</property>
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="187">
+            <property name="width">11.145833333333334in</property>
+            <column id="188">
+                <property name="width">11.145833333333334in</property>
+            </column>
+            <row id="189">
+                <cell id="190">
+                    <data id="167">
+                        <property name="fontFamily">"宋体"</property>
+                        <property name="fontSize">26pt</property>
+                        <property name="textAlign">center</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">pageshow</property>
+                                <expression name="expression" type="javascript">"石碑山风电场"+params["year"]+"年度"+params["month"]+"月维护"+decodeURI(params["workteamCnName"])+"组风机平均故障率统计表"</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">pageshow</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="191">
+                <cell id="192">
+                    <table id="12">
+                        <property name="width">10.979166666666666in</property>
+                        <property name="dataSet">DS_1</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">EQUIPNAME_NO</property>
+                                <text-property name="displayName">EQUIPNAME_NO</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["EQUIPNAME_NO"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">WORK_DESCRIPTION</property>
+                                <text-property name="displayName">WORK_DESCRIPTION</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["WORK_DESCRIPTION"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">DISCOVER_DATE</property>
+                                <text-property name="displayName">DISCOVER_DATE</text-property>
+                                <expression name="expression" type="javascript">null!=dataSetRow["DISCOVER_DATE"]?dataSetRow["DISCOVER_DATE"].getDate():""</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">YX_NAME</property>
+                                <text-property name="displayName">YX_NAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["YX_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">APPROVESTOP_TIME</property>
+                                <text-property name="displayName">APPROVESTOP_TIME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["APPROVESTOP_TIME"]</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">REAL_FINISH_TIME</property>
+                                <text-property name="displayName">REAL_FINISH_TIME</text-property>
+                                <expression name="expression" type="javascript">null!=dataSetRow["REAL_FINISH_TIME"]?dataSetRow["REAL_FINISH_TIME"].getMinutes():""</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">STOP_LASTTIME</property>
+                                <text-property name="displayName">STOP_LASTTIME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["STOP_LASTTIME"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">YS_NAME</property>
+                                <text-property name="displayName">YS_NAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["YS_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">XQ_NAME</property>
+                                <text-property name="displayName">XQ_NAME</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["XQ_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">REMARKS</property>
+                                <text-property name="displayName">REMARKS</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["REMARKS"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Column Binding</property>
+                                <expression name="expression" type="javascript">row.__rownum+1</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">DISCOVER_DATE_HOUR</property>
+                                <text-property name="displayName">DISCOVER_DATE</text-property>
+                                <expression name="expression" type="javascript">null!=dataSetRow["DISCOVER_DATE"]?(dataSetRow["DISCOVER_DATE"].getHours()):""</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">DISCOVER_DATE_MINUTE</property>
+                                <text-property name="displayName">DISCOVER_DATE</text-property>
+                                <expression name="expression" type="javascript">null!=dataSetRow["DISCOVER_DATE"]?dataSetRow["DISCOVER_DATE"].getMinutes():""</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">REAL_FINISH_TIME_DATE</property>
+                                <text-property name="displayName">REAL_FINISH_TIME</text-property>
+                                <expression name="expression" type="javascript">null!=dataSetRow["REAL_FINISH_TIME"]?dataSetRow["REAL_FINISH_TIME"].getDate():""</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">REAL_FINISH_DATE_HOUR</property>
+                                <text-property name="displayName">REAL_FINISH_TIME</text-property>
+                                <expression name="expression" type="javascript">null!=dataSetRow["REAL_FINISH_TIME"]?dataSetRow["REAL_FINISH_TIME"].getHours():""</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <column id="70">
+                            <property name="width">50px</property>
+                        </column>
+                        <column id="71">
+                            <property name="width">90px</property>
+                        </column>
+                        <column id="72">
+                            <property name="width">300px</property>
+                        </column>
+                        <column id="73">
+                            <property name="width">30px</property>
+                        </column>
+                        <column id="74">
+                            <property name="width">30px</property>
+                        </column>
+                        <column id="76">
+                            <property name="width">30px</property>
+                        </column>
+                        <column id="77">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="78">
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="79">
+                            <property name="style">dateStyle</property>
+                            <property name="width">30px</property>
+                        </column>
+                        <column id="80">
+                            <property name="style">timeStyle</property>
+                            <property name="width">30px</property>
+                        </column>
+                        <column id="82">
+                            <property name="style">timeStyle</property>
+                            <property name="width">30px</property>
+                        </column>
+                        <column id="83">
+                            <property name="style">simpleStyle</property>
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="84">
+                            <property name="style">simpleStyle</property>
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="85">
+                            <property name="style">simpleStyle</property>
+                            <property name="width">80px</property>
+                        </column>
+                        <column id="86">
+                            <property name="style">simpleStyle</property>
+                            <property name="width">40px</property>
+                        </column>
+                        <column id="87"/>
+                        <header>
+                            <row id="118">
+                                <cell id="119">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">2px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="137">
+                                        <text-property name="text">序号</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="120">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="88">
+                                        <text-property name="text">风机编号</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="121">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="90">
+                                        <text-property name="text">故 障 名 称</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="122">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="138">
+                                        <text-property name="text">故障发生时间</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="126">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="100">
+                                        <text-property name="text">运行登记人</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="127">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="102">
+                                        <text-property name="text">批准停机时间(小时)</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="128">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="139">
+                                        <text-property name="text">风机恢复时间</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="132">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="110">
+                                        <text-property name="text">故障停机时间(小时)</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="133">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="112">
+                                        <text-property name="text">运行登记人</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="134">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="114">
+                                        <text-property name="text">维护确认人</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="135">
+                                    <property name="colSpan">1</property>
+                                    <property name="rowSpan">2</property>
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">2px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="116">
+                                        <text-property name="text">备   注</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="136"/>
+                            </row>
+                            <row id="13">
+                                <cell id="17">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="92">
+                                        <text-property name="text">日</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="18">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="94">
+                                        <text-property name="text">时</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="20">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="98">
+                                        <text-property name="text">分</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="23">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="104">
+                                        <text-property name="text">日</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="24">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="106">
+                                        <text-property name="text">时</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="26">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="108">
+                                        <text-property name="text">分</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="31"/>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="32">
+                                <cell id="33">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">2px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="140">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">Column Binding</property>
+                                    </data>
+                                </cell>
+                                <cell id="34">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="89">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">EQUIPNAME_NO</property>
+                                    </data>
+                                </cell>
+                                <cell id="35">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="91">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">WORK_DESCRIPTION</property>
+                                    </data>
+                                </cell>
+                                <cell id="36">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="93">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">DISCOVER_DATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="37">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="95">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">DISCOVER_DATE_HOUR</property>
+                                    </data>
+                                </cell>
+                                <cell id="39">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="99">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">DISCOVER_DATE_MINUTE</property>
+                                    </data>
+                                </cell>
+                                <cell id="40">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="101">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">YX_NAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="41">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="103">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">APPROVESTOP_TIME</property>
+                                    </data>
+                                </cell>
+                                <cell id="42">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="105">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">REAL_FINISH_TIME_DATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="43">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="107">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">REAL_FINISH_DATE_HOUR</property>
+                                    </data>
+                                </cell>
+                                <cell id="45">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="109">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">REAL_FINISH_TIME</property>
+                                    </data>
+                                </cell>
+                                <cell id="46">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="111">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">STOP_LASTTIME</property>
+                                    </data>
+                                </cell>
+                                <cell id="47">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="113">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">YS_NAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="48">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="115">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">XQ_NAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="49">
+                                    <property name="fontFamily">"宋体"</property>
+                                    <property name="fontSize">12pt</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">2px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="117">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">REMARKS</property>
+                                    </data>
+                                </cell>
+                                <cell id="50">
+                                    <label id="193">
+                                        <property name="fontSize">20pt</property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="197">
+                                <cell id="198">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">2px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <label id="233">
+                                        <property name="fontFamily">"宋体"</property>
+                                        <property name="fontSize">12pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">风机总台数(台)：</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="246">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <data id="242">
+                                        <property name="fontFamily">"宋体"</property>
+                                        <property name="fontSize">12pt</property>
+                                        <property name="textAlign">center</property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">wind_sum</property>
+                                                <expression name="expression" type="javascript">params["someWTWindSum"]</expression>
+                                                <property name="dataType">string</property>
+                                                <property name="allowExport">true</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">wind_sum</property>
+                                    </data>
+                                </cell>
+                                <cell id="253">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <label id="234">
+                                        <property name="fontFamily">"宋体"</property>
+                                        <property name="fontSize">12pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">累计故障停机时间(小时)：</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="256">
+                                    <property name="colSpan">5</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">2px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">2px</property>
+                                    <data id="243">
+                                        <property name="fontFamily">"宋体"</property>
+                                        <property name="fontSize">12pt</property>
+                                        <property name="textAlign">center</property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">stoptime_sum</property>
+                                                <expression name="expression" type="javascript">params["workteamStopTime"]</expression>
+                                                <property name="dataType">string</property>
+                                                <property name="allowExport">true</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">stoptime_sum</property>
+                                    </data>
+                                </cell>
+                                <cell id="215"/>
+                            </row>
+                            <row id="216">
+                                <cell id="217">
+                                    <property name="colSpan">6</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">2px</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">2px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="235">
+                                        <property name="fontFamily">"宋体"</property>
+                                        <property name="fontSize">12pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">风机平均故障率(%)：</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="263">
+                                    <property name="colSpan">9</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">2px</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">2px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <data id="244">
+                                        <property name="fontFamily">"宋体"</property>
+                                        <property name="fontSize">12pt</property>
+                                        <property name="textAlign">center</property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">avgfaultRate</property>
+                                                <expression name="expression" type="javascript">params["workteamRate"]</expression>
+                                                <property name="dataType">string</property>
+                                                <property name="allowExport">true</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">avgfaultRate</property>
+                                    </data>
+                                </cell>
+                                <cell id="232"/>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

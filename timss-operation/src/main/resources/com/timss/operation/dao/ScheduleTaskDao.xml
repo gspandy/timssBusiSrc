@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.operation.dao.ScheduleTaskDao">
+
+	<resultMap type="ScheduleTask" id="scheduleTaskMap">
+		<id column="ID" property="id" />
+		<result column="CODE" property="code" />
+		<result column="TASK_PLAN_ID" property="taskPlanId" />
+		<result column="TYPE" property="type" />
+		<result column="ASSET_ID" property="assetId" />
+		<result column="ASSET_NAME" property="assetName" />
+		<result column="CONTENT" property="content" />
+		<result column="DEPT_ID" property="deptId" />
+		<result column="DEPT_NAME" property="deptName" />
+		
+		<result column="SHIFT_ID" property="shiftId" />
+		<result column="SHIFT_DATE" property="shiftDate" />
+		<result column="SHIFT_NAME" property="shiftName" />		
+		<result column="DUTY_ID" property="dutyId" />
+		<result column="DUTY_NAME" property="dutyName" />
+		<result column="DO_STATUS" property="doStatus" />
+		<result column="DO_RESULT" property="doResult" />
+		<result column="DO_TIME" property="doTime" />
+		<result column="DO_USER_NAMES" property="doUserNames" />
+		<result column="DO_USER_IDS" property="doUserIds" />
+		<result column="RECORDER" property="recorder" />
+		<result column="RECORDERNAME" property="recorderName" />
+		<result column="RECORDE_TIME" property="recordeTime" />
+		<result column="REMARKS" property="remarks" />
+		<result column="CREATEDATE" property="createdate" />
+		<result column="SITEID" property="siteid" />
+	</resultMap>	
+	
+	<insert id="insertScheduleTask" >
+		insert into opr_schedule_task(ID,CODE,TASK_PLAN_ID,TYPE,ASSET_ID,ASSET_NAME,CONTENT,SHIFT_DATE,
+									DEPT_ID,SHIFT_ID,DUTY_ID,DUTY_NAME,DO_STATUS,CREATEDATE,SITEID) 
+		values( #{id},
+				#{code,jdbcType=VARCHAR},
+				#{taskPlanId,jdbcType=VARCHAR},
+				#{type,jdbcType=VARCHAR},
+				#{assetId,jdbcType=VARCHAR},
+				#{assetName,jdbcType=VARCHAR},
+				#{content,jdbcType=VARCHAR},
+				#{shiftDate,jdbcType=TIMESTAMP},
+				#{deptId,jdbcType=VARCHAR},
+				#{shiftId,jdbcType=NUMERIC},
+				#{dutyId,jdbcType=VARCHAR},
+				#{dutyName,jdbcType=VARCHAR},
+				#{doStatus,jdbcType=VARCHAR},
+				#{createdate,jdbcType=TIMESTAMP},
+				#{siteid,jdbcType=VARCHAR}
+				) 
+	</insert>
+	<select id="querytodoScheduleTaskList" parameterType="HashMap" resultMap="scheduleTaskMap">
+		select t.ID,t.CODE,t.TYPE,T.TASK_PLAN_ID,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,CREATEDATE,
+			   t.DO_STATUS,T.DEPT_ID,t.SHIFT_ID,t.DUTY_ID,t.DUTY_NAME,t.SITEID,
+			   t.do_time DO_TIME,t.do_user_names DO_USER_NAMES,t.remarks REMARKS,
+			   to_char(t.shift_date,'yyyy-MM-dd') || ' '||os.name  SHIFT_NAME			   
+		from opr_schedule_task t,opr_shift os 
+		where t.siteid=#{params.siteid} AND os.id= t.shift_id
+				and t.DO_STATUS = 'undo' and 
+				t.SHIFT_DATE <![CDATA[ < ]]> #{params.tomorrow}
+				<if test="params.deptId != null and params.deptId !=''.toString() ">
+					and t.DEPT_ID = #{params.deptId}
+				</if> 
+				<if test="params.shiftId != null and params.shiftId !=''.toString() ">
+					and t.SHIFT_ID = #{params.shiftId}
+				</if>
+		order by t.createdate desc
+	</select>
+	
+	<select id="queryScheduleTaskList" parameterType="HashMap" resultMap="scheduleTaskMap">
+		select ID,CODE,TYPE,TASK_PLAN_ID,ASSET_ID,ASSET_NAME,CONTENT,CREATEDATE,
+			   DEPT_ID,DUTY_ID,DUTY_NAME,SITEID,SHIFT_ID,
+			   REMARKS,DO_STATUS,DO_TIME,DO_USER_NAMES,SHIFT_NAME,BEFORE_SHIFT_DATE
+		from (
+				select t.ID,t.CODE,t.TYPE,T.TASK_PLAN_ID,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,T.CREATEDATE,
+					   T.DEPT_ID,t.DUTY_ID,t.DUTY_NAME,t.SITEID,
+					   ostc.BEFORE_SHIFT_ID SHIFT_ID,
+					   decode(ostc.after_shift,NULL, t.remarks,ostc.remarks  ) REMARKS ,
+					   decode(ostc.after_shift,NULL, t.do_status,'changeShift'  ) DO_STATUS ,
+		          	   decode(ostc.after_shift,NULL, t.do_time , ostc.createdate) DO_TIME,
+		               decode(ostc.after_shift,NULL,  t.do_user_names, su.name ) DO_USER_NAMES,
+					   ostc.before_shift SHIFT_NAME,ostc.BEFORE_SHIFT_DATE 			   
+				from opr_schedule_task t,opr_shift os,
+					 opr_schedule_task_changeshift ostc LEFT JOIN SEC_USER su ON  SU.USER_ID = OSTC.CREATEUSER
+				where t.siteid=#{params.siteid} 
+						AND os.id= ostc.BEFORE_SHIFT_ID
+				 		AND t.id = ostc.task_id 
+						<if test="params.deptId != null and params.deptId !=''.toString() ">
+							and t.DEPT_ID = #{params.deptId}
+						</if> 
+						<if test="params.shiftIdList != null">
+							and ostc.before_shift_id in 
+							<foreach collection="params.shiftIdList" item="shiftId" index="index" open="(" close=")" separator=",">
+		           				 #{params.shiftIdList[${index}]}
+		        			</foreach>
+						</if>
+						<if test="params.typeList != null">
+							AND t.type IN 
+							<foreach collection="params.typeList" item="type" index="index" open="(" close=")" separator=",">
+		           				 #{params.typeList[${index}]}
+		        			</foreach>
+						</if>
+						<if test="params.beginDate != null">
+							AND ostc.BEFORE_SHIFT_DATE <![CDATA[ >= ]]> #{params.beginDate}
+						</if>
+						<if test="params.endDate != null">
+							AND ostc.BEFORE_SHIFT_DATE <![CDATA[ <= ]]> #{params.endDate}
+						</if>
+			) ss
+		where ss.id = ss.id 
+			<if test="params.doStatusList != null">
+				AND ss.do_status IN
+				<foreach collection="params.doStatusList" item="doStatus" index="index" open="(" close=")" separator=",">
+          				 #{params.doStatusList[${index}]}
+       			</foreach>
+			</if>
+		order by BEFORE_SHIFT_DATE desc
+	</select>
+	
+	<select id="queryTaskListByTaskPlanId" parameterType="HashMap" resultMap="scheduleTaskMap">
+		select t.ID,t.CODE,t.TYPE,T.TASK_PLAN_ID,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,CREATEDATE,
+			   t.DO_STATUS,T.DEPT_ID,t.SHIFT_ID,t.DUTY_ID,t.DUTY_NAME,t.SITEID			   
+		from opr_schedule_task t 
+		where t.TASK_PLAN_ID=#{taskPlanId}
+		order by t.createdate desc
+	</select>
+	
+	<select id="queryUndoScheduleTaskListByShift" parameterType="HashMap" resultMap="scheduleTaskMap">
+		select t.ID,t.CODE,t.TYPE,T.TASK_PLAN_ID,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,CREATEDATE,
+			   t.DO_STATUS,T.DEPT_ID,t.SHIFT_ID,t.DUTY_ID,t.DUTY_NAME,t.SITEID			   
+		from opr_schedule_task t 
+		where T.DO_STATUS = 'undo' and t.SHIFT_ID = #{shiftId}
+			<if test="shiftDate != null">
+				and T.shift_date = #{shiftDate}
+			</if>
+		order by t.createdate desc
+	</select>
+	
+	<select id="queryTaskById" parameterType="HashMap" resultMap="scheduleTaskMap">
+		select t.ID,t.CODE,T.TASK_PLAN_ID,t.TYPE,t.ASSET_ID,t.ASSET_NAME,t.CONTENT,t.DO_STATUS,
+				T.DEPT_ID,od.name dept_name,t.SHIFT_ID,t.DUTY_ID,t.DUTY_NAME,CREATEDATE,t.SITEID,t.DO_RESULT,T.DO_TIME,
+				T.DO_USER_NAMES,T.RECORDER, su.name RECORDERNAME,T.RECORDE_TIME,T.REMARKS,T.SHIFT_DATE,
+				 to_char(t.shift_date,'yyyy-MM-dd') || ' '||os.name || '('||t.duty_name||')' SHIFT_NAME
+		from opr_schedule_task t left join  sec_user su  on su.user_id = t.recorder, 
+				 opr_dept od, opr_shift os 
+		where t.id = #{id} AND os.id= t.shift_id AND od.deptid= t.dept_id
+	</select>
+	
+	<!-- 修改-->
+	<update id="updateScheduleTask" parameterType="ScheduleTask">
+		update opr_schedule_task t
+		set  ID=#{id} 
+			<if test=" dutyName != null and dutyName !='' ">
+			 	,DUTY_NAME = #{dutyName,jdbcType=VARCHAR}
+			</if>
+			<if test=" dutyId != null and dutyId !='' ">
+			 	,DUTY_ID = #{dutyId,jdbcType=VARCHAR}
+			</if>
+			<if test=" shiftDate != null  ">
+			 	,SHIFT_DATE = #{shiftDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="  shiftId!= null and shiftId !='' ">
+			 	,SHIFT_ID = #{shiftId,jdbcType=VARCHAR}
+			</if>
+			 <if test=" doStatus != null and doStatus !='' ">
+			 	,DO_STATUS = #{doStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="doResult != null and doResult  !='' ">
+			 	,DO_RESULT = #{doResult,jdbcType=VARCHAR}
+			</if>
+			<if test="doTime != null ">
+			 	,DO_TIME = #{doTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test=" doUserNames!= null and  doUserNames!='' ">
+			 	, DO_USER_NAMES = #{doUserNames,jdbcType=VARCHAR}
+			</if>
+			<if test="doUserIds != null and doUserIds !='' ">
+			 	,DO_USER_IDS = #{doUserIds,jdbcType=VARCHAR}
+			</if>
+			<if test="recorder != null and recorder !='' ">
+			 	,RECORDER = #{recorder,jdbcType=VARCHAR}
+			</if>
+			<if test=" recordeTime!= null ">
+			 	,RECORDE_TIME = #{recordeTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test=" remarks!= null and remarks !='' ">
+			 	,REMARKS = #{remarks,jdbcType=VARCHAR}
+			</if>
+		where ID=#{id} 
+	</update>
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.timss.attendance.dao.SealApplyDao">
+	<resultMap type="SealApplyVo" id="SealApplyMap">
+		<id property="saId" column="SA_ID"/>
+		<result property="saNo" column="SA_NO"/>
+		<result property="createUserName" column="CREATE_USER_NAME"/>
+		<result property="deptName" column="DEPT_NAME"/>
+		<result property="title" column="TITLE"/>
+		<result property="sendCompany" column="SEND_COMPANY"/>
+		<result property="createdate" column="CREATE_DATE"/>
+		<result property="createuser" column="CREATE_USER"/>
+		<result property="status" column="STATUS"/>
+		<result property="reason" column="REASON"/>
+		<result property="count" column="COUNT"/>
+		<result property="category" column="CATEGORY"/>
+		<result property="instanceId" column="instance_id"/>
+		<result property="siteid" column="site_id"/>
+		
+		<result property="statusName" column="status_name"/>
+	</resultMap>
+	
+	<select id="queryAllSealApply" resultMap="SealApplyMap">
+		select a.sa_id,a.sa_no,c.name as create_user_name, b.name as dept_name, a.title, a.send_company, a.create_date, a.status,be.enum_val as status_name from atd_seal_apply a 
+		left join sec_organization b on b.org_code=a.dept_id
+		left join sec_user c on c.user_id=a.create_user
+		left join b_enum be on be.enum_code = a.status and be.ecat_code='ATD_SEALAPPLY_STATUS'
+		where site_id = '${ params.siteId }' and a.status!='draft' and a.del_ind !='Y' and  be.siteid='${ params.siteId }'
+		<if test="params.saNo != null and params.saNo != ''">
+		 	and a.sa_no like '%${ params.saNo }%'
+		</if>
+	</select>
+	
+	<select id="querySealApplyById" resultMap="SealApplyMap" parameterType="java.lang.String">
+		select a.sa_id, a.title, c.name as create_user_name, b.name as dept_name, 
+		a.sa_no, a.send_company, a.category, a.reason, a.count, a.create_date,
+		a.instance_id, a.site_id, a.create_user, a.status
+		from atd_seal_apply a
+		left join sec_user c on c.user_id=a.create_user
+		left join sec_organization b on b.org_code=a.dept_id
+		where a.sa_id = #{saId}
+	</select>
+	
+	<insert id="insertSealApply" parameterType="com.timss.attendance.bean.SealApplyBean">
+		insert into atd_seal_apply 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="title != null"> title, </if>
+		<if test="reason != null"> reason, </if>
+		<if test="sendCompany != null"> send_company, </if>
+		<if test="count != null"> count, </if>
+		<if test="category != null"> category, </if>
+		<if test="createdate != null"> create_date, </if>
+		<if test="saId != null"> sa_id, </if>
+		<if test="saNo != null"> sa_no, </if>
+		<if test="status != null"> status, </if>
+		<if test="createuser != null"> create_user, </if>
+		<if test="siteid != null"> site_id, </if>
+		<if test="deptid != null"> dept_id, </if>
+		<if test="delInd != null"> del_ind, </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		<if test="title != null"> #{title,jdbcType=VARCHAR}, </if>
+		<if test="reason != null"> #{reason,jdbcType=VARCHAR}, </if>
+		<if test="sendCompany != null"> #{sendCompany,jdbcType=VARCHAR}, </if>
+		<if test="count != null"> #{count,jdbcType=VARCHAR}, </if>
+		<if test="category != null"> #{category,jdbcType=VARCHAR}, </if>
+		<if test="createdate != null"> #{createdate,jdbcType=VARCHAR}, </if>
+		<if test="saId != null"> #{saId,jdbcType=VARCHAR}, </if>
+		<if test="saNo != null"> #{saNo,jdbcType=VARCHAR}, </if>
+		<if test="status != null"> #{status,jdbcType=VARCHAR}, </if>
+		<if test="createuser != null"> #{createuser,jdbcType=VARCHAR}, </if>
+		<if test="siteid != null"> #{siteid,jdbcType=VARCHAR}, </if>
+		<if test="deptid != null"> #{deptid,jdbcType=VARCHAR}, </if>
+		<if test="delInd != null"> #{delInd,jdbcType=VARCHAR}, </if>
+		</trim>
+	</insert>
+	
+	<update id="updateSealApply" parameterType="com.timss.attendance.bean.SealApplyBean">
+		update atd_seal_apply
+		<set>
+			<if test="title != null">title = #{title,jdbcType=VARCHAR}, </if>
+			<if test="reason != null">reason = #{reason,jdbcType=VARCHAR}, </if>
+			<if test="sendCompany != null">send_company = #{sendCompany,jdbcType=VARCHAR}, </if>
+			<if test="count != null">count = #{count,jdbcType=VARCHAR}, </if>
+			<if test="category != null">category = #{category,jdbcType=VARCHAR}, </if>
+			<if test="instanceId != null">instance_id = #{instanceId,jdbcType=VARCHAR},</if>
+			<if test="status != null">status = #{status,jdbcType=VARCHAR},</if>
+			<if test="modifyuser != null">update_user = #{modifyuser,jdbcType=VARCHAR},</if>
+			<if test="modifydate != null">update_date = #{modifydate,jdbcType=TIMESTAMP},</if>
+			<if test="delInd != null">del_ind = #{delInd,jdbcType=VARCHAR},</if>
+		</set>
+		 where sa_id = #{saId,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="removeSealApply" parameterType="java.lang.String">
+		delete from atd_seal_apply a where a.sa_id = #{saId}
+	</delete>
+
+</mapper>

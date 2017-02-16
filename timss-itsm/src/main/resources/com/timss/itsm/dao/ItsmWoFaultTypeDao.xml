@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.timss.itsm.dao.ItsmWoFaultTypeDao">
+
+	<resultMap type="ItsmWoFaultType" id="faultTypeMap">
+		<id column="ID" property="id" />
+		<result column="NAME" property="name" />
+		<result column="FAULTTYPE_CODE" property="faultTypeCode" />
+		<result column="PARENT_ID" property="parentId" />
+		<result column="ONELEVEL_ID" property="oneLevelId" />
+		<result column="DEFAULT_SCORE" property="defaultScore" />
+		<result column="KEYWORDS" property="keywords" />
+		<result column="REMARKS" property="remarks" />
+		<result column="PRINCIPALGROUP" property="principalGroup" />
+		
+		<result column="CREATEDATE" property="createDate" />
+		<result column="MODIFYDATE" property="modifyDate" />
+		<result column="CREATEUSER" property="createUser" />
+		<result column="MODIFYUSER" property="modifyUser" />
+		<result column="SITEID" property="siteid" />
+		<result column="DEPTID" property="deptid" />
+		<result column="YXBZ" property="yxbz" />
+		
+		<!-- 数据库表中没有字段 -->
+		<result column="PARENT_NAME" property="parentTypeName" />
+	</resultMap>	
+	
+	<insert id="insertFaultType"  parameterType="ItsmWoFaultType" >
+		insert into itsm_faulttype(ID,NAME,FAULTTYPE_CODE,PARENT_ID,ONELEVEL_ID,DEFAULT_SCORE,KEYWORDS,REMARKS,
+								PRINCIPALGROUP,CREATEDATE,MODIFYDATE,CREATEUSER,MODIFYUSER,SITEID,YXBZ) 
+		values( #{id},
+				#{name,jdbcType=VARCHAR},
+				#{faultTypeCode,jdbcType=VARCHAR},
+				#{parentId,jdbcType=NUMERIC},
+				#{oneLevelId,jdbcType=NUMERIC},
+				#{defaultScore,jdbcType=NUMERIC},
+				#{keywords,jdbcType=VARCHAR},
+				#{remarks,jdbcType=VARCHAR},
+				
+				#{principalGroup,jdbcType=VARCHAR},
+				#{createDate,jdbcType=TIMESTAMP},
+				#{modifyDate,jdbcType=TIMESTAMP},
+				#{createUser,jdbcType=VARCHAR},
+				#{modifyUser,jdbcType=VARCHAR},
+				#{siteid,jdbcType=VARCHAR},
+				#{yxbz,jdbcType=NUMERIC}
+			  )
+	</insert>
+	
+	<!--  -->
+	<update id="updateFaultType" parameterType="ItsmWoFaultType">
+		update itsm_faulttype 
+		set NAME=#{name,jdbcType=VARCHAR},
+			FAULTTYPE_CODE=#{faultTypeCode,jdbcType=VARCHAR},
+			REMARKS = #{remarks,jdbcType=VARCHAR},
+			PARENT_ID=#{parentId,jdbcType=NUMERIC},
+			ONELEVEL_ID=#{oneLevelId,jdbcType=NUMERIC},
+			PRINCIPALGROUP =#{principalGroup,jdbcType=NUMERIC},
+			DEFAULT_SCORE=#{defaultScore,jdbcType=NUMERIC},
+			KEYWORDS=#{keywords,jdbcType=VARCHAR},
+			MODIFYDATE=#{modifyDate,jdbcType=TIMESTAMP},
+			MODIFYUSER=#{modifyUser,jdbcType=TIMESTAMP}
+		where ID=#{id} 
+	</update>
+	 
+	<!--  -->
+	<select id="queryFaultTypeById" parameterType="int" resultMap="faultTypeMap">
+		select t1.id,t1.faulttype_code, t1.name,t1.remarks,t1.DEFAULT_SCORE,t1.keywords,
+				t1.parent_id,t2.name PARENT_NAME,t1.PRINCIPALGROUP,t1.siteid,t1.ONELEVEL_ID
+		from itsm_faulttype t1
+			 left join itsm_faulttype t2 on t1.parent_id = t2.id
+		where t1.id= #{ id }
+	</select>
+	
+	<select id="queryOneLeveFTById" parameterType="int" resultMap="faultTypeMap">
+		SELECT * FROM (
+		       select B.*,ROWNUM RNS
+		        from (select A.*,rownum RN
+		        from (select t1.id,t1.faulttype_code, t1.name,t1.remarks,t1.DEFAULT_SCORE,t1.keywords,
+		                t1.parent_id,t2.name PARENT_NAME,t1.PRINCIPALGROUP,T1.ONELEVEL_ID
+		              from itsm_faulttype t1
+		               left join itsm_faulttype t2 on t1.parent_id = t2.id start with t1.id=#{ id } connect by prior t1.parent_id=t1.id) A
+		        order by RN desc) B
+		)WHERE RNS = 2
+	</select>
+	
+	<select id="queryOneLevelFTBySiteId" parameterType="HashMap" resultMap="faultTypeMap">
+		select tt.id,tt.name,tt.parent_id,tt.default_score,tt.siteid, tt.PRINCIPALGROUP
+		from itsm_faulttype  tt
+		where tt.parent_id = (select t.id from itsm_faulttype t where t.parent_id is null and t.yxbz=1 and t.siteid = #{siteid})
+		ORDER BY tt.DEFAULT_SCORE
+	</select>
+	<!--  -->
+	<delete id="deleteFaultType" parameterType="int">
+		update itsm_faulttype 
+		set YXBZ = 0
+		where ID=#{id} 
+	</delete>
+	<!-- 获取下一个插入的记录的ID -->
+	<select id="getNextParamsConfId" resultType="int">
+		select SEQ_ITSM_PARAMSCONF.nextval id from dual
+	</select>
+	
+	<!-- 查询列表信息 -->
+	<select id="queryWoFaultTypeList"  resultMap="faultTypeMap" >
+		select *
+		from itsm_faulttype t
+		where t.yxbz=1
+		<if test="params.siteId != null">
+			and siteId = #{params.siteId}
+		</if>
+		<if test="params.id != null">
+			and id  in (select ft.id from itsm_faulttype ft  where ft.yxbz=1 
+						start with 	ft.ID=#{params.id} connect by prior ID = parent_id)
+		</if>
+	</select>
+	
+	<select id="queryNewWoFaultTypeList" resultMap="faultTypeMap" >
+		select *
+		from itsm_faulttype t
+		where t.yxbz=1 and  t.faulttype_code='SD'
+	</select>
+	<!-- 查询根节点 -->
+	<select id="queryFTRootBySiteId" resultMap="faultTypeMap" >
+		select *
+		from itsm_faulttype t
+		where t.yxbz=1 and siteId = #{siteid} and t.parent_id is null
+	</select>
+	
+	<!-- 查询某类型的子类型 -->
+	<select id="queryChildrenNodes" resultMap="faultTypeMap" >
+		select *
+		from itsm_faulttype t
+		where t.yxbz=1 and t.parent_id=#{parent_id} and siteId = #{siteid}
+		<if test="treeType != null">
+			and t.FAULTTYPE_CODE = #{treeType}
+		</if>
+		order by t.default_score
+	</select>
+	
+	<!-- 删除故障类型及其子类型 -->
+	<update id="deleteFaultTypeById" >
+		update itsm_faulttype t
+		set t.yxbz=0,t.parent_id=null
+		where t.id=#{faultTypeId} or t.parent_id=#{faultTypeId}
+	</update>
+	
+	<!-- 打开服务目录树节点 -->
+	 <select id="queryWoFaultTypeParents" resultType="String">
+        select t.id
+		from itsm_faulttype t 
+		start with t.id=#{id}
+		connect by t.id=prior parent_id 
+    </select>
+    
+    <resultMap id='faultTypeHint' type="map">
+        <id property="id" column="id"/>
+	    <result property="name" column="name"/>
+    </resultMap>
+    <select id="queryFaultTypeForHint" resultMap="faultTypeHint">
+        select t.id,t.name
+        from itsm_faulttype t
+        where t.FAULTTYPE_CODE ='SD' and t.name like '%${kw}%'
+        and rownum&lt;=11
+    </select>
+</mapper>

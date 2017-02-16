@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timss.pms.dao.InvoiceConfirmDao">
+
+<!--说明：#{}内的参数，需要与传入的User中bean的属性相同，SQL语句中的列名为数据库中的cloumn名称-->
+
+	
+	<resultMap type="com.timss.pms.vo.InvoiceConfirmVo" id="invoiceConfirmVoMap">
+		<id property="id" column="id"/>
+		<result property="invoiceId" column="invoice_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUser" column="create_user"/>
+		<result property="confirmTime" column="confirm_time"/>
+		<result property="confirmSum" column="confirm_sum"/>
+		<result property="siteid" column="siteid"/>
+		<result property="command" column="command"/>
+	</resultMap>
+	
+	
+
+<!-- 可以重复使用的sql语句可以用 sql这种方式包含起来，在后面调用即可 -->
+	<sql id="columnBasic">
+		id,invoice_id,create_time,create_user,confirm_time,confirm_sum,siteid,del_flag,command
+	</sql>
+	
+	<sql id="columnVo">
+		<include refid="columnBasic"/>
+	</sql>
+
+<insert id="insertInvoiceConfirm" parameterType="com.timss.pms.bean.InvoiceConfirm">
+
+    insert into Tim_Pms_INVOICE_Confirm(<include refid="columnBasic"/>)
+    values (#{id},#{invoiceId,jdbcType=NUMERIC},#{createTime,jdbcType=TIMESTAMP},
+    	#{createUser,jdbcType=VARCHAR},#{confirmTime,jdbcType=TIMESTAMP},#{confirmSum,jdbcType=NUMERIC},
+    	#{siteid,jdbcType=NUMERIC},0,#{command,jdbcType=VARCHAR})
+</insert>
+
+<delete id="deleteInvoiceConfrimByInvoiceId">
+    delete from Tim_Pms_Invoice_Confirm t 
+    where t.invoice_id=#{invoiceId}
+</delete>
+
+<select id="queryInvoiceConfirmByInvoiceId" resultMap="invoiceConfirmVoMap">
+	select <include refid="columnVo"/>
+	from tim_pms_invoice_confirm t
+	where t.invoice_id=#{invoiceId}
+</select>
+ 
+</mapper>
